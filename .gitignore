@@ -43,3 +43,6 @@ next-env.d.ts
 # local cache/temp (never os.tmpdir())
 .cache/
 .tmp/
+
+.vercel
+.env*
