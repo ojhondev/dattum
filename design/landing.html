@@ -25,36 +25,9 @@
   --mast-ink-soft:rgba(245,244,241,.62);
   --mast-line:rgba(245,244,241,.12);
 }
-@media (prefers-color-scheme: dark){
-  :root:not([data-theme="light"]){
-    --bg:#0f0f11;
-    --surface:#1a1a1c;
-    --surface-2:#212123;
-    --ink:#eeede8;
-    --ink-soft:#a3a2aa;
-    --line:#2a2a2d;
-    --line-strong:#38383c;
-    --blue-card:#16233d;
-    --blue-card-line:#213556;
-    --good:#7fc79a;
-    --warn:#e0a05e;
-    --shadow:0 1px 2px rgba(0,0,0,.5), 0 20px 44px -20px rgba(0,0,0,.6);
-  }
-}
-:root[data-theme="dark"]{
-  --bg:#0f0f11;
-  --surface:#1a1a1c;
-  --surface-2:#212123;
-  --ink:#eeede8;
-  --ink-soft:#a3a2aa;
-  --line:#2a2a2d;
-  --line-strong:#38383c;
-  --blue-card:#16233d;
-  --blue-card-line:#213556;
-  --good:#7fc79a;
-  --warn:#e0a05e;
-  --shadow:0 1px 2px rgba(0,0,0,.5), 0 20px 44px -20px rgba(0,0,0,.6);
-}
+/* Identidade de marca fixa (como a Deel): o site NÃO se adapta ao tema do
+   sistema — só as faixas escuras propositais (--mast-*) existem, o resto do
+   fundo é sempre claro. */
 
 *{box-sizing:border-box;}
 html{scroll-behavior:smooth;}
@@ -94,8 +67,6 @@ header.site{padding:1rem 0; background:var(--bg);}
 header.site .wrap{display:flex; align-items:center; justify-content:space-between; gap:1.5rem;}
 .wordmark img{height:20px; width:auto; display:block;}
 .wordmark{display:flex; align-items:center;}
-@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .header-logo{filter:invert(1);} }
-:root[data-theme="dark"] .header-logo{filter:invert(1);}
 .header-mid{display:flex; align-items:center; gap:2rem;}
 .navlinks{display:flex; gap:2rem;}
 .navlinks a{font-size:.88rem; font-weight:500; color:var(--ink-soft);}
@@ -171,8 +142,6 @@ section.block{padding:4.6rem 0;}
 @media (max-width:860px){ .journey-grid{grid-template-columns:1fr;} }
 .j-col h4{font-size:1.05rem; font-weight:700; margin-bottom:.9rem;}
 .j-card{background:var(--blue-card); border:1px solid var(--blue-card-line); border-radius:12px; padding:1.05rem 1.15rem; font-size:.87rem; color:#2a3a54; line-height:1.6;}
-@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .j-card{color:var(--mast-ink-soft);} }
-:root[data-theme="dark"] .j-card{color:var(--mast-ink-soft);}
 
 /* ---------- diferenciais: two stacked dark panels ---------- */
 .dark-outer{padding:0 clamp(1.1rem,3vw,2.4rem); display:flex; flex-direction:column; gap:1px;}
