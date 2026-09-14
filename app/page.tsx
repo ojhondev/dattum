@@ -1,9 +1,103 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+
+const PICKS: { key: string; label: string; short: string }[] = [
+  {
+    key: "contrato",
+    label: "Contrato de prestação de serviço genérico, sem cláusula de dados",
+    short: "contrato de operador",
+  },
+  {
+    key: "contaminacao",
+    label: "Contaminação cruzada de base entre clientes",
+    short: "segregação de base",
+  },
+  {
+    key: "exclusao",
+    label: "Pedido de exclusão que ninguém sabe processar",
+    short: "canal do titular",
+  },
+  {
+    key: "selo",
+    label: "Selo de conformidade pra vender",
+    short: "selo de conformidade",
+  },
+  {
+    key: "incidente",
+    label: "Zero playbook de incidente",
+    short: "plano de incidente",
+  },
+];
+
+function Check() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3">
+      <polyline points="4 12 9 18 20 6" />
+    </svg>
+  );
+}
+
+function useReveal<T extends HTMLElement>() {
+  const ref = useRef<T>(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    if (!("IntersectionObserver" in window)) {
+      el.classList.add("in");
+      return;
+    }
+    const obs = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) {
+            (e.target as HTMLElement).classList.add("in");
+            obs.unobserve(e.target);
+          }
+        });
+      },
+      { threshold: 0.12 }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
+  return ref;
+}
 
 export default function Home() {
   const [showUtilBar, setShowUtilBar] = useState(true);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [selected, setSelected] = useState<Record<string, boolean>>({});
+  const [gaugeFilled, setGaugeFilled] = useState(false);
+  const [barsFilled, setBarsFilled] = useState(false);
+
+  useEffect(() => {
+    const t1 = requestAnimationFrame(() => setGaugeFilled(true));
+    const t2 = setTimeout(() => setBarsFilled(true), 50);
+    return () => {
+      cancelAnimationFrame(t1);
+      clearTimeout(t2);
+    };
+  }, []);
+
+  useEffect(() => {
+    document.body.style.overflow = menuOpen ? "hidden" : "";
+  }, [menuOpen]);
+
+  const togglePick = (key: string) =>
+    setSelected((s) => ({ ...s, [key]: !s[key] }));
+
+  const activeLabels = PICKS.filter((p) => selected[p.key]).map((p) => p.short);
+  const hint =
+    activeLabels.length > 0
+      ? `Seu diagnóstico vai priorizar: ${activeLabels.join(", ")}.`
+      : " ";
+
+  const revServ = useReveal<HTMLElement>();
+  const revJourney = useReveal<HTMLElement>();
+  const revDiff1 = useReveal<HTMLDivElement>();
+  const revDiff2 = useReveal<HTMLDivElement>();
+  const revMarcas = useReveal<HTMLDivElement>();
 
   return (
     <>
@@ -13,7 +107,7 @@ export default function Home() {
             <div className="util-left">
               <span className="wa-dot"></span>
               <span>Fale com nosso time:</span>
-              <span className="util-phone mono">+55 55006 6778</span>
+              <span className="util-phone">+55 55006 6778</span>
             </div>
             <button
               className="util-close"
@@ -29,13 +123,7 @@ export default function Home() {
       <header className="site">
         <div className="wrap">
           <a className="wordmark" href="#top">
-            <img
-              className="header-logo"
-              src="/logo-dattum.png"
-              alt="Dattum"
-              width={100}
-              height={22}
-            />
+            dattum.
           </a>
           <div className="header-mid">
             <nav className="navlinks">
@@ -46,98 +134,147 @@ export default function Home() {
             </nav>
           </div>
           <div className="header-actions">
-            <a className="btn btn-outline" href="#cta">
+            <a className="btn btn-ghost" href="#cta">
               entrar
             </a>
-            <a className="btn btn-primary" href="#cta">
+            <a className="btn btn-dark" href="#cta">
               veja uma demo
             </a>
+            <button
+              className="menu-btn"
+              aria-label="Abrir menu"
+              aria-expanded={menuOpen}
+              onClick={() => setMenuOpen(true)}
+            >
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <line x1="3" y1="6" x2="21" y2="6" />
+                <line x1="3" y1="12" x2="21" y2="12" />
+                <line x1="3" y1="18" x2="21" y2="18" />
+              </svg>
+            </button>
           </div>
         </div>
       </header>
 
-      <div className="hero-shell" id="top">
-        <div className="wrap">
-          <div className="hero">
-            <div className="hero-copy">
-              <h1>
-                Sua agência pode ser multada por falta de conformidade com a
-                LGPD
-              </h1>
-              <p className="hero-sub">
-                O que você gostaria de fazer com a Dattum
-              </p>
-              <div className="pain-grid">
-                <div className="pain">
-                  <span className="pi"></span>
-                  <span className="pt">
-                    Contrato de prestação de serviço genérico, sem cláusula
-                    de dados
+      <div className={`mobile-menu${menuOpen ? " open" : ""}`}>
+        <div className="mm-top">
+          <a className="wordmark" href="#top">
+            dattum.
+          </a>
+          <button
+            className="menu-btn"
+            aria-label="Fechar menu"
+            style={{ display: "flex" }}
+            onClick={() => setMenuOpen(false)}
+          >
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <line x1="6" y1="6" x2="18" y2="18" />
+              <line x1="6" y1="18" x2="18" y2="6" />
+            </svg>
+          </button>
+        </div>
+        <nav>
+          <a href="#solucoes" onClick={() => setMenuOpen(false)}>
+            soluções
+          </a>
+          <a href="#exemplo" onClick={() => setMenuOpen(false)}>
+            casos de uso
+          </a>
+          <a href="#quem-atendemos" onClick={() => setMenuOpen(false)}>
+            quem atendemos
+          </a>
+          <a href="#precos" onClick={() => setMenuOpen(false)}>
+            preços
+          </a>
+        </nav>
+        <div className="mm-cta">
+          <a className="btn btn-ghost btn-block" href="#cta" onClick={() => setMenuOpen(false)}>
+            entrar
+          </a>
+          <a className="btn btn-dark btn-block" href="#cta" onClick={() => setMenuOpen(false)}>
+            veja uma demo
+          </a>
+        </div>
+      </div>
+
+      <div className="hero" id="top">
+        <div className="hero-copy">
+          <h1>
+            Sua agência pode ser multada por falta de conformidade{" "}
+            <span className="accent">com a LGPD.</span>
+          </h1>
+          <p className="hero-sub">Marque o que já é problema pra você:</p>
+          <div className="pick-grid" role="group" aria-label="Selecione seus desafios de conformidade">
+            {PICKS.slice(0, 2).map((p) => (
+              <button
+                key={p.key}
+                type="button"
+                className="pick"
+                aria-pressed={!!selected[p.key]}
+                onClick={() => togglePick(p.key)}
+              >
+                <span className="pick-box">
+                  <Check />
+                </span>
+                <span className="pick-label">{p.label}</span>
+              </button>
+            ))}
+            <div className="pick-row3">
+              {PICKS.slice(2).map((p) => (
+                <button
+                  key={p.key}
+                  type="button"
+                  className="pick"
+                  aria-pressed={!!selected[p.key]}
+                  onClick={() => togglePick(p.key)}
+                >
+                  <span className="pick-box">
+                    <Check />
                   </span>
-                </div>
-                <div className="pain">
-                  <span className="pi"></span>
-                  <span className="pt">
-                    Contaminação cruzada de base entre clientes
-                  </span>
-                </div>
-                <div className="pain-row-2">
-                  <div className="pain">
-                    <span className="pi"></span>
-                    <span className="pt">
-                      Pedido de exclusão que ninguém sabe processar
-                    </span>
-                  </div>
-                  <div className="pain">
-                    <span className="pi"></span>
-                    <span className="pt">Selo de conformidade pra vender</span>
-                  </div>
-                  <div className="pain">
-                    <span className="pi"></span>
-                    <span className="pt">Zero playbook de incidente</span>
-                  </div>
+                  <span className="pick-label">{p.label}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+          <p className="pick-hint" aria-live="polite">
+            {hint}
+          </p>
+          <a className="btn btn-violet btn-block" href="#cta">
+            Agendar uma análise de especialista
+          </a>
+          <p className="hero-trust">
+            Fundamentado na LGPD (Lei 13.709/2018, art. 42 e 52). Nunca
+            apresentado como comunicação oficial da ANPD.
+          </p>
+        </div>
+        <div className="hero-visual">
+          <div className="hv-shape s1"></div>
+          <div className="hv-shape s2"></div>
+          <span className="photo-note">Imagem — placeholder</span>
+          <div className="score-card">
+            <div className="sc-top">
+              <span className="sc-label">Diagnóstico completo</span>
+              <span className="sc-check">
+                <Check />
+              </span>
+            </div>
+            <div className="gauge-row">
+              <div className={`gauge${gaugeFilled ? " fill" : ""}`}>
+                <div className="gauge-inner">
+                  <span className="n">82</span>
                 </div>
               </div>
-              <a className="btn btn-white btn-block" href="#cta">
-                Agendar uma análise de especialista
-              </a>
-              <p className="hero-trust">
-                Fundamentado na LGPD (Lei 13.709/2018, art. 42 e 52). Nunca
-                apresentado como comunicação oficial da ANPD.
-              </p>
-            </div>
-            <div className="hero-visual">
-              <div className="photo-placeholder">
-                <span className="ph-label">Imagem — placeholder</span>
-                <div className="float-card fc-main">
-                  <div className="fm-top">
-                    <span className="fm-label">Diagnóstico completo</span>
-                    <span className="fc-check">✓</span>
-                  </div>
-                  <div className="fm-value">
-                    82<span style={{ fontSize: ".9rem", fontWeight: 600 }}>/100</span>
-                  </div>
-                  <div className="fm-sub">Score de higiene de operador</div>
-                </div>
-                <div className="float-card pill-card pill-1">
-                  <span className="pill-ic b">✓</span>Contrato assinado
-                </div>
-                <div className="float-card pill-card pill-2">
-                  <span className="pill-ic g">7</span>Contas monitoradas
-                </div>
-                <div className="float-card pill-card pill-3">
-                  <span className="pill-ic y">!</span>2 pendências
-                </div>
-                <div className="float-card pill-card pill-4">
-                  <span className="pill-ic b">✓</span>Canal do titular
-                </div>
+              <div className="gauge-label">
+                Score de higiene
+                <br />
+                de operador — 82/100
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      <section className="block" id="solucoes">
+      <section className="block reveal" id="solucoes" ref={revServ}>
         <div className="wrap">
           <div className="block-head">
             <span className="eyebrow">O QUE A DATTUM FAZ</span>
@@ -153,7 +290,10 @@ export default function Home() {
               <div className="progress-pill">
                 <div className="pp-label">4 de 7 contas assinadas</div>
                 <div className="progress-track">
-                  <div className="progress-fill" style={{ width: "57%" }}></div>
+                  <div
+                    className="progress-fill"
+                    style={{ width: barsFilled ? "57%" : "0%" }}
+                  ></div>
                 </div>
               </div>
             </div>
@@ -166,7 +306,10 @@ export default function Home() {
               <div className="progress-pill">
                 <div className="pp-label">Configurado e ativo</div>
                 <div className="progress-track">
-                  <div className="progress-fill" style={{ width: "100%" }}></div>
+                  <div
+                    className="progress-fill"
+                    style={{ width: barsFilled ? "100%" : "0%" }}
+                  ></div>
                 </div>
               </div>
             </div>
@@ -179,7 +322,10 @@ export default function Home() {
               <div className="progress-pill">
                 <div className="pp-label">12 de 15 ferramentas mapeadas</div>
                 <div className="progress-track">
-                  <div className="progress-fill" style={{ width: "80%" }}></div>
+                  <div
+                    className="progress-fill"
+                    style={{ width: barsFilled ? "80%" : "0%" }}
+                  ></div>
                 </div>
               </div>
             </div>
@@ -187,7 +333,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="block">
+      <section className="block reveal" ref={revJourney}>
         <div className="wrap">
           <div className="block-head center">
             <span className="eyebrow">O QUE A DATTUM FAZ</span>
@@ -230,8 +376,8 @@ export default function Home() {
         </div>
       </section>
 
-      <div className="dark-outer">
-        <div className="dark-panel">
+      <div className="dark-band reveal" ref={revDiff1}>
+        <div className="wrap">
           <div className="diff-head">
             <h2>Diferenciais da Dattum baseados nas dores das agências</h2>
           </div>
@@ -263,33 +409,33 @@ export default function Home() {
             </div>
           </div>
           <div className="diff-photo">
-            <span className="ph-label">Imagem — placeholder</span>
+            <span className="ph-note">Imagem — placeholder</span>
             <div className="tool-list-card">
-              <div className="tl-row2 active">
+              <div className="tl-row">
                 <span className="tl-name">
                   <span className="tl-dot">M</span>Meta Ads
                 </span>
                 <span className="tl-check">✓</span>
               </div>
-              <div className="tl-row2">
+              <div className="tl-row">
                 <span className="tl-name">
                   <span className="tl-dot">R</span>RD Station
                 </span>
                 <span className="tl-check">✓</span>
               </div>
-              <div className="tl-row2">
+              <div className="tl-row">
                 <span className="tl-name">
                   <span className="tl-dot">W</span>WhatsApp API
                 </span>
                 <span className="tl-check">✓</span>
               </div>
-              <div className="tl-row2">
+              <div className="tl-row">
                 <span className="tl-name">
                   <span className="tl-dot">Z</span>Zapier
                 </span>
                 <span className="tl-check">✓</span>
               </div>
-              <div className="tl-row2">
+              <div className="tl-row">
                 <span className="tl-name">
                   <span className="tl-dot">H</span>Hotmart
                 </span>
@@ -298,8 +444,14 @@ export default function Home() {
             </div>
           </div>
         </div>
+      </div>
 
-        <div className="dark-panel">
+      <div
+        className="dark-band reveal"
+        style={{ paddingTop: 0 }}
+        ref={revDiff2}
+      >
+        <div className="wrap">
           <div className="infra-panel">
             <h3>
               Construindo infraestrutura própria de gestão LGPD para
@@ -335,7 +487,7 @@ export default function Home() {
         </div>
       </div>
 
-      <div className="marcas" id="quem-atendemos">
+      <div className="marcas reveal" id="quem-atendemos" ref={revMarcas}>
         <div className="wrap">
           <p className="mc-head">
             <strong>A Dattum ainda não tem 500 agências como cliente</strong>{" "}
@@ -403,7 +555,7 @@ export default function Home() {
 
           <section className="block" id="precos" style={{ paddingTop: 0 }}>
             <div className="block-head">
-              <span className="eyebrow" style={{ color: "#e0a05e" }}>
+              <span className="eyebrow" style={{ color: "var(--amber)" }}>
                 PREÇOS
               </span>
               <h2>Preço por faixa de contas geridas</h2>
@@ -424,7 +576,11 @@ export default function Home() {
                   <li>SLA canal do titular: 15 dias úteis</li>
                   <li>Suporte e-mail + chat</li>
                 </ul>
-                <a className="btn btn-outline" href="#cta">
+                <a
+                  className="btn btn-ghost"
+                  href="#cta"
+                  style={{ borderColor: "rgba(255,255,255,.25)", color: "#fff" }}
+                >
                   Falar com a gente
                 </a>
               </div>
@@ -439,7 +595,7 @@ export default function Home() {
                   <li>SLA canal do titular: 10 dias úteis</li>
                   <li>Suporte prioritário</li>
                 </ul>
-                <a className="btn btn-primary" href="#cta">
+                <a className="btn btn-violet" href="#cta">
                   Falar com a gente
                 </a>
               </div>
@@ -452,7 +608,11 @@ export default function Home() {
                   <li>SLA canal do titular: 5 dias úteis</li>
                   <li>Gestor de conta dedicado</li>
                 </ul>
-                <a className="btn btn-outline" href="#cta">
+                <a
+                  className="btn btn-ghost"
+                  href="#cta"
+                  style={{ borderColor: "rgba(255,255,255,.25)", color: "#fff" }}
+                >
                   Falar com a gente
                 </a>
               </div>
@@ -465,7 +625,11 @@ export default function Home() {
                   <li>SLA definido em contrato</li>
                   <li>DPO dedicado nomeado</li>
                 </ul>
-                <a className="btn btn-outline" href="#cta">
+                <a
+                  className="btn btn-ghost"
+                  href="#cta"
+                  style={{ borderColor: "rgba(255,255,255,.25)", color: "#fff" }}
+                >
                   Falar com o time
                 </a>
               </div>
@@ -482,9 +646,8 @@ export default function Home() {
           <div style={{ textAlign: "center", padding: "3.5rem 0 4rem" }}>
             <h2
               style={{
-                color: "var(--mast-ink)",
-                fontSize: "clamp(1.6rem,2.8vw,2.2rem)",
-                fontWeight: 800,
+                color: "#fff",
+                fontSize: "clamp(1.8rem,3.4vw,2.5rem)",
                 maxWidth: "20ch",
                 margin: "0 auto 1rem",
               }}
@@ -493,23 +656,24 @@ export default function Home() {
             </h2>
             <p
               style={{
-                color: "var(--mast-ink-soft)",
+                color: "var(--linen)",
                 maxWidth: "44ch",
                 margin: "0 auto 1.6rem",
-                fontSize: ".94rem",
+                fontSize: ".96rem",
+                fontFamily: "var(--font-body-fam)",
               }}
             >
               Diagnóstico gratuito, baseado em campanhas públicas que você
               já roda. Sem compromisso, sem cadastro de cartão.
             </p>
-            <a className="btn btn-white" href="#top" id="cta">
+            <a className="btn btn-violet" href="#top" id="cta">
               Agendar uma análise de especialista
             </a>
             <p
               style={{
                 fontSize: ".74rem",
                 marginTop: "1rem",
-                color: "var(--mast-ink-soft)",
+                color: "var(--ash)",
               }}
             >
               O diagnóstico é um documento técnico da Dattum — não
@@ -547,13 +711,7 @@ export default function Home() {
             <div className="foot-grid">
               <div className="foot-brand">
                 <a className="wordmark" href="#top">
-                  <img
-                    src="/logo-dattum.png"
-                    alt="Dattum"
-                    width={100}
-                    height={22}
-                    style={{ filter: "invert(1)" }}
-                  />
+                  dattum.
                 </a>
                 <p>
                   Consultoria de compliance LGPD e DPO-as-a-Service para

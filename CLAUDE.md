@@ -18,9 +18,9 @@ faixa de contas de cliente geridas.
   — agora central ao funil (PRD §05, §06.2), não mais um playbook à parte.
 - Fonte da landing page publicada em [`design/landing.html`](design/landing.html) — o app
   Next.js em `app/` é a versão canônica, ambos sincronizados com o ICP de agências.
-- Logo oficial em [`public/logo-dattum.png`](public/logo-dattum.png) (wordmark preto
-  "dattum.", fundo transparente) — invertido via CSS (`.header-logo`) quando o fundo
-  atrás dele é escuro (tema escuro do visitante, ou os blocos `--mast-bg` do site).
+- Wordmark renderizado como texto (`.wordmark`, Barlow Condensed 600), não como imagem
+  — `public/logo-dattum.png` (PNG antigo, preto sobre transparente) ficou obsoleto e
+  não é mais referenciado pelo site.
 - Imagens de pessoas/fotos na landing são **placeholders** (`.photo-placeholder`,
   `.diff-photo`) — texto "Imagem — placeholder", aguardando fotos reais do usuário.
 - A landing segue a referência visual de 6 seções que o usuário mandou (baseada no
@@ -36,14 +36,29 @@ faixa de contas de cliente geridas.
 
 ## Stack
 
-- Next.js 16 (App Router, Turbopack) + TypeScript, componente da home como Client
-  Component (`"use client"`) só pela barra de utilidade fechável (`useState`)
+- Next.js 16 (App Router, Turbopack) + TypeScript, home como Client Component
+  (`"use client"`) por causa da barra de utilidade fechável, do menu mobile, do
+  seletor de dores (checkboxes reais com `aria-pressed`), do scroll-reveal
+  (`IntersectionObserver`) e da animação de gauge/barras de progresso no load.
 - CSS próprio (design tokens em `app/globals.css`) — sem Tailwind. Identidade visual
-  **v3 (site)**: preto/branco/creme + acento azul (`--blue`) para elementos
-  informativos (barra de progresso, cards "Como a Dattum atua") + pills pastel
-  azul/amarelo/verde, tipografia Inter 700–900 nos títulos + IBM Plex Mono nos labels.
-  Isso **substitui** a identidade navy + dourado + serifa Spectral descrita no PRD §11
-  (documento ainda não sincronizado com essa mudança — ver nota abaixo).
+  **v4 (site)**, baseada em extração real de tokens do design da Deel (deel.com/pt):
+  Cosmos (`#201547`, fundo do hero) + Violet (`#5938b7`, CTA) + Lavender (accent word,
+  só na zona do hero) + Lime/Amber (hero-visual) + Obsidian (`#141414`, painéis escuros)
+  sobre fundo Cream (`#fffbf4`, não branco puro). Tipografia: **Barlow Condensed**
+  (500/600/700) nos títulos via `next/font/google`, **Inter** no corpo, IBM Plex Mono só
+  em labels pequenos (chips de artigo de lei). Isso **substitui** a identidade v3
+  (preto/branco/creme + azul) e a identidade navy/dourado/Spectral do PRD §11 (documento
+  ainda não sincronizado com essa mudança).
+- Hero **full-bleed** (`.hero`, sem `.wrap`, sem border-radius, grid de 2 colunas) —
+  layout de referência real da Deel, não um card contido.
+- Wordmark é **texto estilizado** (`dattum.` em Barlow Condensed 600), não mais a
+  imagem `public/logo-dattum.png` — decisão espelhando como a própria Deel renderiza
+  "deel." como texto, não logo.
+- **Identidade de marca fixa**: o site não se adapta ao tema (claro/escuro) do sistema
+  do visitante — igual à própria Deel. Não reintroduzir `@media (prefers-color-scheme:
+  dark)` ou `[data-theme="dark"]` sobre os tokens de página (`--cream`, `--graphite`
+  etc.); só os blocos deliberadamente escuros (`--cosmos`, `--obsidian`) são escuros,
+  sempre.
 - Deploy: Vercel — repositório `github.com/ojhondev/dattum`
 - Banco: Neon (Postgres serverless), a provisionar conforme o MVP (PRD §13) precisar de
   schema real — nenhuma tabela ainda, este é o estágio de provisionamento de infra.
