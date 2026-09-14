@@ -8,6 +8,10 @@ regularização de 10 dias úteis → assinatura recorrente de Encarregado (DPO)
   da ANPD — o diagnóstico é sempre um documento privado, assinado e identificado como
   Dattum (ver PRD §03, decisão vinculante sobre o mecanismo de urgência).
 - Visão completa de produto em [`docs/PRD.md`](docs/PRD.md).
+- Metodologia de investigação (reconhecimento público, teste "mystery lead", evidência
+  documental) em [`docs/METODOLOGIA-INVESTIGACAO.md`](docs/METODOLOGIA-INVESTIGACAO.md)
+  — playbook standalone, ainda não integrado ao escopo comercial do PRD (§04 segue
+  restrito a e-commerces).
 - Fonte da landing page publicada em [`design/landing.html`](design/landing.html)
   (versão estática usada como artifact) — o app Next.js em `app/` é a versão canônica.
 
