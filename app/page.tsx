@@ -39,6 +39,37 @@ function Check() {
   );
 }
 
+function DocIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M7 3h7l5 5v13H7z" />
+      <path d="M14 3v5h5" />
+      <path d="M9.5 13h5M9.5 16.5h5" />
+    </svg>
+  );
+}
+
+function InboxIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M3 12h5l2 3h4l2-3h5" />
+      <path d="M5 12 4 5h16l-1 7" />
+      <path d="M4 12v6a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-6" />
+    </svg>
+  );
+}
+
+function NetworkIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="6" cy="6" r="2.4" />
+      <circle cx="18" cy="6" r="2.4" />
+      <circle cx="12" cy="18" r="2.4" />
+      <path d="M8 7.3 14.7 17M16 7.3 9.3 17M8.4 6h7.2" />
+    </svg>
+  );
+}
+
 function useReveal<T extends HTMLElement>() {
   const ref = useRef<T>(null);
   useEffect(() => {
@@ -242,32 +273,6 @@ export default function Home() {
         </div>
         <div className="hero-visual">
           <span className="photo-note">Imagem — placeholder</span>
-          <div className="hero-cards">
-            <div className="stat-card">
-              <div className="sc-top">
-                <span className="sc-label">Diagnóstico completo</span>
-                <span className="sc-check">
-                  <Check />
-                </span>
-              </div>
-              <span className="sc-value">82/100</span>
-            </div>
-            <div className="chip-card tag">
-              <div className="chip-row">
-                <span className="chip-dot">C</span>
-                <span className="chip-text">Contrato de operador</span>
-              </div>
-              <span className="chip-badge">Assinado</span>
-            </div>
-            <div className="chip-card">
-              <span className="chip-dot">12</span>
-              <span className="chip-text">ferramentas mapeadas</span>
-            </div>
-            <div className="chip-card">
-              <span className="chip-dot">5</span>
-              <span className="chip-text">clientes protegidos</span>
-            </div>
-          </div>
         </div>
       </div>
 
@@ -276,9 +281,17 @@ export default function Home() {
           <div className="block-head">
             <span className="eyebrow">O QUE A DATTUM FAZ</span>
             <h2>A plataforma da LGPD para agências de tráfego e performance</h2>
+            <p>
+              Cada obrigação acessória vira uma rotina configurada uma vez —
+              rodando pra carteira inteira, sem depender de projeto jurídico
+              avulso a cada cliente novo.
+            </p>
           </div>
           <div className="svc-grid">
             <div className="svc-card">
+              <span className="svc-icon violet">
+                <DocIcon />
+              </span>
               <h4>Contrato de operador padronizado</h4>
               <p>
                 Template gerado e enviado pra cada cliente da carteira
@@ -293,15 +306,24 @@ export default function Home() {
                   ></div>
                 </div>
               </div>
+              <span className="svc-more">saiba mais →</span>
             </div>
             <div className="svc-card">
+              <span className="svc-icon celadon">
+                <InboxIcon />
+              </span>
               <h4>Canal do titular centralizado</h4>
               <p>
                 Formulário único, roteando pedido de exclusão ou acesso pro
                 cliente certo, com prazo rastreado.
               </p>
               <div className="progress-pill">
-                <div className="pp-label">Configurado e ativo</div>
+                <div className="pp-label-row">
+                  <span className="pp-label">Configurado e ativo</span>
+                  <span className="pp-check">
+                    <Check />
+                  </span>
+                </div>
                 <div className="progress-track">
                   <div
                     className="progress-fill"
@@ -309,8 +331,12 @@ export default function Home() {
                   ></div>
                 </div>
               </div>
+              <span className="svc-more">saiba mais →</span>
             </div>
             <div className="svc-card">
+              <span className="svc-icon amber">
+                <NetworkIcon />
+              </span>
               <h4>Mapeamento de sub-processadores</h4>
               <p>
                 Todo SaaS que toca o dado de cada conta — Meta, RD Station,
@@ -325,6 +351,7 @@ export default function Home() {
                   ></div>
                 </div>
               </div>
+              <span className="svc-more">saiba mais →</span>
             </div>
           </div>
         </div>
