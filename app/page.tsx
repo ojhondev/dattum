@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 
 const PICKS: { key: string; label: string; short: string }[] = [
   {
@@ -68,16 +69,11 @@ export default function Home() {
   const [showUtilBar, setShowUtilBar] = useState(true);
   const [menuOpen, setMenuOpen] = useState(false);
   const [selected, setSelected] = useState<Record<string, boolean>>({});
-  const [gaugeFilled, setGaugeFilled] = useState(false);
   const [barsFilled, setBarsFilled] = useState(false);
 
   useEffect(() => {
-    const t1 = requestAnimationFrame(() => setGaugeFilled(true));
-    const t2 = setTimeout(() => setBarsFilled(true), 50);
-    return () => {
-      cancelAnimationFrame(t1);
-      clearTimeout(t2);
-    };
+    const t = setTimeout(() => setBarsFilled(true), 50);
+    return () => clearTimeout(t);
   }, []);
 
   useEffect(() => {
@@ -123,7 +119,7 @@ export default function Home() {
       <header className="site">
         <div className="wrap">
           <a className="wordmark" href="#top">
-            dattum.
+            <Image src="/logo-dattum.png" alt="Dattum" width={640} height={146} className="logo-img" priority />
           </a>
           <div className="header-mid">
             <nav className="navlinks">
@@ -159,7 +155,7 @@ export default function Home() {
       <div className={`mobile-menu${menuOpen ? " open" : ""}`}>
         <div className="mm-top">
           <a className="wordmark" href="#top">
-            dattum.
+            <Image src="/logo-dattum.png" alt="Dattum" width={640} height={146} className="logo-img" />
           </a>
           <button
             className="menu-btn"
@@ -199,10 +195,7 @@ export default function Home() {
 
       <div className="hero" id="top">
         <div className="hero-copy">
-          <h1>
-            Sua agência pode ser multada por falta de conformidade{" "}
-            <span className="accent">com a LGPD.</span>
-          </h1>
+          <h1>Sua agência pode ser multada por falta de conformidade com a LGPD</h1>
           <p className="hero-sub">Marque o que já é problema pra você:</p>
           <div className="pick-grid" role="group" aria-label="Selecione seus desafios de conformidade">
             {PICKS.slice(0, 2).map((p) => (
@@ -239,7 +232,7 @@ export default function Home() {
           <p className="pick-hint" aria-live="polite">
             {hint}
           </p>
-          <a className="btn btn-violet btn-block" href="#cta">
+          <a className="btn btn-white btn-block" href="#cta">
             Agendar uma análise de especialista
           </a>
           <p className="hero-trust">
@@ -248,27 +241,31 @@ export default function Home() {
           </p>
         </div>
         <div className="hero-visual">
-          <div className="hv-shape s1"></div>
-          <div className="hv-shape s2"></div>
           <span className="photo-note">Imagem — placeholder</span>
-          <div className="score-card">
-            <div className="sc-top">
-              <span className="sc-label">Diagnóstico completo</span>
-              <span className="sc-check">
-                <Check />
-              </span>
+          <div className="hero-cards">
+            <div className="stat-card">
+              <div className="sc-top">
+                <span className="sc-label">Diagnóstico completo</span>
+                <span className="sc-check">
+                  <Check />
+                </span>
+              </div>
+              <span className="sc-value">82/100</span>
             </div>
-            <div className="gauge-row">
-              <div className={`gauge${gaugeFilled ? " fill" : ""}`}>
-                <div className="gauge-inner">
-                  <span className="n">82</span>
-                </div>
+            <div className="chip-card tag">
+              <div className="chip-row">
+                <span className="chip-dot">C</span>
+                <span className="chip-text">Contrato de operador</span>
               </div>
-              <div className="gauge-label">
-                Score de higiene
-                <br />
-                de operador — 82/100
-              </div>
+              <span className="chip-badge">Assinado</span>
+            </div>
+            <div className="chip-card">
+              <span className="chip-dot">12</span>
+              <span className="chip-text">ferramentas mapeadas</span>
+            </div>
+            <div className="chip-card">
+              <span className="chip-dot">5</span>
+              <span className="chip-text">clientes protegidos</span>
             </div>
           </div>
         </div>
