@@ -229,21 +229,23 @@ export default function Home() {
           <h1>Sua agência pode ser multada por falta de conformidade com a LGPD</h1>
           <p className="hero-sub">Marque o que já é problema pra você:</p>
           <div className="pick-grid" role="group" aria-label="Selecione seus desafios de conformidade">
-            {PICKS.slice(0, 2).map((p) => (
-              <button
-                key={p.key}
-                type="button"
-                className="pick"
-                aria-pressed={!!selected[p.key]}
-                onClick={() => togglePick(p.key)}
-              >
-                <span className="pick-box">
-                  <Check />
-                </span>
-                <span className="pick-label">{p.label}</span>
-              </button>
-            ))}
-            <div className="pick-row3">
+            <div className="pick-row">
+              {PICKS.slice(0, 2).map((p) => (
+                <button
+                  key={p.key}
+                  type="button"
+                  className="pick"
+                  aria-pressed={!!selected[p.key]}
+                  onClick={() => togglePick(p.key)}
+                >
+                  <span className="pick-box">
+                    <Check />
+                  </span>
+                  <span className="pick-label">{p.label}</span>
+                </button>
+              ))}
+            </div>
+            <div className="pick-row">
               {PICKS.slice(2).map((p) => (
                 <button
                   key={p.key}
