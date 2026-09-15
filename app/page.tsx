@@ -585,18 +585,13 @@ export default function Home() {
                   <li>SLA canal do titular: 15 dias úteis</li>
                   <li>Suporte e-mail + chat</li>
                 </ul>
-                <a
-                  className="btn btn-ghost"
-                  href="#cta"
-                  style={{ borderColor: "rgba(255,255,255,.25)", color: "#fff" }}
-                >
+                <a className="btn btn-white" href="#cta">
                   Falar com a gente
                 </a>
               </div>
               <div className="plan-card rec">
-                <div className="pname">
-                  Growth <span className="badge">Mais comum</span>
-                </div>
+                <span className="badge">Mais comum</span>
+                <div className="pname">Growth</div>
                 <div className="prange">11–30 contas de clientes ativas</div>
                 <div className="price">Sob consulta</div>
                 <ul>
@@ -604,7 +599,7 @@ export default function Home() {
                   <li>SLA canal do titular: 10 dias úteis</li>
                   <li>Suporte prioritário</li>
                 </ul>
-                <a className="btn btn-violet" href="#cta">
+                <a className="btn btn-white" href="#cta">
                   Falar com a gente
                 </a>
               </div>
@@ -617,11 +612,7 @@ export default function Home() {
                   <li>SLA canal do titular: 5 dias úteis</li>
                   <li>Gestor de conta dedicado</li>
                 </ul>
-                <a
-                  className="btn btn-ghost"
-                  href="#cta"
-                  style={{ borderColor: "rgba(255,255,255,.25)", color: "#fff" }}
-                >
+                <a className="btn btn-white" href="#cta">
                   Falar com a gente
                 </a>
               </div>
@@ -634,11 +625,7 @@ export default function Home() {
                   <li>SLA definido em contrato</li>
                   <li>DPO dedicado nomeado</li>
                 </ul>
-                <a
-                  className="btn btn-ghost"
-                  href="#cta"
-                  style={{ borderColor: "rgba(255,255,255,.25)", color: "#fff" }}
-                >
+                <a className="btn btn-white" href="#cta">
                   Falar com o time
                 </a>
               </div>
