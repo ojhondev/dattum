@@ -158,19 +158,16 @@ section.block{padding:5.5rem 0;}
 .progress-track{height:.4rem; background:var(--bone); border-radius:99px; overflow:hidden;}
 .progress-fill{height:100%; background:var(--violet); border-radius:99px; width:0; transition:width 1s ease .2s;}
 
-/* ---------- como funciona ---------- */
-.tag-row{display:flex; gap:.6rem; margin:1.5rem 0 2.4rem; flex-wrap:wrap; justify-content:center;}
-.jtag{font-size:.76rem; font-weight:600; padding:.4rem .9rem; border-radius:var(--r-chip); display:inline-flex; align-items:center; gap:.4rem; font-family:var(--font-body-fam);}
-.jtag-1{background:#eaf1ff; color:#2d4f9e;}
-.jtag-2{background:#fff2cf; color:#8a6a10;}
-.jtag-3{background:#e4f3e0; color:#2f7d4f;}
-.timeline-rule{position:relative; height:1px; background-image:repeating-linear-gradient(to right, var(--bone) 0 6px, transparent 6px 12px); margin:0 auto 2.4rem; max-width:88%;}
-.timeline-rule::before,.timeline-rule::after{content:""; position:absolute; top:50%; transform:translateY(-50%); width:.5rem; height:.5rem; border-radius:50%; background:var(--ash);}
-.timeline-rule::before{left:0;} .timeline-rule::after{right:0;}
-.journey-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:20px;}
+/* ---------- como funciona ----------
+   Specs pulled live from deel.com/pt "Realize mais em menos tempo" (Hoje/Horas depois/Amanhã):
+   eyebrow + h2 only (no pastel tag row — that was unvalidated filler), dashed line is a
+   flat 2px dashed #ccc rule with no dot markers, card is a flat tinted panel (bg #D8EBFF,
+   no border, radius 12px, padding 20px), heading 20px/500 in the display face, body 16px/lh-1.7. */
+.timeline-rule{height:0; border-top:2px dashed #ccc; margin:0 auto 2.4rem; max-width:88%;}
+.journey-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:24px;}
 @media (max-width:860px){ .journey-grid{grid-template-columns:1fr;} }
-.j-col h4{font-family:var(--font-body-fam); font-size:1.1rem; font-weight:600; margin-bottom:.9rem;}
-.j-card{background:#eef3ff; border:1px solid #d3e0f9; border-radius:var(--r-panel); padding:1.1rem 1.2rem; font-size:.88rem; color:#2a3a54; line-height:1.6; font-family:var(--font-body-fam);}
+.j-col h4{font-family:var(--font-display-fam); font-size:1.25rem; font-weight:500; margin-bottom:.9rem;}
+.j-card{background:#d8ebff; border-radius:var(--r-panel); padding:1.25rem; font-size:1rem; color:var(--graphite); line-height:1.7; font-family:var(--font-body-fam);}
 
 /* ---------- diferenciais: two dark obsidian bands ---------- */
 .dark-band{background:var(--obsidian); color:#fff; padding:5rem 0;}

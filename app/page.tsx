@@ -356,11 +356,6 @@ export default function Home() {
             <span className="eyebrow">O QUE A DATTUM FAZ</span>
             <h2>Como a Dattum atua</h2>
           </div>
-          <div className="tag-row">
-            <span className="jtag jtag-1">Risco LGPD</span>
-            <span className="jtag jtag-2">Sprint de higienização</span>
-            <span className="jtag jtag-3">Obrigações acessórias</span>
-          </div>
           <div className="timeline-rule"></div>
           <div className="journey-grid">
             <div className="j-col">
