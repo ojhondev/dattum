@@ -401,7 +401,6 @@ export default function Home() {
                 agregado — igual ao fechamento que o contador manda todo
                 mês.
               </p>
-              <span className="dc-more">saiba mais →</span>
             </div>
             <div className="diff-card">
               <h5>Motor de diagnóstico contínuo</h5>
@@ -409,7 +408,6 @@ export default function Home() {
                 Reexecuta sobre as campanhas ativas — pega o pixel novo, o
                 app novo, o contrato que falta, sem esperar reclamação.
               </p>
-              <span className="dc-more">saiba mais →</span>
             </div>
             <div className="diff-card">
               <h5>Playbook multicliente de incidente</h5>
@@ -417,7 +415,6 @@ export default function Home() {
                 Um plano só, cobrindo toda a carteira — mostra o raio de
                 impacto entre clientes no minuto em que algo vaza.
               </p>
-              <span className="dc-more">saiba mais →</span>
             </div>
           </div>
           <div className="diff-photo">

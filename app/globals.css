@@ -12,6 +12,7 @@
   --ash:#a4a4a4;
   --bone:#dbdbdb;
   --linen:#d9d0ca;
+  --parchment:#faf4ee;
   --cream:#fffbf4;
   --stone:#f7f5f2;
   --white:#ffffff;
@@ -169,29 +170,33 @@ section.block{padding:5.5rem 0;}
 .j-col h4{font-family:var(--font-display-fam); font-size:1.25rem; font-weight:500; margin-bottom:.9rem;}
 .j-card{background:#d8ebff; border-radius:var(--r-panel); padding:1.25rem; font-size:1rem; color:var(--graphite); line-height:1.7; font-family:var(--font-body-fam);}
 
-/* ---------- diferenciais: two dark obsidian bands ---------- */
+/* ---------- diferenciais: two dark obsidian bands ----------
+   Specs pulled live from deel.com/pt "Uma Experiência Moderna..." dark stat-card row:
+   heading is left-aligned (not centered) 28px/500 in a warm off-white (#FAF4EE, not pure
+   #fff), cards are bg white/5% radius 16px padding 20px gap 32px, body copy is 18px at
+   65% opacity of that same off-white (not a separate --linen hex), no "saiba mais" filler
+   link on the card. */
 .dark-band{background:var(--obsidian); color:#fff; padding:5rem 0;}
-.diff-head{text-align:center; max-width:50ch; margin:0 auto 2.2rem;}
-.diff-head h2{color:#fff; font-size:clamp(1.7rem,3vw,2.4rem);}
-.diff-cards{display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:2rem;}
+.diff-head{max-width:44ch; margin:0 0 2.2rem;}
+.diff-head h2{color:var(--parchment); font-size:clamp(1.6rem,2.4vw,1.75rem); font-weight:500;}
+.diff-cards{display:grid; grid-template-columns:repeat(3,1fr); gap:32px; margin-bottom:2rem;}
 @media (max-width:860px){ .diff-cards{grid-template-columns:1fr;} }
-.diff-card{background:rgba(255,255,255,.05); border-radius:var(--r-card); padding:24px; transition:background .2s;}
+.diff-card{background:rgba(255,255,255,.05); border-radius:var(--r-card); padding:20px; transition:background .2s;}
 .diff-card:hover{background:rgba(255,255,255,.09);}
-.diff-card h5{font-family:var(--font-display-fam); color:#fff; font-size:1.3rem; font-weight:500; margin-bottom:.4rem;}
-.diff-card p{color:var(--linen); font-size:.86rem; line-height:1.55; margin-bottom:.8rem; font-family:var(--font-body-fam);}
-.diff-card .dc-more{font-size:.82rem; font-weight:600; color:var(--amber); font-family:var(--font-body-fam);}
+.diff-card h5{font-family:var(--font-display-fam); color:#fff; font-size:1.25rem; font-weight:600; margin-bottom:.4rem;}
+.diff-card p{color:rgba(250,244,238,.65); font-size:1.125rem; line-height:1.5; font-family:var(--font-body-fam);}
 .diff-photo{position:relative; border-radius:var(--r-card); overflow:hidden; min-height:280px; background:linear-gradient(150deg,#2a2a2a,#141414); display:flex; align-items:center; justify-content:center; border:1px solid rgba(255,255,255,.1);}
 .diff-photo .ph-note{font-family:'IBM Plex Mono',monospace; font-size:.7rem; letter-spacing:.08em; text-transform:uppercase; color:var(--ash); border:1px dashed rgba(255,255,255,.2); padding:.45rem .9rem; border-radius:8px;}
 .tool-list-card{position:absolute; top:10%; left:6%; background:#fff; border-radius:var(--r-card); padding:.55rem; box-shadow:var(--shadow); width:190px;}
 .tl-row{display:flex; align-items:center; justify-content:space-between; gap:.5rem; padding:.5rem .6rem; border-radius:10px; font-size:.8rem; font-weight:500; color:var(--graphite); font-family:var(--font-body-fam);}
 .tl-row .tl-name{display:flex; align-items:center; gap:.5rem;}
-.tl-row .tl-dot{width:1.1rem; height:1.1rem; border-radius:50%; background:#eaf1ff; color:#2d4f9e; display:flex; align-items:center; justify-content:center; font-size:.6rem; font-weight:700;}
+.tl-row .tl-dot{width:1.1rem; height:1.1rem; border-radius:50%; background:var(--stone); color:var(--graphite); display:flex; align-items:center; justify-content:center; font-size:.6rem; font-weight:700;}
 .tl-check{color:var(--celadon); font-size:.85rem;}
 
 .infra-panel{display:grid; grid-template-columns:1fr 1.3fr; gap:2rem; align-items:center;}
 @media (max-width:760px){ .infra-panel{grid-template-columns:1fr;} }
-.infra-panel h3{color:#fff; font-family:var(--font-display-fam); font-size:1.7rem; font-weight:500; max-width:15ch;}
-.badge-cloud{display:flex; flex-wrap:wrap; gap:.55rem;}
+.infra-panel h3{color:var(--parchment); font-family:var(--font-display-fam); font-size:clamp(1.6rem,2.4vw,1.75rem); font-weight:500; max-width:16ch;}
+.badge-cloud{display:flex; flex-wrap:wrap; gap:.75rem;}
 .badge-cloud span:nth-child(2n){margin-top:1.1rem;}
 .tool-badge{display:inline-flex; align-items:center; gap:.45rem; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.14); border-radius:var(--r-chip); padding:.4rem .85rem; font-size:.78rem; font-weight:500; color:#fff; font-family:var(--font-body-fam);}
 .tool-badge .tb-dot{width:.45rem; height:.45rem; border-radius:50%; background:var(--lime);}
