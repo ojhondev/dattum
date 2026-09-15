@@ -280,14 +280,8 @@ export default function Home() {
 
       <section className="block reveal" id="solucoes" ref={revServ}>
         <div className="wrap">
-          <div className="block-head">
-            <span className="eyebrow">O QUE A DATTUM FAZ</span>
+          <div className="block-head solo">
             <h2>A plataforma da LGPD para agências de tráfego e performance</h2>
-            <p>
-              Cada obrigação acessória vira uma rotina configurada uma vez —
-              rodando pra carteira inteira, sem depender de projeto jurídico
-              avulso a cada cliente novo.
-            </p>
           </div>
           <div className="svc-grid">
             <div className="svc-card">
@@ -308,7 +302,6 @@ export default function Home() {
                   ></div>
                 </div>
               </div>
-              <span className="svc-more">saiba mais →</span>
             </div>
             <div className="svc-card">
               <span className="svc-icon celadon">
@@ -333,7 +326,6 @@ export default function Home() {
                   ></div>
                 </div>
               </div>
-              <span className="svc-more">saiba mais →</span>
             </div>
             <div className="svc-card">
               <span className="svc-icon amber">
@@ -353,7 +345,6 @@ export default function Home() {
                   ></div>
                 </div>
               </div>
-              <span className="svc-more">saiba mais →</span>
             </div>
           </div>
         </div>
