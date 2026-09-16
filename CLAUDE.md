@@ -32,7 +32,14 @@ faixa de contas de cliente geridas.
   tem cliente real — substituído pela seção "Exemplo ilustrativo", `#exemplo`) e a
   alegação "mais de 500 agências" (número fictício do template — substituído por uma
   frase honesta + a lista de ferramentas auditadas, `.marcas`). Nunca reintroduzir
-  prova social fabricada nessas seções — mesmo princípio do PRD §03.
+  prova social fabricada em `.marcas` ou `#exemplo` — mesmo princípio do PRD §03.
+- **Exceção deliberada e confirmada pelo usuário** (2026-09-16): o `.trust-strip`
+  (carrossel de placeholders logo abaixo do hero) usa a frase "Somos a escolha de mais
+  de 100 agências..." — um número não verificado. Alertei sobre o conflito direto com a
+  regra acima antes de implementar; o usuário optou explicitamente por "usar o texto
+  como pedido, mesmo sem comprovação". Não reverter silenciosamente sem perguntar de
+  novo — mas também não tratar essa exceção pontual como licença pra reintroduzir
+  prova social fabricada em nenhuma outra seção.
 
 ## Stack
 

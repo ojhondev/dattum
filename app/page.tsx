@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import Image from "next/image";
 
 const PICKS: { key: string; label: string; short: string }[] = [
@@ -70,6 +70,67 @@ function NetworkIcon() {
   );
 }
 
+function AlertIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 3 2 20h20z" />
+      <path d="M12 9.5v4" />
+      <circle cx="12" cy="16.5" r=".6" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
+
+function ChecklistIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="5" y="3" width="14" height="18" rx="2" />
+      <path d="M9 11l2 2 4-4" />
+    </svg>
+  );
+}
+
+function ShieldIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z" />
+    </svg>
+  );
+}
+
+const PILLARS: {
+  key: string;
+  label: string;
+  icon: ReactNode;
+  hoje: string;
+  problema: string;
+  dattum: string;
+}[] = [
+  {
+    key: "risco",
+    label: "Risco LGPD",
+    icon: <AlertIcon />,
+    hoje: "Contrato de prestação de serviço genérico, CRM compartilhado entre clientes, e ninguém sabe quem responde se um lead reclamar — a agência já é operadora de dados e já responde solidariamente por isso (art. 42), mesmo sem saber.",
+    problema: "Sem contrato de operador, sem canal do titular, sem plano de incidente — cada cliente novo é um novo ponto de exposição, e a responsabilidade pode se equiparar à do controlador.",
+    dattum: "Diagnóstico gratuito, sprint de higienização em 10 dias úteis, e a carteira inteira operando sob as onze obrigações acessórias da Dattum — cliente novo e cliente antigo, sem depender de projeto avulso.",
+  },
+  {
+    key: "regularizacao",
+    label: "Regularização",
+    icon: <ChecklistIcon />,
+    hoje: "A agência sabe que está exposta, mas não sabe por onde começar — ajustes acontecem cliente a cliente, sem checklist, sem prazo, sem registro do que já foi corrigido.",
+    problema: "Sem um processo padronizado de regularização, alguns clientes recebem atenção e outros ficam pra trás — e não existe comprovante de que a correção realmente aconteceu.",
+    dattum: "Sprint de higienização em 10 dias úteis, checklist único aplicado a toda a carteira, e um relatório de conclusão por conta — prova documental de que o ajuste foi feito.",
+  },
+  {
+    key: "dpo",
+    label: "DPO as a Service",
+    icon: <ShieldIcon />,
+    hoje: "Ninguém na agência é formalmente responsável pela LGPD — fica sob “alguém vai resolver”, geralmente o time jurídico externo que só é acionado quando já deu problema.",
+    problema: "Sem um responsável contínuo, obrigação vence, contrato vence, e não tem quem monitore — e se a ANPD ou um cliente perguntar, ninguém sabe responder.",
+    dattum: "As onze obrigações acessórias rodando como assinatura, com ponto de contato dedicado e monitoramento contínuo — a mesma função de um DPO interno, sem contratar um.",
+  },
+];
+
 function useReveal<T extends HTMLElement>() {
   const ref = useRef<T>(null);
   useEffect(() => {
@@ -101,6 +162,7 @@ export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [selected, setSelected] = useState<Record<string, boolean>>({});
   const [barsFilled, setBarsFilled] = useState(false);
+  const [activePillar, setActivePillar] = useState(PILLARS[0].key);
 
   useEffect(() => {
     const t = setTimeout(() => setBarsFilled(true), 50);
@@ -278,6 +340,29 @@ export default function Home() {
         </div>
       </div>
 
+      <div className="trust-strip">
+        <div className="wrap">
+          <p className="trust-head">
+            Somos a escolha de mais de 100 agências quando o assunto é
+            gestão de conformidade com a LGPD
+          </p>
+        </div>
+        <div className="trust-marquee">
+          <div className="trust-track">
+            {Array.from({ length: 10 }).map((_, i) => (
+              <span className="trust-tile" key={i}>
+                Imagem — placeholder
+              </span>
+            ))}
+            {Array.from({ length: 10 }).map((_, i) => (
+              <span className="trust-tile" aria-hidden="true" key={`dup-${i}`}>
+                Imagem — placeholder
+              </span>
+            ))}
+          </div>
+        </div>
+      </div>
+
       <section className="block reveal" id="solucoes" ref={revServ}>
         <div className="wrap">
           <div className="block-head solo">
@@ -357,31 +442,38 @@ export default function Home() {
             <h2>Como a Dattum atua</h2>
           </div>
           <div className="timeline-rule"></div>
-          <div className="journey-grid">
+          <div className="pillar-row" role="tablist" aria-label="Pilares de atuação da Dattum">
+            {PILLARS.map((p) => (
+              <button
+                key={p.key}
+                type="button"
+                role="tab"
+                aria-selected={activePillar === p.key}
+                className={`pillar-btn pillar-${p.key}`}
+                onClick={() => setActivePillar(p.key)}
+              >
+                <span className="pillar-icon">{p.icon}</span>
+                {p.label}
+              </button>
+            ))}
+          </div>
+          <div className="journey-grid" key={activePillar}>
             <div className="j-col">
               <h4>Como está hoje</h4>
               <div className="j-card">
-                Contrato de prestação de serviço genérico, CRM compartilhado
-                entre clientes, e ninguém sabe quem responde se um lead
-                reclamar — a agência já é operadora de dados e já responde
-                solidariamente por isso (art. 42), mesmo sem saber.
+                {PILLARS.find((p) => p.key === activePillar)?.hoje}
               </div>
             </div>
             <div className="j-col">
               <h4>O problema</h4>
               <div className="j-card">
-                Sem contrato de operador, sem canal do titular, sem plano de
-                incidente — cada cliente novo é um novo ponto de exposição,
-                e a responsabilidade pode se equiparar à do controlador.
+                {PILLARS.find((p) => p.key === activePillar)?.problema}
               </div>
             </div>
             <div className="j-col">
               <h4>Com a Dattum</h4>
               <div className="j-card">
-                Diagnóstico gratuito, sprint de higienização em 10 dias
-                úteis, e a carteira inteira operando sob as onze obrigações
-                acessórias da Dattum — cliente novo e cliente antigo, sem
-                depender de projeto avulso.
+                {PILLARS.find((p) => p.key === activePillar)?.dattum}
               </div>
             </div>
           </div>
