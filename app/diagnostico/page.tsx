@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState, type CSSProperties } from "react";
+import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import "./diagnostico.css";
 
 type AnswerKey = "sim" | "parcial" | "nao";
@@ -206,37 +206,23 @@ type HistoryEntry = {
 
 const STORE_KEY = "dattis_diag_history_v1";
 
-function SegCtl({
-  value,
-  onChange,
-  isSignal,
-}: {
-  value: AnswerKey | undefined;
-  onChange: (key: AnswerKey) => void;
-  isSignal?: boolean;
-}) {
-  const opts: { key: AnswerKey; label: string }[] = isSignal
-    ? [
-        { key: "sim", label: "Sim" },
-        { key: "nao", label: "Não" },
-      ]
-    : STATES;
-  return (
-    <div className="diag-segctl">
-      {opts.map((opt) => (
-        <button
-          key={opt.key}
-          type="button"
-          className={opt.key}
-          aria-pressed={value === opt.key}
-          onClick={() => onChange(opt.key)}
-        >
-          {opt.label}
-        </button>
-      ))}
-    </div>
-  );
-}
+type FlatQuestion = {
+  item: Item;
+  catKey: string;
+  catName: string;
+  color: string;
+  isSignal: boolean;
+};
+
+const ALL_QUESTIONS: FlatQuestion[] = [
+  ...CATEGORIES.flatMap((cat) =>
+    cat.items.map((item) => ({ item, catKey: cat.key, catName: cat.name, color: cat.color, isSignal: false }))
+  ),
+  ...SIGNAL.items.map((item) => ({ item, catKey: SIGNAL.key, catName: SIGNAL.name, color: SIGNAL.color, isSignal: true })),
+];
+
+const TOTAL_QUESTIONS = ALL_QUESTIONS.length;
+const RESULTS_STEP = TOTAL_QUESTIONS;
 
 export default function Diagnostico() {
   const [answers, setAnswers] = useState<Record<string, AnswerKey>>({});
@@ -252,14 +238,36 @@ export default function Diagnostico() {
     }
   });
   const [mounted, setMounted] = useState(false);
+  const [step, setStep] = useState(-1); // -1 = intro, 0..TOTAL-1 = questions, RESULTS_STEP = resultado
+  const [direction, setDirection] = useState<"fwd" | "back">("fwd");
+  const advanceTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   useEffect(() => {
     const t = setTimeout(() => setMounted(true), 0);
     return () => clearTimeout(t);
   }, []);
 
+  useEffect(() => {
+    return () => {
+      if (advanceTimer.current) clearTimeout(advanceTimer.current);
+    };
+  }, []);
+
   const setAnswer = (id: string, key: AnswerKey) =>
     setAnswers((a) => ({ ...a, [id]: key }));
+
+  const goTo = (next: number, dir: "fwd" | "back") => {
+    setDirection(dir);
+    setStep(Math.max(-1, Math.min(RESULTS_STEP, next)));
+  };
+
+  const chooseAnswer = (id: string, key: AnswerKey) => {
+    setAnswer(id, key);
+    if (advanceTimer.current) clearTimeout(advanceTimer.current);
+    advanceTimer.current = setTimeout(() => {
+      goTo(step + 1, "fwd");
+    }, 380);
+  };
 
   const computed = useMemo(() => {
     const catBreakdown = CATEGORIES.map((cat) => {
@@ -358,6 +366,7 @@ export default function Diagnostico() {
     setAnswers({});
     setAgencyName("");
     setAgencyDate(new Date().toISOString().slice(0, 10));
+    goTo(-1, "back");
   };
 
   const gaugeStyle = {
@@ -365,199 +374,245 @@ export default function Diagnostico() {
     "--gauge-color": computed.hasAnyRiskAnswer ? computed.level.color : "var(--aiki-carbon-20)",
   } as CSSProperties;
 
+  const scoreChipStyle = {
+    "--gauge-pct": computed.hasAnyRiskAnswer ? computed.overallPct : 0,
+    "--gauge-color": computed.hasAnyRiskAnswer ? computed.level.color : "var(--aiki-carbon-40)",
+  } as CSSProperties;
+
+  const inQuestion = step >= 0 && step < RESULTS_STEP;
+  const inResults = step === RESULTS_STEP;
+  const progressPct = step < 0 ? 0 : inResults ? 100 : Math.round((step / TOTAL_QUESTIONS) * 100);
+  const current = inQuestion ? ALL_QUESTIONS[step] : null;
+
   return (
     <div className="diag-page">
-      <header className="diag-top">
-        <div>
-          <div className="diag-eyebrow">Dattis · Diagnóstico Expresso</div>
-          <h1 className="diag-title">Checklist de Diagnóstico</h1>
-          <p className="diag-subtitle">
-            Para rodar ao vivo em ~15–20 min com uma agência de tráfego pago. Responda
-            conforme a conversa avança — o score atualiza sozinho.
-          </p>
+      {step >= 0 && (
+        <div className="diag-progressbar">
+          <div className="diag-progressbar-fill" style={{ width: `${progressPct}%` }}></div>
         </div>
-        <div className="diag-meta-form">
-          <div className="diag-field">
-            <label htmlFor="agencyName">Agência</label>
-            <input
-              id="agencyName"
-              type="text"
-              placeholder="Nome da agência"
-              value={agencyName}
-              onChange={(e) => setAgencyName(e.target.value)}
-            />
-          </div>
-          <div className="diag-field">
-            <label htmlFor="agencyDate">Data</label>
-            <input
-              id="agencyDate"
-              type="date"
-              value={agencyDate}
-              onChange={(e) => setAgencyDate(e.target.value)}
-            />
-          </div>
-        </div>
-      </header>
+      )}
 
-      <p className="diag-progress diag-shell">
-        <b>{computed.answeredTotal}</b>/19 respondidas
-      </p>
+      <div className="diag-header-fixed">
+        <div className="diag-header-eyebrow">Dattis · Diagnóstico Expresso</div>
+        {step >= 0 && (
+          <div className="diag-score-chip">
+            <span className="diag-score-ring" style={scoreChipStyle}>
+              <span className="diag-score-ring-inner">{computed.hasAnyRiskAnswer ? computed.overallPct : "—"}</span>
+            </span>
+            <span className="diag-score-chip-text">
+              <b style={{ color: computed.hasAnyRiskAnswer ? computed.level.color : "var(--aiki-carbon-60)" }}>
+                {computed.hasAnyRiskAnswer ? computed.level.label : "aguardando"}
+              </b>
+              <span>{computed.answeredTotal}/{TOTAL_QUESTIONS} respondidas</span>
+            </span>
+          </div>
+        )}
+      </div>
 
-      <div className="diag-layout">
-        <div>
-          {computed.catBreakdown.map((cat) => (
-            <div className="diag-category" key={cat.key}>
-              <div className="diag-cat-head">
-                <h2>
-                  <span className="diag-cat-letter">{cat.key}</span> {cat.name}
-                </h2>
-                <div className="diag-cat-bar">
-                  <div style={{ width: `${cat.pct}%`, background: cat.color }}></div>
-                </div>
+      {step === -1 && (
+        <div className="diag-stage intro">
+          <div className="diag-q" key="intro">
+            <h1 className="diag-intro-title">Checklist de Diagnóstico</h1>
+            <p className="diag-intro-sub">
+              Pra rodar ao vivo em ~15–20 min com uma agência de tráfego pago. Uma
+              pergunta de cada vez — responda conforme a conversa avança, o score de
+              risco atualiza sozinho e fica visível até o fim.
+            </p>
+            <div className="diag-intro-form">
+              <div className="diag-field">
+                <label htmlFor="agencyName">Agência</label>
+                <input
+                  id="agencyName"
+                  type="text"
+                  placeholder="Nome da agência"
+                  value={agencyName}
+                  onChange={(e) => setAgencyName(e.target.value)}
+                />
               </div>
-              {cat.items.map((item) => (
-                <div className="diag-qcard" key={item.id}>
-                  <p className="diag-qtext">{item.text}</p>
-                  <p className="diag-qhelp">{item.help}</p>
-                  <SegCtl value={answers[item.id]} onChange={(k) => setAnswer(item.id, k)} />
-                </div>
+              <div className="diag-field">
+                <label htmlFor="agencyDate">Data</label>
+                <input
+                  id="agencyDate"
+                  type="date"
+                  value={agencyDate}
+                  onChange={(e) => setAgencyDate(e.target.value)}
+                />
+              </div>
+            </div>
+            <button className="diag-btn primary diag-intro-btn" onClick={() => goTo(0, "fwd")}>
+              Começar diagnóstico →
+            </button>
+          </div>
+        </div>
+      )}
+
+      {inQuestion && current && (
+        <div className="diag-stage">
+          <div className="diag-q" key={step} data-dir={direction}>
+            <button className="diag-back" onClick={() => goTo(step - 1, "back")}>
+              ← Voltar
+            </button>
+            <div className="diag-q-eyebrow" style={{ color: current.color }}>
+              {current.catKey} · {current.catName}
+            </div>
+            <p className="diag-q-count">
+              Pergunta {step + 1} de {TOTAL_QUESTIONS}
+            </p>
+            <h2 className="diag-q-text">{current.item.text}</h2>
+            <p className="diag-q-help">{current.item.help}</p>
+            <div className="diag-answers">
+              {(current.isSignal
+                ? [
+                    { key: "sim" as AnswerKey, label: "Sim" },
+                    { key: "nao" as AnswerKey, label: "Não" },
+                  ]
+                : STATES
+              ).map((opt) => (
+                <button
+                  key={opt.key}
+                  type="button"
+                  className={`diag-answer-btn ${opt.key}`}
+                  aria-pressed={answers[current.item.id] === opt.key}
+                  onClick={() => chooseAnswer(current.item.id, opt.key)}
+                >
+                  {opt.label}
+                </button>
               ))}
             </div>
-          ))}
-
-          <div className="diag-category">
-            <div className="diag-cat-head">
-              <h2>
-                <span className="diag-cat-letter">H</span> Sinal comercial
-              </h2>
-            </div>
-            {SIGNAL.items.map((item) => (
-              <div className="diag-qcard signal" key={item.id}>
-                <p className="diag-qtext">{item.text}</p>
-                <p className="diag-qhelp">{item.help}</p>
-                <SegCtl value={answers[item.id]} onChange={(k) => setAnswer(item.id, k)} isSignal />
-              </div>
-            ))}
           </div>
         </div>
+      )}
 
-        <aside className="diag-summary">
-          <div>
-            <p className="diag-panel-label">Score de risco</p>
-            <div className="diag-gauge-wrap">
-              <div className="diag-gauge" style={gaugeStyle}>
-                <div className="diag-gauge-inner">
-                  <div className="diag-gauge-pct">{computed.hasAnyRiskAnswer ? `${computed.overallPct}%` : "—"}</div>
-                  <div
-                    className="diag-gauge-level"
-                    style={{ color: computed.hasAnyRiskAnswer ? computed.level.color : "var(--aiki-carbon-60)" }}
-                  >
-                    {computed.hasAnyRiskAnswer ? computed.level.label : "aguardando"}
+      {inResults && (
+        <div className="diag-stage results">
+          <div className="diag-q" key="results">
+            <p className="diag-panel-label">Diagnóstico completo</p>
+            <h1 className="diag-intro-title" style={{ fontSize: "clamp(1.6rem, 3vw, 2.1rem)" }}>
+              {agencyName || "Diagnóstico"} — resultado
+            </h1>
+
+            <div className="diag-results-grid">
+              <div>
+                <p className="diag-panel-label">Score de risco</p>
+                <div className="diag-gauge-wrap">
+                  <div className="diag-gauge" style={gaugeStyle}>
+                    <div className="diag-gauge-inner">
+                      <div className="diag-gauge-pct">{computed.hasAnyRiskAnswer ? `${computed.overallPct}%` : "—"}</div>
+                      <div
+                        className="diag-gauge-level"
+                        style={{ color: computed.hasAnyRiskAnswer ? computed.level.color : "var(--aiki-carbon-60)" }}
+                      >
+                        {computed.hasAnyRiskAnswer ? computed.level.label : "aguardando"}
+                      </div>
+                    </div>
                   </div>
                 </div>
+
+                <p className="diag-panel-label" style={{ marginTop: "20px" }}>
+                  Sinal comercial
+                </p>
+                <div className={`diag-signal-badge ${computed.signalCount > 0 ? "on" : "off"}`}>
+                  <span>
+                    {computed.signalCount === 2
+                      ? "Já pediu prova e quase perdeu contrato"
+                      : computed.signalCount === 1
+                      ? "Já existe pressão comercial por conformidade"
+                      : "Nenhum gatilho identificado ainda"}
+                  </span>
+                  <b>{computed.signalCount > 0 ? (computed.signalCount === 2 ? "Alto" : "Presente") : "—"}</b>
+                </div>
+              </div>
+
+              <div>
+                <p className="diag-panel-label">Por categoria</p>
+                <div className="diag-cb">
+                  {computed.catBreakdown.map((c) => (
+                    <div className="diag-cb-row" key={c.key}>
+                      <span className="diag-cb-name">{c.name}</span>
+                      <span className="diag-cb-track">
+                        <span
+                          className="diag-cb-fill"
+                          style={{ width: `${c.answered > 0 ? c.pct : 0}%`, background: c.answered > 0 ? c.color : "var(--aiki-carbon-20)" }}
+                        ></span>
+                      </span>
+                      <span className="diag-cb-val">{c.answered > 0 ? `${c.pct}%` : "—"}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
-          </div>
 
-          <div>
-            <p className="diag-panel-label">Por categoria</p>
-            <div className="diag-cb">
-              {computed.catBreakdown.map((c) => (
-                <div className="diag-cb-row" key={c.key}>
-                  <span className="diag-cb-name">{c.name}</span>
-                  <span className="diag-cb-track">
-                    <span
-                      className="diag-cb-fill"
-                      style={{ width: `${c.answered > 0 ? c.pct : 0}%`, background: c.answered > 0 ? c.color : "var(--aiki-carbon-20)" }}
-                    ></span>
-                  </span>
-                  <span className="diag-cb-val">{c.answered > 0 ? `${c.pct}%` : "—"}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div>
-            <p className="diag-panel-label">Sinal comercial</p>
-            <div className={`diag-signal-badge ${computed.signalCount > 0 ? "on" : "off"}`}>
-              <span>
-                {computed.signalCount === 2
-                  ? "Já pediu prova e quase perdeu contrato"
-                  : computed.signalCount === 1
-                  ? "Já existe pressão comercial por conformidade"
-                  : "Nenhum gatilho identificado ainda"}
-              </span>
-              <b>{computed.signalCount > 0 ? (computed.signalCount === 2 ? "Alto" : "Presente") : "—"}</b>
-            </div>
-          </div>
-
-          <div>
-            <p className="diag-panel-label">Resumo pra copiar</p>
+            <p className="diag-panel-label" style={{ marginTop: "24px" }}>
+              Resumo pra copiar
+            </p>
             <textarea className="diag-textarea" readOnly value={mounted ? summaryText : ""} />
             <div className="diag-btn-row" style={{ marginTop: "10px" }}>
               <button className="diag-btn primary" onClick={saveToHistory}>
                 Salvar no histórico
               </button>
+              <button className="diag-btn" onClick={() => goTo(TOTAL_QUESTIONS - 1, "back")}>
+                ← Revisar respostas
+              </button>
               <button className="diag-btn" onClick={resetAll}>
                 Novo diagnóstico
               </button>
             </div>
-          </div>
-        </aside>
-      </div>
 
-      <section className="diag-history">
-        <h2>Histórico local</h2>
-        <p className="hint">Salvo apenas neste navegador — não sincroniza entre dispositivos.</p>
-        <div className="diag-table-wrap">
-          <table className="diag-table">
-            <thead>
-              <tr>
-                <th>Agência</th>
-                <th>Data</th>
-                <th>Score</th>
-                <th>Nível</th>
-                <th>Sinal comercial</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              {!mounted || history.length === 0 ? (
-                <tr className="diag-empty-row">
-                  <td colSpan={6}>Nenhum diagnóstico salvo ainda.</td>
-                </tr>
-              ) : (
-                [...history]
-                  .map((entry, realIdx) => ({ entry, realIdx }))
-                  .reverse()
-                  .map(({ entry, realIdx }) => {
-                    const lvl = levelFor(entry.score);
-                    return (
-                      <tr key={realIdx}>
-                        <td>{entry.name}</td>
-                        <td>{entry.date}</td>
-                        <td className="num">{entry.score}%</td>
-                        <td>
-                          <span className="diag-level-pill" style={{ background: lvl.soft, color: lvl.color }}>
-                            {lvl.label}
-                          </span>
-                        </td>
-                        <td>{entry.signal}</td>
-                        <td>
-                          <button className="diag-remove-btn" onClick={() => removeFromHistory(realIdx)}>
-                            Remover
-                          </button>
-                        </td>
+            <section className="diag-history">
+              <h2>Histórico local</h2>
+              <p className="hint">Salvo apenas neste navegador — não sincroniza entre dispositivos.</p>
+              <div className="diag-table-wrap">
+                <table className="diag-table">
+                  <thead>
+                    <tr>
+                      <th>Agência</th>
+                      <th>Data</th>
+                      <th>Score</th>
+                      <th>Nível</th>
+                      <th>Sinal comercial</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {!mounted || history.length === 0 ? (
+                      <tr className="diag-empty-row">
+                        <td colSpan={6}>Nenhum diagnóstico salvo ainda.</td>
                       </tr>
-                    );
-                  })
-              )}
-            </tbody>
-          </table>
-        </div>
-      </section>
+                    ) : (
+                      [...history]
+                        .map((entry, realIdx) => ({ entry, realIdx }))
+                        .reverse()
+                        .map(({ entry, realIdx }) => {
+                          const lvl = levelFor(entry.score);
+                          return (
+                            <tr key={realIdx}>
+                              <td>{entry.name}</td>
+                              <td>{entry.date}</td>
+                              <td className="num">{entry.score}%</td>
+                              <td>
+                                <span className="diag-level-pill" style={{ background: lvl.soft, color: lvl.color }}>
+                                  {lvl.label}
+                                </span>
+                              </td>
+                              <td>{entry.signal}</td>
+                              <td>
+                                <button className="diag-remove-btn" onClick={() => removeFromHistory(realIdx)}>
+                                  Remover
+                                </button>
+                              </td>
+                            </tr>
+                          );
+                        })
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </section>
 
-      <footer className="diag-foot">Dattis — ferramenta interna de diagnóstico, não substitui parecer jurídico.</footer>
+            <footer className="diag-foot">Dattis — ferramenta interna de diagnóstico, não substitui parecer jurídico.</footer>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

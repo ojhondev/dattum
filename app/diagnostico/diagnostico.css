@@ -1,11 +1,14 @@
 /* ---------------------------------------------------------------------
-   Diagnóstico Dattis — tokens extraídos ao vivo de aikido.dev (2026-09-21):
-   getComputedStyle no :root (--primary--aiki-*, --surface--*, --radius--main),
-   no botão primário real ("Start for free": bg #6551f3, radius 160px,
-   padding 12px 46.4px, 16px/500) e no navbar (pill #141031, texto branco).
-   Fonte real da Aikido é "Newgrotesk" (proprietária) — substituída por Inter,
-   já carregada no projeto como --font-body-fam. Mono (código/dados) por
-   JetBrains Mono, mesmo papel do widget de diff de código da Aikido.
+   Diagnóstico Dattis — fluxo estilo Typeform (uma pergunta por tela,
+   avanço automático, score de risco persistente entre as telas) sobre
+   os tokens extraídos ao vivo de aikido.dev (2026-09-21): getComputedStyle
+   no :root (--primary--aiki-*, --surface--*, --radius--main), no botão
+   primário real ("Start for free": bg #6551f3, radius 160px, padding
+   12px 46.4px, 16px/500) e no navbar (pill #141031, texto branco).
+   Fonte real da Aikido é "Newgrotesk" (proprietária) — substituída por
+   Inter, já carregada no projeto como --font-body-fam. Mono (código/
+   dados) por JetBrains Mono, mesmo papel do widget de diff de código
+   da Aikido.
    --------------------------------------------------------------------- */
 .diag-page {
   --aiki-purple: #6551f3;
@@ -34,90 +37,107 @@
 
   --aiki-radius: 1rem;
   --aiki-radius-sm: .375rem;
+  --aiki-radius-md: .75rem;
   --aiki-radius-pill: 160px;
   --aiki-shadow: 0 1px 2px rgba(1,0,36,.04), 0 8px 24px -8px rgba(1,0,36,.12);
+  --aiki-header-h: 64px;
 
   background: var(--aiki-carbon-5);
   color: var(--aiki-purple-ink);
   font-family: var(--font-body-fam);
   min-height: 100vh;
-  padding-bottom: 6rem;
 }
 
-.diag-shell { max-width: 1180px; margin: 0 auto; padding: 0 20px; }
+/* ---------- fixed progress bar + header (score stays visible across steps) ---------- */
+.diag-progressbar { position: fixed; top: 0; left: 0; right: 0; height: 3px; background: var(--aiki-carbon-20); z-index: 40; }
+.diag-progressbar-fill { height: 100%; background: var(--aiki-purple); transition: width .3s ease; }
 
-/* ---------- header ---------- */
-.diag-top {
-  max-width: 1180px; margin: 0 auto; padding: 40px 20px 28px;
+.diag-header-fixed {
+  position: fixed; top: 3px; left: 0; right: 0; z-index: 39; height: var(--aiki-header-h);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 24px; background: rgba(245,245,246,.85); backdrop-filter: blur(6px);
   border-bottom: 1px solid var(--aiki-carbon-20);
-  display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; flex-wrap: wrap;
 }
-.diag-eyebrow {
+.diag-header-eyebrow {
   font-family: var(--font-mono-fam); font-size: 12px; letter-spacing: .08em; text-transform: uppercase;
-  color: var(--aiki-purple); display: flex; align-items: center; gap: 8px; margin-bottom: 12px; font-weight: 600;
+  color: var(--aiki-purple); font-weight: 600;
 }
-.diag-eyebrow::before { content: ""; width: 18px; height: 1.5px; background: var(--aiki-purple); display: inline-block; }
-.diag-title { font-family: var(--font-body-fam); font-weight: 500; font-size: clamp(1.9rem, 3.2vw, 2.6rem); line-height: 1.12; letter-spacing: -.02em; margin: 0 0 8px; color: var(--aiki-purple-ink); }
-.diag-subtitle { color: var(--aiki-carbon-80); font-size: .98rem; max-width: 54ch; margin: 0; line-height: 1.5; }
 
-.diag-meta-form { display: flex; gap: 12px; flex-wrap: wrap; }
+.diag-score-chip { display: flex; align-items: center; gap: 10px; }
+.diag-score-ring {
+  width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0;
+  background: conic-gradient(var(--gauge-color, var(--aiki-carbon-20)) calc(var(--gauge-pct, 0) * 1%), var(--aiki-carbon-20) 0);
+  display: flex; align-items: center; justify-content: center; transition: background .3s ease;
+}
+.diag-score-ring-inner {
+  width: 27px; height: 27px; border-radius: 50%; background: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-mono-fam); font-size: 9.5px; font-weight: 700; color: var(--aiki-purple-ink);
+}
+.diag-score-chip-text { display: flex; flex-direction: column; line-height: 1.25; }
+.diag-score-chip-text b { font-size: .8rem; font-weight: 700; }
+.diag-score-chip-text span { font-family: var(--font-mono-fam); font-size: 10px; color: var(--aiki-carbon-60); }
+
+/* ---------- stage: one screen at a time, centered ---------- */
+.diag-stage {
+  min-height: 100vh; display: flex; align-items: center; justify-content: center;
+  padding: calc(var(--aiki-header-h) + 48px) 24px 48px;
+}
+.diag-stage.results { align-items: flex-start; }
+
+.diag-q { width: 100%; max-width: 640px; }
+
+@keyframes diagSlideFwd { from { opacity: 0; transform: translateX(28px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes diagSlideBack { from { opacity: 0; transform: translateX(-28px); } to { opacity: 1; transform: translateX(0); } }
+.diag-q[data-dir="fwd"] { animation: diagSlideFwd .32s ease both; }
+.diag-q[data-dir="back"] { animation: diagSlideBack .32s ease both; }
+.diag-stage.intro .diag-q, .diag-stage.results .diag-q { animation: diagSlideFwd .32s ease both; }
+
+.diag-back {
+  all: unset; cursor: pointer; font-family: var(--font-body-fam); font-size: .82rem; font-weight: 500;
+  color: var(--aiki-carbon-60); margin-bottom: 18px; display: inline-block; transition: color .15s;
+}
+.diag-back:hover { color: var(--aiki-purple); }
+
+/* ---------- intro ---------- */
+.diag-intro-title { font-family: var(--font-body-fam); font-weight: 500; font-size: clamp(1.9rem, 4vw, 2.6rem); line-height: 1.12; letter-spacing: -.02em; margin: 0 0 14px; color: var(--aiki-purple-ink); }
+.diag-intro-sub { color: var(--aiki-carbon-80); font-size: 1.02rem; line-height: 1.55; max-width: 56ch; margin: 0 0 28px; }
+.diag-intro-form { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 28px; }
+.diag-intro-btn { font-size: 1rem; padding: 14px 26px; }
+
 .diag-field { display: flex; flex-direction: column; gap: 5px; }
 .diag-field label { font-family: var(--font-mono-fam); font-size: 10.5px; letter-spacing: .07em; text-transform: uppercase; color: var(--aiki-carbon-60); font-weight: 600; }
 .diag-field input {
-  font-family: var(--font-body-fam); font-size: .94rem; padding: 9px 12px; border-radius: var(--aiki-radius-sm);
-  border: 1px solid var(--aiki-carbon-40); background: #fff; color: var(--aiki-purple-ink); min-width: 190px;
+  font-family: var(--font-body-fam); font-size: .96rem; padding: 11px 14px; border-radius: var(--aiki-radius-sm);
+  border: 1px solid var(--aiki-carbon-40); background: #fff; color: var(--aiki-purple-ink); min-width: 210px;
 }
 .diag-field input:focus { outline: 2px solid var(--aiki-purple); outline-offset: 1px; border-color: var(--aiki-purple); }
 
-/* ---------- layout ---------- */
-.diag-layout { display: grid; grid-template-columns: 1fr 340px; gap: 28px; margin-top: 32px; align-items: start; max-width: 1180px; margin-left: auto; margin-right: auto; padding: 0 20px; }
-@media (max-width: 880px) { .diag-layout { grid-template-columns: 1fr; } .diag-summary { position: static; order: -1; } }
+/* ---------- question ---------- */
+.diag-q-eyebrow { font-family: var(--font-mono-fam); font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 10px; }
+.diag-q-count { font-family: var(--font-mono-fam); font-size: 11px; color: var(--aiki-carbon-60); margin: 0 0 6px; }
+.diag-q-text { font-family: var(--font-body-fam); font-weight: 500; font-size: clamp(1.4rem, 3vw, 1.9rem); line-height: 1.28; letter-spacing: -.01em; color: var(--aiki-purple-ink); margin: 0 0 12px; }
+.diag-q-help { color: var(--aiki-carbon-60); font-size: .96rem; line-height: 1.55; margin: 0 0 28px; max-width: 60ch; }
 
-.diag-progress { font-family: var(--font-mono-fam); font-size: 12px; color: var(--aiki-carbon-60); margin: 0 0 20px; grid-column: 1 / -1; }
-.diag-progress b { color: var(--aiki-purple-ink); font-weight: 700; }
-
-/* ---------- category ---------- */
-.diag-category { margin-bottom: 26px; }
-.diag-cat-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
-.diag-cat-head h2 { font-family: var(--font-body-fam); font-weight: 600; font-size: 1rem; color: var(--aiki-purple-ink); margin: 0; display: flex; align-items: center; gap: 10px; }
-.diag-cat-letter {
-  font-family: var(--font-mono-fam); font-weight: 700; font-size: .78rem; color: var(--aiki-purple);
-  background: var(--aiki-purple-tint-soft); width: 1.5rem; height: 1.5rem; border-radius: var(--aiki-radius-sm);
-  display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;
+.diag-answers { display: flex; flex-direction: column; gap: 10px; }
+.diag-answer-btn {
+  all: unset; box-sizing: border-box; cursor: pointer; width: 100%;
+  font-family: var(--font-body-fam); font-size: 1rem; font-weight: 600; color: var(--aiki-purple-ink);
+  background: #fff; border: 1.5px solid var(--aiki-carbon-20); border-radius: var(--aiki-radius-md);
+  padding: 18px 22px; transition: border-color .15s, background .15s, transform .1s;
 }
-.diag-cat-bar { width: 90px; height: 5px; border-radius: 3px; background: var(--aiki-carbon-20); overflow: hidden; flex-shrink: 0; }
-.diag-cat-bar > div { height: 100%; border-radius: 3px; transition: width .25s ease, background .25s ease; }
+.diag-answer-btn:hover { border-color: var(--aiki-carbon-40); transform: translateY(-1px); }
+.diag-answer-btn:focus-visible { outline: 2px solid var(--aiki-purple); outline-offset: 2px; }
+.diag-answer-btn.sim[aria-pressed="true"] { background: var(--aiki-green-soft); border-color: var(--aiki-green); color: #00734b; }
+.diag-answer-btn.parcial[aria-pressed="true"] { background: var(--aiki-orange-soft); border-color: var(--aiki-orange-deep); color: var(--aiki-orange-deep); }
+.diag-answer-btn.nao[aria-pressed="true"] { background: var(--aiki-red-soft); border-color: var(--aiki-red); color: #992c25; }
 
-.diag-qcard { background: #fff; border: 1px solid var(--aiki-carbon-20); border-radius: var(--aiki-radius-sm); padding: 16px 18px; margin-bottom: 8px; }
-.diag-qcard.signal { border-left: 3px solid var(--aiki-purple); }
-.diag-qtext { font-size: .95rem; color: var(--aiki-purple-ink); margin: 0 0 4px; font-weight: 500; }
-.diag-qhelp { font-size: .83rem; color: var(--aiki-carbon-60); margin: 0 0 12px; max-width: 60ch; line-height: 1.5; }
-
-.diag-segctl { display: inline-flex; border: 1px solid var(--aiki-carbon-40); border-radius: var(--aiki-radius-pill); overflow: hidden; }
-.diag-segctl button {
-  all: unset; box-sizing: border-box; cursor: pointer;
-  font-family: var(--font-mono-fam); font-size: 12px; letter-spacing: .02em; font-weight: 500;
-  padding: 7px 15px; background: #fff; color: var(--aiki-carbon-60); border-right: 1px solid var(--aiki-carbon-40);
-  transition: background .15s, color .15s;
-}
-.diag-segctl button:last-child { border-right: none; }
-.diag-segctl button:hover { background: var(--aiki-carbon-5); }
-.diag-segctl button:focus-visible { outline: 2px solid var(--aiki-purple); outline-offset: -2px; }
-.diag-segctl button[aria-pressed="true"].sim { background: var(--aiki-green-soft); color: var(--aiki-green); }
-.diag-segctl button[aria-pressed="true"].parcial { background: var(--aiki-orange-soft); color: var(--aiki-orange-deep); }
-.diag-segctl button[aria-pressed="true"].nao { background: var(--aiki-red-soft); color: var(--aiki-red); }
-.diag-qcard.signal .diag-segctl button[aria-pressed="true"].sim { background: var(--aiki-green-soft); color: var(--aiki-green); }
-.diag-qcard.signal .diag-segctl button[aria-pressed="true"].nao { background: var(--aiki-carbon-5); color: var(--aiki-carbon-60); }
-
-/* ---------- summary panel ---------- */
-.diag-summary {
-  position: sticky; top: 20px; background: #fff; border: 1px solid var(--aiki-carbon-20);
-  border-radius: var(--aiki-radius); padding: 22px; display: flex; flex-direction: column; gap: 20px;
-  box-shadow: var(--aiki-shadow);
-}
+/* ---------- results ---------- */
 .diag-panel-label { font-family: var(--font-mono-fam); font-size: 11px; letter-spacing: .07em; text-transform: uppercase; color: var(--aiki-carbon-60); margin: 0 0 10px; font-weight: 600; }
+.diag-results-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin: 20px 0; }
+@media (max-width: 640px) { .diag-results-grid { grid-template-columns: 1fr; } }
 
-.diag-gauge-wrap { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+.diag-gauge-wrap { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; }
 .diag-gauge {
   width: 148px; height: 148px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
   background: conic-gradient(var(--gauge-color, var(--aiki-carbon-20)) calc(var(--gauge-pct, 0) * 1%), var(--aiki-carbon-20) 0);
@@ -129,20 +149,20 @@
 
 .diag-cb { display: flex; flex-direction: column; gap: 10px; }
 .diag-cb-row { display: flex; align-items: center; gap: 10px; }
-.diag-cb-name { font-size: .82rem; color: var(--aiki-carbon-80); width: 84px; flex-shrink: 0; }
+.diag-cb-name { font-size: .82rem; color: var(--aiki-carbon-80); width: 150px; flex-shrink: 0; }
 .diag-cb-track { flex: 1; height: 6px; border-radius: 3px; background: var(--aiki-carbon-20); overflow: hidden; }
-.diag-cb-fill { height: 100%; border-radius: 3px; transition: width .25s ease, background .25s ease; }
+.diag-cb-fill { height: 100%; border-radius: 3px; display: block; transition: width .25s ease, background .25s ease; }
 .diag-cb-val { font-family: var(--font-mono-fam); font-size: 11px; color: var(--aiki-carbon-60); width: 30px; text-align: right; font-variant-numeric: tabular-nums; }
 
-.diag-signal-badge { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; border-radius: var(--aiki-radius-sm); font-size: .85rem; }
+.diag-signal-badge { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 14px; border-radius: var(--aiki-radius-sm); font-size: .85rem; }
 .diag-signal-badge.on { background: var(--aiki-green-soft); color: #00734b; }
-.diag-signal-badge.off { background: var(--aiki-carbon-5); color: var(--aiki-carbon-60); }
-.diag-signal-badge b { font-family: var(--font-mono-fam); font-size: 11px; text-transform: uppercase; letter-spacing: .06em; }
+.diag-signal-badge.off { background: var(--aiki-carbon-5); color: var(--aiki-carbon-60); border: 1px solid var(--aiki-carbon-20); }
+.diag-signal-badge b { font-family: var(--font-mono-fam); font-size: 11px; text-transform: uppercase; letter-spacing: .06em; flex-shrink: 0; }
 
 .diag-textarea {
-  width: 100%; min-height: 150px; resize: vertical; box-sizing: border-box;
+  width: 100%; min-height: 130px; resize: vertical; box-sizing: border-box;
   font-family: var(--font-mono-fam); font-size: 12px; line-height: 1.6;
-  background: var(--aiki-carbon-5); color: var(--aiki-purple-ink);
+  background: #fff; color: var(--aiki-purple-ink);
   border: 1px solid var(--aiki-carbon-20); border-radius: var(--aiki-radius-sm); padding: 12px;
 }
 
@@ -157,8 +177,8 @@
 .diag-btn-row { display: flex; gap: 8px; flex-wrap: wrap; }
 
 /* ---------- history ---------- */
-.diag-history { max-width: 1180px; margin: 56px auto 0; padding: 0 20px; }
-.diag-history h2 { font-family: var(--font-body-fam); font-weight: 600; font-size: 1.3rem; margin: 0 0 4px; color: var(--aiki-purple-ink); }
+.diag-history { margin-top: 48px; }
+.diag-history h2 { font-family: var(--font-body-fam); font-weight: 600; font-size: 1.2rem; margin: 0 0 4px; color: var(--aiki-purple-ink); }
 .diag-history p.hint { color: var(--aiki-carbon-60); font-size: .85rem; margin: 0 0 16px; }
 .diag-table-wrap { overflow-x: auto; border: 1px solid var(--aiki-carbon-20); border-radius: var(--aiki-radius); background: #fff; }
 .diag-table { border-collapse: collapse; width: 100%; min-width: 560px; }
@@ -171,6 +191,8 @@
 .diag-remove-btn { all: unset; cursor: pointer; font-family: var(--font-body-fam); font-size: .8rem; color: var(--aiki-carbon-60); text-decoration: underline; }
 .diag-remove-btn:hover { color: var(--aiki-red); }
 
-.diag-foot { max-width: 1180px; margin: 60px auto 0; padding: 20px 20px 0; border-top: 1px solid var(--aiki-carbon-20); font-family: var(--font-mono-fam); font-size: 11.5px; color: var(--aiki-carbon-60); }
+.diag-foot { margin-top: 48px; padding-top: 20px; border-top: 1px solid var(--aiki-carbon-20); font-family: var(--font-mono-fam); font-size: 11.5px; color: var(--aiki-carbon-60); }
 
-@media (prefers-reduced-motion: reduce) { .diag-page * { transition: none !important; } }
+@media (prefers-reduced-motion: reduce) {
+  .diag-page * { transition: none !important; animation: none !important; }
+}
