@@ -1,4 +1,46 @@
-# Dattum
+# Dattum → Dattis (pivô v3, em andamento desde 2026-09-21)
+
+**A marca é agora Dattis** — não mexer no nome do repositório GitHub
+(`github.com/ojhondev/dattum`) nem no diretório (`A:\Dattum`), só no que aparece pro
+usuário (copy, `<title>`, metadados, logo textual). O resto desta seção (abaixo) descreve
+o produto **v2.0/Dattum**, ainda parcialmente válido mas **sendo substituído** pelo pivô
+v3/Dattis:
+
+- **ICP mudou**: de "agências de marketing digital e de lançamento" (genérico) para
+  especificamente **agências de tráfego pago/performance** — pela dor operacional
+  concreta delas: upload de Custom Audiences, CAPI/Enhanced Conversions com PII
+  hasheada, leads via WhatsApp/CRM, landing pages sem consentimento. Tese explícita:
+  **não é canal/revenda white-label** (ex: DPONet) — a agência é sempre cliente direta.
+- **Produto**: 13 módulos em 5 grupos (A Entrada/Ativação, B Núcleo de conformidade por
+  conta — RAT/DPA/subprocessadores/consent, C Operação contínua — alertas/treinamento/
+  relatório, D DPO as a Service — camada humana que atravessa tudo, E Prova/crise —
+  selo/incidente/dossiê Meta). Só 3 módulos são MVP: RAT automatizado, Gerador de DPA,
+  Registro de subprocessadores — os demais (incl. DPO as a Service) são v1.1/v2, **não
+  construir antes de validar** (ver roadmap do PRD: validação manual → playbook → MVP).
+- **Ferramenta de Diagnóstico Expresso já é real**, portada em
+  [`app/diagnostico/page.tsx`](app/diagnostico/page.tsx): 19 perguntas / 8 categorias
+  (A–G risco, H sinal comercial), Sim=0/Parcial=1/Não=2 pontos, score por categoria
+  (normalizado só pelas respondidas) + score geral (denominador **fixo** = todas as 17
+  perguntas de risco × 2, não só as respondidas — ver algoritmo original, portado
+  fielmente), níveis Baixo/Médio/Alto/Crítico (0–25/26–50/51–75/76–100%), resumo
+  copiável, histórico em `localStorage` (`dattis_diag_history_v1`).
+- **Identidade visual da ferramenta é IDÊNTICA à Aikido** (aikido.dev), a pedido
+  explícito do usuário — não ao sistema Deel-based do site de marketing abaixo. Tokens
+  extraídos ao vivo (`getComputedStyle` no :root, no botão primário real, no navbar):
+  roxo `#6551f3` (`--primary--aiki--100`), escala neutra "carbon" `#f5f5f6`→`#010024`,
+  escala de severidade vermelho/laranja/verde (sem amarelo — Aikido não tem essa 4ª
+  matiz, então Médio e Alto usam dois tons de laranja, só Crítico é vermelho). Fonte
+  real da Aikido é "Newgrotesk" (proprietária) — substituída por Inter (já carregada
+  como `--font-body-fam`); Mono é JetBrains Mono (`--font-mono-fam`, novo). Todos os
+  tokens ficam escopados em `.diag-page` (`app/diagnostico/diagnostico.css`), **não**
+  em `:root` — não colidem com os tokens Deel-based do site em `app/globals.css`.
+- **A home (`/`) ainda está no sistema visual e copy antigos (Dattum/Deel-based)** —
+  branding e design da home ainda não foram atualizados pro pivô Dattis/Aikido. Não
+  assumir que a home já reflete o novo posicionamento até isso ser feito explicitamente.
+
+---
+
+## Produto v2.0 (Dattum, pré-pivô — parcialmente superseded, ver acima)
 
 Consultoria de compliance LGPD + DPO-as-a-Service para **agências de marketing digital
 e de lançamento** (v2.0 — pivô de ICP, ver PRD nota de versão), operada por uma

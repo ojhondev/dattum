@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Hanken_Grotesk, Inter } from "next/font/google";
+import { Hanken_Grotesk, Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 
 const hankenGrotesk = Hanken_Grotesk({
@@ -14,15 +14,21 @@ const inter = Inter({
   variable: "--font-body",
 });
 
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-mono",
+});
+
 export const metadata: Metadata = {
-  title: "Dattum — Compliance LGPD para agências",
+  title: "Dattis — Compliance LGPD para agências de tráfego pago",
   description:
-    "Diagnóstico de operador gratuito, sprint de higienização em 10 dias úteis, e as obrigações acessórias de LGPD rodando como assinatura fixa para agências de marketing digital e de lançamento.",
+    "Diagnóstico de risco gratuito, RAT e DPA automatizados por conta, e DPO as a Service — a camada de conformidade LGPD desenhada pro fluxo de dados de agências de performance.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="pt-BR" className={`${hankenGrotesk.variable} ${inter.variable}`}>
+    <html lang="pt-BR" className={`${hankenGrotesk.variable} ${inter.variable} ${jetbrainsMono.variable}`}>
       <body>{children}</body>
     </html>
   );

@@ -28,6 +28,7 @@
 
   --font-display-fam: var(--font-display), 'Hanken Grotesk', ui-sans-serif, system-ui, sans-serif;
   --font-body-fam: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+  --font-mono-fam: var(--font-mono), 'JetBrains Mono', 'IBM Plex Mono', monospace;
 
   --r-card:16px; --r-panel:12px; --r-pill:200px; --r-chip:100px; --r-icon:5px;
 }
