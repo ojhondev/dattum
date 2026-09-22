@@ -41,20 +41,42 @@ v3/Dattis:
   pergunta por tela, avanço automático (~380ms após clicar), score de risco fixo no
   header (persiste entre as telas), tela de resultado completo no final. Mesma lógica
   de score de antes, só a apresentação mudou pra sequencial.
-- **`/auditoria` é nova (2026-09-22)**: usuário cola a URL de um site, o backend
-  (`app/api/auditoria/route.ts`, rota dinâmica Node) faz `fetch` server-side do HTML
-  público e roda checagem heurística por regex — pixels (Meta/GA/GTM/TikTok/LinkedIn/
-  Google Ads), formulário capturando e-mail/telefone, link de WhatsApp, widget de chat,
-  banner de consentimento de cookies (CMPs conhecidos + texto genérico), link de
-  política de privacidade, HTTPS. Cada achado tem peso; score = pontos atingidos ÷ 17
-  (mesmas faixas Baixo/Médio/Alto/Crítico do Diagnóstico). Frontend em
-  `app/auditoria/page.tsx` + `auditoria.css` (mesmos tokens Aikido, duplicados do
-  `diagnostico.css` — as duas rotas ainda não compartilham um módulo de tokens comum).
-  **Isso é uma varredura heurística do HTML público, não uma auditoria jurídica** — não
-  vê backend, cookies definidos após interação, nem contratos. O disclaimer no resultado
-  e o footer deixam isso explícito; nunca reportar um achado que a regex não confirmou
-  de verdade (sem fabricar violação). Proteção básica contra SSRF: bloqueia localhost,
-  IPs privados (10.*/172.16-31.*/192.168.*/169.254.*) e hostname sem ponto.
+- **`/auditoria` é nova (2026-09-22, upgrade pra crawler real em 2026-09-22)**:
+  usuário cola a URL de um site, o backend (`app/api/auditoria/route.ts`, rota Node
+  dinâmica) abre a página num **navegador headless real** (puppeteer-core +
+  `@sparticuz/chromium-min`) — não é mais regex em HTML estático. Detecção:
+  - Pixels/tags (Meta, GA/GTM, TikTok, LinkedIn, Google Ads) confirmados por
+    **requisição de rede real** (`page.on('request')`, hostname da requisição) — pega
+    tag injetada via GTM/JS depois do load.
+  - Cookies reais lidos via CDP (`Network.getAllCookies`) pra corroborar (_fbp, _ga,
+    _ttp etc.).
+  - Consentimento, política de privacidade e formulário checados no **DOM renderizado**
+    (`page.evaluate`), não no HTML cru — pega conteúdo montado via JS/SPA.
+  Cada achado tem peso; score = pontos atingidos ÷ 17 (mesmas faixas Baixo/Médio/Alto/
+  Crítico do Diagnóstico). Cada achado ativado vem com **"Como corrigir"** — passo a
+  passo concreto (ex: ativar Google Consent Mode v2, instalar CMP), pedido explícito do
+  usuário. Frontend em `app/auditoria/page.tsx` + `auditoria.css` (mesmos tokens Aikido,
+  duplicados do `diagnostico.css` — as duas rotas ainda não compartilham um módulo de
+  tokens comum).
+  - **Infra serverless — armadilha já resolvida**: `@sparticuz/chromium` (com o binário
+    embutido, ~35-52MB) falha em produção na Vercel com `"input directory .../bin does
+    not exist"` — o Node File Tracing da Vercel não inclui o binário porque o caminho é
+    resolvido em runtime, não via `require()` estático. Fix: `@sparticuz/chromium-min`
+    (67KB, sem binário) + `chromium.executablePath(CHROMIUM_PACK_URL)` apontando pro
+    pack oficial nos releases do GitHub do Sparticuz — baixado pra `/tmp` no cold start.
+    **A versão do pack na URL tem que ficar em lockstep com a versão instalada do
+    pacote** (não existe alias "latest" que funcione aqui, o nome do arquivo tem a
+    versão). `next.config.ts` marca `puppeteer-core` e `@sparticuz/chromium-min` como
+    `serverExternalPackages`. `maxDuration = 60` (cold start baixa o pack + sobe o
+    browser + navega de verdade — bem mais lento que um `fetch` simples).
+  - Local dev usa Chrome/Edge instalado na máquina (`resolveExecutablePath` detecta o
+    binário local antes de cair pro pack remoto) — só a Vercel usa o pack do Sparticuz.
+  **Isso é uma varredura automática com navegador real, ainda assim não é uma auditoria
+  jurídica** — não vê backend, cookies definidos após interação do usuário, nem
+  contratos. O disclaimer no resultado e o footer deixam isso explícito; nunca reportar
+  um achado que o crawler não confirmou de verdade (sem fabricar violação). Proteção
+  básica contra SSRF: bloqueia localhost, IPs privados (10.*/172.16-31.*/192.168.*/
+  169.254.*) e hostname sem ponto, antes de abrir o navegador.
 
 ---
 
