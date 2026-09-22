@@ -103,6 +103,10 @@
 .audit-finding-label { font-weight: 600; font-size: .95rem; color: var(--aiki-purple-ink); }
 .audit-finding-article { font-family: var(--font-mono-fam); font-size: 10px; color: var(--aiki-carbon-60); white-space: nowrap; }
 .audit-finding-detail { font-size: .86rem; color: var(--aiki-carbon-60); margin: 4px 0 0; line-height: 1.5; }
+.audit-finding-fix { margin-top: 12px; padding: 12px 14px; background: var(--aiki-carbon-5); border-radius: var(--aiki-radius-sm); }
+.audit-finding-fix-label { font-family: var(--font-mono-fam); font-size: 10px; letter-spacing: .06em; text-transform: uppercase; color: var(--aiki-purple); font-weight: 700; margin: 0 0 6px; }
+.audit-finding-fix ol { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 5px; }
+.audit-finding-fix li { font-size: .85rem; color: var(--aiki-carbon-80); line-height: 1.5; }
 
 .audit-disclaimer { font-size: .8rem; color: var(--aiki-carbon-60); line-height: 1.55; margin: 0 0 32px; padding: 14px 18px; background: var(--aiki-carbon-5); border: 1px solid var(--aiki-carbon-20); border-radius: var(--aiki-radius-sm); }
 

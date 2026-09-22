@@ -13,6 +13,7 @@ type Finding = {
   weight: number;
   detail: string;
   article?: string;
+  fix: string[];
 };
 
 type Risk = { title: string; detail: string };
@@ -32,8 +33,9 @@ type AuditErr = { ok: false; error: string };
 type AuditResult = AuditOk | AuditErr;
 
 const SCAN_STEPS = [
-  "Acessando o site...",
-  "Procurando pixels de rastreamento (Meta, Google, TikTok)...",
+  "Abrindo o site num navegador real...",
+  "Monitorando requisições de rede (Meta, Google, TikTok)...",
+  "Lendo cookies definidos durante o carregamento...",
   "Verificando formulários e captura de dado...",
   "Checando banner de consentimento de cookies...",
   "Calculando o score de risco...",
@@ -245,17 +247,27 @@ export default function Auditoria() {
                       {f.article && <span className="audit-finding-article">{f.article}</span>}
                     </div>
                     <p className="audit-finding-detail">{f.detail}</p>
+                    {f.triggered && f.fix.length > 0 && (
+                      <div className="audit-finding-fix">
+                        <p className="audit-finding-fix-label">Como corrigir</p>
+                        <ol>
+                          {f.fix.map((step, i) => (
+                            <li key={i}>{step}</li>
+                          ))}
+                        </ol>
+                      </div>
+                    )}
                   </div>
                 </div>
               ))}
             </div>
 
             <p className="audit-disclaimer">
-              Essa é uma varredura automática do código público da página — não
-              substitui parecer jurídico e não vê o que acontece no backend, em
-              cookies definidos após interação, nem em contratos e retenção real de
-              dado. Fundamentado na LGPD (Lei 13.709/2018); nunca apresentado como
-              comunicação oficial da ANPD.
+              Essa é uma varredura automática com navegador real (não só leitura de
+              HTML estático) — mas ainda assim não substitui parecer jurídico e não vê
+              o que acontece no backend, em cookies definidos após uma interação do
+              usuário, nem em contratos e retenção real de dado. Fundamentado na LGPD
+              (Lei 13.709/2018); nunca apresentado como comunicação oficial da ANPD.
             </p>
 
             <div className="audit-cta">
