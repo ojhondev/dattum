@@ -1,10 +1,19 @@
 import { NextResponse } from "next/server";
 import fs from "node:fs";
-import chromium from "@sparticuz/chromium";
+import chromium from "@sparticuz/chromium-min";
 import puppeteer, { type Browser } from "puppeteer-core";
 
 export const runtime = "nodejs";
-export const maxDuration = 45;
+export const maxDuration = 60; // cold start now includes downloading the Chromium pack (~70MB) into /tmp
+
+// @sparticuz/chromium-min ships no binary — it downloads this pack at cold start
+// into /tmp instead of bundling ~35-50MB into the function (which broke Vercel's
+// file tracing: "@sparticuz/chromium" alone failed in prod with "input directory
+// /var/task/node_modules/@sparticuz/chromium/bin does not exist"). Keep this
+// version number in lockstep with the installed @sparticuz/chromium-min version —
+// the pack filename is version-pinned, there's no "latest" alias that works here.
+const CHROMIUM_PACK_URL =
+  "https://github.com/Sparticuz/chromium/releases/download/v153.0.0/chromium-v153.0.0-pack.x64.tar";
 
 type CheckKind = "tracker" | "capture" | "consent" | "policy" | "security";
 
@@ -64,7 +73,7 @@ async function resolveExecutablePath(): Promise<string> {
       if (fs.existsSync(c)) return c;
     }
   }
-  return chromium.executablePath();
+  return chromium.executablePath(CHROMIUM_PACK_URL);
 }
 
 function hostEndsWith(hosts: Set<string>, suffixes: string[]): boolean {
