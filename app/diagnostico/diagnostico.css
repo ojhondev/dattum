@@ -176,6 +176,15 @@
 .diag-btn.primary:hover { background: var(--aiki-purple-dark); }
 .diag-btn-row { display: flex; gap: 8px; flex-wrap: wrap; }
 
+/* ---------- cta ---------- */
+.diag-cta { display: flex; flex-direction: column; align-items: flex-start; gap: 14px; padding: 28px; border-radius: var(--aiki-radius); background: var(--aiki-purple-ink); color: #fff; margin-top: 32px; }
+.diag-cta h3 { font-family: var(--font-body-fam); font-weight: 500; font-size: 1.3rem; margin: 0; text-wrap: balance; }
+.diag-cta p { margin: 0; color: var(--aiki-purple-tint); font-size: .92rem; max-width: 50ch; }
+.diag-cta-row { display: flex; gap: 10px; flex-wrap: wrap; }
+.diag-cta-btn { font-family: var(--font-body-fam); font-weight: 600; font-size: .95rem; padding: 13px 24px; border-radius: var(--aiki-radius-pill); border: 1px solid #fff; background: #fff; color: var(--aiki-purple-ink); cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; transition: transform .15s; }
+.diag-cta-btn:hover { transform: translateY(-1px); }
+.diag-cta-btn.ghost { background: transparent; color: #fff; }
+
 /* ---------- history ---------- */
 .diag-history { margin-top: 48px; }
 .diag-history h2 { font-family: var(--font-body-fam); font-weight: 600; font-size: 1.2rem; margin: 0 0 4px; color: var(--aiki-purple-ink); }

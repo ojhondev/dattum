@@ -558,6 +558,22 @@ export default function Diagnostico() {
               </button>
             </div>
 
+            <div className="diag-cta">
+              <h3>Corrija isso de verdade, não só descubra o problema</h3>
+              <p>
+                Crie sua conta grátis — a Dattis já gera o registro do que vocês fazem com
+                o dado de cada cliente e o contrato entre vocês, prontos pra assinar.
+              </p>
+              <div className="diag-cta-row">
+                <a className="diag-cta-btn" href="/cadastro">
+                  Criar conta grátis →
+                </a>
+                <a className="diag-cta-btn ghost" href="/auditoria">
+                  Auditar um site →
+                </a>
+              </div>
+            </div>
+
             <section className="diag-history">
               <h2>Histórico local</h2>
               <p className="hint">Salvo apenas neste navegador — não sincroniza entre dispositivos.</p>

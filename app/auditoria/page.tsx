@@ -271,14 +271,16 @@ export default function Auditoria() {
             </p>
 
             <div className="audit-cta">
-              <h3>Quer o diagnóstico completo da sua operação, não só do site?</h3>
+              <h3>Corrija isso de verdade, não só descubra o problema</h3>
               <p>
-                O site é só a porta de entrada. O Diagnóstico Expresso cobre Custom
-                Audiences, CAPI, CRM, contratos e subprocessadores — os pontos que uma
-                varredura de página não alcança.
+                Crie sua conta grátis — a Dattis já gera o registro do que vocês fazem com
+                o dado desse cliente e o contrato entre vocês, prontos pra assinar.
               </p>
               <div className="audit-cta-row">
-                <a className="audit-cta-btn" href="/diagnostico">
+                <a className="audit-cta-btn" href="/cadastro">
+                  Criar conta grátis →
+                </a>
+                <a className="audit-cta-btn ghost" href="/diagnostico">
                   Fazer o Diagnóstico Expresso →
                 </a>
               </div>

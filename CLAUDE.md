@@ -78,6 +78,61 @@ v3/Dattis:
   básica contra SSRF: bloqueia localhost, IPs privados (10.*/172.16-31.*/192.168.*/
   169.254.*) e hostname sem ponto, antes de abrir o navegador.
 
+- **Painel operacional (`/painel`) é novo e real** (2026-09-22): os 3 módulos MVP do
+  PRD — **RAT automatizado**, **Gerador de DPA**, **Registro de subprocessadores** —
+  estão implementados fim a fim, testados no browser (cadastro → wizard → RAT/DPA/
+  subprocessadores auto-gerados → assinatura → PDF → registro agregado).
+  - **Banco**: Neon provisionado via Drizzle (`lib/db/schema.ts`, `lib/db/index.ts`,
+    `drizzle.config.ts` — `npx drizzle-kit push` já rodado). Tabelas: `agencias`,
+    `contas_cliente`, `subprocessadores_catalogo` (catálogo central seedado —
+    `lib/db/seed.ts`, roda com `npx tsx lib/db/seed.ts` — Meta Ads, Google Ads,
+    TikTok Ads, WhatsApp Business API, RD Station, Zapier), `conta_subprocessadores`,
+    `atividades_tratamento` (RAT), `dpas`. **Regra não-negociável do PRD §12**: toda
+    tabela de dado sensível tem `agencia_id`; dado por conta de cliente tem também
+    `conta_cliente_id`; toda rota de API filtra por `agencia_id` da sessão, nunca
+    confia em id vindo do client sem essa checagem.
+  - **Auth**: sem NextAuth — `bcryptjs` (hash) + `jose` (JWT em cookie httpOnly
+    `dattis_session`, 30 dias) em `lib/auth.ts`. `proxy.ts` (não `middleware.ts` —
+    ver nota abaixo) protege tudo sob `/painel`, redireciona pra `/entrar` com
+    `?proximo=`. MVP tem um único papel ("agência admin"); RBAC de analista/DPO/
+    agência-operador do PRD fica pra v1.1/v2.
+  - **Assinatura do DPA = click-wrap interno**, decisão confirmada com o usuário: nome
+    + cargo + checkbox "li e concordo" grava `assinante_nome/cargo/assinado_em/
+    assinado_ip` e trava o `conteudo_snapshot`. Sem integração de e-sig paga
+    (ZapSign/Clicksign) nesse ciclo — troca fácil depois, schema já comporta.
+  - **PDF do DPA** (`app/api/dpa/[id]/pdf/route.ts`) reaproveita a mesma infra
+    puppeteer-core + `@sparticuz/chromium-min` da Auditoria — a lógica de resolver o
+    executável (`resolveExecutablePath`) foi extraída pra `lib/browser.ts` e agora é
+    compartilhada pelas duas rotas, pra não duplicar a armadilha do binário na
+    Vercel (ver nota da Auditoria abaixo). Usa `page.setContent()` (não
+    `page.goto()`) — sem navegação de rede, sem superfície de SSRF nova; **atenção**:
+    `page.setContent` só aceita `waitUntil: "load"|"domcontentloaded"` no
+    `puppeteer-core`, não `"networkidle0"` (isso é só pra `page.goto`).
+  - **Wizard de ativação de conta** (`app/painel/contas/novo`): ao marcar os fluxos
+    padrão (CAPI/Ads/WhatsApp/CRM), gera automaticamente as atividades de RAT
+    correspondentes (`lib/rat-templates.ts` — `FLOW_TEMPLATES`), herda os
+    subprocessadores do catálogo central pro fluxo marcado, e já cria o DPA em
+    rascunho com o conteúdo montado (`gerarConteudoDpa`). Isso implementa
+    literalmente a frase do PRD: "wizard importa as contas... e gera RAT + DPA
+    automaticamente pra cada uma" + "base central... herdada por todas as contas".
+  - **Linguagem da UI**: rótulo técnico nunca é o principal — "O que fazemos com o
+    dado" (RAT), "Contrato com seu cliente" (DPA), "Quem mais mexe nesse dado"
+    (subprocessadores), com o termo técnico como legenda pequena. Pedido explícito do
+    usuário: "o lead não sabe o que é RAT, nem DPA, nem subprocessadores" — usa
+    exatamente as frases "Simples" que já estavam na tabela de módulos do PRD.
+  - **Diagnóstico e Auditoria continuam 100% abertos, sem login** — só ganharam um
+    novo bloco de CTA (`.diag-cta` / `.audit-cta`) linkando pra `/cadastro` na tela
+    de resultado. Nenhum comportamento anterior dessas duas rotas mudou.
+  - **`middleware.ts` → `proxy.ts`**: no Next.js 16 a convenção `middleware` foi
+    renomeada pra `proxy` (`export function proxy` em vez de `export function
+    middleware`, mesmo `config.matcher`) — não recriar um `middleware.ts`, o arquivo
+    correto é `proxy.ts` na raiz.
+  - **Não implementado nesse ciclo** (fora de escopo, não confundir com pendência
+    esquecida): edição/remoção de subprocessador customizado fora do wizard de
+    ativação, CRUD de conta além de criar/excluir, qualquer papel além de "agência
+    admin", e-sig real, e salvar resultado do Diagnóstico/Auditoria automaticamente
+    numa conta logada.
+
 ---
 
 ## Produto v2.0 (Dattum, pré-pivô — parcialmente superseded, ver acima)
@@ -149,8 +204,8 @@ faixa de contas de cliente geridas.
   etc.); só os blocos deliberadamente escuros (`--cosmos`, `--obsidian`) são escuros,
   sempre.
 - Deploy: Vercel — repositório `github.com/ojhondev/dattum`
-- Banco: Neon (Postgres serverless), a provisionar conforme o MVP (PRD §13) precisar de
-  schema real — nenhuma tabela ainda, este é o estágio de provisionamento de infra.
+- Banco: Neon (Postgres serverless) via Drizzle ORM — schema provisionado
+  (2026-09-22), ver seção do painel operacional acima para as tabelas e convenções.
 
 ## Dev
 
