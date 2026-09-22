@@ -1,0 +1,122 @@
+/* ---------------------------------------------------------------------
+   Auditoria Dattis — mesmos tokens Aikido de app/diagnostico/diagnostico.css
+   (getComputedStyle em aikido.dev, 2026-09-21). Duplicado aqui de propósito:
+   são duas rotas independentes, sem um pai visual compartilhado ainda.
+   --------------------------------------------------------------------- */
+.audit-page {
+  --aiki-purple: #6551f3;
+  --aiki-purple-dark: #3d3192;
+  --aiki-purple-ink: #141031;
+  --aiki-purple-tint: #e0dcfd;
+  --aiki-purple-tint-soft: #f7f6fe;
+
+  --aiki-carbon-5: #f5f5f6;
+  --aiki-carbon-20: #e5e5e9;
+  --aiki-carbon-40: #bfbfc8;
+  --aiki-carbon-60: #737283;
+  --aiki-carbon-80: #37364d;
+  --aiki-carbon-100: #010024;
+
+  --aiki-green: #00c07d;
+  --aiki-green-soft: #ccf2e5;
+  --aiki-orange: #ffac44;
+  --aiki-orange-soft: #ffead0;
+  --aiki-orange-deep: #cc7911;
+  --aiki-orange-deep-soft: #ffd5a1;
+  --aiki-red: #ff4a3e;
+  --aiki-red-soft: #ffe2df;
+
+  --aiki-radius: 1rem;
+  --aiki-radius-sm: .375rem;
+  --aiki-radius-md: .75rem;
+  --aiki-radius-pill: 160px;
+  --aiki-shadow: 0 1px 2px rgba(1,0,36,.04), 0 8px 24px -8px rgba(1,0,36,.12);
+
+  background: var(--aiki-carbon-5);
+  color: var(--aiki-purple-ink);
+  font-family: var(--font-body-fam);
+  min-height: 100vh;
+}
+
+.audit-wrap { max-width: 760px; margin: 0 auto; padding: 56px 24px 80px; }
+.audit-eyebrow {
+  font-family: var(--font-mono-fam); font-size: 12px; letter-spacing: .08em; text-transform: uppercase;
+  color: var(--aiki-purple); font-weight: 600; margin-bottom: 14px; display: flex; align-items: center; gap: 8px;
+}
+.audit-eyebrow::before { content: ""; width: 18px; height: 1.5px; background: var(--aiki-purple); display: inline-block; }
+
+.audit-title { font-family: var(--font-body-fam); font-weight: 500; font-size: clamp(2rem, 4.5vw, 2.9rem); line-height: 1.1; letter-spacing: -.02em; margin: 0 0 16px; color: var(--aiki-purple-ink); text-wrap: balance; }
+.audit-sub { color: var(--aiki-carbon-80); font-size: 1.05rem; line-height: 1.55; max-width: 58ch; margin: 0 0 32px; }
+
+/* ---------- input form ---------- */
+.audit-form { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
+.audit-input {
+  flex: 1; min-width: 240px; font-family: var(--font-body-fam); font-size: 1.05rem; padding: 16px 20px;
+  border-radius: var(--aiki-radius-pill); border: 1.5px solid var(--aiki-carbon-40); background: #fff; color: var(--aiki-purple-ink);
+}
+.audit-input:focus { outline: none; border-color: var(--aiki-purple); box-shadow: 0 0 0 3px var(--aiki-purple-tint); }
+.audit-submit {
+  font-family: var(--font-body-fam); font-weight: 600; font-size: 1.02rem; padding: 16px 30px; white-space: nowrap;
+  border-radius: var(--aiki-radius-pill); border: 1px solid var(--aiki-purple); background: var(--aiki-purple); color: #fff;
+  cursor: pointer; transition: background .15s, transform .15s;
+}
+.audit-submit:hover { background: var(--aiki-purple-dark); transform: translateY(-1px); }
+.audit-submit:disabled { opacity: .6; cursor: default; transform: none; }
+.audit-hint { font-size: .82rem; color: var(--aiki-carbon-60); margin: 0; }
+.audit-error { margin-top: 16px; padding: 14px 18px; border-radius: var(--aiki-radius-sm); background: var(--aiki-red-soft); color: #992c25; font-size: .92rem; }
+
+/* ---------- scanning ---------- */
+.audit-scan { display: flex; flex-direction: column; align-items: flex-start; gap: 20px; padding: 40px 0; }
+.audit-scan-ring {
+  width: 64px; height: 64px; border-radius: 50%; border: 4px solid var(--aiki-carbon-20); border-top-color: var(--aiki-purple);
+  animation: auditSpin 1s linear infinite;
+}
+@keyframes auditSpin { to { transform: rotate(360deg); } }
+.audit-scan-status { font-family: var(--font-mono-fam); font-size: .92rem; color: var(--aiki-purple-ink); min-height: 1.4em; }
+.audit-scan-target { font-family: var(--font-mono-fam); font-size: .8rem; color: var(--aiki-carbon-60); word-break: break-all; }
+
+/* ---------- results ---------- */
+.audit-result-head { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; margin-bottom: 32px; padding-bottom: 28px; border-bottom: 1px solid var(--aiki-carbon-20); }
+.audit-gauge { width: 128px; height: 128px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+  background: conic-gradient(var(--gauge-color, var(--aiki-carbon-20)) calc(var(--gauge-pct, 0) * 1%), var(--aiki-carbon-20) 0); }
+.audit-gauge-inner { width: 98px; height: 98px; border-radius: 50%; background: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.audit-gauge-pct { font-family: var(--font-body-fam); font-size: 1.7rem; font-weight: 700; line-height: 1; color: var(--aiki-purple-ink); }
+.audit-gauge-level { font-family: var(--font-mono-fam); font-size: 10px; letter-spacing: .06em; text-transform: uppercase; margin-top: 4px; font-weight: 700; }
+.audit-result-headline { font-family: var(--font-body-fam); font-weight: 500; font-size: clamp(1.4rem, 3vw, 1.9rem); line-height: 1.25; margin: 0 0 8px; color: var(--aiki-purple-ink); text-wrap: balance; }
+.audit-result-target { font-family: var(--font-mono-fam); font-size: .82rem; color: var(--aiki-carbon-60); word-break: break-all; }
+
+.audit-section-label { font-family: var(--font-mono-fam); font-size: 11px; letter-spacing: .07em; text-transform: uppercase; color: var(--aiki-carbon-60); font-weight: 600; margin: 0 0 14px; }
+
+.audit-risk-card { display: flex; flex-direction: column; gap: 4px; padding: 18px 20px; border-radius: var(--aiki-radius-md); background: var(--aiki-red-soft); margin-bottom: 12px; }
+.audit-risk-card.calm { background: var(--aiki-green-soft); }
+.audit-risk-card h3 { font-family: var(--font-body-fam); font-size: 1.02rem; font-weight: 700; margin: 0; color: var(--aiki-purple-ink); }
+.audit-risk-card p { margin: 0; font-size: .9rem; line-height: 1.5; color: var(--aiki-carbon-80); }
+
+.audit-findings { display: flex; flex-direction: column; gap: 1px; background: var(--aiki-carbon-20); border: 1px solid var(--aiki-carbon-20); border-radius: var(--aiki-radius); overflow: hidden; margin-bottom: 32px; }
+.audit-finding { background: #fff; padding: 16px 20px; display: flex; align-items: flex-start; gap: 14px; }
+.audit-finding-icon { width: 26px; height: 26px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; margin-top: 1px; }
+.audit-finding-icon.bad { background: var(--aiki-red-soft); color: #992c25; }
+.audit-finding-icon.ok { background: var(--aiki-green-soft); color: #00734b; }
+.audit-finding-icon svg { width: 13px; height: 13px; }
+.audit-finding-body { flex: 1; min-width: 0; }
+.audit-finding-top { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.audit-finding-label { font-weight: 600; font-size: .95rem; color: var(--aiki-purple-ink); }
+.audit-finding-article { font-family: var(--font-mono-fam); font-size: 10px; color: var(--aiki-carbon-60); white-space: nowrap; }
+.audit-finding-detail { font-size: .86rem; color: var(--aiki-carbon-60); margin: 4px 0 0; line-height: 1.5; }
+
+.audit-disclaimer { font-size: .8rem; color: var(--aiki-carbon-60); line-height: 1.55; margin: 0 0 32px; padding: 14px 18px; background: var(--aiki-carbon-5); border: 1px solid var(--aiki-carbon-20); border-radius: var(--aiki-radius-sm); }
+
+.audit-cta { display: flex; flex-direction: column; align-items: flex-start; gap: 14px; padding: 28px; border-radius: var(--aiki-radius); background: var(--aiki-purple-ink); color: #fff; }
+.audit-cta h3 { font-family: var(--font-body-fam); font-weight: 500; font-size: 1.3rem; margin: 0; text-wrap: balance; }
+.audit-cta p { margin: 0; color: var(--aiki-purple-tint); font-size: .92rem; max-width: 50ch; }
+.audit-cta-row { display: flex; gap: 10px; flex-wrap: wrap; }
+.audit-cta-btn { font-family: var(--font-body-fam); font-weight: 600; font-size: .95rem; padding: 13px 24px; border-radius: var(--aiki-radius-pill); border: 1px solid #fff; background: #fff; color: var(--aiki-purple-ink); cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; transition: transform .15s; }
+.audit-cta-btn:hover { transform: translateY(-1px); }
+.audit-cta-btn.ghost { background: transparent; color: #fff; }
+
+.audit-again { all: unset; cursor: pointer; font-family: var(--font-body-fam); font-size: .85rem; color: var(--aiki-carbon-60); margin-top: 20px; display: inline-block; }
+.audit-again:hover { color: var(--aiki-purple); }
+
+@media (prefers-reduced-motion: reduce) {
+  .audit-page * { animation: none !important; transition: none !important; }
+}

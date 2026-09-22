@@ -37,6 +37,24 @@ v3/Dattis:
 - **A home (`/`) ainda está no sistema visual e copy antigos (Dattum/Deel-based)** —
   branding e design da home ainda não foram atualizados pro pivô Dattis/Aikido. Não
   assumir que a home já reflete o novo posicionamento até isso ser feito explicitamente.
+- **`/diagnostico` é fluxo estilo Typeform** (2026-09-21, a pedido do usuário): uma
+  pergunta por tela, avanço automático (~380ms após clicar), score de risco fixo no
+  header (persiste entre as telas), tela de resultado completo no final. Mesma lógica
+  de score de antes, só a apresentação mudou pra sequencial.
+- **`/auditoria` é nova (2026-09-22)**: usuário cola a URL de um site, o backend
+  (`app/api/auditoria/route.ts`, rota dinâmica Node) faz `fetch` server-side do HTML
+  público e roda checagem heurística por regex — pixels (Meta/GA/GTM/TikTok/LinkedIn/
+  Google Ads), formulário capturando e-mail/telefone, link de WhatsApp, widget de chat,
+  banner de consentimento de cookies (CMPs conhecidos + texto genérico), link de
+  política de privacidade, HTTPS. Cada achado tem peso; score = pontos atingidos ÷ 17
+  (mesmas faixas Baixo/Médio/Alto/Crítico do Diagnóstico). Frontend em
+  `app/auditoria/page.tsx` + `auditoria.css` (mesmos tokens Aikido, duplicados do
+  `diagnostico.css` — as duas rotas ainda não compartilham um módulo de tokens comum).
+  **Isso é uma varredura heurística do HTML público, não uma auditoria jurídica** — não
+  vê backend, cookies definidos após interação, nem contratos. O disclaimer no resultado
+  e o footer deixam isso explícito; nunca reportar um achado que a regex não confirmou
+  de verdade (sem fabricar violação). Proteção básica contra SSRF: bloqueia localhost,
+  IPs privados (10.*/172.16-31.*/192.168.*/169.254.*) e hostname sem ponto.
 
 ---
 
