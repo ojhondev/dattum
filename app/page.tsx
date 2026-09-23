@@ -1,240 +1,171 @@
 "use client";
 
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useState } from "react";
 import Image from "next/image";
 
-const PICKS: { key: string; label: string; short: string }[] = [
-  {
-    key: "contrato",
-    label: "Contrato de prestação de serviço genérico, sem cláusula de dados",
-    short: "contrato de operador",
-  },
-  {
-    key: "contaminacao",
-    label: "Contaminação cruzada de base entre clientes",
-    short: "segregação de base",
-  },
-  {
-    key: "exclusao",
-    label: "Pedido de exclusão que ninguém sabe processar",
-    short: "canal do titular",
-  },
-  {
-    key: "selo",
-    label: "Selo de conformidade pra vender",
-    short: "selo de conformidade",
-  },
-  {
-    key: "incidente",
-    label: "Zero playbook de incidente",
-    short: "plano de incidente",
-  },
+type ModuleKey = "rat" | "dpa" | "subprocessadores" | "auditoria";
+
+const MODULES: { key: ModuleKey; label: string }[] = [
+  { key: "rat", label: "rat" },
+  { key: "dpa", label: "dpa" },
+  { key: "subprocessadores", label: "subprocessadores" },
+  { key: "auditoria", label: "auditoria" },
 ];
 
-function Check() {
+const MODULE_TITLES: Record<ModuleKey, string> = {
+  rat: "painel.dattis.com/contas/loja-aurora — o que fazemos com o dado",
+  dpa: "painel.dattis.com/contas/loja-aurora — contrato com o cliente",
+  subprocessadores: "painel.dattis.com/subprocessadores — quem mais mexe nesse dado",
+  auditoria: "dattis.com/auditoria — resultado",
+};
+
+function RatPreview() {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3">
-      <polyline points="4 12 9 18 20 6" />
-    </svg>
+    <div className="mw-rat-card">
+      <h4>Conversion API (CAPI) e Custom Audiences</h4>
+      <div className="mw-rat-grid">
+        <div className="full">
+          <p className="mw-field-label">Categorias de dado</p>
+          <p className="mw-field-value">
+            Dado de contato hasheado (e-mail, telefone), identificador de dispositivo, evento de conversão
+          </p>
+        </div>
+        <div>
+          <p className="mw-field-label">Finalidade</p>
+          <p className="mw-field-value">Otimizar e mensurar campanhas de tráfego pago via Meta Ads em nome do cliente</p>
+        </div>
+        <div>
+          <p className="mw-field-label">Base legal</p>
+          <p className="mw-field-value">Legítimo interesse do controlador e execução do contrato (art. 7º, IX e V, LGPD)</p>
+        </div>
+        <div>
+          <p className="mw-field-label">Titulares</p>
+          <p className="mw-field-value">Leads e clientes do cliente final atendido pela agência</p>
+        </div>
+        <div>
+          <p className="mw-field-label">Prazo de retenção</p>
+          <p className="mw-field-value">Enquanto durar a campanha ativa, mais 6 meses</p>
+        </div>
+      </div>
+    </div>
   );
 }
 
-function DocIcon() {
+function DpaPreview() {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M7 3h7l5 5v13H7z" />
-      <path d="M14 3v5h5" />
-      <path d="M9.5 13h5M9.5 16.5h5" />
-    </svg>
+    <div>
+      <span className="mw-dpa-badge">Assinado eletronicamente</span>
+      <div className="mw-dpa-doc">
+{`CONTRATO DE OPERAÇÃO DE DADOS PESSOAIS (DPA)
+
+Firmado nos termos da Lei nº 13.709/2018 (LGPD), entre:
+OPERADORA: Agência Aurora Tráfego.
+CONTROLADORA: Loja Aurora.
+
+1. OBJETO
+A Agência tratará dados pessoais em nome do Cliente exclusivamente
+para a execução dos serviços de tráfego pago contratados...
+
+3. SUBPROCESSADORES AUTORIZADOS
+  - Meta Ads (Facebook/Instagram)
+  - WhatsApp Business API`}
+      </div>
+    </div>
   );
 }
 
-function InboxIcon() {
+function SubprocessadoresPreview() {
+  const rows = [
+    { nome: "Meta Ads (Facebook/Instagram)", categoria: "Publicidade", contas: 1 },
+    { nome: "Google Ads / Google Analytics", categoria: "Publicidade", contas: 1 },
+    { nome: "WhatsApp Business API", categoria: "Atendimento", contas: 1 },
+    { nome: "RD Station", categoria: "CRM/Automação", contas: 1 },
+  ];
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M3 12h5l2 3h4l2-3h5" />
-      <path d="M5 12 4 5h16l-1 7" />
-      <path d="M4 12v6a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-6" />
-    </svg>
+    <table className="mw-table">
+      <thead>
+        <tr>
+          <th>Ferramenta</th>
+          <th>Categoria</th>
+          <th>Em quantas contas</th>
+        </tr>
+      </thead>
+      <tbody>
+        {rows.map((r) => (
+          <tr key={r.nome}>
+            <td>{r.nome}</td>
+            <td>{r.categoria}</td>
+            <td>{r.contas}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
   );
 }
 
-function NetworkIcon() {
+function AuditoriaPreview() {
+  const findings = [
+    { label: "Meta Pixel / CAPI", detail: "Confirmado por requisição de rede real", bad: true },
+    { label: "Banner de consentimento de cookies", detail: "Não encontrado no DOM renderizado", bad: true },
+    { label: "HTTPS", detail: "Certificado válido", bad: false },
+    { label: "Política de privacidade", detail: "Link encontrado no rodapé", bad: false },
+  ];
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="6" cy="6" r="2.4" />
-      <circle cx="18" cy="6" r="2.4" />
-      <circle cx="12" cy="18" r="2.4" />
-      <path d="M8 7.3 14.7 17M16 7.3 9.3 17M8.4 6h7.2" />
-    </svg>
+    <div>
+      <div className="mw-audit-head">
+        <div className="mw-gauge">
+          <div className="mw-gauge-inner">
+            <span className="mw-gauge-pct">38%</span>
+            <span className="mw-gauge-level">Médio</span>
+          </div>
+        </div>
+        <div>
+          <p style={{ fontWeight: 600, color: "var(--ink)", fontSize: ".98rem", marginBottom: 4 }}>
+            Risco Médio — dá pra corrigir rápido, antes que vire problema
+          </p>
+          <p style={{ fontSize: ".8rem", color: "var(--carbon-60)", fontFamily: "var(--font-mono-fam)" }}>
+            lojaaurora.com.br
+          </p>
+        </div>
+      </div>
+      {findings.map((f) => (
+        <div className="mw-finding" key={f.label}>
+          <span className={`mw-finding-icon ${f.bad ? "bad" : "ok"}`}>{f.bad ? "!" : "✓"}</span>
+          <div>
+            <div className="mw-finding-label">{f.label}</div>
+            <div className="mw-finding-detail">{f.detail}</div>
+          </div>
+        </div>
+      ))}
+    </div>
   );
-}
-
-function AlertIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M12 3 2 20h20z" />
-      <path d="M12 9.5v4" />
-      <circle cx="12" cy="16.5" r=".6" fill="currentColor" stroke="none" />
-    </svg>
-  );
-}
-
-function ChecklistIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <rect x="5" y="3" width="14" height="18" rx="2" />
-      <path d="M9 11l2 2 4-4" />
-    </svg>
-  );
-}
-
-function ShieldIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z" />
-    </svg>
-  );
-}
-
-const PILLARS: {
-  key: string;
-  label: string;
-  icon: ReactNode;
-  hoje: string;
-  problema: string;
-  dattum: string;
-}[] = [
-  {
-    key: "risco",
-    label: "Risco LGPD",
-    icon: <AlertIcon />,
-    hoje: "Contrato de prestação de serviço genérico, CRM compartilhado entre clientes, e ninguém sabe quem responde se um lead reclamar — a agência já é operadora de dados e já responde solidariamente por isso (art. 42), mesmo sem saber.",
-    problema: "Sem contrato de operador, sem canal do titular, sem plano de incidente — cada cliente novo é um novo ponto de exposição, e a responsabilidade pode se equiparar à do controlador.",
-    dattum: "Diagnóstico gratuito, sprint de higienização em 10 dias úteis, e a carteira inteira operando sob as onze obrigações acessórias da Dattum — cliente novo e cliente antigo, sem depender de projeto avulso.",
-  },
-  {
-    key: "regularizacao",
-    label: "Regularização",
-    icon: <ChecklistIcon />,
-    hoje: "A agência sabe que está exposta, mas não sabe por onde começar — ajustes acontecem cliente a cliente, sem checklist, sem prazo, sem registro do que já foi corrigido.",
-    problema: "Sem um processo padronizado de regularização, alguns clientes recebem atenção e outros ficam pra trás — e não existe comprovante de que a correção realmente aconteceu.",
-    dattum: "Sprint de higienização em 10 dias úteis, checklist único aplicado a toda a carteira, e um relatório de conclusão por conta — prova documental de que o ajuste foi feito.",
-  },
-  {
-    key: "dpo",
-    label: "DPO as a Service",
-    icon: <ShieldIcon />,
-    hoje: "Ninguém na agência é formalmente responsável pela LGPD — fica sob “alguém vai resolver”, geralmente o time jurídico externo que só é acionado quando já deu problema.",
-    problema: "Sem um responsável contínuo, obrigação vence, contrato vence, e não tem quem monitore — e se a ANPD ou um cliente perguntar, ninguém sabe responder.",
-    dattum: "As onze obrigações acessórias rodando como assinatura, com ponto de contato dedicado e monitoramento contínuo — a mesma função de um DPO interno, sem contratar um.",
-  },
-];
-
-function useReveal<T extends HTMLElement>() {
-  const ref = useRef<T>(null);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    if (!("IntersectionObserver" in window)) {
-      el.classList.add("in");
-      return;
-    }
-    const obs = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((e) => {
-          if (e.isIntersecting) {
-            (e.target as HTMLElement).classList.add("in");
-            obs.unobserve(e.target);
-          }
-        });
-      },
-      { threshold: 0.12 }
-    );
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, []);
-  return ref;
 }
 
 export default function Home() {
-  const [showUtilBar, setShowUtilBar] = useState(true);
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [selected, setSelected] = useState<Record<string, boolean>>({});
-  const [barsFilled, setBarsFilled] = useState(false);
-  const [activePillar, setActivePillar] = useState(PILLARS[0].key);
-
-  useEffect(() => {
-    const t = setTimeout(() => setBarsFilled(true), 50);
-    return () => clearTimeout(t);
-  }, []);
-
-  useEffect(() => {
-    document.body.style.overflow = menuOpen ? "hidden" : "";
-  }, [menuOpen]);
-
-  const togglePick = (key: string) =>
-    setSelected((s) => ({ ...s, [key]: !s[key] }));
-
-  const activeLabels = PICKS.filter((p) => selected[p.key]).map((p) => p.short);
-  const hint =
-    activeLabels.length > 0
-      ? `Seu diagnóstico vai priorizar: ${activeLabels.join(", ")}.`
-      : " ";
-
-  const revServ = useReveal<HTMLElement>();
-  const revJourney = useReveal<HTMLElement>();
-  const revDiff1 = useReveal<HTMLDivElement>();
-  const revDiff2 = useReveal<HTMLDivElement>();
-  const revMarcas = useReveal<HTMLDivElement>();
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [activeModule, setActiveModule] = useState<ModuleKey>("rat");
 
   return (
-    <>
-      {showUtilBar && (
-        <div className="util-bar" id="utilbar">
-          <div className="wrap">
-            <div className="util-left">
-              <span className="wa-dot"></span>
-              <span>Fale com nosso time:</span>
-              <span className="util-phone">+55 55006 6778</span>
-            </div>
-            <button
-              className="util-close"
-              aria-label="Fechar aviso"
-              onClick={() => setShowUtilBar(false)}
-            >
-              ✕
-            </button>
-          </div>
-        </div>
-      )}
-
-      <header className="site">
-        <div className="wrap">
-          <a className="wordmark" href="#top">
-            <Image src="/logo-dattum.png" alt="Dattum" width={640} height={146} className="logo-img" priority />
+    <div className="home-page">
+      <div className="home-nav-wrap">
+        <nav className="home-nav">
+          <a href="#top" className="home-nav-brand">
+            <Image src="/brand/logo-fundo-dark.png" alt="Dattis" width={110} height={21} style={{ height: 21, width: "auto" }} priority />
           </a>
-          <div className="header-mid">
-            <nav className="navlinks">
-              <a href="#solucoes">soluções</a>
-              <a href="#exemplo">casos de uso</a>
-              <a href="#quem-atendemos">quem atendemos</a>
-              <a href="#precos">preços</a>
-            </nav>
+          <div className="home-nav-links">
+            <a href="#modulos">Módulos</a>
+            <a href="/diagnostico">Diagnóstico</a>
+            <a href="/auditoria">Auditoria</a>
+            <a href="#precos">Preços</a>
           </div>
-          <div className="header-actions">
-            <a className="btn btn-ghost" href="#cta">
-              entrar
+          <div className="home-nav-actions">
+            <a href="/entrar" className="home-login">
+              Entrar
             </a>
-            <a className="btn btn-dark" href="#cta">
-              veja uma demo
+            <a href="/cadastro" className="home-btn home-btn-mint">
+              Começar grátis
             </a>
-            <button
-              className="menu-btn"
-              aria-label="Abrir menu"
-              aria-expanded={menuOpen}
-              onClick={() => setMenuOpen(true)}
-            >
+            <button className="home-menu-btn" onClick={() => setMobileOpen(true)} aria-label="Abrir menu">
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <line x1="3" y1="6" x2="21" y2="6" />
                 <line x1="3" y1="12" x2="21" y2="12" />
@@ -242,656 +173,112 @@ export default function Home() {
               </svg>
             </button>
           </div>
-        </div>
-      </header>
+        </nav>
+      </div>
 
-      <div className={`mobile-menu${menuOpen ? " open" : ""}`}>
+      <div className={`home-mobile-menu ${mobileOpen ? "open" : ""}`}>
         <div className="mm-top">
-          <a className="wordmark" href="#top">
-            <Image src="/logo-dattum.png" alt="Dattum" width={640} height={146} className="logo-img" />
-          </a>
-          <button
-            className="menu-btn"
-            aria-label="Fechar menu"
-            style={{ display: "flex" }}
-            onClick={() => setMenuOpen(false)}
-          >
+          <Image src="/brand/logo-fundo-dark.png" alt="Dattis" width={100} height={19} style={{ height: 19, width: "auto" }} />
+          <button className="mm-close" onClick={() => setMobileOpen(false)} aria-label="Fechar menu">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <line x1="6" y1="6" x2="18" y2="18" />
-              <line x1="6" y1="18" x2="18" y2="6" />
+              <line x1="5" y1="5" x2="19" y2="19" />
+              <line x1="19" y1="5" x2="5" y2="19" />
             </svg>
           </button>
         </div>
         <nav>
-          <a href="#solucoes" onClick={() => setMenuOpen(false)}>
-            soluções
-          </a>
-          <a href="#exemplo" onClick={() => setMenuOpen(false)}>
-            casos de uso
-          </a>
-          <a href="#quem-atendemos" onClick={() => setMenuOpen(false)}>
-            quem atendemos
-          </a>
-          <a href="#precos" onClick={() => setMenuOpen(false)}>
-            preços
-          </a>
+          <a href="#modulos" onClick={() => setMobileOpen(false)}>Módulos</a>
+          <a href="/diagnostico" onClick={() => setMobileOpen(false)}>Diagnóstico</a>
+          <a href="/auditoria" onClick={() => setMobileOpen(false)}>Auditoria</a>
+          <a href="#precos" onClick={() => setMobileOpen(false)}>Preços</a>
         </nav>
         <div className="mm-cta">
-          <a className="btn btn-ghost btn-block" href="#cta" onClick={() => setMenuOpen(false)}>
-            entrar
-          </a>
-          <a className="btn btn-dark btn-block" href="#cta" onClick={() => setMenuOpen(false)}>
-            veja uma demo
-          </a>
+          <a href="/entrar" className="home-btn home-btn-outline-white">Entrar</a>
+          <a href="/cadastro" className="home-btn home-btn-mint">Começar grátis</a>
         </div>
       </div>
 
-      <div className="hero" id="top">
-        <div className="hero-copy">
-          <h1>Sua agência pode ser multada por falta de conformidade com a LGPD</h1>
-          <p className="hero-sub">Marque o que já é problema pra você:</p>
-          <div className="pick-grid" role="group" aria-label="Selecione seus desafios de conformidade">
-            <div className="pick-row">
-              {PICKS.slice(0, 2).map((p) => (
-                <button
-                  key={p.key}
-                  type="button"
-                  className="pick"
-                  aria-pressed={!!selected[p.key]}
-                  onClick={() => togglePick(p.key)}
-                >
-                  <span className="pick-box">
-                    <Check />
-                  </span>
-                  <span className="pick-label">{p.label}</span>
-                </button>
-              ))}
-            </div>
-            <div className="pick-row">
-              {PICKS.slice(2).map((p) => (
-                <button
-                  key={p.key}
-                  type="button"
-                  className="pick"
-                  aria-pressed={!!selected[p.key]}
-                  onClick={() => togglePick(p.key)}
-                >
-                  <span className="pick-box">
-                    <Check />
-                  </span>
-                  <span className="pick-label">{p.label}</span>
-                </button>
-              ))}
-            </div>
-          </div>
-          <p className="pick-hint" aria-live="polite">
-            {hint}
-          </p>
-          <a className="btn btn-white btn-block" href="#cta">
-            Agendar uma análise de especialista
-          </a>
-          <p className="hero-trust">
-            Fundamentado na LGPD (Lei 13.709/2018, art. 42 e 52). Nunca
-            apresentado como comunicação oficial da ANPD.
-          </p>
-        </div>
-        <div className="hero-visual">
-          <span className="photo-note">Imagem — placeholder</span>
-        </div>
-      </div>
-
-      <div className="trust-strip">
-        <div className="wrap">
-          <p className="trust-head">
-            Somos a escolha de mais de 100 agências quando o assunto é
-            gestão de conformidade com a LGPD
-          </p>
-        </div>
-        <div className="trust-marquee">
-          <div className="trust-track">
-            {Array.from({ length: 10 }).map((_, i) => (
-              <span className="trust-tile" key={i}>
-                Imagem — placeholder
-              </span>
-            ))}
-            {Array.from({ length: 10 }).map((_, i) => (
-              <span className="trust-tile" aria-hidden="true" key={`dup-${i}`}>
-                Imagem — placeholder
-              </span>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      <section className="block reveal" id="solucoes" ref={revServ}>
-        <div className="wrap">
-          <div className="block-head solo">
-            <h2>A plataforma da LGPD para agências de tráfego e performance</h2>
-          </div>
-          <div className="svc-grid">
-            <div className="svc-card">
-              <span className="svc-icon violet">
-                <DocIcon />
-              </span>
-              <h4>Contrato de operador padronizado</h4>
-              <p>
-                Template gerado e enviado pra cada cliente da carteira
-                assinar — sem trabalho jurídico caso a caso.
-              </p>
-              <div className="progress-pill">
-                <div className="pp-label">4 de 7 contas assinadas</div>
-                <div className="progress-track">
-                  <div
-                    className="progress-fill"
-                    style={{ width: barsFilled ? "57%" : "0%" }}
-                  ></div>
-                </div>
-              </div>
-            </div>
-            <div className="svc-card">
-              <span className="svc-icon celadon">
-                <InboxIcon />
-              </span>
-              <h4>Canal do titular centralizado</h4>
-              <p>
-                Formulário único, roteando pedido de exclusão ou acesso pro
-                cliente certo, com prazo rastreado.
-              </p>
-              <div className="progress-pill">
-                <div className="pp-label-row">
-                  <span className="pp-label">Configurado e ativo</span>
-                  <span className="pp-check">
-                    <Check />
-                  </span>
-                </div>
-                <div className="progress-track">
-                  <div
-                    className="progress-fill"
-                    style={{ width: barsFilled ? "100%" : "0%" }}
-                  ></div>
-                </div>
-              </div>
-            </div>
-            <div className="svc-card">
-              <span className="svc-icon amber">
-                <NetworkIcon />
-              </span>
-              <h4>Mapeamento de sub-processadores</h4>
-              <p>
-                Todo SaaS que toca o dado de cada conta — Meta, RD Station,
-                WhatsApp API — listado e monitorado.
-              </p>
-              <div className="progress-pill">
-                <div className="pp-label">12 de 15 ferramentas mapeadas</div>
-                <div className="progress-track">
-                  <div
-                    className="progress-fill"
-                    style={{ width: barsFilled ? "80%" : "0%" }}
-                  ></div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="block reveal" ref={revJourney}>
-        <div className="wrap">
-          <div className="block-head center">
-            <span className="eyebrow">O QUE A DATTUM FAZ</span>
-            <h2>Como a Dattum atua</h2>
-          </div>
-          <div className="timeline-rule"></div>
-          <div className="pillar-row" role="tablist" aria-label="Pilares de atuação da Dattum">
-            {PILLARS.map((p) => (
-              <button
-                key={p.key}
-                type="button"
-                role="tab"
-                aria-selected={activePillar === p.key}
-                className={`pillar-btn pillar-${p.key}`}
-                onClick={() => setActivePillar(p.key)}
-              >
-                <span className="pillar-icon">{p.icon}</span>
-                {p.label}
-              </button>
-            ))}
-          </div>
-          <div className="journey-grid" key={activePillar}>
-            <div className="j-col">
-              <h4>Como está hoje</h4>
-              <div className="j-card">
-                {PILLARS.find((p) => p.key === activePillar)?.hoje}
-              </div>
-            </div>
-            <div className="j-col">
-              <h4>O problema</h4>
-              <div className="j-card">
-                {PILLARS.find((p) => p.key === activePillar)?.problema}
-              </div>
-            </div>
-            <div className="j-col">
-              <h4>Com a Dattum</h4>
-              <div className="j-card">
-                {PILLARS.find((p) => p.key === activePillar)?.dattum}
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <div className="dark-band reveal" ref={revDiff1}>
-        <div className="wrap">
-          <div className="diff-head">
-            <h2>Diferenciais da Dattum baseados nas dores das agências</h2>
-          </div>
-          <div className="diff-cards">
-            <div className="diff-card">
-              <h5>Relatório mensal por conta</h5>
-              <p>
-                Score de conformidade e pendências, conta por conta e
-                agregado — igual ao fechamento que o contador manda todo
-                mês.
-              </p>
-            </div>
-            <div className="diff-card">
-              <h5>Motor de diagnóstico contínuo</h5>
-              <p>
-                Reexecuta sobre as campanhas ativas — pega o pixel novo, o
-                app novo, o contrato que falta, sem esperar reclamação.
-              </p>
-            </div>
-            <div className="diff-card">
-              <h5>Playbook multicliente de incidente</h5>
-              <p>
-                Um plano só, cobrindo toda a carteira — mostra o raio de
-                impacto entre clientes no minuto em que algo vaza.
-              </p>
-            </div>
-          </div>
-          <div className="diff-photo">
-            <span className="ph-note">Imagem — placeholder</span>
-            <div className="tool-list-card">
-              <div className="tl-row">
-                <span className="tl-name">
-                  <span className="tl-dot">M</span>Meta Ads
-                </span>
-                <span className="tl-check">✓</span>
-              </div>
-              <div className="tl-row">
-                <span className="tl-name">
-                  <span className="tl-dot">R</span>RD Station
-                </span>
-                <span className="tl-check">✓</span>
-              </div>
-              <div className="tl-row">
-                <span className="tl-name">
-                  <span className="tl-dot">W</span>WhatsApp API
-                </span>
-                <span className="tl-check">✓</span>
-              </div>
-              <div className="tl-row">
-                <span className="tl-name">
-                  <span className="tl-dot">Z</span>Zapier
-                </span>
-                <span className="tl-check">✓</span>
-              </div>
-              <div className="tl-row">
-                <span className="tl-name">
-                  <span className="tl-dot">H</span>Hotmart
-                </span>
-                <span className="tl-check">✓</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div
-        className="dark-band reveal"
-        style={{ paddingTop: 0 }}
-        ref={revDiff2}
-      >
-        <div className="wrap">
-          <div className="infra-panel">
-            <h3>
-              Construindo infraestrutura própria de gestão LGPD para
-              agências.
-            </h3>
-            <div className="badge-cloud">
-              <span className="tool-badge">
-                <span className="tb-dot"></span>Meta Ads
-              </span>
-              <span className="tool-badge">
-                <span className="tb-dot"></span>Google Ads
-              </span>
-              <span className="tool-badge">
-                <span className="tb-dot"></span>TikTok Ads
-              </span>
-              <span className="tool-badge">
-                <span className="tb-dot"></span>RD Station
-              </span>
-              <span className="tool-badge">
-                <span className="tb-dot"></span>WhatsApp API
-              </span>
-              <span className="tool-badge">
-                <span className="tb-dot"></span>Zapier
-              </span>
-              <span className="tool-badge">
-                <span className="tb-dot"></span>Hotmart
-              </span>
-              <span className="tool-badge">
-                <span className="tb-dot"></span>ActiveCampaign
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="marcas reveal" id="quem-atendemos" ref={revMarcas}>
-        <div className="wrap">
-          <p className="mc-head">
-            <strong>A Dattum ainda não tem 500 agências como cliente</strong>{" "}
-            — tem uma tese jurídica que não depende de escala pra ser
-            verdadeira. Auditamos agências que operam em:
-          </p>
-          <div className="tool-row">
-            <span>Meta Ads</span>
-            <span>Google Ads</span>
-            <span>TikTok Ads</span>
-            <span>RD Station</span>
-            <span>WhatsApp API</span>
-            <span>Hotmart</span>
-          </div>
-        </div>
-      </div>
-
-      <div className="reviews-panel" id="exemplo">
-        <div className="wrap">
-          <span className="ex-tag">
-            Exemplo ilustrativo — não é uma cliente real
-          </span>
-          <div className="block-head">
-            <h2>É assim que um diagnóstico de operador chega até você</h2>
-            <p>
-              A &quot;Agência Exemplo&quot; abaixo é fictícia — construída
-              pra mostrar a estrutura real de um relatório: fato
-              verificável, artigo da lei, risco. A Dattum ainda não tem
-              clientes publicados; por isso não há depoimentos nesta página
-              — só o que conseguimos provar.
-            </p>
-          </div>
-          <div className="ex-cards">
-            <div className="finding-card">
-              <div className="fc-head">
-                <h5>Base de leads compartilhada</h5>
-                <code>art. 42</code>
-              </div>
-              <p>
-                O mesmo CRM concentra leads de 3 clientes diferentes, sem
-                segregação — risco de equiparação da agência ao controlador.
-              </p>
-            </div>
-            <div className="finding-card">
-              <div className="fc-head">
-                <h5>Nenhum contrato de operador</h5>
-                <code>art. 42</code>
-              </div>
-              <p>
-                Nenhum dos 7 clientes ativos tem cláusula de tratamento de
-                dados no contrato de prestação de serviço.
-              </p>
-            </div>
-            <div className="finding-card">
-              <div className="fc-head">
-                <h5>Canal do titular inexistente</h5>
-                <code>art. 18</code>
-              </div>
-              <p>
-                Pedido de exclusão chegaria pelo WhatsApp da campanha, sem
-                fluxo definido pra tratar.
-              </p>
-            </div>
-          </div>
-
-          <section className="block" id="precos" style={{ paddingTop: 0 }}>
-            <div className="block-head">
-              <span className="eyebrow" style={{ color: "var(--amber)" }}>
-                PREÇOS
-              </span>
-              <h2>Preço por faixa de contas geridas</h2>
-              <p>
-                Não cobramos pelo faturamento da agência — cobramos pelo
-                número de contas de cliente ativas. A mesma régua da
-                contabilidade: por volume, não por &quot;quão
-                importante&quot; é o cliente.
-              </p>
-            </div>
-            <div className="plan-grid">
-              <div className="plan-card">
-                <div className="pname">Start</div>
-                <div className="prange">até 10 contas de clientes ativas</div>
-                <div className="price">Sob consulta</div>
-                <ul>
-                  <li>Auditoria trimestral</li>
-                  <li>SLA canal do titular: 15 dias úteis</li>
-                  <li>Suporte e-mail + chat</li>
-                </ul>
-                <a className="btn btn-white" href="#cta">
-                  Falar com a gente
-                </a>
-              </div>
-              <div className="plan-card rec">
-                <span className="badge">Mais comum</span>
-                <div className="pname">Growth</div>
-                <div className="prange">11–30 contas de clientes ativas</div>
-                <div className="price">Sob consulta</div>
-                <ul>
-                  <li>Auditoria mensal</li>
-                  <li>SLA canal do titular: 10 dias úteis</li>
-                  <li>Suporte prioritário</li>
-                </ul>
-                <a className="btn btn-white" href="#cta">
-                  Falar com a gente
-                </a>
-              </div>
-              <div className="plan-card">
-                <div className="pname">Scale</div>
-                <div className="prange">31–100 contas de clientes ativas</div>
-                <div className="price">Sob consulta</div>
-                <ul>
-                  <li>Auditoria semanal</li>
-                  <li>SLA canal do titular: 5 dias úteis</li>
-                  <li>Gestor de conta dedicado</li>
-                </ul>
-                <a className="btn btn-white" href="#cta">
-                  Falar com a gente
-                </a>
-              </div>
-              <div className="plan-card">
-                <div className="pname">Enterprise</div>
-                <div className="prange">100+ contas de clientes ativas</div>
-                <div className="price">Sob consulta</div>
-                <ul>
-                  <li>Auditoria contínua + alertas</li>
-                  <li>SLA definido em contrato</li>
-                  <li>DPO dedicado nomeado</li>
-                </ul>
-                <a className="btn btn-white" href="#cta">
-                  Falar com o time
-                </a>
-              </div>
-            </div>
-            <p className="pricing-foot">
-              <strong>Sprint de Higienização</strong> cobrado à parte, com
-              crédito na primeira mensalidade se fechar o plano anual junto.
-              Valores por faixa ainda em definição — estamos validando com
-              agências reais antes de fechar preço;{" "}
-              <a href="#cta">fale com a gente</a> pra entrar nessa conversa.
-            </p>
-          </section>
-
-          <div style={{ textAlign: "center", padding: "3.5rem 0 4rem" }}>
-            <h2
-              style={{
-                color: "#fff",
-                fontSize: "clamp(1.8rem,3.4vw,2.5rem)",
-                maxWidth: "20ch",
-                margin: "0 auto 1rem",
-              }}
-            >
-              Descubra se sua agência já está exposta.
-            </h2>
-            <p
-              style={{
-                color: "var(--linen)",
-                maxWidth: "44ch",
-                margin: "0 auto 1.6rem",
-                fontSize: ".96rem",
-                fontFamily: "var(--font-body-fam)",
-              }}
-            >
-              Diagnóstico gratuito, baseado em campanhas públicas que você
-              já roda. Sem compromisso, sem cadastro de cartão.
-            </p>
-            <a className="btn btn-violet" href="#top" id="cta">
-              Agendar uma análise de especialista
-            </a>
-            <p
-              style={{
-                fontSize: ".74rem",
-                marginTop: "1rem",
-                color: "var(--ash)",
-              }}
-            >
-              O diagnóstico é um documento técnico da Dattum — não
-              constitui notificação da ANPD.
-            </p>
-          </div>
-
-          <nav className="foot-nav">
-            <a href="#">Sobre nós</a>
-            <a href="#">Equipe de liderança</a>
-            <a href="#">Carreiras</a>
-            <a href="#precos">Preços</a>
-          </nav>
-        </div>
-
-        <footer className="site">
+      <main id="top">
+        {/* ============ 1ª DOBRA — hero ============ */}
+        <section className="home-hero">
           <div className="wrap">
-            <div className="foot-top">
-              <h3>
-                Receba as atualizações de fiscalização da LGPD direto na sua
-                caixa de entrada.
-              </h3>
-              <div>
-                <div className="newsletter">
-                  <input type="email" placeholder="seu e-mail" />
-                  <a className="btn btn-white" href="#cta">
-                    Assinar
-                  </a>
-                </div>
-                <p className="newsletter-note">
-                  Sem spam. Cancelamento a qualquer momento.
-                </p>
-              </div>
+            <span className="eyebrow" style={{ marginBottom: 18 }}>
+              Dattis · Compliance LGPD para agências de tráfego pago
+            </span>
+            <h1>
+              Agência: evite multas por falta de conformidade com a LGPD
+            </h1>
+            <p className="hero-sub">
+              A Dattis gera, para cada cliente que sua agência atende, o registro do que vocês
+              fazem com o dado dele, o contrato assinado entre vocês e a lista de ferramentas
+              que também tocam esse dado — sem precisar contratar um advogado por documento.
+            </p>
+            <div className="home-hero-ctas">
+              <a href="/cadastro" className="home-btn home-btn-ink">
+                Começar grátis →
+              </a>
+              <a href="/diagnostico" className="home-btn home-btn-outline">
+                Fazer o Diagnóstico Expresso
+              </a>
             </div>
-            <div className="foot-grid">
-              <div className="foot-brand">
-                <a className="wordmark" href="#top">
-                  dattum.
-                </a>
-                <p>
-                  Consultoria de compliance LGPD e DPO-as-a-Service para
-                  agências de marketing digital e de lançamento.
-                </p>
-                <div className="social-row">
-                  <a href="#" aria-label="LinkedIn">
-                    in
-                  </a>
-                  <a href="#" aria-label="Instagram">
-                    ig
-                  </a>
-                  <a href="#" aria-label="X">
-                    x
-                  </a>
+            <p className="home-trust-line">Baseado na Lei 13.709/2018 (LGPD) · feito para agências de tráfego pago</p>
+          </div>
+        </section>
+
+        {/* ============ 2ª DOBRA — módulos ============ */}
+        <section className="home-modules" id="modulos">
+          <div className="wrap">
+            <div className="home-modules-head">
+              <span className="eyebrow">Dentro da plataforma</span>
+              <h2>Uma plataforma, todos os documentos que sua agência precisa</h2>
+              <p>Cada módulo abaixo já está em funcionamento — clique pra ver o que ele gera.</p>
+            </div>
+
+            <div className="module-tabs" role="tablist">
+              {MODULES.map((m) => (
+                <button
+                  key={m.key}
+                  role="tab"
+                  aria-selected={activeModule === m.key}
+                  className="module-tab"
+                  onClick={() => setActiveModule(m.key)}
+                >
+                  <span className="mt-slash">dattis/</span>
+                  {m.label}
+                </button>
+              ))}
+            </div>
+
+            <div className="module-stage">
+              <div className="module-window">
+                <div className="module-window-bar">
+                  <span className="module-window-dot" />
+                  <span className="module-window-dot" />
+                  <span className="module-window-dot" />
+                  <span className="module-window-title">{MODULE_TITLES[activeModule]}</span>
+                </div>
+                <div className="module-window-body">
+                  {activeModule === "rat" && <RatPreview />}
+                  {activeModule === "dpa" && <DpaPreview />}
+                  {activeModule === "subprocessadores" && <SubprocessadoresPreview />}
+                  {activeModule === "auditoria" && <AuditoriaPreview />}
                 </div>
               </div>
-              <div className="foot-col">
-                <div className="fc-title">Serviço</div>
-                <ul>
-                  <li>
-                    <a href="#top">Diagnóstico de operador</a>
-                  </li>
-                  <li>
-                    <a href="#solucoes">Sprint de higienização</a>
-                  </li>
-                  <li>
-                    <a href="#solucoes">Obrigações acessórias</a>
-                  </li>
-                  <li>
-                    <a href="#precos">Preços</a>
-                  </li>
-                </ul>
-              </div>
-              <div className="foot-col">
-                <div className="fc-title">Recursos</div>
-                <ul>
-                  <li>
-                    <a href="#exemplo">Exemplo de diagnóstico</a>
-                  </li>
-                  <li>
-                    <a href="#">Central de ajuda</a>
-                  </li>
-                  <li>
-                    <a href="#">Blog jurídico</a>
-                  </li>
-                </ul>
-              </div>
-              <div className="foot-col">
-                <div className="fc-title">Empresa</div>
-                <ul>
-                  <li>
-                    <a href="#">Sobre</a>
-                  </li>
-                  <li>
-                    <a href="#cta">Contato</a>
-                  </li>
-                </ul>
-              </div>
-              <div className="foot-col">
-                <div className="fc-title">Legal</div>
-                <ul>
-                  <li>
-                    <a href="#">Política de privacidade</a>
-                  </li>
-                  <li>
-                    <a href="#">Termos de uso</a>
-                  </li>
-                </ul>
-              </div>
-            </div>
-            <div className="foot-bottom">
-              <p className="legal-note">
-                Dattum Consultoria em Proteção de Dados. Este site e os
-                diagnósticos gerados pela Dattum são documentos privados,
-                elaborados pela própria empresa — não constituem
-                notificação, autuação ou comunicação oficial da Autoridade
-                Nacional de Proteção de Dados (ANPD).
-              </p>
-              <div className="foot-legal-links">
-                <a href="#">Isenção de responsabilidade</a>
-                <a href="#">Política de Privacidade</a>
-                <a href="#">Configurações de Cookies</a>
-                <a href="#">Central Jurídica</a>
-              </div>
-              <p className="copyline">
-                © 2026 Dattum. Todos os direitos reservados.
-              </p>
             </div>
           </div>
-        </footer>
-      </div>
-    </>
+        </section>
+      </main>
+
+      <footer className="home-footer">
+        <div className="wrap">
+          <Image src="/brand/logo-fundo-dark.png" alt="Dattis" width={90} height={17} style={{ height: 17, width: "auto" }} />
+          <div className="home-footer-links">
+            <a href="/diagnostico">Diagnóstico</a>
+            <a href="/auditoria">Auditoria</a>
+            <a href="/entrar">Entrar</a>
+          </div>
+        </div>
+      </footer>
+    </div>
   );
 }
