@@ -69,6 +69,19 @@ function EntrarForm() {
         </button>
       </form>
 
+      <div className="font-ui mt-6 flex items-center gap-3 text-caption text-faint">
+        <span className="h-px flex-1 bg-line" />
+        ou
+        <span className="h-px flex-1 bg-line" />
+      </div>
+
+      <a href="/api/auth/demo" className="btn btn-ghost mt-6 w-full justify-center py-2.5 text-body-sm">
+        Testar a plataforma sem senha →
+      </a>
+      <p className="font-ui mt-2 text-caption text-faint">
+        Acesso de demonstração com dados de exemplo, sem precisar criar conta.
+      </p>
+
       <p className="font-ui mt-8 text-body-sm">
         Ainda não tem conta?{" "}
         <Link href="/cadastro" className="nav-link">
