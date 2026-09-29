@@ -1,6 +1,7 @@
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowRight } from "lucide-react";
-import { Logo } from "@/components/brand/Logo";
+import logoDark from "../../public/brand/logo-fundo-dark.png";
 
 export function SiteFooter({ fluid = "w-full px-5 sm:px-10 lg:px-20" }: { fluid?: string }) {
   const year = new Date().getFullYear();
@@ -37,7 +38,7 @@ export function SiteFooter({ fluid = "w-full px-5 sm:px-10 lg:px-20" }: { fluid?
       <div className={`${fluid} py-16`}>
         <div className="grid gap-12 lg:grid-cols-[1.4fr_2fr]">
           <div className="max-w-sm">
-            <Logo height={24} />
+            <Image src={logoDark} alt="Dattis" height={24} width={Math.round((logoDark.width / logoDark.height) * 24)} />
             <p className="mt-5 text-body-sm leading-relaxed text-white/55">
               Compliance LGPD para agências de tráfego pago e lançamento. RAT, DPA e registro de subprocessadores
               gerados automaticamente por conta de cliente.
