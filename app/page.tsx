@@ -244,14 +244,15 @@ export default function Home() {
         </section>
 
         {/* solução */}
-        <section id="solucao" className="relative overflow-hidden bg-secondary px-5 py-24 text-secondary-foreground sm:py-28">
+        <section id="solucao" className="relative overflow-hidden bg-[#001410] px-5 py-24 text-secondary-foreground sm:py-28">
           <Image
             src="/marketing/solucao-glow.png"
             alt=""
             fill
             aria-hidden
-            className="pointer-events-none object-cover object-top opacity-90"
+            className="pointer-events-none object-cover object-top opacity-60"
           />
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/50 via-black/20 to-black/60" aria-hidden />
           <div className="relative mx-auto max-w-5xl text-center">
             <Badge variant="outline" className="mb-4 border-primary/40 font-mono text-[11px] font-semibold tracking-wide text-primary uppercase">
               A solução
