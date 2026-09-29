@@ -17,46 +17,44 @@ export default async function PainelDashboard() {
 
   return (
     <div>
-      <p className="painel-eyebrow">Dattis · Painel</p>
-      <h1 className="painel-title">Sua operação de compliance, em um lugar só</h1>
-      <p className="painel-lede">
-        Cada conta de cliente que você ativa aqui já sai com o que a LGPD exige: o que vocês
-        fazem com o dado dela, o contrato com o cliente e a lista de ferramentas que tocam esse dado.
+      <p className="t-eyebrow mb-2">Dattis · Painel</p>
+      <h1 className="t-heading-lg">Sua operação de compliance, em um lugar só</h1>
+      <p className="mt-3 max-w-2xl text-body text-muted">
+        Cada conta de cliente que você ativa aqui já sai com o que a LGPD exige: o que vocês fazem com o dado dela, o
+        contrato com o cliente e a lista de ferramentas que tocam esse dado.
       </p>
 
-      <div className="painel-cards">
-        <div className="painel-card">
-          <p className="painel-card-label">Contas ativas</p>
-          <p className="painel-card-value">{contas.length}</p>
+      <div className="mt-8 grid gap-4 sm:grid-cols-3">
+        <div className="card">
+          <p className="font-ui text-caption text-muted">Contas ativas</p>
+          <p className="font-display mt-2 text-[2.2rem] font-semibold text-ink">{contas.length}</p>
         </div>
-        <div className="painel-card">
-          <p className="painel-card-label">Contratos pendentes de assinatura</p>
-          <p className={`painel-card-value ${pendentes > 0 ? "alert" : ""}`}>{pendentes}</p>
+        <div className="card">
+          <p className="font-ui text-caption text-muted">Contratos pendentes</p>
+          <p className={"font-display mt-2 text-[2.2rem] font-semibold " + (pendentes > 0 ? "text-warn" : "text-ink")}>{pendentes}</p>
         </div>
-        <div className="painel-card">
-          <p className="painel-card-label">Contratos assinados</p>
-          <p className="painel-card-value">{dpasPendentes.length - pendentes}</p>
+        <div className="card">
+          <p className="font-ui text-caption text-muted">Contratos assinados</p>
+          <p className="font-display mt-2 text-[2.2rem] font-semibold text-ink">{dpasPendentes.length - pendentes}</p>
         </div>
       </div>
 
-      <div style={{ display: "flex", gap: 12, flexWrap: "wrap", marginBottom: 32 }}>
-        <Link href="/painel/contas/novo" className="painel-btn">
+      <div className="mt-8 flex flex-wrap gap-3">
+        <Link href="/painel/contas/novo" className="btn btn-primary">
           Ativar conta nova →
         </Link>
-        <Link href="/diagnostico" className="painel-btn ghost">
+        <Link href="/diagnostico" className="btn btn-ghost">
           Refazer Diagnóstico Expresso
         </Link>
-        <Link href="/auditoria" className="painel-btn ghost">
+        <Link href="/auditoria" className="btn btn-ghost">
           Auditar um site
         </Link>
       </div>
 
       {contas.length === 0 && (
-        <div className="painel-table-wrap">
-          <div className="painel-empty">
-            Nenhuma conta ativada ainda. Comece ativando a primeira conta de cliente — a Dattis
-            já gera o RAT e o contrato automaticamente.
-          </div>
+        <div className="card-flush mt-8 p-12 text-center text-body-sm text-muted">
+          Nenhuma conta ativada ainda. Comece ativando a primeira conta de cliente — a Dattis já gera o RAT e o
+          contrato automaticamente.
         </div>
       )}
     </div>

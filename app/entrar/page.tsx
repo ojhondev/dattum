@@ -3,7 +3,7 @@
 import { Suspense, useState, type FormEvent } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import "../auth.css";
+import { AuthShell } from "@/components/marketing/AuthShell";
 
 function EntrarForm() {
   const router = useRouter();
@@ -38,37 +38,51 @@ function EntrarForm() {
   };
 
   return (
-    <div className="auth-card">
-      <p className="auth-eyebrow">Dattis</p>
-      <h1 className="auth-title">Entrar</h1>
-      <p className="auth-sub">Acesse o painel da sua agência.</p>
-      <form className="auth-form" onSubmit={submit}>
-        <div className="auth-field">
-          <label htmlFor="email">E-mail</label>
-          <input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-        </div>
-        <div className="auth-field">
-          <label htmlFor="senha">Senha</label>
-          <input id="senha" type="password" value={senha} onChange={(e) => setSenha(e.target.value)} required />
-        </div>
-        {erro && <div className="auth-error">{erro}</div>}
-        <button className="auth-submit" type="submit" disabled={enviando}>
+    <AuthShell panelHeadline="Sua operação de compliance, em um lugar só.">
+      <h1 className="t-heading-lg">Entrar</h1>
+      <p className="mt-3 text-body-sm text-muted">Acesse o painel da sua agência.</p>
+
+      <form className="font-ui mt-8 space-y-4" onSubmit={submit}>
+        <label className="block">
+          <span className="text-body-sm text-body">E-mail</span>
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            className="mt-1.5 w-full rounded-none border border-line-strong bg-surface px-3 py-2.5 text-body-sm text-ink"
+          />
+        </label>
+        <label className="block">
+          <span className="text-body-sm text-body">Senha</span>
+          <input
+            type="password"
+            value={senha}
+            onChange={(e) => setSenha(e.target.value)}
+            required
+            className="mt-1.5 w-full rounded-none border border-line-strong bg-surface px-3 py-2.5 text-body-sm text-ink"
+          />
+        </label>
+        {erro && <div className="border border-danger/30 bg-danger-tint px-3 py-2.5 text-body-sm text-danger">{erro}</div>}
+        <button type="submit" disabled={enviando} className="btn btn-primary w-full justify-center py-2.5 text-body-sm">
           {enviando ? "Entrando..." : "Entrar →"}
         </button>
       </form>
-      <p className="auth-switch">
-        Ainda não tem conta? <Link href="/cadastro">Criar conta grátis</Link>
+
+      <p className="font-ui mt-8 text-body-sm">
+        Ainda não tem conta?{" "}
+        <Link href="/cadastro" className="nav-link">
+          Criar conta grátis
+        </Link>
       </p>
-    </div>
+    </AuthShell>
   );
 }
 
 export default function EntrarPage() {
   return (
-    <div className="auth-page">
-      <Suspense fallback={null}>
-        <EntrarForm />
-      </Suspense>
-    </div>
+    <Suspense fallback={null}>
+      <EntrarForm />
+    </Suspense>
   );
 }

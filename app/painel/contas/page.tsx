@@ -18,53 +18,45 @@ export default async function ContasPage() {
 
   return (
     <div>
-      <p className="painel-eyebrow">Dattis · Contas de cliente</p>
-      <h1 className="painel-title">Contas de cliente</h1>
-      <p className="painel-lede">
-        Cada linha é um cliente que sua agência atende. Ao ativar uma conta, a Dattis já gera
-        automaticamente o que ela precisa: o registro do que vocês fazem com o dado dela e o
-        contrato entre vocês.
+      <p className="t-eyebrow mb-2">Dattis · Contas de cliente</p>
+      <h1 className="t-heading-lg">Contas de cliente</h1>
+      <p className="mt-3 max-w-2xl text-body text-muted">
+        Cada linha é um cliente que sua agência atende. Ao ativar uma conta, a Dattis já gera automaticamente o que
+        ela precisa: o registro do que vocês fazem com o dado dela e o contrato entre vocês.
       </p>
 
-      <div style={{ marginBottom: 24 }}>
-        <Link href="/painel/contas/novo" className="painel-btn">
+      <div className="mt-6">
+        <Link href="/painel/contas/novo" className="btn btn-primary">
           Ativar conta nova →
         </Link>
       </div>
 
-      <div className="painel-table-wrap">
+      <div className="card-flush mt-8 overflow-x-auto">
         {contas.length === 0 ? (
-          <div className="painel-empty">Nenhuma conta ativada ainda.</div>
+          <div className="p-12 text-center text-body-sm text-muted">Nenhuma conta ativada ainda.</div>
         ) : (
-          <table className="painel-table">
+          <table className="w-full border-collapse text-body-sm">
             <thead>
-              <tr>
-                <th>Cliente</th>
-                <th>Fluxos ativos</th>
-                <th>Contrato (DPA)</th>
+              <tr className="bg-surface-2">
+                <th className="border-b border-line px-4 py-3 text-left font-ui text-[11px] font-semibold uppercase tracking-[0.06em] text-muted">Cliente</th>
+                <th className="border-b border-line px-4 py-3 text-left font-ui text-[11px] font-semibold uppercase tracking-[0.06em] text-muted">Fluxos ativos</th>
+                <th className="border-b border-line px-4 py-3 text-left font-ui text-[11px] font-semibold uppercase tracking-[0.06em] text-muted">Contrato (DPA)</th>
               </tr>
             </thead>
             <tbody>
               {contas.map((conta) => {
                 const dpa = dpaPorConta.get(conta.id);
-                const flows = [
-                  conta.flowCapi && "CAPI",
-                  conta.flowAds && "Ads",
-                  conta.flowWhatsapp && "WhatsApp",
-                  conta.flowCrm && "CRM",
-                ].filter(Boolean);
+                const flows = [conta.flowCapi && "CAPI", conta.flowAds && "Ads", conta.flowWhatsapp && "WhatsApp", conta.flowCrm && "CRM"].filter(Boolean);
                 return (
-                  <tr key={conta.id}>
-                    <td>
-                      <Link href={`/painel/contas/${conta.id}`}>{conta.nome}</Link>
+                  <tr key={conta.id} className="hover:bg-surface-2">
+                    <td className="border-b border-line px-4 py-3">
+                      <Link href={`/painel/contas/${conta.id}`} className="nav-link font-medium text-ink">
+                        {conta.nome}
+                      </Link>
                     </td>
-                    <td>{flows.length > 0 ? flows.join(", ") : "—"}</td>
-                    <td>
-                      {dpa?.status === "assinado" ? (
-                        <span className="painel-pill ok">Assinado</span>
-                      ) : (
-                        <span className="painel-pill pendente">Pendente</span>
-                      )}
+                    <td className="border-b border-line px-4 py-3 text-muted">{flows.length > 0 ? flows.join(", ") : "—"}</td>
+                    <td className="border-b border-line px-4 py-3">
+                      {dpa?.status === "assinado" ? <span className="pill pill-ok">Assinado</span> : <span className="pill pill-warn">Pendente</span>}
                     </td>
                   </tr>
                 );
