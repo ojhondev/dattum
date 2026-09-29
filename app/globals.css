@@ -43,7 +43,7 @@
 
   /* ---- Tipografia ---- */
   --font-ui: var(--font-body), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  --font-display: "Helvetica Neue", Helvetica, Arial, ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-body), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --font-body: var(--font-body), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-mono-src), "JetBrains Mono", monospace;
 
@@ -179,10 +179,10 @@ a { color: inherit; text-decoration: none; }
 
 h1, h2, h3, h4 {
   font-family: var(--font-display);
-  font-weight: 600;
+  font-weight: 700;
   color: var(--color-ink);
   line-height: 1.2;
-  letter-spacing: -0.011em;
+  letter-spacing: -0.008em;
   text-wrap: balance;
   margin: 0;
 }
@@ -191,31 +191,31 @@ h1, h2, h3, h4 {
 
 .t-hero {
   font-family: var(--font-display);
-  font-weight: 700;
+  font-weight: 800;
   font-size: clamp(2.9rem, 7vw, var(--text-hero));
   line-height: 1.04;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.02em;
 }
 .t-display {
   font-family: var(--font-display);
   font-weight: 700;
   font-size: clamp(2.4rem, 5.5vw, var(--text-display-lg));
   line-height: 1.08;
-  letter-spacing: -0.025em;
+  letter-spacing: -0.018em;
 }
 .t-heading-lg {
   font-family: var(--font-display);
-  font-weight: 600;
+  font-weight: 700;
   font-size: clamp(1.9rem, 3.6vw, var(--text-heading-lg));
   line-height: 1.15;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.014em;
 }
 .t-heading {
   font-family: var(--font-display);
   font-weight: 600;
   font-size: var(--text-heading);
   line-height: 1.25;
-  letter-spacing: -0.015em;
+  letter-spacing: -0.01em;
 }
 .t-eyebrow {
   font-family: var(--font-ui);
@@ -247,7 +247,7 @@ h1, h2, h3, h4 {
 .btn {
   font-family: var(--font-ui);
   font-size: var(--text-body-sm);
-  font-weight: 500;
+  font-weight: 600;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -307,7 +307,7 @@ h1, h2, h3, h4 {
 
 /* ---------- Link de navegação — sublinhado que cresce da esquerda ---------- */
 .nav-link {
-  font-family: var(--font-ui); font-size: 14px; position: relative; color: var(--color-body);
+  font-family: var(--font-ui); font-size: 14px; font-weight: 500; position: relative; color: var(--color-body);
   transition: color 140ms ease;
 }
 .nav-link:hover { color: var(--color-ink); }
@@ -328,14 +328,14 @@ h1, h2, h3, h4 {
    §card/§pill acima pros tokens base.
    ========================================================================= */
 .painel-eyebrow { font-family: var(--font-ui); font-weight: 600; font-size: var(--text-caption); letter-spacing: 0.06em; text-transform: uppercase; color: var(--color-faint); margin-bottom: 8px; }
-.painel-title { font-family: var(--font-display); font-weight: 600; font-size: clamp(1.9rem, 3.6vw, var(--text-heading-lg)); line-height: 1.15; letter-spacing: -0.02em; color: var(--color-ink); }
+.painel-title { font-family: var(--font-display); font-weight: 700; font-size: clamp(1.9rem, 3.6vw, var(--text-heading-lg)); line-height: 1.15; letter-spacing: -0.014em; color: var(--color-ink); }
 .painel-title small { display: block; font-family: var(--font-ui); font-size: var(--text-caption); font-weight: 600; color: var(--color-muted); text-transform: none; margin-top: 6px; letter-spacing: 0; }
 .painel-lede { margin-top: 12px; max-width: 62ch; color: var(--color-muted); font-size: var(--text-body); line-height: 1.6; }
 
 .painel-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 16px; margin: 32px 0; }
 .painel-card { background: var(--color-surface); border: 1px solid var(--color-line); padding: 20px; }
 .painel-card-label { font-family: var(--font-ui); font-size: var(--text-caption); color: var(--color-muted); margin: 0 0 8px; }
-.painel-card-value { font-family: var(--font-display); font-weight: 600; font-size: 2.2rem; color: var(--color-ink); }
+.painel-card-value { font-family: var(--font-display); font-weight: 700; font-size: 2.2rem; color: var(--color-ink); font-variant-numeric: tabular-nums; }
 .painel-card-value.alert { color: var(--color-warn); }
 
 .painel-table-wrap { background: var(--color-surface); border: 1px solid var(--color-line); overflow: hidden; margin-top: 24px; }
@@ -370,7 +370,7 @@ table.painel-table a:hover { text-decoration: underline; }
 .painel-checkbox-sub { font-size: 12px; color: var(--color-muted); }
 
 .painel-btn {
-  font-family: var(--font-ui); font-weight: 500; font-size: var(--text-body-sm); padding: 9px 16px; white-space: nowrap;
+  font-family: var(--font-ui); font-weight: 600; font-size: var(--text-body-sm); padding: 9px 16px; white-space: nowrap;
   border-radius: 0; border: 1px solid transparent; background: var(--color-brand); color: var(--color-on-brand);
   cursor: pointer; transition: background .14s; display: inline-flex; align-items: center; justify-content: center; gap: 6px; text-decoration: none;
 }

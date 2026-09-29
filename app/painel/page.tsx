@@ -27,15 +27,15 @@ export default async function PainelDashboard() {
       <div className="mt-8 grid gap-4 sm:grid-cols-3">
         <div className="card">
           <p className="font-ui text-caption text-muted">Contas ativas</p>
-          <p className="font-display mt-2 text-[2.2rem] font-semibold text-ink">{contas.length}</p>
+          <p className="font-display mt-2 text-[2.2rem] font-bold tabular-nums text-ink">{contas.length}</p>
         </div>
         <div className="card">
           <p className="font-ui text-caption text-muted">Contratos pendentes</p>
-          <p className={"font-display mt-2 text-[2.2rem] font-semibold " + (pendentes > 0 ? "text-warn" : "text-ink")}>{pendentes}</p>
+          <p className={"font-display mt-2 text-[2.2rem] font-bold tabular-nums " + (pendentes > 0 ? "text-warn" : "text-ink")}>{pendentes}</p>
         </div>
         <div className="card">
           <p className="font-ui text-caption text-muted">Contratos assinados</p>
-          <p className="font-display mt-2 text-[2.2rem] font-semibold text-ink">{dpasPendentes.length - pendentes}</p>
+          <p className="font-display mt-2 text-[2.2rem] font-bold tabular-nums text-ink">{dpasPendentes.length - pendentes}</p>
         </div>
       </div>
 
