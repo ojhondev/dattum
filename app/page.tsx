@@ -1,434 +1,226 @@
-"use client";
-
-import { useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
-import { Menu, X, ArrowRight, ArrowUpRight } from "lucide-react";
-import { Button, buttonVariants } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-import { Badge } from "@/components/ui/badge";
-import { Card } from "@/components/ui/card";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetClose,
-} from "@/components/ui/sheet";
+import { ArrowRight, ArrowDown, FileText, FileSignature, Network, ShieldCheck, FileCheck } from "lucide-react";
+import { SiteHeader } from "@/components/marketing/SiteHeader";
+import { HeroPreview } from "@/components/marketing/HeroPreview";
+import { SiteFooter } from "@/components/marketing/SiteFooter";
+import { Reveal } from "@/components/marketing/Reveal";
+import { ParticleField } from "@/components/marketing/ParticleField";
+import { PillarsShowcase, type Pillar } from "@/components/marketing/PillarsShowcase";
+import { Marquee } from "@/components/marketing/Marquee";
+import { Testimonials } from "@/components/marketing/Testimonials";
+import { Faq } from "@/components/marketing/Faq";
 
-const NAV_LINKS = [
-  { href: "#problema", label: "O Problema" },
-  { href: "#solucao", label: "Soluções" },
-  { href: "#por-que-agora", label: "Jurídico" },
-  { href: "#planos", label: "Planos" },
-];
+const FLUID = "w-full px-5 sm:px-10 lg:px-20";
 
-type ModuleKey = "rat" | "dpa" | "subprocessadores" | "auditoria";
-
-const MODULES: {
-  key: ModuleKey;
-  slug: string;
-  simples: string;
-  tecnico: string;
-  descricao: string;
-  url: string;
-}[] = [
+const PILLARS: Pillar[] = [
   {
-    key: "rat",
-    slug: "rat",
-    simples: "O que fazemos com o dado de cada cliente",
-    tecnico: "Registro de Atividades de Tratamento (RAT)",
-    descricao:
-      "Gerado automaticamente pra cada conta de cliente: qual ferramenta usa o dado, pra quê, com que base legal. O inventário que a LGPD exige e que, na prática, quase nenhuma agência mantém atualizado.",
-    url: "painel.dattis.com/contas/loja-aurora/rat",
+    id: "rat",
+    tab: "RAT",
+    heading: "O que fazemos com o dado de cada cliente",
+    body: "Gerado automaticamente pra cada conta: qual ferramenta usa o dado, pra quê, com que base legal. O inventário que a LGPD exige e que, na prática, quase nenhuma agência mantém atualizado.",
+    cta: "Ver o módulo de RAT",
+    href: "/cadastro",
+    panel: "rat",
+    tint: "",
   },
   {
-    key: "dpa",
-    slug: "dpa",
-    simples: "O contrato entre você e seu cliente",
-    tecnico: "Contrato de Operador de Dados (DPA)",
-    descricao:
-      "Formaliza quem é operador e quem é controlador entre a agência e o cliente dela — protege vocês se o cliente tentar jogar toda a responsabilidade pra cima da agência. Assinatura eletrônica direto na plataforma.",
-    url: "painel.dattis.com/contas/loja-aurora/dpa",
+    id: "dpa",
+    tab: "DPA",
+    heading: "O contrato entre você e seu cliente",
+    body: "Formaliza quem é operador e quem é controlador — protege sua agência se o cliente tentar jogar toda a responsabilidade pra cima de vocês. Assinatura eletrônica direto na plataforma.",
+    cta: "Ver o módulo de DPA",
+    href: "/cadastro",
+    panel: "dpa",
+    tint: "",
   },
   {
-    key: "subprocessadores",
-    slug: "subprocessadores",
-    simples: "Quem mais mexe nesse dado",
-    tecnico: "Registro de subprocessadores",
-    descricao:
-      "Toda ferramenta que toca o dado do cliente — Meta Ads, WhatsApp Business API, RD Station — mapeada por conta, com alerta quando uma ferramenta nova entra sem contrato.",
-    url: "painel.dattis.com/subprocessadores",
-  },
-  {
-    key: "auditoria",
-    slug: "auditoria",
-    simples: "Verificação contínua, não uma vez só",
-    tecnico: "Auditoria periódica",
-    descricao:
-      "A Dattis reroda o motor de diagnóstico sobre as campanhas ativas da agência — pixel, cookie, canal do titular — pra pegar o que mudou antes que vire multa.",
-    url: "dattis.com/auditoria/loja-aurora",
+    id: "subprocessadores",
+    tab: "Subprocessadores",
+    heading: "Quem mais mexe nesse dado",
+    body: "Toda ferramenta que toca o dado do cliente — Meta Ads, WhatsApp Business API, RD Station — mapeada por conta, com alerta quando uma ferramenta nova entra sem contrato.",
+    cta: "Ver o registro",
+    href: "/cadastro",
+    panel: "subprocessadores",
+    tint: "",
   },
 ];
 
-const PROBLEMA_CARDS = [
+const TOOLS = [
+  { icon: FileText, name: "RAT", short: "Registro de Atividades de Tratamento gerado por conta de cliente." },
+  { icon: FileSignature, name: "DPA", short: "Contrato de Operador de Dados, com assinatura eletrônica." },
+  { icon: Network, name: "Subprocessadores", short: "Mapa das ferramentas que tocam o dado de cada cliente." },
+  { icon: ShieldCheck, name: "Auditoria", short: "Reexecução periódica do motor de diagnóstico nas campanhas ativas." },
+  { icon: FileCheck, name: "DAT", short: "Resumo de conformidade que sua agência manda pro cliente dela." },
+];
+
+const TRUST = [
   {
-    titulo: "2% de multa\nsob faturamento",
-    texto: "Sua agência pode sofrer multa de até 2% do faturamento, limitada a R$ 50 milhões por infração.",
+    title: "180 mil+ agências",
+    body: "de marketing e comunicação no Brasil, 91,3% com atuação digital — a grande maioria ainda trata dado de cliente como responsabilidade só do controlador.",
   },
   {
-    titulo: "Proibição no\nTratamento de Dados",
-    texto:
-      "Medida prevista no art. 52 a ANPD pode determinar a proibição parcial ou total do exercício de atividades relacionadas ao tratamento de dados.",
+    title: "19 processos",
+    body: "abertos pela ANPD em um único mês (junho de 2026) — recorde histórico da autarquia. A fiscalização está acelerando, não o contrário.",
   },
   {
-    titulo: "Indiciamento\ncriminal",
-    texto: "Condutas envolvendo dados pessoais podem gerar responsabilidade civil e  responsabilização criminal",
+    title: "Tese publicada",
+    body: "A PUC Goiás já publicou pesquisa acadêmica específica sobre violação da LGPD por agências de marketing digital — o cruzamento já é objeto de estudo, não hipótese.",
   },
 ];
 
-const MISSAO_PILLS = [
-  "Gerar RAT por conta",
-  "Assinar DPA eletronicamente",
-  "Mapear subprocessadores",
-  "Rodar auditoria periódica",
-  "Centralizar canal do titular",
-  "Consolidar tudo no DAT",
+const FAQ_ITEMS = [
+  {
+    q: "Minha agência precisa mesmo de RAT e DPA?",
+    a: "Se você gerencia CRM, WhatsApp, tráfego ou automação em nome de clientes, a LGPD trata sua agência como operadora de dados (art. 5º, VII) — e prevê responsabilidade solidária com o cliente (art. 42). RAT e DPA são os documentos que provam que essa operação está regular.",
+  },
+  {
+    q: "O que é o DAT?",
+    a: "É o documento-resumo que reúne o status do RAT, do DPA e dos subprocessadores de uma conta — a prova de conformidade que sua agência manda pro cliente dela, sempre que ele perguntar.",
+  },
+  {
+    q: "Isso substitui um advogado?",
+    a: "Não. A Dattis automatiza a parte operacional (documentos, mapeamento, auditoria). Contencioso e casos complexos continuam sendo encaminhados a um parceiro jurídico.",
+  },
+  {
+    q: "Quanto tempo leva pra ativar uma conta nova?",
+    a: "O wizard de ativação já gera o RAT e o DPA da conta assim que você marca os fluxos padrão (CAPI, WhatsApp, CRM) — minutos, não dias.",
+  },
 ];
 
-export default function Home() {
-  const [mobileOpen, setMobileOpen] = useState(false);
-
+export default function LandingPage() {
   return (
-    <div className="bg-background text-foreground">
-      {/* announcement bar */}
-      <a
-        href="mailto:contato@dattis.com?subject=Preciso%20de%20ajuda%20urgente%20com%20LGPD"
-        className="block bg-gradient-to-r from-primary via-primary/45 to-white py-2 text-center text-[13px] font-semibold text-secondary underline underline-offset-2 hover:no-underline"
-      >
-        Sofreu uma denúncia ou multa? Fale com a gente com urgência
-      </a>
-
-      {/* nav */}
-      <header className="sticky top-0 z-50 bg-secondary text-secondary-foreground">
-        <div className="mx-auto flex h-20 max-w-6xl items-center justify-between px-5 sm:px-8">
-          <Link href="/" className="flex items-center gap-2">
-            <Image src="/brand/logo-fundo-dark.png" alt="Dattis" width={110} height={21} priority className="h-[21px] w-auto" />
-          </Link>
-
-          <nav className="hidden items-center gap-1 rounded-full bg-[#e6fffa] p-1.5 md:flex">
-            {NAV_LINKS.map((l) => (
-              <a
-                key={l.href}
-                href={l.href}
-                className="rounded-full px-4 py-2 text-sm font-medium text-black transition-colors hover:bg-white"
-              >
-                {l.label}
-              </a>
-            ))}
-          </nav>
-
-          <div className="flex items-center gap-4">
-            <Link href="/agendar" className="hidden text-sm font-semibold text-secondary-foreground hover:opacity-80 sm:block">
-              Agendar um papo
-            </Link>
-            <Link href="/cadastro" className={cn(buttonVariants(), "rounded-full text-secondary")}>
-              Começar
-            </Link>
-            <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
-              <Button variant="ghost" size="icon" className="text-secondary-foreground md:hidden" onClick={() => setMobileOpen(true)}>
-                <Menu />
-              </Button>
-              <SheetContent side="right" className="w-full bg-secondary text-secondary-foreground sm:max-w-xs">
-                <SheetHeader className="flex-row items-center justify-between">
-                  <SheetTitle className="text-secondary-foreground">
-                    <Image src="/brand/logo-fundo-dark.png" alt="Dattis" width={100} height={19} className="h-[19px] w-auto" />
-                  </SheetTitle>
-                  <SheetClose render={<Button variant="ghost" size="icon" className="text-secondary-foreground" />}>
-                    <X />
-                  </SheetClose>
-                </SheetHeader>
-                <nav className="flex flex-col gap-1 px-4">
-                  {NAV_LINKS.map((l) => (
-                    <a
-                      key={l.href}
-                      href={l.href}
-                      onClick={() => setMobileOpen(false)}
-                      className="border-b border-white/10 py-3 font-display text-xl font-medium"
-                    >
-                      {l.label}
-                    </a>
-                  ))}
-                </nav>
-                <div className="mt-auto flex flex-col gap-2 p-4">
-                  <Link
-                    href="/entrar"
-                    className={cn(
-                      buttonVariants({ variant: "outline" }),
-                      "border-white/25 bg-transparent text-secondary-foreground hover:bg-white/10 hover:text-secondary-foreground"
-                    )}
-                  >
-                    Entrar
-                  </Link>
-                  <Link href="/cadastro" className={cn(buttonVariants(), "rounded-full text-secondary")}>
-                    Começar grátis
-                  </Link>
-                </div>
-              </SheetContent>
-            </Sheet>
-          </div>
-        </div>
-      </header>
+    <div className="relative z-10">
+      <div className="bg-rail">
+        <p className="font-ui px-5 py-2.5 text-center text-[13px] text-white">
+          Sofreu uma denúncia ou multa? <Link href="mailto:contato@dattis.com" className="underline underline-offset-2">Fale com a gente com urgência</Link>
+        </p>
+      </div>
+      <SiteHeader />
 
       <main>
-        {/* hero */}
-        <section className="relative bg-secondary px-5 pt-14 pb-16 text-center text-secondary-foreground sm:pt-20 sm:pb-24">
-          <div className="mx-auto max-w-6xl">
-            <p className="mb-5 text-xs text-secondary-foreground/55">
-              Baseado na Lei 13.709/2018 (LGPD) · feito para agências de tráfego pago
-            </p>
-            <h1 className="mx-auto text-5xl leading-[1.35] font-semibold text-balance sm:text-7xl">
-              Agência de Tráfego:
-              <br />
-              Descumprir a LGPD gera multas.
-            </h1>
-            <p className="mx-auto mt-7 max-w-2xl text-lg leading-relaxed text-secondary-foreground/70">
-              Captação, armazenamento e gestão de dados sem os controles adequados podem expor sua agência a riscos e
-              multas de milhares de reais.
-            </p>
-            <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-              <Link
-                href="/cadastro"
-                className={cn(buttonVariants({ size: "lg" }), "h-11 rounded-full px-7 text-[15px] text-secondary")}
-              >
-                Começar
-              </Link>
-              <Link
-                href="/agendar"
-                className={cn(
-                  buttonVariants({ size: "lg", variant: "outline" }),
-                  "h-11 rounded-full border-white/30 bg-transparent px-7 text-[15px] text-secondary-foreground hover:bg-white/10 hover:text-secondary-foreground"
-                )}
-              >
-                Agendar um papo
-              </Link>
+        <ParticleField>
+          {/* HERO */}
+          <section className={`${FLUID} flex min-h-[82vh] flex-col justify-center py-16`}>
+            <div className="grid items-center gap-14 lg:grid-cols-[1fr_1.05fr]">
+              <div>
+                <h1 className="t-display max-w-[16ch]">Descumprir a LGPD sai caro pra sua agência.</h1>
+                <p className="mt-8 max-w-lg text-body leading-relaxed text-body">
+                  A Dattis gera o RAT, o DPA e o registro de subprocessadores pra cada cliente que sua agência
+                  atende — sem precisar contratar um advogado por documento.
+                </p>
+                <div className="mt-10 flex flex-wrap items-center gap-6">
+                  <Link href="/cadastro" className="btn btn-lg btn-dark">
+                    Começar grátis <ArrowRight size={16} />
+                  </Link>
+                  <Link href="/#ferramentas" className="nav-link text-body-sm font-medium">
+                    Ver módulos
+                  </Link>
+                </div>
+              </div>
+              <Reveal delay={80}>
+                <HeroPreview />
+              </Reveal>
             </div>
-          </div>
-        </section>
+            <div className="mt-16 flex items-center gap-2 text-faint">
+              <ArrowDown size={14} />
+              <span className="font-ui text-caption uppercase tracking-[0.14em]">role pra ver como funciona</span>
+            </div>
+          </section>
 
-        <div className="relative z-10 -mt-10 px-5 sm:-mt-20">
-          <div className="mx-auto max-w-6xl overflow-hidden rounded-3xl border-4 border-primary/70 shadow-[0_30px_80px_-20px_rgba(0,0,0,0.5)]">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/marketing/demo-plataforma.png" alt="Demonstração da plataforma Dattis" className="w-full" />
-          </div>
+          {/* GLOBO */}
+          <section className="relative flex min-h-[110vh] items-center justify-center px-5 text-center">
+            <div className="max-w-3xl">
+              <h2 className="t-display">
+                Sua agência já usa Meta, WhatsApp, RD Station, CRM —
+                <br />
+                <span className="mark">a Dattis organiza o resto.</span>
+              </h2>
+              <p className="mx-auto mt-6 max-w-xl text-body text-muted">
+                Cada ferramenta que toca o dado do seu cliente vira um subprocessador mapeado, automaticamente.
+              </p>
+            </div>
+          </section>
+        </ParticleField>
+
+        {/* PILARES */}
+        <div className="relative z-10 bg-canvas">
+          <PillarsShowcase kicker="Como funciona" title="Três documentos, gerados pra cada conta de cliente" pillars={PILLARS} fluid={FLUID} />
         </div>
 
-        {/* problema */}
-        <section id="problema" className="px-5 pt-16 pb-20 sm:pt-20 sm:pb-24">
-          <div className="mx-auto max-w-5xl">
-            <p className="mb-5 font-mono text-[13px] font-bold tracking-[0.1em] text-secondary uppercase">O problema</p>
-            <h2 className="max-w-4xl text-3xl leading-tight font-semibold text-balance text-muted-foreground sm:text-4xl">
-              Sua agência gera, coleta, cruza e compartilha dados pessoais todos os dias para criar e executar
-              campanhas. Mas quem garante que todo esse tratamento está de{" "}
-              <span className="text-primary">acordo com a lei?</span>
-            </h2>
-            <div className="mt-14 grid gap-10 sm:grid-cols-3 sm:gap-6">
-              {PROBLEMA_CARDS.map((c) => (
-                <div key={c.titulo}>
-                  <h3 className="text-xl leading-tight font-semibold text-secondary whitespace-pre-line">{c.titulo}</h3>
-                  <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{c.texto}</p>
-                </div>
+        {/* MARQUEE */}
+        <Marquee
+          line="Da bagunça de ferramentas espalhadas a um sistema só de conformidade."
+          rowA={["RAT", "DPA", "Subprocessadores", "Auditoria", "DAT", "Art. 42 LGPD"]}
+          rowB={["Meta Ads", "WhatsApp Business API", "RD Station", "Google Ads", "CRM", "Zapier"]}
+        />
+
+        {/* TRUST */}
+        <section id="problema" className="relative z-10 border-y border-line bg-surface">
+          <div className={`${FLUID} py-20`}>
+            <h2 className="t-heading-lg max-w-2xl">O risco não é hipotético — já tem tese acadêmica e fiscalização real sobre isso</h2>
+            <div className="mt-12 grid gap-6 md:grid-cols-3">
+              {TRUST.map((c, i) => (
+                <Reveal key={c.title} delay={i * 70} className="card">
+                  <span className="font-ui text-caption text-muted">0{i + 1}</span>
+                  <h3 className="t-heading mt-3">{c.title}</h3>
+                  <p className="mt-3 text-body-sm text-muted">{c.body}</p>
+                </Reveal>
               ))}
             </div>
           </div>
         </section>
 
-        {/* solução */}
-        <section id="solucao" className="relative overflow-hidden bg-[#001410] px-5 py-24 text-secondary-foreground sm:py-28">
-          <Image
-            src="/marketing/solucao-glow.png"
-            alt=""
-            fill
-            aria-hidden
-            className="pointer-events-none object-cover object-top opacity-60"
-          />
-          <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/50 via-black/20 to-black/60" aria-hidden />
-          <div className="relative mx-auto max-w-5xl text-center">
-            <Badge variant="outline" className="mb-4 border-primary/40 font-mono text-[11px] font-semibold tracking-wide text-primary uppercase">
-              A solução
-            </Badge>
-            <h2 className="mx-auto max-w-2xl text-3xl leading-tight font-semibold text-balance sm:text-4xl">
-              A Dattis entende de agência e torna tudo mais seguro: para você e para o cliente
-            </h2>
-            <p className="mx-auto mt-5 max-w-xl text-base leading-relaxed text-secondary-foreground/75">
-              Transforma a exposição da sua agência como operadora numa rotina de documentos — do jeito que a
-              contabilidade já é: fixa, recorrente, e resolvida antes de virar problema.
-            </p>
-
-            <div className="mx-auto mt-8 flex max-w-md items-center gap-3 rounded-full border border-white/20 bg-white/5 py-2 pr-2 pl-4 text-left backdrop-blur-sm">
-              <Badge className="shrink-0 bg-primary text-primary-foreground">DAT gerado</Badge>
-              <span className="text-sm text-secondary-foreground/85">A Dattis atualizou o DAT da conta. Envie por e-mail pro cliente.</span>
-            </div>
-            <p className="mx-auto mt-3 max-w-md text-xs text-secondary-foreground/55">
-              O DAT reúne o status do RAT, do DPA e dos subprocessadores de uma conta num único documento — a prova de
-              conformidade que sua agência manda pro cliente dela.
-            </p>
-          </div>
-
-          <div className="relative mx-auto mt-20 flex max-w-5xl flex-col gap-20 sm:mt-28 sm:gap-28">
-            {MODULES.map((m, i) => (
-              <div
-                key={m.key}
-                className={cn(
-                  "flex flex-col items-center gap-8 sm:gap-12 md:flex-row",
-                  i % 2 === 1 && "md:flex-row-reverse"
-                )}
-              >
-                <div className="flex-1 text-center md:text-left">
-                  <span className="inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-white/5 px-3 py-1 font-mono text-[12px] font-semibold text-secondary-foreground/70">
-                    <span className="opacity-55">dattis/</span>
-                    {m.slug}
-                  </span>
-                  <h3 className="mt-4 text-2xl leading-tight font-semibold text-secondary-foreground sm:text-3xl">
-                    {m.simples}
-                  </h3>
-                  <p className="mt-3 text-sm leading-relaxed text-secondary-foreground/70">{m.descricao}</p>
-                  <Link
-                    href="/cadastro"
-                    className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-primary hover:opacity-80"
-                  >
-                    Começar agora <ArrowRight className="size-4" />
-                  </Link>
-                </div>
-                <div className="flex-1">
-                  <div className="overflow-hidden rounded-2xl border-2 border-primary/50 shadow-2xl shadow-black/30">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src="/marketing/demo-plataforma.png"
-                      alt={`Tela de ${m.tecnico} na plataforma Dattis`}
-                      className="w-full"
-                    />
-                  </div>
-                </div>
-              </div>
+        {/* FERRAMENTAS */}
+        <section id="ferramentas" className={`${FLUID} relative z-10 bg-canvas py-24`}>
+          <h2 className="t-heading-lg max-w-2xl">Todos os módulos, numa plataforma só</h2>
+          <p className="mt-4 max-w-xl text-body text-muted">Cada módulo abaixo já está em funcionamento — comece grátis pra ver o que ele gera.</p>
+          <div className="mt-12 grid gap-px overflow-hidden rounded-[var(--radius-card-lg)] border border-line bg-line sm:grid-cols-2 lg:grid-cols-3">
+            {TOOLS.map((tool, i) => (
+              <Reveal key={tool.name} delay={i * 50} className="group flex flex-col bg-surface p-7">
+                <tool.icon size={22} strokeWidth={1.5} className="text-ink" />
+                <h3 className="t-heading mt-4">{tool.name}</h3>
+                <p className="mt-2 flex-1 text-body-sm text-muted">{tool.short}</p>
+                <Link href="/cadastro" className="nav-link mt-5 inline-flex w-fit items-center gap-1.5 text-[14px]">
+                  Começar <ArrowRight size={14} />
+                </Link>
+              </Reveal>
             ))}
           </div>
         </section>
 
-        {/* por que agora — credibilidade real, sem depoimento fabricado */}
-        <section id="por-que-agora" className="border-t border-border px-5 py-20 sm:py-24">
-          <div className="mx-auto max-w-5xl">
-            <Card className="grid gap-0 overflow-hidden p-0 sm:grid-cols-2">
-              <div className="flex aspect-video items-center justify-center bg-muted sm:aspect-auto">
-                <span className="font-mono text-xs text-muted-foreground">[Foto/vídeo do cliente entra aqui]</span>
-              </div>
-              <div className="flex flex-col justify-center gap-4 p-8">
-                <span className="font-mono text-[11px] font-semibold tracking-wide text-muted-foreground uppercase">
-                  Ler o caso completo ↗
-                </span>
-                <p className="text-xl leading-snug font-semibold text-balance">
-                  &ldquo;[Depoimento real de uma agência cliente entra aqui — resultado que a Dattis trouxe pra
-                  operação dela]&rdquo;
-                </p>
-                <p className="text-sm text-muted-foreground">
-                  <span className="font-semibold text-foreground">[Nome do responsável]</span> [Cargo] na [Nome da
-                  agência]
-                </p>
-                <div className="mt-4 grid grid-cols-3 gap-4 border-t border-border pt-4">
-                  <div>
-                    <p className="font-mono text-2xl font-bold text-foreground">[00]+</p>
-                    <p className="text-xs text-muted-foreground">Agências atendidas</p>
-                  </div>
-                  <div>
-                    <p className="font-mono text-2xl font-bold text-foreground">[00]</p>
-                    <p className="text-xs text-muted-foreground">Contas por agência</p>
-                  </div>
-                  <div>
-                    <p className="font-mono text-2xl font-bold text-foreground">[00]d</p>
-                    <p className="text-xs text-muted-foreground">Sprint de higienização</p>
-                  </div>
-                </div>
-              </div>
-            </Card>
-            <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
-              {["Agência A", "Agência B", "Agência C", "Agência D"].map((label) => (
-                <div
-                  key={label}
-                  className="flex h-16 items-center justify-center rounded-lg border border-dashed border-border font-mono text-xs text-muted-foreground"
-                >
-                  {label}
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
+        {/* DEPOIMENTOS */}
+        <Testimonials
+          kicker="Prova social"
+          title="O que agências dizem sobre a Dattis"
+          note="[Depoimentos reais entram aqui antes da publicação — placeholder]"
+          items={[
+            {
+              quote: "[Depoimento real de uma agência cliente entra aqui — resultado que a Dattis trouxe pra operação dela]",
+              name: "[Nome do responsável]",
+              role: "[Cargo] na [Nome da agência]",
+            },
+            {
+              quote: "[Segundo depoimento entra aqui]",
+              name: "[Nome do responsável]",
+              role: "[Cargo] na [Nome da agência]",
+            },
+          ]}
+        />
 
-        {/* missão / CTA final */}
-        <section className="bg-secondary px-5 py-20 text-center text-secondary-foreground sm:py-24">
-          <div className="mx-auto max-w-2xl">
-            <h2 className="text-2xl leading-snug font-semibold text-balance sm:text-3xl">
-              Compliance de agência, do jeito que a contabilidade já é: fixo, recorrente, e resolvido antes de virar
-              problema.
-            </h2>
-            <div className="mt-8 flex flex-wrap justify-center gap-2">
-              {MISSAO_PILLS.map((p) => (
-                <span
-                  key={p}
-                  className="rounded-full border border-white/20 px-4 py-2 text-[13px] font-medium text-secondary-foreground/80"
-                >
-                  {p}
-                </span>
-              ))}
-            </div>
-            <Link href="/cadastro" className={cn(buttonVariants({ size: "lg" }), "mt-10 h-12 rounded-full px-7 text-base text-secondary")}>
-              Começar grátis <ArrowRight />
-            </Link>
-          </div>
+        {/* FAQ */}
+        <Faq kicker="Dúvidas" title="Perguntas frequentes" items={FAQ_ITEMS} />
+
+        {/* CTA */}
+        <section id="demo" className={`${FLUID} relative z-10 bg-canvas py-24 text-center`}>
+          <h2 className="t-display mx-auto max-w-3xl">Pronto pra parar de torcer pra não cair fiscalização?</h2>
+          <p className="mx-auto mt-4 max-w-md text-body text-muted">Comece grátis, sem cartão de crédito.</p>
+          <Link href="/cadastro" className="btn btn-primary mt-8">
+            Começar grátis <ArrowRight size={16} />
+          </Link>
         </section>
       </main>
 
-      <footer className="border-t border-border px-5 py-14">
-        <div className="mx-auto grid max-w-6xl gap-10 sm:grid-cols-[1.2fr_1fr_1fr_1fr]">
-          <div>
-            <Image src="/brand/logo-fundo-claro.png" alt="Dattis" width={100} height={19} className="h-[19px] w-auto" />
-            <p className="mt-4 max-w-[26ch] text-sm text-muted-foreground">
-              Compliance LGPD para agências de tráfego pago e lançamento.
-            </p>
-          </div>
-          <div>
-            <p className="mb-3 text-sm font-semibold">Plataforma</p>
-            <ul className="flex flex-col gap-2 text-sm text-muted-foreground">
-              <li><a href="#solucao" className="hover:text-foreground">RAT</a></li>
-              <li><a href="#solucao" className="hover:text-foreground">DPA</a></li>
-              <li><a href="#solucao" className="hover:text-foreground">Subprocessadores</a></li>
-              <li><a href="#solucao" className="hover:text-foreground">Auditoria</a></li>
-              <li><a href="#solucao" className="hover:text-foreground">DAT</a></li>
-            </ul>
-          </div>
-          <div>
-            <p className="mb-3 text-sm font-semibold">Empresa</p>
-            <ul className="flex flex-col gap-2 text-sm text-muted-foreground">
-              <li><Link href="/diagnostico" className="hover:text-foreground">Diagnóstico Expresso</Link></li>
-              <li><Link href="/auditoria" className="hover:text-foreground">Auditoria pública</Link></li>
-              <li><Link href="/entrar" className="hover:text-foreground">Entrar</Link></li>
-              <li><Link href="/cadastro" className="hover:text-foreground">Criar conta</Link></li>
-            </ul>
-          </div>
-          <div>
-            <p className="mb-3 text-sm font-semibold">Contato</p>
-            <ul className="flex flex-col gap-2 text-sm text-muted-foreground">
-              <li>
-                <a href="mailto:contato@dattis.com" className="inline-flex items-center gap-1 hover:text-foreground">
-                  contato@dattis.com <ArrowUpRight className="size-3.5" />
-                </a>
-              </li>
-            </ul>
-          </div>
-        </div>
-        <div className="mx-auto mt-10 max-w-6xl border-t border-border pt-6 text-xs text-muted-foreground">
-          © {new Date().getFullYear()} Dattis. Baseado na Lei nº 13.709/2018 (LGPD).
-        </div>
-      </footer>
+      <SiteFooter fluid={FLUID} />
     </div>
   );
 }

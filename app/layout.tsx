@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
   weight: ["500", "600", "700"],
-  variable: "--font-display",
+  variable: "--font-display-src",
 });
 
 const inter = Inter({
@@ -18,18 +18,21 @@ const inter = Inter({
 const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
-  variable: "--font-mono",
+  variable: "--font-mono-src",
 });
 
 export const metadata: Metadata = {
-  title: "Dattis — Compliance LGPD para agências de tráfego pago",
+  title: {
+    default: "Dattis — Compliance LGPD para agências de tráfego pago",
+    template: "%s · Dattis",
+  },
   description:
-    "Diagnóstico de risco gratuito, RAT e DPA automatizados por conta, e DPO as a Service — a camada de conformidade LGPD desenhada pro fluxo de dados de agências de performance.",
+    "A Dattis gera, para cada cliente que sua agência atende, o RAT, o DPA e o registro de subprocessadores — sem precisar contratar um advogado por documento.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="pt-BR" className={cn(spaceGrotesk.variable, inter.variable, jetbrainsMono.variable, "font-sans")}>
+    <html lang="pt-BR" className={cn(spaceGrotesk.variable, inter.variable, jetbrainsMono.variable, "font-ui")}>
       <body>{children}</body>
     </html>
   );
