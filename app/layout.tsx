@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
-import { Hanken_Grotesk, Inter, JetBrains_Mono } from "next/font/google";
+import { Space_Grotesk, Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 
-const hankenGrotesk = Hanken_Grotesk({
+const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
-  weight: ["500", "600", "700", "800"],
+  weight: ["500", "600", "700"],
   variable: "--font-display",
 });
 
@@ -29,7 +29,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="pt-BR" className={cn(hankenGrotesk.variable, inter.variable, jetbrainsMono.variable, "font-sans")}>
+    <html lang="pt-BR" className={cn(spaceGrotesk.variable, inter.variable, jetbrainsMono.variable, "font-sans")}>
       <body>{children}</body>
     </html>
   );

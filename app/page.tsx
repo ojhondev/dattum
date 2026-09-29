@@ -3,12 +3,11 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Menu, X, ArrowRight, ArrowUpRight, ShieldAlert, Scale, FileWarning } from "lucide-react";
+import { Menu, X, ArrowRight, ArrowUpRight } from "lucide-react";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import {
   Sheet,
   SheetContent,
@@ -72,161 +71,19 @@ const MODULES: {
   },
 ];
 
-function BrowserChrome({ url, children }: { url: string; children: React.ReactNode }) {
-  return (
-    <Card className="overflow-hidden py-0 ring-foreground/10 shadow-2xl shadow-black/10">
-      <div className="flex items-center gap-1.5 border-b border-border bg-muted/60 px-4 py-3">
-        <span className="size-2.5 rounded-full bg-border" />
-        <span className="size-2.5 rounded-full bg-border" />
-        <span className="size-2.5 rounded-full bg-border" />
-        <span className="ml-2 truncate font-mono text-[11px] text-muted-foreground">{url}</span>
-      </div>
-      <div className="min-h-[320px] p-6 sm:p-8">{children}</div>
-    </Card>
-  );
-}
-
-function FieldPair({ label, value, full }: { label: string; value: string; full?: boolean }) {
-  return (
-    <div className={full ? "col-span-2" : ""}>
-      <p className="mb-1 font-mono text-[11px] font-bold tracking-wide text-muted-foreground uppercase">{label}</p>
-      <p className="text-sm leading-relaxed text-foreground/90">{value}</p>
-    </div>
-  );
-}
-
-function RatPreview() {
-  return (
-    <div className="rounded-lg border border-border bg-muted/40 p-5">
-      <h4 className="mb-4 font-semibold text-foreground">Conversion API (CAPI) e Custom Audiences</h4>
-      <div className="grid grid-cols-2 gap-4">
-        <FieldPair
-          full
-          label="Categorias de dado"
-          value="Dado de contato hasheado (e-mail, telefone), identificador de dispositivo, evento de conversão"
-        />
-        <FieldPair label="Finalidade" value="Otimizar e mensurar campanhas de tráfego pago via Meta Ads em nome do cliente" />
-        <FieldPair label="Base legal" value="Legítimo interesse do controlador e execução do contrato (art. 7º, IX e V, LGPD)" />
-        <FieldPair label="Titulares" value="Leads e clientes do cliente final atendido pela agência" />
-        <FieldPair label="Prazo de retenção" value="Enquanto durar a campanha ativa, mais 6 meses" />
-      </div>
-    </div>
-  );
-}
-
-function DpaPreview() {
-  return (
-    <div>
-      <Badge className="mb-4 bg-accent text-accent-foreground">Assinado eletronicamente</Badge>
-      <div className="rounded-lg border border-border bg-muted/40 p-5 font-mono text-[13px] leading-relaxed whitespace-pre-wrap text-foreground/90">
-        {`CONTRATO DE OPERAÇÃO DE DADOS PESSOAIS (DPA)
-
-Firmado nos termos da Lei nº 13.709/2018 (LGPD), entre:
-OPERADORA: Agência Aurora Tráfego.
-CONTROLADORA: Loja Aurora.
-
-1. OBJETO
-A Agência tratará dados pessoais em nome do Cliente exclusivamente
-para a execução dos serviços de tráfego pago contratados...
-
-3. SUBPROCESSADORES AUTORIZADOS
-  - Meta Ads (Facebook/Instagram)
-  - WhatsApp Business API`}
-      </div>
-    </div>
-  );
-}
-
-function SubprocessadoresPreview() {
-  const rows = [
-    { nome: "Meta Ads (Facebook/Instagram)", categoria: "Publicidade", contas: 24 },
-    { nome: "Google Ads / Google Analytics", categoria: "Publicidade", contas: 19 },
-    { nome: "WhatsApp Business API", categoria: "Atendimento", contas: 22 },
-    { nome: "RD Station", categoria: "CRM/Automação", contas: 11 },
-  ];
-  return (
-    <table className="w-full border-collapse text-sm">
-      <thead>
-        <tr>
-          <th className="border-b border-border px-3 py-2.5 text-left font-mono text-[10.5px] font-bold tracking-wide text-muted-foreground uppercase">Ferramenta</th>
-          <th className="border-b border-border px-3 py-2.5 text-left font-mono text-[10.5px] font-bold tracking-wide text-muted-foreground uppercase">Categoria</th>
-          <th className="border-b border-border px-3 py-2.5 text-left font-mono text-[10.5px] font-bold tracking-wide text-muted-foreground uppercase">Em quantas contas</th>
-        </tr>
-      </thead>
-      <tbody>
-        {rows.map((r) => (
-          <tr key={r.nome}>
-            <td className="border-b border-border px-3 py-3 text-foreground/90 last:border-0">{r.nome}</td>
-            <td className="border-b border-border px-3 py-3 text-foreground/90 last:border-0">{r.categoria}</td>
-            <td className="border-b border-border px-3 py-3 text-foreground/90 last:border-0">{r.contas}</td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  );
-}
-
-function AuditoriaPreview() {
-  const findings = [
-    { label: "Meta Pixel / CAPI", detail: "Confirmado por requisição de rede real", bad: true },
-    { label: "Banner de consentimento de cookies", detail: "Não encontrado no DOM renderizado", bad: true },
-    { label: "HTTPS", detail: "Certificado válido", bad: false },
-    { label: "Política de privacidade", detail: "Link encontrado no rodapé", bad: false },
-  ];
-  return (
-    <div>
-      <div className="mb-5 flex items-center gap-5">
-        <div
-          className="flex size-[72px] shrink-0 items-center justify-center rounded-full"
-          style={{ background: "conic-gradient(var(--chart-2) 132deg, var(--border) 0)" }}
-        >
-          <div className="flex size-[55px] flex-col items-center justify-center rounded-full bg-card">
-            <span className="text-base leading-none font-bold text-foreground">38%</span>
-            <span className="mt-0.5 font-mono text-[8px] font-bold text-muted-foreground uppercase">Médio</span>
-          </div>
-        </div>
-        <div>
-          <p className="mb-1 text-[15px] font-semibold text-foreground">Risco Médio — dá pra corrigir rápido, antes que vire problema</p>
-          <p className="font-mono text-[13px] text-muted-foreground">lojaaurora.com.br</p>
-        </div>
-      </div>
-      {findings.map((f) => (
-        <div key={f.label} className="flex items-start gap-2.5 border-b border-border py-2.5 last:border-0">
-          <span
-            className={`mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full text-[11px] ${
-              f.bad ? "bg-destructive/15 text-destructive" : "bg-accent text-accent-foreground"
-            }`}
-          >
-            {f.bad ? "!" : "✓"}
-          </span>
-          <div>
-            <div className="text-sm font-semibold text-foreground">{f.label}</div>
-            <div className="mt-0.5 text-[13px] text-muted-foreground">{f.detail}</div>
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-}
-
 const PROBLEMA_CARDS = [
   {
-    icon: Scale,
-    titulo: "Multa solidária",
-    texto:
-      "Se sua agência sai das instruções do cliente — reaproveita lista entre contas, mistura CRM/WhatsApp de clientes diferentes — ela se equipara ao controlador e herda multa de até 2% do faturamento, limitada a R$ 50 milhões por infração (art. 52, LGPD).",
+    titulo: "2% de multa\nsob faturamento",
+    texto: "Sua agência pode sofrer multa de até 2% do faturamento, limitada a R$ 50 milhões por infração.",
   },
   {
-    icon: ShieldAlert,
-    titulo: "Responsabilidade solidária",
+    titulo: "Proibição no\nTratamento de Dados",
     texto:
-      "Como operadora, a agência responde junto com o cliente por qualquer dano ao titular do dado (art. 42, LGPD) — o titular pode acionar qualquer um dos dois, não só o dono da campanha.",
+      "Medida prevista no art. 52 a ANPD pode determinar a proibição parcial ou total do exercício de atividades relacionadas ao tratamento de dados.",
   },
   {
-    icon: FileWarning,
-    titulo: "Sem prova, sem defesa",
-    texto:
-      "Boa-fé e mitigação prévia reduzem a pena em caso de sanção (art. 52, §1º) — mas só valem se houver histórico documentado. Sem RAT, DPA e canal do titular registrados, não tem o que mostrar.",
+    titulo: "Indiciamento\ncriminal",
+    texto: "Condutas envolvendo dados pessoais podem gerar responsabilidade civil e  responsabilização criminal",
   },
 ];
 
@@ -241,44 +98,42 @@ const MISSAO_PILLS = [
 
 export default function Home() {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [activeModule, setActiveModule] = useState<ModuleKey>("rat");
-  const active = MODULES.find((m) => m.key === activeModule)!;
 
   return (
     <div className="bg-background text-foreground">
       {/* announcement bar */}
       <a
         href="mailto:contato@dattis.com?subject=Preciso%20de%20ajuda%20urgente%20com%20LGPD"
-        className="block bg-gradient-to-r from-primary/70 via-primary to-primary/70 py-2 text-center text-[13px] font-semibold text-secondary underline underline-offset-2 hover:no-underline"
+        className="block bg-gradient-to-r from-primary via-primary/45 to-white py-2 text-center text-[13px] font-semibold text-secondary underline underline-offset-2 hover:no-underline"
       >
         Sofreu uma denúncia ou multa? Fale com a gente com urgência
       </a>
 
       {/* nav */}
-      <header className="sticky top-0 z-50 border-b border-white/10 bg-secondary text-secondary-foreground">
-        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5 sm:px-8">
+      <header className="sticky top-0 z-50 bg-secondary text-secondary-foreground">
+        <div className="mx-auto flex h-20 max-w-6xl items-center justify-between px-5 sm:px-8">
           <Link href="/" className="flex items-center gap-2">
             <Image src="/brand/logo-fundo-dark.png" alt="Dattis" width={110} height={21} priority className="h-[21px] w-auto" />
           </Link>
 
-          <nav className="hidden items-center gap-1 md:flex">
+          <nav className="hidden items-center gap-1 rounded-full bg-[#e6fffa] p-1.5 md:flex">
             {NAV_LINKS.map((l) => (
               <a
                 key={l.href}
                 href={l.href}
-                className="rounded-full px-3.5 py-2 text-sm font-medium text-secondary-foreground/80 transition-colors hover:bg-white/10 hover:text-secondary-foreground"
+                className="rounded-full px-4 py-2 text-sm font-medium text-black transition-colors hover:bg-white"
               >
                 {l.label}
               </a>
             ))}
           </nav>
 
-          <div className="flex items-center gap-2">
-            <Link href="/entrar" className="hidden text-sm font-semibold text-secondary-foreground hover:opacity-80 sm:block">
-              Entrar
+          <div className="flex items-center gap-4">
+            <Link href="/agendar" className="hidden text-sm font-semibold text-secondary-foreground hover:opacity-80 sm:block">
+              Agendar um papo
             </Link>
-            <Link href="/cadastro" className={cn(buttonVariants(), "rounded-full")}>
-              Começar grátis
+            <Link href="/cadastro" className={cn(buttonVariants(), "rounded-full text-secondary")}>
+              Começar
             </Link>
             <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
               <Button variant="ghost" size="icon" className="text-secondary-foreground md:hidden" onClick={() => setMobileOpen(true)}>
@@ -315,7 +170,7 @@ export default function Home() {
                   >
                     Entrar
                   </Link>
-                  <Link href="/cadastro" className={cn(buttonVariants(), "rounded-full")}>
+                  <Link href="/cadastro" className={cn(buttonVariants(), "rounded-full text-secondary")}>
                     Começar grátis
                   </Link>
                 </div>
@@ -327,54 +182,62 @@ export default function Home() {
 
       <main>
         {/* hero */}
-        <section className="px-5 pt-20 pb-16 text-center sm:pt-28 sm:pb-24">
-          <div className="mx-auto max-w-3xl">
-            <Badge variant="outline" className="mb-6 border-primary/40 font-mono text-[11px] font-semibold tracking-wide text-primary uppercase">
-              Dattis · Compliance LGPD para agências de tráfego pago
-            </Badge>
-            <h1 className="mx-auto max-w-2xl text-5xl leading-[1.05] font-semibold tracking-tight text-balance sm:text-6xl">
-              Agência de tráfego: descumprir a LGPD sai caro.
+        <section className="relative bg-secondary px-5 pt-14 pb-16 text-center text-secondary-foreground sm:pt-20 sm:pb-24">
+          <div className="mx-auto max-w-6xl">
+            <p className="mb-5 text-xs text-secondary-foreground/55">
+              Baseado na Lei 13.709/2018 (LGPD) · feito para agências de tráfego pago
+            </p>
+            <h1 className="mx-auto text-5xl leading-[1.35] font-semibold text-balance sm:text-7xl">
+              Agência de Tráfego:
+              <br />
+              Descumprir a LGPD gera multas.
             </h1>
-            <p className="mx-auto mt-6 max-w-xl text-lg leading-relaxed text-foreground/70">
-              A Dattis gera, para cada cliente que sua agência atende, o registro do que vocês fazem com o dado dele, o
-              contrato assinado entre vocês e a lista de ferramentas que também tocam esse dado — sem precisar
-              contratar um advogado por documento.
+            <p className="mx-auto mt-7 max-w-2xl text-lg leading-relaxed text-secondary-foreground/70">
+              Captação, armazenamento e gestão de dados sem os controles adequados podem expor sua agência a riscos e
+              multas de milhares de reais.
             </p>
             <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-              <Link href="/cadastro" className={cn(buttonVariants({ size: "lg" }), "h-12 rounded-full px-7 text-base")}>
-                Começar grátis <ArrowRight />
+              <Link
+                href="/cadastro"
+                className={cn(buttonVariants({ size: "lg" }), "h-11 rounded-full px-7 text-[15px] text-secondary")}
+              >
+                Começar
               </Link>
               <Link
-                href="/diagnostico"
-                className={cn(buttonVariants({ size: "lg", variant: "outline" }), "h-12 rounded-full px-7 text-base")}
+                href="/agendar"
+                className={cn(
+                  buttonVariants({ size: "lg", variant: "outline" }),
+                  "h-11 rounded-full border-white/30 bg-transparent px-7 text-[15px] text-secondary-foreground hover:bg-white/10 hover:text-secondary-foreground"
+                )}
               >
-                Fazer o Diagnóstico Expresso
+                Agendar um papo
               </Link>
             </div>
-            <p className="mt-6 font-mono text-xs text-muted-foreground">
-              Baseado na Lei 13.709/2018 (LGPD) · feito para agências de tráfego pago e lançamento
-            </p>
           </div>
         </section>
 
+        <div className="relative z-10 -mt-10 px-5 sm:-mt-20">
+          <div className="mx-auto max-w-6xl overflow-hidden rounded-3xl border-4 border-primary/70 shadow-[0_30px_80px_-20px_rgba(0,0,0,0.5)]">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/marketing/demo-plataforma.png" alt="Demonstração da plataforma Dattis" className="w-full" />
+          </div>
+        </div>
+
         {/* problema */}
-        <section id="problema" className="border-t border-border px-5 py-20 sm:py-24">
+        <section id="problema" className="px-5 pt-16 pb-20 sm:pt-20 sm:pb-24">
           <div className="mx-auto max-w-5xl">
-            <Badge variant="outline" className="mb-4 font-mono text-[11px] font-semibold tracking-wide text-muted-foreground uppercase">
-              O problema
-            </Badge>
-            <h2 className="max-w-3xl text-3xl leading-tight font-semibold text-balance sm:text-4xl">
-              Sua agência gera, coleta, cruza e compartilha dados pessoais todos os dias pra criar e executar campanhas
-              dos seus clientes. Mas quem garante que todo esse tratamento está{" "}
-              <span className="text-primary">de acordo com a lei?</span>
+            <p className="mb-5 font-mono text-[13px] font-bold tracking-[0.1em] text-secondary uppercase">O problema</p>
+            <h2 className="max-w-4xl text-3xl leading-tight font-semibold text-balance text-muted-foreground sm:text-4xl">
+              Sua agência gera, coleta, cruza e compartilha dados pessoais todos os dias para criar e executar
+              campanhas. Mas quem garante que todo esse tratamento está de{" "}
+              <span className="text-primary">acordo com a lei?</span>
             </h2>
-            <div className="mt-12 grid gap-6 sm:grid-cols-3">
+            <div className="mt-14 grid gap-10 sm:grid-cols-3 sm:gap-6">
               {PROBLEMA_CARDS.map((c) => (
-                <Card key={c.titulo} className="gap-3 p-6">
-                  <c.icon className="size-5 text-primary" />
-                  <h3 className="text-lg font-semibold">{c.titulo}</h3>
-                  <p className="text-sm leading-relaxed text-muted-foreground">{c.texto}</p>
-                </Card>
+                <div key={c.titulo}>
+                  <h3 className="text-xl leading-tight font-semibold text-secondary whitespace-pre-line">{c.titulo}</h3>
+                  <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{c.texto}</p>
+                </div>
               ))}
             </div>
           </div>
@@ -411,72 +274,90 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="relative mx-auto mt-14 max-w-4xl">
-            <Tabs value={activeModule} onValueChange={(v) => setActiveModule(v as ModuleKey)}>
-              <TabsList className="mx-auto mb-8 h-auto flex-wrap justify-center gap-2 bg-transparent p-0">
-                {MODULES.map((m) => (
-                  <TabsTrigger
-                    key={m.key}
-                    value={m.key}
-                    className="rounded-full border border-white/20 bg-white/5 px-4 py-2 font-mono text-[13px] font-semibold text-secondary-foreground/70 data-active:border-primary data-active:bg-primary data-active:text-primary-foreground data-active:shadow-none"
-                  >
+          <div className="relative mx-auto mt-20 flex max-w-5xl flex-col gap-20 sm:mt-28 sm:gap-28">
+            {MODULES.map((m, i) => (
+              <div
+                key={m.key}
+                className={cn(
+                  "flex flex-col items-center gap-8 sm:gap-12 md:flex-row",
+                  i % 2 === 1 && "md:flex-row-reverse"
+                )}
+              >
+                <div className="flex-1 text-center md:text-left">
+                  <span className="inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-white/5 px-3 py-1 font-mono text-[12px] font-semibold text-secondary-foreground/70">
                     <span className="opacity-55">dattis/</span>
                     {m.slug}
-                  </TabsTrigger>
-                ))}
-              </TabsList>
-
-              <div className="mb-6 text-center">
-                <h3 className="text-xl font-semibold text-secondary-foreground sm:text-2xl">{active.simples}</h3>
-                <p className="mt-1 font-mono text-[11px] tracking-wide text-primary uppercase">{active.tecnico}</p>
-                <p className="mx-auto mt-3 max-w-xl text-sm leading-relaxed text-secondary-foreground/70">{active.descricao}</p>
+                  </span>
+                  <h3 className="mt-4 text-2xl leading-tight font-semibold text-secondary-foreground sm:text-3xl">
+                    {m.simples}
+                  </h3>
+                  <p className="mt-3 text-sm leading-relaxed text-secondary-foreground/70">{m.descricao}</p>
+                  <Link
+                    href="/cadastro"
+                    className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-primary hover:opacity-80"
+                  >
+                    Começar agora <ArrowRight className="size-4" />
+                  </Link>
+                </div>
+                <div className="flex-1">
+                  <div className="overflow-hidden rounded-2xl border-2 border-primary/50 shadow-2xl shadow-black/30">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src="/marketing/demo-plataforma.png"
+                      alt={`Tela de ${m.tecnico} na plataforma Dattis`}
+                      className="w-full"
+                    />
+                  </div>
+                </div>
               </div>
-
-              {MODULES.map((m) => (
-                <TabsContent key={m.key} value={m.key}>
-                  <BrowserChrome url={m.url}>
-                    {m.key === "rat" && <RatPreview />}
-                    {m.key === "dpa" && <DpaPreview />}
-                    {m.key === "subprocessadores" && <SubprocessadoresPreview />}
-                    {m.key === "auditoria" && <AuditoriaPreview />}
-                  </BrowserChrome>
-                </TabsContent>
-              ))}
-            </Tabs>
+            ))}
           </div>
         </section>
 
         {/* por que agora — credibilidade real, sem depoimento fabricado */}
         <section id="por-que-agora" className="border-t border-border px-5 py-20 sm:py-24">
           <div className="mx-auto max-w-5xl">
-            <Badge variant="outline" className="mb-4 font-mono text-[11px] font-semibold tracking-wide text-muted-foreground uppercase">
-              Por que agora
-            </Badge>
-            <h2 className="max-w-2xl text-3xl leading-tight font-semibold text-balance sm:text-4xl">
-              O risco não é hipotético — já tem tese acadêmica e fiscalização real sobre isso
-            </h2>
-            <div className="mt-10 grid gap-6 sm:grid-cols-3">
-              <Card className="gap-2 p-6">
-                <span className="font-mono text-3xl font-bold text-primary">180 mil+</span>
-                <p className="text-sm leading-relaxed text-muted-foreground">
-                  agências de marketing e comunicação no Brasil, 91,3% com atuação digital — a grande maioria ainda
-                  trata dado de cliente como responsabilidade só do controlador.
+            <Card className="grid gap-0 overflow-hidden p-0 sm:grid-cols-2">
+              <div className="flex aspect-video items-center justify-center bg-muted sm:aspect-auto">
+                <span className="font-mono text-xs text-muted-foreground">[Foto/vídeo do cliente entra aqui]</span>
+              </div>
+              <div className="flex flex-col justify-center gap-4 p-8">
+                <span className="font-mono text-[11px] font-semibold tracking-wide text-muted-foreground uppercase">
+                  Ler o caso completo ↗
+                </span>
+                <p className="text-xl leading-snug font-semibold text-balance">
+                  &ldquo;[Depoimento real de uma agência cliente entra aqui — resultado que a Dattis trouxe pra
+                  operação dela]&rdquo;
                 </p>
-              </Card>
-              <Card className="gap-2 p-6">
-                <span className="font-mono text-3xl font-bold text-primary">19 processos</span>
-                <p className="text-sm leading-relaxed text-muted-foreground">
-                  abertos pela ANPD em um único mês (junho de 2026) — recorde histórico da autarquia. A fiscalização
-                  está acelerando, não o contrário.
+                <p className="text-sm text-muted-foreground">
+                  <span className="font-semibold text-foreground">[Nome do responsável]</span> [Cargo] na [Nome da
+                  agência]
                 </p>
-              </Card>
-              <Card className="gap-2 p-6">
-                <span className="font-mono text-3xl font-bold text-primary">Tese publicada</span>
-                <p className="text-sm leading-relaxed text-muted-foreground">
-                  A PUC Goiás já publicou pesquisa acadêmica específica sobre violação da LGPD por agências de
-                  marketing digital — o cruzamento já é objeto de estudo, não hipótese.
-                </p>
-              </Card>
+                <div className="mt-4 grid grid-cols-3 gap-4 border-t border-border pt-4">
+                  <div>
+                    <p className="font-mono text-2xl font-bold text-foreground">[00]+</p>
+                    <p className="text-xs text-muted-foreground">Agências atendidas</p>
+                  </div>
+                  <div>
+                    <p className="font-mono text-2xl font-bold text-foreground">[00]</p>
+                    <p className="text-xs text-muted-foreground">Contas por agência</p>
+                  </div>
+                  <div>
+                    <p className="font-mono text-2xl font-bold text-foreground">[00]d</p>
+                    <p className="text-xs text-muted-foreground">Sprint de higienização</p>
+                  </div>
+                </div>
+              </div>
+            </Card>
+            <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
+              {["Agência A", "Agência B", "Agência C", "Agência D"].map((label) => (
+                <div
+                  key={label}
+                  className="flex h-16 items-center justify-center rounded-lg border border-dashed border-border font-mono text-xs text-muted-foreground"
+                >
+                  {label}
+                </div>
+              ))}
             </div>
           </div>
         </section>
@@ -498,7 +379,7 @@ export default function Home() {
                 </span>
               ))}
             </div>
-            <Link href="/cadastro" className={cn(buttonVariants({ size: "lg" }), "mt-10 h-12 rounded-full px-7 text-base")}>
+            <Link href="/cadastro" className={cn(buttonVariants({ size: "lg" }), "mt-10 h-12 rounded-full px-7 text-base text-secondary")}>
               Começar grátis <ArrowRight />
             </Link>
           </div>
