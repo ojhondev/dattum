@@ -8,7 +8,7 @@ export function SiteHeader() {
   return (
     <header className="sticky top-0 z-40 bg-canvas/90 backdrop-blur">
       <div className="grid h-[76px] w-full grid-cols-[1fr_auto] items-center gap-4 px-4 sm:px-10 lg:grid-cols-[1fr_auto_1fr]">
-        <Logo height={26} />
+        <Logo height={34} />
         <DesktopNav />
         <div className="flex shrink-0 items-center justify-end gap-2.5">
           <ThemeToggle />

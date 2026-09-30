@@ -47,7 +47,7 @@ export function SiteFooter() {
 
   return (
     <footer className="bg-rail text-white">
-      <div className="w-full px-5 py-16 sm:px-10 lg:px-14 lg:py-20">
+      <div className="w-full px-5 pb-28 pt-16 sm:px-10 lg:px-14 lg:pb-32 lg:pt-20">
         <div className="grid gap-12 lg:grid-cols-[120px_1fr]">
           <Image
             src={appIcon}

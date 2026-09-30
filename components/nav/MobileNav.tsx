@@ -33,7 +33,7 @@ export function MobileNav({
         createPortal(
         <div className="fixed inset-0 z-50 flex flex-col bg-canvas">
           <div className="flex h-[76px] shrink-0 items-center justify-between px-4">
-            <Logo height={26} />
+            <Logo height={32} />
             <button type="button" aria-label="Fechar" onClick={fechar} className="rounded-full p-2 text-ink">
               <X size={26} />
             </button>

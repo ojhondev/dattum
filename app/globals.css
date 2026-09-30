@@ -474,3 +474,12 @@ table.painel-table a:hover { text-decoration: underline; }
   main { padding: 0 !important; }
   section { break-inside: avoid; }
 }
+
+/* ---------- Letreiro da faixa da LGPD ---------- */
+@keyframes letreiro { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+.letreiro { animation: letreiro 40s linear infinite; }
+.letreiro:hover { animation-play-state: paused; }
+@media (prefers-reduced-motion: reduce) {
+  .letreiro { animation: none !important; display: grid; grid-template-columns: repeat(2, max-content); row-gap: 2px; }
+  .letreiro > [aria-hidden="true"], .letreiro > [data-extra] { display: none; }
+}

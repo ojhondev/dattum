@@ -47,7 +47,7 @@ export function ScrollRevealText({ eyebrow, trechos }: { eyebrow: string; trecho
     <div ref={ref} className="relative h-[260vh]">
       <div className="sticky top-0 flex h-svh flex-col justify-center px-5 pb-10 pt-[96px] sm:px-10 lg:px-14">
         <p className="t-eyebrow !text-white/80">{eyebrow}</p>
-        <h2 className="mt-6 font-display text-[clamp(2.1rem,5.4vw,5.6rem)] leading-[1.08] tracking-[-0.01em]">
+        <h2 className="mt-6 font-display text-[clamp(2.1rem,min(5.4vw,8.6svh),5.6rem)] leading-[1.08] tracking-[-0.01em]">
           {palavras.map((p, i) => (
             <span key={i}>
               {p.quebra && <br />}

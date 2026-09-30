@@ -7,6 +7,8 @@ import { ArrowLink } from "@/components/marketing/MetaChips";
 import { Faq } from "@/components/marketing/Faq";
 import { PLANOS, RECURSOS, destaquesDoPlano, type Plano } from "@/lib/planos";
 import { linkAssinar } from "@/lib/contato";
+import { LeiBar } from "@/components/marketing/LeiBar";
+import { CalculadoraPopup } from "@/components/marketing/CalculadoraPopup";
 
 const SPRINT = [
   "Contrato de operador (DPA) padrão para a carteira",
@@ -269,6 +271,8 @@ export default function PlanosPage() {
       </main>
 
       <SiteFooter />
+      <LeiBar />
+      <CalculadoraPopup />
     </div>
   );
 }

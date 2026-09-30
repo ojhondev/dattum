@@ -17,6 +17,8 @@ import {
 } from "@/components/marketing/ModuleVisuals";
 import { Testimonials } from "@/components/marketing/Testimonials";
 import { ScrollRevealText } from "@/components/marketing/ScrollRevealText";
+import { LeiBar } from "@/components/marketing/LeiBar";
+import { CalculadoraPopup, BotaoCalculadora } from "@/components/marketing/CalculadoraPopup";
 import { Faq } from "@/components/marketing/Faq";
 
 const RISCOS = [
@@ -402,6 +404,7 @@ export default function LandingPage() {
               Você e seu cliente correm risco toda vez que um lead entra numa campanha. A pergunta não é se a fiscalização
               existe — é quanto custa estar sem prova quando ela chegar.
             </p>
+            <BotaoCalculadora className="btn btn-dark btn-lg mt-8 max-w-full whitespace-normal text-center leading-snug">Calcular o risco da minha agência</BotaoCalculadora>
             <div className="mt-12 grid gap-5 lg:grid-cols-2">
               <div className="on-light rounded-[40px] bg-orange px-8 py-12 sm:px-12">
                 <p className="t-label">Sem a Dattis</p>
@@ -487,6 +490,8 @@ export default function LandingPage() {
       </main>
 
       <SiteFooter />
+      <LeiBar />
+      <CalculadoraPopup />
     </div>
   );
 }
