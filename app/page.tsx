@@ -20,6 +20,7 @@ import { ScrollRevealText } from "@/components/marketing/ScrollRevealText";
 import { LeiBar } from "@/components/marketing/LeiBar";
 import { CalculadoraPopup, BotaoCalculadora } from "@/components/marketing/CalculadoraPopup";
 import { Faq } from "@/components/marketing/Faq";
+import { linkContato } from "@/lib/contato";
 
 const RISCOS = [
   {
@@ -138,9 +139,14 @@ export default function LandingPage() {
       <div className="announce">
         <p className="px-5 py-2.5 text-center text-[13px]">
           Sofreu uma denúncia ou multa?{" "}
-          <Link href="mailto:contato@dattis.com" className="underline underline-offset-2">
+          <a
+            href={linkContato("Olá! Sofri uma denúncia ou multa e preciso de ajuda com urgência.")}
+            target="_blank"
+            rel="noopener"
+            className="underline underline-offset-2"
+          >
             Fale com a gente com urgência
-          </Link>
+          </a>
         </p>
       </div>
       <SiteHeader />

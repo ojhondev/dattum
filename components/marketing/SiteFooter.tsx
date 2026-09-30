@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import appIcon from "../../public/brand/app-icon.png";
+import { EMAIL_CONTATO, WHATSAPP_EXIBICAO, linkContato } from "@/lib/contato";
 
 const COLUMNS: { title: string; links: { label: string; href: string }[] }[] = [
   {
@@ -29,7 +30,8 @@ const COLUMNS: { title: string; links: { label: string; href: string }[] }[] = [
       { label: "Diferencial competitivo", href: "/#diferencial" },
       { label: "O papel do DPO", href: "/#dpo" },
       { label: "Perguntas frequentes", href: "/#faq" },
-      { label: "Contato", href: "mailto:contato@dattis.com" },
+      { label: `WhatsApp ${WHATSAPP_EXIBICAO}`, href: linkContato("Olá! Vim pelo site da Dattis e quero falar com a equipe.") },
+      { label: EMAIL_CONTATO, href: `mailto:${EMAIL_CONTATO}` },
     ],
   },
   {

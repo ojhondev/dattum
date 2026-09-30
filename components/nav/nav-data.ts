@@ -9,10 +9,10 @@ import {
   Scale,
   Trophy,
   CircleHelp,
-  Mail,
+  MessageCircle,
   type LucideIcon,
 } from "lucide-react";
-import { EMAIL_CONTATO } from "@/lib/contato";
+import { WHATSAPP_EXIBICAO, linkContato } from "@/lib/contato";
 
 export type NavItem = { href: string; label: string; desc: string; icon: LucideIcon };
 export type NavGroup = { label: string; items: NavItem[] };
@@ -46,7 +46,7 @@ export const NAV_GROUPS: NavGroup[] = [
     items: [
       { href: "/#diferencial", label: "Diferencial competitivo", desc: "Privacidade como argumento de venda da agência.", icon: Trophy },
       { href: "/#faq", label: "Perguntas frequentes", desc: "RAT, DPA, selo, BM suspensa e preços.", icon: CircleHelp },
-      { href: `mailto:${EMAIL_CONTATO}`, label: "Contato", desc: EMAIL_CONTATO, icon: Mail },
+      { href: linkContato("Olá! Vim pelo site da Dattis e quero falar com a equipe."), label: "WhatsApp", desc: WHATSAPP_EXIBICAO, icon: MessageCircle },
     ],
   },
 ];

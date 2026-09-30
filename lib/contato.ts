@@ -1,9 +1,10 @@
 /**
  * A venda é feita em reunião, com link de pagamento enviado por WhatsApp.
- * Todo CTA de assinatura abre conversa no WhatsApp (NEXT_PUBLIC_WHATSAPP, só dígitos com DDI,
- * ex.: 5511999999999). Sem o número configurado, cai no e-mail.
+ * Todo CTA de assinatura abre conversa no WhatsApp comercial (DDI + DDD + número, só dígitos).
+ * NEXT_PUBLIC_WHATSAPP sobrescreve o número padrão.
  */
-const WHATSAPP = (process.env.NEXT_PUBLIC_WHATSAPP ?? "").replace(/\D/g, "");
+const WHATSAPP = (process.env.NEXT_PUBLIC_WHATSAPP || "5514998570045").replace(/\D/g, "");
+export const WHATSAPP_EXIBICAO = "(14) 99857-0045";
 export const EMAIL_CONTATO = "contato@dattis.com";
 
 export function linkContato(mensagem: string) {
