@@ -17,7 +17,8 @@ import {
   X,
   type LucideIcon,
 } from "lucide-react";
-import markDark from "../../public/brand/icone-fundo-dark.png";
+import iconeMenta from "../../public/brand/icone-sidebar-menta.png";
+import iconeBranco from "../../public/brand/icone-sidebar-branco.png";
 import logoDark from "../../public/brand/logo-fundo-dark.png";
 
 type Item = { href: string; label: string; icon: LucideIcon; exact?: boolean };
@@ -47,7 +48,13 @@ function RailMark({ withWordmark = false }: { withWordmark?: boolean }) {
   if (withWordmark) {
     return <Image src={logoDark} alt="Dattis" height={20} width={Math.round((logoDark.width / logoDark.height) * 20)} priority />;
   }
-  return <Image src={markDark} alt="Dattis" height={22} width={Math.round((markDark.width / markDark.height) * 22)} priority />;
+  const w = Math.round((iconeMenta.width / iconeMenta.height) * 28);
+  return (
+    <>
+      <Image src={iconeMenta} alt="Dattis" height={28} width={w} priority className="logo-light" />
+      <Image src={iconeBranco} alt="Dattis" height={28} width={w} priority className="logo-dark" />
+    </>
+  );
 }
 
 function NavItems({ collapsed, onNavigate }: { collapsed: boolean; onNavigate?: () => void }) {

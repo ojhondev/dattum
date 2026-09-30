@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import markDark from "../../public/brand/icone-fundo-dark.png";
+import appIcon from "../../public/brand/app-icon.png";
 
 const COLUMNS: { title: string; links: { label: string; href: string }[] }[] = [
   {
@@ -50,10 +50,10 @@ export function SiteFooter() {
       <div className="w-full px-5 py-16 sm:px-10 lg:px-14 lg:py-20">
         <div className="grid gap-12 lg:grid-cols-[120px_1fr]">
           <Image
-            src={markDark}
+            src={appIcon}
             alt="Dattis"
-            height={56}
-            width={Math.round((markDark.width / markDark.height) * 56)}
+            height={64}
+            width={64}
           />
 
           <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 md:grid-cols-4">
