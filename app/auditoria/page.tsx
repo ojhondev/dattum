@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState, type CSSProperties, type FormEvent } from "react";
+import { SiteHeader } from "@/components/marketing/SiteHeader";
+import { SiteFooter } from "@/components/marketing/SiteFooter";
 import "./auditoria.css";
 
 type FindingKind = "tracker" | "capture" | "consent" | "policy" | "security";
@@ -140,6 +142,7 @@ export default function Auditoria() {
 
   return (
     <div className="audit-page">
+      <SiteHeader />
       <div className="audit-wrap">
         <div className="audit-eyebrow">Dattis · Auditoria de Risco</div>
 
@@ -292,6 +295,7 @@ export default function Auditoria() {
           </div>
         )}
       </div>
+      <SiteFooter />
     </div>
   );
 }

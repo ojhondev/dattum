@@ -39,43 +39,43 @@ function EntrarForm() {
 
   return (
     <AuthShell panelHeadline="Sua operação de compliance, em um lugar só.">
-      <h1 className="t-heading-lg">Entrar</h1>
+      <h1 className="t-display">Entrar</h1>
       <p className="mt-3 text-body-sm text-muted">Acesse o painel da sua agência.</p>
 
       <form className="font-ui mt-8 space-y-4" onSubmit={submit}>
         <label className="block">
-          <span className="text-body-sm text-body">E-mail</span>
+          <span className="text-body-sm font-medium text-body">E-mail</span>
           <input
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            className="mt-1.5 w-full rounded-none border border-line-strong bg-surface px-3 py-2.5 text-body-sm text-ink"
+            className="field-input mt-1.5"
           />
         </label>
         <label className="block">
-          <span className="text-body-sm text-body">Senha</span>
+          <span className="text-body-sm font-medium text-body">Senha</span>
           <input
             type="password"
             value={senha}
             onChange={(e) => setSenha(e.target.value)}
             required
-            className="mt-1.5 w-full rounded-none border border-line-strong bg-surface px-3 py-2.5 text-body-sm text-ink"
+            className="field-input mt-1.5"
           />
         </label>
-        {erro && <div className="border border-danger/30 bg-danger-tint px-3 py-2.5 text-body-sm text-danger">{erro}</div>}
-        <button type="submit" disabled={enviando} className="btn btn-primary w-full justify-center py-2.5 text-body-sm">
+        {erro && <div className="rounded-xl bg-danger-tint px-4 py-3 text-body-sm text-danger">{erro}</div>}
+        <button type="submit" disabled={enviando} className="btn btn-dark btn-lg w-full">
           {enviando ? "Entrando..." : "Entrar →"}
         </button>
       </form>
 
-      <div className="font-ui mt-6 flex items-center gap-3 text-caption text-faint">
+      <div className="mt-6 flex items-center gap-3 font-mono text-caption uppercase text-faint">
         <span className="h-px flex-1 bg-line" />
         ou
         <span className="h-px flex-1 bg-line" />
       </div>
 
-      <a href="/api/auth/demo" className="btn btn-ghost mt-6 w-full justify-center py-2.5 text-body-sm">
+      <a href="/api/auth/demo" className="btn btn-primary btn-lg mt-6 w-full">
         Testar a plataforma sem senha →
       </a>
       <p className="font-ui mt-2 text-caption text-faint">

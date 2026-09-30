@@ -46,13 +46,13 @@ function NavItems({ collapsed, onNavigate }: { collapsed: boolean; onNavigate?: 
   const isActive = (href: string, exact = false) => (exact ? pathname === href : pathname === href || pathname.startsWith(href + "/"));
 
   return (
-    <nav className="font-ui flex flex-1 flex-col gap-1 px-2 text-body-sm">
+    <nav className="flex flex-1 flex-col gap-1 px-3 text-[15px]">
       {GROUPS.map((g, gi) => (
         <div key={g.title} className={gi > 0 ? "mt-4" : ""}>
           {collapsed ? (
             gi > 0 && <div className="mx-2 my-2 h-px bg-white/10" />
           ) : (
-            <p className="mb-1 px-2.5 text-[11px] font-semibold uppercase tracking-[0.08em] text-white/35">{g.title}</p>
+            <p className="mb-2 px-3.5 font-mono text-[11px] uppercase tracking-[0.06em] text-white/40">{g.title}</p>
           )}
           {g.items.map((it) => {
             const Icon = it.icon;
@@ -64,13 +64,12 @@ function NavItems({ collapsed, onNavigate }: { collapsed: boolean; onNavigate?: 
                 onClick={onNavigate}
                 title={it.label}
                 className={
-                  "group relative flex items-center gap-2.5 rounded-none px-2.5 py-2 transition-colors " +
-                  (active ? "bg-white/10 text-white" : "text-white/60 hover:bg-white/[0.06] hover:text-white") +
+                  "group relative flex items-center gap-2.5 rounded-full px-3.5 py-2.5 transition-colors " +
+                  (active ? "bg-brand text-on-brand" : "text-white/70 hover:bg-white/[0.08] hover:text-white") +
                   (collapsed ? " justify-center px-0" : "")
                 }
               >
-                {active && <span className="absolute left-0 top-1/2 h-4 w-[3px] -translate-y-1/2 rounded-r bg-brand" />}
-                <Icon size={16} strokeWidth={1.9} className={"shrink-0 " + (active ? "text-brand" : "")} />
+                <Icon size={17} strokeWidth={1.8} className="shrink-0" />
                 {!collapsed && <span className="flex-1 truncate">{it.label}</span>}
               </Link>
             );
@@ -91,32 +90,32 @@ export function Sidebar({ agenciaNome, sairSlot }: { agenciaNome: string; sairSl
         type="button"
         aria-label="Menu"
         onClick={() => setMobileOpen(true)}
-        className="fixed left-3 top-3 z-30 rounded-none border border-line bg-surface p-2 text-ink shadow-[var(--shadow-card)] lg:hidden"
+        className="fixed left-4 top-4 z-30 rounded-full border border-line bg-surface p-2.5 text-ink shadow-[var(--shadow-chip)] lg:hidden"
       >
         <Menu size={18} />
       </button>
 
       <aside
         className={
-          "thin-scroll sticky top-0 hidden h-svh shrink-0 flex-col bg-rail py-4 transition-[width] duration-200 lg:flex " +
-          (collapsed ? "w-[64px]" : "w-[236px]")
+          "thin-scroll sticky top-3 m-3 mr-0 hidden h-[calc(100svh-24px)] shrink-0 flex-col rounded-[28px] bg-rail py-5 transition-[width] duration-200 lg:flex " +
+          (collapsed ? "w-[76px]" : "w-[260px]")
         }
       >
-        <div className={"flex items-center px-4 pb-5 pt-1 " + (collapsed ? "justify-center px-0" : "")}>
+        <div className={"flex items-center px-6 pb-8 pt-3 " + (collapsed ? "justify-center px-0" : "")}>
           <RailMark withWordmark={!collapsed} />
         </div>
         <div className="flex flex-1 flex-col overflow-y-auto">
           <NavItems collapsed={collapsed} />
         </div>
-        <div className={"mx-2 mt-2 border-t border-white/10 pt-2 " + (collapsed ? "text-center" : "")}>
-          {!collapsed && <p className="truncate px-2.5 pb-1 font-ui text-caption text-white/45">{agenciaNome}</p>}
-          <div className={collapsed ? "flex justify-center" : "px-1"}>{sairSlot}</div>
+        <div className={"mx-3 mt-2 border-t border-white/10 pt-3 " + (collapsed ? "text-center" : "")}>
+          {!collapsed && <p className="font-display truncate px-3.5 pb-1 text-[16px] text-white/85">{agenciaNome}</p>}
+          <div className={collapsed ? "flex justify-center" : ""}>{sairSlot}</div>
         </div>
         <button
           type="button"
           onClick={() => setCollapsed(!collapsed)}
           title="Recolher"
-          className={"font-ui mx-2 mt-2 flex items-center gap-2 rounded-none px-2.5 py-2 text-caption text-white/45 transition-colors hover:bg-white/[0.06] hover:text-white/80 " + (collapsed ? "justify-center" : "")}
+          className={"mx-3 mt-2 flex items-center gap-2 rounded-full px-3.5 py-2.5 font-mono text-[12px] uppercase tracking-[0.04em] text-white/45 transition-colors hover:bg-white/[0.08] hover:text-white/80 " + (collapsed ? "justify-center" : "")}
         >
           {collapsed ? <PanelLeftOpen size={16} /> : <PanelLeftClose size={16} />}
           {!collapsed && "Recolher"}
@@ -126,7 +125,7 @@ export function Sidebar({ agenciaNome, sairSlot }: { agenciaNome: string; sairSl
       {mobileOpen && (
         <div className="fixed inset-0 z-50 lg:hidden">
           <div className="absolute inset-0 bg-black/45" onClick={() => setMobileOpen(false)} />
-          <div className="thin-scroll absolute inset-y-0 left-0 flex w-[264px] flex-col overflow-y-auto bg-rail py-4">
+          <div className="thin-scroll absolute inset-y-2 left-2 flex w-[280px] flex-col overflow-y-auto rounded-[28px] bg-rail py-5">
             <div className="flex items-center justify-between px-4 pb-4 pt-1">
               <RailMark withWordmark />
               <button type="button" aria-label="Fechar" onClick={() => setMobileOpen(false)} className="p-1.5 text-white/70">
@@ -136,7 +135,7 @@ export function Sidebar({ agenciaNome, sairSlot }: { agenciaNome: string; sairSl
             <div className="flex flex-1 flex-col">
               <NavItems collapsed={false} onNavigate={() => setMobileOpen(false)} />
             </div>
-            <div className="mx-2 mt-2 border-t border-white/10 px-1 pt-2">{sairSlot}</div>
+            <div className="mx-3 mt-2 border-t border-white/10 pt-3">{sairSlot}</div>
           </div>
         </div>
       )}

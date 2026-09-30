@@ -16,7 +16,7 @@ export default async function PainelLayout({ children }: { children: React.React
   return (
     <div className="flex min-h-svh bg-canvas">
       <Sidebar agenciaNome={agencia.nome} sairSlot={<SairButton />} />
-      <main className="min-w-0 flex-1 px-5 py-8 sm:px-10">{children}</main>
+      <main className="min-w-0 flex-1 px-5 pb-16 pt-20 sm:px-10 lg:px-14 lg:pt-12">{children}</main>
     </div>
   );
 }

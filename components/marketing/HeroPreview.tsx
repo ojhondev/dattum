@@ -1,106 +1,72 @@
 /**
- * Eco estático do painel Dattis para o hero da home — não é screenshot, é o
- * próprio sistema visual (tokens do tema) montado em pequena escala. Decorativo.
+ * Eco estático do painel Dattis — não é screenshot, é o próprio sistema
+ * visual montado em pequena escala. Decorativo.
  */
 const RAIL_ITEMS = [true, false, false, false];
 const STEPS = ["Conta", "RAT", "DPA", "Subprocessadores"];
 const BARS = [
-  { l: "RAT em dia", v: 92, c: "var(--color-brand)" },
-  { l: "DPA assinado", v: 78, c: "var(--color-brand)" },
-  { l: "Subprocessadores", v: 64, c: "var(--color-brand)" },
-  { l: "Canal do titular", v: 41, c: "var(--color-warn)" },
+  { l: "RAT em dia", v: 92, c: "#45d190" },
+  { l: "DPA assinado", v: 78, c: "#45d190" },
+  { l: "Subprocessadores", v: 64, c: "#45d190" },
+  { l: "Canal do titular", v: 41, c: "#f38536" },
 ];
-const DONUT = [
-  { v: 46, c: "var(--color-brand)" },
-  { v: 24, c: "var(--color-info)" },
-  { v: 18, c: "var(--color-warn)" },
-  { v: 12, c: "var(--color-line-strong)" },
-];
-
-function Donut() {
-  const total = DONUT.reduce((s, d) => s + d.v, 0);
-  const c = 2 * Math.PI * 34;
-  const arcs = DONUT.reduce<{ d: (typeof DONUT)[number]; len: number; off: number }[]>((acc, d) => {
-    const len = (d.v / total) * c;
-    acc.push({ d, len, off: acc.reduce((s, a) => s + a.len, 0) });
-    return acc;
-  }, []);
-  return (
-    <svg viewBox="0 0 88 88" className="h-[88px] w-[88px] -rotate-90">
-      <circle cx="44" cy="44" r="34" fill="none" stroke="var(--color-line)" strokeWidth="13" />
-      {arcs.map(({ d, len, off }, i) => (
-        <circle key={i} cx="44" cy="44" r="34" fill="none" stroke={d.c} strokeWidth="13" strokeDasharray={`${len} ${c - len}`} strokeDashoffset={-off} />
-      ))}
-    </svg>
-  );
-}
 
 export function HeroPreview() {
   return (
-    <div aria-hidden="true" className="pointer-events-none select-none border border-line-strong bg-surface-2 p-2 sm:p-3">
-      <div className="flex overflow-hidden border border-line bg-surface">
-        <div className="hidden w-11 shrink-0 flex-col items-center gap-3 bg-rail py-3 sm:flex">
-          <div className="h-3.5 w-3.5 bg-brand" />
+    <div aria-hidden="true" className="pointer-events-none select-none rounded-[28px] bg-white/60 p-2.5 shadow-[0_20px_60px_rgba(0,40,32,0.15)] sm:p-3">
+      <div className="flex overflow-hidden rounded-[20px] bg-white text-[#0a120f]">
+        <div className="hidden w-12 shrink-0 flex-col items-center gap-3 bg-[#002820] py-4 sm:flex">
+          <div className="h-4 w-4 rounded-md bg-[#6ceead]" />
           {RAIL_ITEMS.map((active, i) => (
-            <div key={i} className={"h-4 w-4 " + (active ? "bg-white/90" : "bg-white/20")} />
+            <div key={i} className={"h-4 w-4 rounded-full " + (active ? "bg-white/90" : "bg-white/20")} />
           ))}
         </div>
 
-        <div className="min-w-0 flex-1 p-3 sm:p-4">
-          <div className="flex items-center justify-between border-b border-line pb-3">
-            <div className="space-y-1.5">
-              <div className="h-2 w-24 bg-ink/80" />
-              <div className="h-1.5 w-16 bg-faint/60" />
+        <div className="min-w-0 flex-1 p-4 sm:p-5">
+          <div className="flex items-center justify-between border-b border-[#e3e3e1] pb-3">
+            <div>
+              <p className="font-mono text-[9px] uppercase tracking-[0.05em] text-[#59645f]">Painel · Loja Aurora</p>
+              <p className="font-display text-[16px] leading-tight">Conta em dia</p>
             </div>
-            <span className="pill pill-ok text-[10px]">Em dia</span>
+            <span className="rounded-full bg-[#cff5e1] px-2.5 py-1 text-[10px] font-semibold text-[#05563a]">DAT gerado</span>
           </div>
 
-          <div className="mt-3 flex items-center gap-2 border border-line bg-surface px-2.5 py-2">
-            <span className="pill pill-ok text-[10px]">DAT gerado</span>
-            <div className="h-1.5 flex-1 bg-line" />
-          </div>
-
-          <div className="mt-3 flex items-center justify-between">
+          <div className="mt-4 flex items-center justify-between">
             {STEPS.map((s, i) => (
               <div key={s} className="flex flex-1 items-center gap-1.5">
                 <span
                   className={
                     "grid h-5 w-5 shrink-0 place-items-center rounded-full text-[9px] font-bold " +
-                    (i < 3 ? "bg-brand text-on-brand" : "border border-line-strong text-faint")
+                    (i < 3 ? "bg-[#45d190] text-[#002820]" : "border border-[#d0d3cf] text-[#8b948f]")
                   }
                 >
                   {i < 3 ? "✓" : i + 1}
                 </span>
-                <span className="hidden text-[9px] font-medium text-muted lg:block">{s}</span>
-                {i < STEPS.length - 1 && <span className={"h-px flex-1 " + (i < 2 ? "bg-brand" : "bg-line")} />}
+                <span className="hidden text-[9px] text-[#59645f] xl:block">{s}</span>
+                {i < STEPS.length - 1 && <span className={"h-px flex-1 " + (i < 2 ? "bg-[#45d190]" : "bg-[#e3e3e1]")} />}
               </div>
             ))}
           </div>
 
-          <div className="mt-3 grid grid-cols-3 gap-2.5">
-            <div className="border border-line bg-surface p-2.5">
-              <div className="h-1.5 w-10 bg-faint/60" />
-              <div className="mt-2 text-2xl font-bold leading-none text-ink">24</div>
-              <div className="mt-2 h-1 w-full bg-line">
-                <div className="h-full bg-info" style={{ width: "61%" }} />
+          <div className="mt-4 grid grid-cols-3 gap-2.5">
+            {[
+              { l: "Contas", v: "24" },
+              { l: "DPAs pendentes", v: "4" },
+              { l: "Subproc.", v: "11" },
+            ].map((k) => (
+              <div key={k.l} className="rounded-2xl bg-[#f4f4f2] p-3">
+                <p className="font-mono text-[8.5px] uppercase tracking-[0.04em] text-[#59645f]">{k.l}</p>
+                <p className="font-display mt-1 text-[24px] leading-none">{k.v}</p>
               </div>
-            </div>
-            <div className="border border-line bg-surface p-2.5">
-              <div className="h-1.5 w-12 bg-faint/60" />
-              <div className="mt-2 text-2xl font-bold leading-none text-ink">4</div>
-              <div className="mt-2 h-1.5 w-14 bg-brand-tint" />
-            </div>
-            <div className="flex items-center justify-center border border-line bg-surface p-2">
-              <Donut />
-            </div>
+            ))}
           </div>
 
-          <div className="mt-2.5 space-y-1.5 border border-line bg-surface p-2.5">
+          <div className="mt-2.5 space-y-2 rounded-2xl bg-[#f4f4f2] p-3">
             {BARS.map((b) => (
               <div key={b.l} className="flex items-center gap-2">
-                <span className="w-20 shrink-0 text-[9px] text-muted">{b.l}</span>
-                <span className="h-1.5 flex-1 bg-line">
-                  <span className="block h-full" style={{ width: `${b.v}%`, background: b.c }} />
+                <span className="w-24 shrink-0 text-[9.5px] text-[#59645f]">{b.l}</span>
+                <span className="h-1.5 flex-1 rounded-full bg-[#e3e3e1]">
+                  <span className="block h-full rounded-full" style={{ width: `${b.v}%`, background: b.c }} />
                 </span>
               </div>
             ))}

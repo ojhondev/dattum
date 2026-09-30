@@ -1,64 +1,65 @@
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight } from "lucide-react";
-import logoDark from "../../public/brand/logo-fundo-dark.png";
+import markDark from "../../public/brand/icone-fundo-dark.png";
 
-export function SiteFooter({ fluid = "w-full px-5 sm:px-10 lg:px-20" }: { fluid?: string }) {
+const COLUMNS: { title: string; links: { label: string; href: string }[] }[] = [
+  {
+    title: "Módulos",
+    links: [
+      { label: "RAT", href: "/#modulos" },
+      { label: "DPA", href: "/#modulos" },
+      { label: "Subprocessadores", href: "/#modulos" },
+      { label: "Auditoria", href: "/#modulos" },
+      { label: "DAT", href: "/#modulos" },
+    ],
+  },
+  {
+    title: "Ferramentas grátis",
+    links: [
+      { label: "Diagnóstico Expresso", href: "/diagnostico" },
+      { label: "Auditoria de site", href: "/auditoria" },
+    ],
+  },
+  {
+    title: "Sobre",
+    links: [
+      { label: "Por que agora", href: "/#por-que-agora" },
+      { label: "Perguntas frequentes", href: "/#faq" },
+      { label: "Contato", href: "mailto:contato@dattis.com" },
+    ],
+  },
+  {
+    title: "Conta",
+    links: [
+      { label: "Entrar", href: "/entrar" },
+      { label: "Criar conta", href: "/cadastro" },
+      { label: "Painel", href: "/painel" },
+    ],
+  },
+];
+
+export function SiteFooter() {
   const year = new Date().getFullYear();
-
-  const columns: { title: string; links: { label: string; href: string }[] }[] = [
-    {
-      title: "Plataforma",
-      links: [
-        { label: "Módulos", href: "/#ferramentas" },
-        { label: "Planos", href: "/planos" },
-        { label: "FAQ", href: "/#faq" },
-        { label: "Diagnóstico Expresso", href: "/diagnostico" },
-      ],
-    },
-    {
-      title: "Recursos",
-      links: [
-        { label: "Auditoria pública", href: "/auditoria" },
-        { label: "Metodologia", href: "/#por-que-agora" },
-      ],
-    },
-    {
-      title: "Conta",
-      links: [
-        { label: "Entrar", href: "/entrar" },
-        { label: "Criar conta", href: "/cadastro" },
-        { label: "Painel", href: "/painel" },
-      ],
-    },
-  ];
 
   return (
     <footer className="bg-rail text-white">
-      <div className={`${fluid} py-16`}>
-        <div className="grid gap-12 lg:grid-cols-[1.4fr_2fr]">
-          <div className="max-w-sm">
-            <Image src={logoDark} alt="Dattis" height={24} width={Math.round((logoDark.width / logoDark.height) * 24)} />
-            <p className="mt-5 text-body-sm leading-relaxed text-white/55">
-              Compliance LGPD para agências de tráfego pago e lançamento. RAT, DPA e registro de subprocessadores
-              gerados automaticamente por conta de cliente.
-            </p>
-            <Link
-              href="/cadastro"
-              className="mt-6 inline-flex items-center gap-2 border-b border-white/30 pb-1 text-body-sm font-medium text-white transition-colors hover:border-brand hover:text-brand"
-            >
-              Começar grátis <ArrowRight size={14} />
-            </Link>
-          </div>
+      <div className="w-full px-5 py-16 sm:px-10 lg:px-14 lg:py-20">
+        <div className="grid gap-12 lg:grid-cols-[120px_1fr]">
+          <Image
+            src={markDark}
+            alt="Dattis"
+            height={56}
+            width={Math.round((markDark.width / markDark.height) * 56)}
+          />
 
-          <div className="grid grid-cols-2 gap-8 sm:grid-cols-3">
-            {columns.map((col) => (
+          <div className="grid grid-cols-2 gap-10 md:grid-cols-4">
+            {COLUMNS.map((col) => (
               <div key={col.title}>
-                <p className="text-[11px] font-semibold uppercase tracking-[0.1em] text-white/40">{col.title}</p>
-                <ul className="mt-4 space-y-2.5">
+                <p className="font-mono text-[15px] uppercase tracking-[0.03em]">{col.title}</p>
+                <ul className="mt-5 space-y-3">
                   {col.links.map((l) => (
-                    <li key={l.label + l.href}>
-                      <Link href={l.href} className="text-body-sm text-white/65 transition-colors hover:text-white">
+                    <li key={l.label}>
+                      <Link href={l.href} className="text-[15px] text-white/80 transition-colors hover:text-brand">
                         {l.label}
                       </Link>
                     </li>
@@ -69,9 +70,19 @@ export function SiteFooter({ fluid = "w-full px-5 sm:px-10 lg:px-20" }: { fluid?
           </div>
         </div>
 
-        <div className="mt-14 flex flex-col gap-3 border-t border-white/12 pt-6 text-caption text-white/45 sm:flex-row sm:items-center sm:justify-between">
-          <p>© {year} Dattis. Todos os direitos reservados.</p>
-          <p className="max-w-lg sm:text-right">Baseado na Lei nº 13.709/2018 (LGPD).</p>
+        <div className="mt-16 flex flex-col gap-8 border-t border-white/10 pt-8 lg:flex-row lg:items-end lg:justify-between">
+          <div className="max-w-xl space-y-2 text-[13px] text-white/55">
+            <p>© {year} Dattis. Todos os direitos reservados.</p>
+            <p>Compliance LGPD para agências de tráfego pago. Baseado na Lei nº 13.709/2018 (LGPD).</p>
+          </div>
+          <div className="flex flex-wrap gap-3">
+            <Link href="/cadastro" className="btn btn-primary">
+              Criar conta grátis
+            </Link>
+            <Link href="/diagnostico" className="btn border-white/25 text-white hover:border-white/60">
+              Fazer diagnóstico
+            </Link>
+          </div>
         </div>
       </div>
     </footer>

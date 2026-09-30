@@ -21,29 +21,31 @@ export function MobileNav({
 
   return (
     <div className="lg:hidden">
-      <button type="button" aria-label="Menu" aria-expanded={open} onClick={() => setOpen(true)} className="p-1.5 text-ink">
-        <Menu size={22} />
+      <button type="button" aria-label="Menu" aria-expanded={open} onClick={() => setOpen(true)} className="rounded-full p-2 text-ink">
+        <Menu size={24} />
       </button>
 
       {open && (
-        <div className="fixed inset-0 z-50 bg-canvas">
-          <div className="flex h-16 items-center justify-end px-5">
-            <button type="button" aria-label="Fechar" onClick={() => setOpen(false)} className="p-1.5">
-              <X size={22} />
+        <div className="fixed inset-0 z-50 overflow-y-auto bg-canvas">
+          <div className="flex h-[76px] items-center justify-end px-5">
+            <button type="button" aria-label="Fechar" onClick={() => setOpen(false)} className="rounded-full p-2">
+              <X size={24} />
             </button>
           </div>
-          <nav className="font-ui flex flex-col gap-1 px-5 pt-4">
+          <nav className="flex flex-col px-5 pt-2">
             {items.map((it) => (
-              <Link key={it.href} href={it.href} onClick={() => setOpen(false)} className="border-b border-line py-4 text-heading-sm">
+              <Link key={it.href} href={it.href} onClick={() => setOpen(false)} className="font-display border-b border-line py-4 text-[26px]">
                 {it.label}
               </Link>
             ))}
-            <Link href="/entrar" onClick={() => setOpen(false)} className="py-4 text-body">
-              {enterLabel}
-            </Link>
-            <Link href={ctaHref} onClick={() => setOpen(false)} className="btn btn-primary mt-4 justify-center">
-              {ctaLabel}
-            </Link>
+            <div className="mt-8 flex flex-col gap-3">
+              <Link href={ctaHref} onClick={() => setOpen(false)} className="btn btn-dark btn-lg">
+                {ctaLabel}
+              </Link>
+              <Link href="/entrar" onClick={() => setOpen(false)} className="btn btn-primary btn-lg">
+                {enterLabel}
+              </Link>
+            </div>
           </nav>
         </div>
       )}

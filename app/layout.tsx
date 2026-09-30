@@ -1,18 +1,24 @@
 import type { Metadata } from "next";
-import { Inter, JetBrains_Mono } from "next/font/google";
+import { Montagu_Slab, Public_Sans, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 
-const inter = Inter({
+const slab = Montagu_Slab({
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
-  variable: "--font-body",
+  weight: ["400", "500"],
+  variable: "--nf-slab",
 });
 
-const jetbrainsMono = JetBrains_Mono({
+const sans = Public_Sans({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
-  variable: "--font-mono-src",
+  variable: "--nf-sans",
+});
+
+const mono = Geist_Mono({
+  subsets: ["latin"],
+  weight: ["400", "500"],
+  variable: "--nf-mono",
 });
 
 export const metadata: Metadata = {
@@ -26,7 +32,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="pt-BR" className={cn(inter.variable, jetbrainsMono.variable, "font-ui")}>
+    <html lang="pt-BR" className={cn(slab.variable, sans.variable, mono.variable, "font-ui")}>
       <body>{children}</body>
     </html>
   );

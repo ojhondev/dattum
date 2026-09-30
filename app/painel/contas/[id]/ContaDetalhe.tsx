@@ -80,7 +80,7 @@ function AtividadeCard({ atividade, contaId }: { atividade: Atividade; contaId: 
                 onChange={(e) => setForm((f) => ({ ...f, [campo.chave]: e.target.value }))}
               />
             ) : (
-              <span style={{ fontSize: ".88rem", color: "var(--aiki-carbon-80)" }}>{form[campo.chave]}</span>
+              <span style={{ fontSize: ".88rem", color: "var(--color-body)" }}>{form[campo.chave]}</span>
             )}
           </div>
         ))}
@@ -277,7 +277,7 @@ export default function ContaDetalhe({
                       <td>{s.nome}</td>
                       <td>{s.categoria}</td>
                       <td>{s.pais}</td>
-                      <td style={{ fontSize: ".82rem", color: "var(--aiki-carbon-60)" }}>{s.finalidade}</td>
+                      <td style={{ fontSize: ".82rem", color: "var(--color-muted)" }}>{s.finalidade}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -287,7 +287,7 @@ export default function ContaDetalhe({
         </div>
       )}
 
-      <div style={{ marginTop: 48, paddingTop: 24, borderTop: "1px solid var(--aiki-carbon-20)" }}>
+      <div style={{ marginTop: 48, paddingTop: 24, borderTop: "1px solid var(--color-line)" }}>
         <button className="painel-btn danger" type="button" onClick={excluirConta} disabled={excluindo}>
           {excluindo ? "Excluindo..." : "Excluir esta conta"}
         </button>

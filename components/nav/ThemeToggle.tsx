@@ -24,7 +24,7 @@ export function ThemeToggle() {
   };
 
   return (
-    <button type="button" onClick={toggle} aria-label="Alternar tema" className="rounded-none p-1.5 text-faint transition-colors hover:text-ink">
+    <button type="button" onClick={toggle} aria-label="Alternar tema" className="rounded-full p-2 text-muted transition-colors hover:bg-surface hover:text-ink">
       <Moon size={16} className="theme-icon-light" />
       <Sun size={16} className="theme-icon-dark" />
     </button>

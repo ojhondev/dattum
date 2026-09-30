@@ -13,7 +13,7 @@ export default function SairButton() {
 
   return (
     <button
-      className="font-ui flex w-full items-center gap-2.5 rounded-none px-2.5 py-2 text-body-sm text-white/60 transition-colors hover:bg-white/[0.06] hover:text-white"
+      className="flex w-full items-center gap-2.5 rounded-full px-3.5 py-2.5 font-mono text-[13px] uppercase tracking-[0.03em] text-white/60 transition-colors hover:bg-white/[0.08] hover:text-white"
       onClick={sair}
       type="button"
     >

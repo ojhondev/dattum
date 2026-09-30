@@ -11,34 +11,36 @@
    da Aikido.
    --------------------------------------------------------------------- */
 .diag-page {
-  --aiki-purple: #6551f3;
-  --aiki-purple-dark: #3d3192;
-  --aiki-purple-ink: #141031;
-  --aiki-purple-tint: #e0dcfd;
-  --aiki-purple-tint-soft: #f7f6fe;
+  --aiki-purple: #002820;
+  --aiki-purple-dark: #0d3a2f;
+  --aiki-purple-ink: #0a120f;
+  --aiki-purple-tint: #cff5e1;
+  --aiki-purple-tint-soft: #e4f9ee;
 
-  --aiki-carbon-5: #f5f5f6;
-  --aiki-carbon-20: #e5e5e9;
-  --aiki-carbon-40: #bfbfc8;
-  --aiki-carbon-60: #737283;
-  --aiki-carbon-80: #37364d;
-  --aiki-carbon-100: #010024;
+  --aiki-carbon-5: #f4f4f2;
+  --aiki-carbon-20: #e3e3e1;
+  --aiki-carbon-40: #d0d3cf;
+  --aiki-carbon-60: #59645f;
+  --aiki-carbon-80: #26302c;
+  --aiki-carbon-100: #0a120f;
 
-  --aiki-green: #00c07d;
-  --aiki-green-soft: #ccf2e5;
-  --aiki-orange: #ffac44;
-  --aiki-orange-soft: #ffead0;
-  --aiki-orange-deep: #cc7911;
+  --aiki-green: #45d190;
+  --aiki-green-soft: #cff5e1;
+  --aiki-orange: #f38536;
+  --aiki-orange-soft: #fdebdc;
+  --aiki-orange-deep: #c8641b;
   --aiki-orange-deep-soft: #ffd5a1;
-  --aiki-red: #ff4a3e;
-  --aiki-red-soft: #ffe2df;
+  --aiki-red: #d84a4a;
+  --aiki-red-soft: #fbe9e9;
   --aiki-blue: #0090ff;
   --aiki-blue-soft: #cce9ff;
 
-  --aiki-radius: 1rem;
-  --aiki-radius-sm: .375rem;
-  --aiki-radius-md: .75rem;
-  --aiki-radius-pill: 160px;
+  --aiki-radius: 20px;
+  --font-body-fam: var(--font-ui);
+  --font-mono-fam: var(--font-mono);
+  --aiki-radius-sm: 12px;
+  --aiki-radius-md: 16px;
+  --aiki-radius-pill: 999px;
   --aiki-shadow: 0 1px 2px rgba(1,0,36,.04), 0 8px 24px -8px rgba(1,0,36,.12);
   --aiki-header-h: 64px;
 
@@ -205,3 +207,19 @@
 @media (prefers-reduced-motion: reduce) {
   .diag-page * { transition: none !important; animation: none !important; }
 }
+
+/* ---------- v3: sistema visual Proofmode (títulos em serifa de laje, pílulas) ---------- */
+.diag-intro-title, .diag-q-text, .diag-cta h3, .diag-history h2, .diag-gauge-pct {
+  font-family: var(--font-display); font-weight: 400; letter-spacing: -0.005em;
+}
+.diag-header-eyebrow, .diag-q-eyebrow, .diag-panel-label, .diag-field label, .diag-table thead th { font-weight: 400; }
+.diag-header-fixed { background: rgba(244,244,242,.88); }
+.diag-progressbar-fill { background: var(--color-brand-strong); }
+.diag-btn { font-family: var(--font-mono); text-transform: uppercase; letter-spacing: .02em; font-size: .8rem; }
+.diag-btn.primary { background: linear-gradient(90deg, var(--color-brand) 0%, #b9f6d6 100%); border-color: var(--color-brand-strong); color: var(--color-on-brand); }
+.diag-btn.primary:hover { background: var(--color-brand); }
+.diag-answer-btn { border-radius: 999px; font-weight: 500; padding: 17px 26px; }
+.diag-cta { background: var(--color-rail); border-radius: 40px; padding: 40px; }
+.diag-cta-btn { font-family: var(--font-mono); text-transform: uppercase; font-weight: 500; letter-spacing: .02em; font-size: .85rem; }
+.diag-cta-btn:not(.ghost) { background: var(--color-brand); border-color: var(--color-brand); color: var(--color-on-brand); }
+.diag-field input { border-radius: 12px; }
