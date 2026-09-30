@@ -3,7 +3,7 @@ export type PlanoId = "start" | "growth" | "scale";
 export type Plano = {
   id: PlanoId;
   nome: string;
-  preco: number; // R$ por usuário/mês
+  preco: number; // R$ por cliente da agência/mês
   resumo: string;
   destaque?: boolean;
 };

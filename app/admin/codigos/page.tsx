@@ -66,7 +66,7 @@ export default async function AdminCodigosPage() {
                       clienteNome: c.clienteNome,
                       clienteContato: c.clienteContato,
                       plano: c.plano,
-                      usuarios: c.usuarios,
+                      clientes: c.clientes,
                       criadoEm: c.criadoEm.toLocaleDateString("pt-BR"),
                       status: c.revogado ? "revogado" : c.usadoEm ? "usado" : "disponivel",
                       usadoPor: ag ? `${ag.nome} · ${ag.email}` : null,

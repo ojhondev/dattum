@@ -16,6 +16,7 @@ import {
   BmAlertVisual,
 } from "@/components/marketing/ModuleVisuals";
 import { Testimonials } from "@/components/marketing/Testimonials";
+import { ScrollRevealText } from "@/components/marketing/ScrollRevealText";
 import { Faq } from "@/components/marketing/Faq";
 
 const RISCOS = [
@@ -106,7 +107,7 @@ const FAQ_ITEMS = [
   },
   {
     q: "Quanto custa?",
-    a: "De R$ 47 a R$ 297 por usuário, por mês. O Growth, de R$ 97, é o plano que cobre o essencial: contrato com assinatura eletrônica, certificado e selo, Dossiê para BM e auditoria mensal.",
+    a: "De R$ 47 a R$ 297 por cliente da agência, por mês. O Growth, de R$ 97, é o plano que cobre o essencial: contrato com assinatura eletrônica, certificado e selo, Dossiê para BM e auditoria mensal.",
   },
   {
     q: "Isso substitui um advogado?",
@@ -166,18 +167,20 @@ export default function LandingPage() {
           <HeroStrip />
         </section>
 
-        <PixelEdge bg="var(--color-canvas)" fill="var(--color-rail)" />
+        <PixelEdge bg="var(--color-canvas)" fill="var(--color-forest)" />
 
         {/* O PROBLEMA */}
-        <section id="problema" className="bg-rail text-white">
-          <div className="w-full px-5 pb-24 pt-16 sm:px-10 lg:px-14">
-            <p className="t-eyebrow !text-white/80">O problema</p>
-            <h2 className="mt-5 max-w-5xl font-display text-[clamp(1.8rem,3.6vw,3rem)] leading-[1.15] text-white/60">
-              Sua agência gera, coleta, cruza e compartilha dados pessoais todos os dias para criar e executar campanhas.
-              <br />
-              Mas quem garante que todo esse tratamento está de <span className="text-brand">acordo com a lei?</span>
-            </h2>
-            <div className="mt-16 grid gap-10 md:grid-cols-3">
+        <section id="problema" className="bg-forest text-white">
+          <ScrollRevealText
+            eyebrow="O problema"
+            trechos={[
+              { texto: "Sua agência gera, coleta, cruza e compartilha dados pessoais todos os dias para criar e executar campanhas." },
+              { texto: "Mas quem garante que todo esse tratamento está de", quebraAntes: true },
+              { texto: "acordo com a lei?", destaque: true },
+            ]}
+          />
+          <div className="w-full px-5 pb-24 sm:px-10 lg:px-14">
+            <div className="grid gap-10 md:grid-cols-3">
               {RISCOS.map((r) => (
                 <div key={r.t}>
                   <h3 className="whitespace-pre-line font-display text-[clamp(1.6rem,2.6vw,2.2rem)] leading-[1.1] text-white">{r.t}</h3>
@@ -415,8 +418,8 @@ export default function LandingPage() {
               </div>
               <div className="flex flex-col rounded-[40px] bg-rail px-8 py-12 text-white sm:px-12">
                 <p className="t-label text-white">Com a Dattis</p>
-                <p className="font-display mt-6 text-[clamp(2.4rem,5vw,4rem)] leading-none text-brand">A partir de R$ 47</p>
-                <p className="mt-3 text-[15px] text-white/80">por usuário, por mês</p>
+                <p className="font-display mt-6 text-[clamp(2.4rem,5vw,4rem)] leading-none text-brand">Um plano completo por R$ 97</p>
+                <p className="mt-3 text-[15px] text-white/80">por cliente da sua agência, por mês</p>
                 <ul className="mt-8 flex flex-1 flex-col gap-2.5">
                   {["Documentação de cada cliente pronta", "Prova verificável no site", "Dossiê pronto se a BM cair", "DPO no plano Scale"].map((s) => (
                     <li key={s} className="flex items-start gap-2.5 text-[15px] text-white/90">

@@ -15,6 +15,7 @@
   --color-surface-2: #f9f9f7;
   --color-rail: #002820;
   --color-rail-2: #0d3a2f;
+  --color-forest: #002820;
   --color-line: #e3e3e1;
   --color-line-strong: #d0d3cf;
 
@@ -83,6 +84,7 @@
 
 :root[data-theme="dark"] {
   color-scheme: dark;
+  --color-forest: #0e3d31;
   --btn-dark-bg: #eef3f0;
   --btn-dark-hover: #ffffff;
   --btn-dark-fg: #002820;
@@ -110,38 +112,6 @@
   --shadow-chip: 0 1px 2px rgba(0, 0, 0, 0.35), 0 4px 14px rgba(0, 0, 0, 0.35);
   --shadow-pop: 0 12px 32px rgba(0, 0, 0, 0.5);
 }
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    color-scheme: dark;
-    --btn-dark-bg: #eef3f0;
-    --btn-dark-hover: #ffffff;
-    --btn-dark-fg: #002820;
-    --color-canvas: #0c1714;
-    --color-surface: #13221e;
-    --color-surface-2: #182a25;
-    --color-rail: #051612;
-    --color-rail-2: #10322a;
-    --color-line: #22362f;
-    --color-line-strong: #2f4840;
-    --color-ink: #eef3f0;
-    --color-body: #c9d6d0;
-    --color-muted: #93a69d;
-    --color-faint: #62766d;
-    --color-brand-tint: #11352b;
-    --color-brand-tint-2: #174536;
-    --color-brand-ink: #9ff5cb;
-    --color-ok-tint: #14312a;
-    --color-warn: #f0955a;
-    --color-warn-tint: #3a2414;
-    --color-danger: #e46a6a;
-    --color-danger-tint: #3a1f1f;
-    --color-info: #5b95ec;
-    --color-info-tint: #17273f;
-    --shadow-chip: 0 1px 2px rgba(0, 0, 0, 0.35), 0 4px 14px rgba(0, 0, 0, 0.35);
-    --shadow-pop: 0 12px 32px rgba(0, 0, 0, 0.5);
-  }
-}
-
 /* Seções de cor chapada (verde, lilás, laranja) mantêm a paleta clara nos dois temas. */
 .on-light {
   --btn-dark-bg: #002820;
@@ -169,13 +139,6 @@
 :root[data-theme="dark"] .logo-light, :root[data-theme="dark"] .theme-icon-light { display: none; }
 :root[data-theme="dark"] .logo-dark { display: block; }
 :root[data-theme="dark"] .theme-icon-dark { display: inline; }
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) .logo-light,
-  :root:not([data-theme="light"]) .theme-icon-light { display: none; }
-  :root:not([data-theme="light"]) .logo-dark { display: block; }
-  :root:not([data-theme="light"]) .theme-icon-dark { display: inline; }
-}
-
 @layer base {
   * { border-color: var(--color-line); box-sizing: border-box; }
   html { -webkit-text-size-adjust: 100%; text-rendering: optimizeLegibility; scroll-behavior: smooth; }
@@ -504,11 +467,6 @@ table.painel-table a:hover { text-decoration: underline; }
 .announce a:hover { color: var(--color-brand); }
 :root[data-theme="dark"] .announce { background: var(--color-brand); color: var(--color-on-brand); }
 :root[data-theme="dark"] .announce a:hover { color: #0d3a2f; }
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) .announce { background: var(--color-brand); color: var(--color-on-brand); }
-  :root:not([data-theme="light"]) .announce a:hover { color: #0d3a2f; }
-}
-
 /* ---------- Impressão (dossiê → PDF) ---------- */
 @media print {
   aside, .no-print, button[aria-label="Menu"] { display: none !important; }

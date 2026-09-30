@@ -45,7 +45,7 @@ export async function POST(req: Request) {
     const senhaHash = await hashSenha(senha);
     const [agencia] = await db
       .insert(agencias)
-      .values({ nome, email, senhaHash, plano: reservado.plano })
+      .values({ nome, email, senhaHash, plano: reservado.plano, clientesContratados: reservado.clientes })
       .returning();
     await db.update(codigosAtivacao).set({ agenciaId: agencia.id }).where(eq(codigosAtivacao.id, reservado.id));
     await criarSessao(agencia.id);

@@ -29,7 +29,7 @@ export function NovoCodigo() {
   const [clienteNome, setClienteNome] = useState("");
   const [clienteContato, setClienteContato] = useState("");
   const [plano, setPlano] = useState<PlanoId>("growth");
-  const [usuarios, setUsuarios] = useState(1);
+  const [clientes, setClientes] = useState(1);
   const [erro, setErro] = useState("");
   const [enviando, setEnviando] = useState(false);
 
@@ -40,7 +40,7 @@ export function NovoCodigo() {
     const res = await fetch("/api/admin/codigos", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ clienteNome, clienteContato, plano, usuarios }),
+      body: JSON.stringify({ clienteNome, clienteContato, plano, clientes }),
     });
     const data = await res.json().catch(() => ({ ok: false }));
     if (!data.ok) {
@@ -48,18 +48,18 @@ export function NovoCodigo() {
     } else {
       setClienteNome("");
       setClienteContato("");
-      setUsuarios(1);
+      setClientes(1);
       router.refresh();
     }
     setEnviando(false);
   };
 
-  const total = (PLANOS.find((p) => p.id === plano)?.preco ?? 0) * usuarios;
+  const total = (PLANOS.find((p) => p.id === plano)?.preco ?? 0) * clientes;
 
   return (
     <form onSubmit={submit} className="block-card mt-10 grid gap-5 px-7 py-9 sm:px-10 md:grid-cols-2 xl:grid-cols-[1.3fr_1.1fr_1fr_120px_auto] xl:items-end">
       <label className="block">
-        <span className="text-body-sm font-medium text-body">Cliente (agência)</span>
+        <span className="text-body-sm font-medium text-body">Agência</span>
         <input id="cod-nome" type="text" value={clienteNome} onChange={(e) => setClienteNome(e.target.value)} required className="field-input mt-1.5" />
       </label>
       <label className="block">
@@ -78,20 +78,20 @@ export function NovoCodigo() {
         <select id="cod-plano" value={plano} onChange={(e) => setPlano(e.target.value as PlanoId)} className="field-input mt-1.5">
           {PLANOS.map((p) => (
             <option key={p.id} value={p.id}>
-              {p.nome} · R$ {p.preco}/usuário
+              {p.nome} · R$ {p.preco}/cliente
             </option>
           ))}
         </select>
       </label>
       <label className="block">
-        <span className="text-body-sm font-medium text-body">Usuários</span>
+        <span className="text-body-sm font-medium text-body">Clientes</span>
         <input
-          id="cod-usuarios"
+          id="cod-clientes"
           type="number"
           min={1}
           max={500}
-          value={usuarios}
-          onChange={(e) => setUsuarios(Math.max(1, Number(e.target.value) || 1))}
+          value={clientes}
+          onChange={(e) => setClientes(Math.max(1, Number(e.target.value) || 1))}
           className="field-input mt-1.5"
         />
       </label>
@@ -99,7 +99,7 @@ export function NovoCodigo() {
         {enviando ? "Gerando..." : "Gerar código"}
       </button>
       <p className="text-[14px] text-muted md:col-span-2 xl:col-span-5">
-        Mensalidade deste cliente: <span className="font-display text-[17px] text-ink">R$ {total}</span> ({usuarios} ×{" "}
+        Mensalidade desta agência: <span className="font-display text-[17px] text-ink">R$ {total}</span> ({clientes} clientes ×{" "}
         {nomePlano(plano)})
       </p>
       {erro && <p className="rounded-xl bg-danger-tint px-4 py-3 text-body-sm text-danger md:col-span-2 xl:col-span-5">{erro}</p>}
@@ -113,7 +113,7 @@ type Linha = {
   clienteNome: string;
   clienteContato: string | null;
   plano: string;
-  usuarios: number;
+  clientes: number;
   criadoEm: string;
   status: "disponivel" | "usado" | "revogado";
   usadoPor: string | null;
@@ -137,7 +137,7 @@ export function CodigoLinha({ c, origem }: { c: Linha; origem: string }) {
     `Seu código de ativação: ${c.codigo}`,
     `Crie o acesso da sua agência aqui: ${link}`,
     "",
-    `Plano ${nomePlano(c.plano)} · ${c.usuarios} usuário(s). O código vale para um único cadastro.`,
+    `Plano ${nomePlano(c.plano)} · até ${c.clientes} cliente(s). O código vale para um único cadastro.`,
   ].join("\n");
   const wa = linkWhatsApp(c.clienteContato, mensagem);
 
@@ -170,7 +170,7 @@ export function CodigoLinha({ c, origem }: { c: Linha; origem: string }) {
           <span className="font-display text-[18px]">{c.clienteNome}</span>
           <span className="text-muted">
             {" "}
-            · {nomePlano(c.plano)} · {c.usuarios} usuário(s) · gerado em {c.criadoEm}
+            · {nomePlano(c.plano)} · {c.clientes} cliente(s) · gerado em {c.criadoEm}
             {c.clienteContato ? ` · ${c.clienteContato}` : ""}
           </span>
         </p>

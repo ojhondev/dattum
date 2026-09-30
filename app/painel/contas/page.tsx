@@ -3,7 +3,7 @@ import { eq } from "drizzle-orm";
 import { ArrowRight } from "lucide-react";
 import { getSessao } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { contasCliente, dpas } from "@/lib/db/schema";
+import { agencias, contasCliente, dpas } from "@/lib/db/schema";
 
 const TH = "border-b border-line px-5 py-3.5 text-left font-mono text-[12px] font-normal uppercase tracking-[0.04em] text-muted";
 const TD = "border-b border-line px-5 py-4";
@@ -18,6 +18,9 @@ export default async function ContasPage() {
   });
 
   const todosDpas = await db.query.dpas.findMany({ where: eq(dpas.agenciaId, sessao.agenciaId) });
+  const agencia = await db.query.agencias.findFirst({ where: eq(agencias.id, sessao.agenciaId) });
+  const limite = agencia?.clientesContratados ?? null;
+  const noLimite = limite != null && contas.length >= limite;
   const dpaPorConta = new Map(todosDpas.map((d) => [d.contaClienteId, d]));
 
   return (
@@ -29,10 +32,21 @@ export default async function ContasPage() {
         ela precisa: o registro do que vocês fazem com o dado dela e o contrato entre vocês.
       </p>
 
-      <div className="mt-8">
-        <Link href="/painel/contas/novo" className="btn btn-primary btn-lg">
-          Ativar conta nova <ArrowRight size={16} />
-        </Link>
+      <div className="mt-8 flex flex-wrap items-center gap-3">
+        {noLimite ? (
+          <span className="rounded-2xl bg-warn-tint px-4 py-3 text-body-sm text-warn">
+            Todos os {limite} clientes do seu plano já estão ativos. Fale com a Dattis pra incluir mais.
+          </span>
+        ) : (
+          <Link href="/painel/contas/novo" className="btn btn-primary btn-lg">
+            Ativar conta nova <ArrowRight size={16} />
+          </Link>
+        )}
+        {limite != null && (
+          <span className="tag tag-white border border-line">
+            {contas.length} de {limite} clientes contratados
+          </span>
+        )}
       </div>
 
       <div className="card-flush mt-10 overflow-x-auto">

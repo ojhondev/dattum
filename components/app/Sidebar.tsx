@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useLocalStorageBoolean } from "@/lib/use-local-storage";
+import { ThemeToggle } from "@/components/nav/ThemeToggle";
 import {
   LayoutDashboard,
   Users,
@@ -127,6 +128,10 @@ export function Sidebar({ agenciaNome, sairSlot }: { agenciaNome: string; sairSl
           {!collapsed && <p className="font-display truncate px-3.5 pb-1 text-[16px] text-white/85">{agenciaNome}</p>}
           <div className={collapsed ? "flex justify-center" : ""}>{sairSlot}</div>
         </div>
+        <ThemeToggle
+          label={collapsed ? undefined : "Tema"}
+          className={"mx-3 mt-2 flex items-center gap-2 rounded-full px-3.5 py-2.5 font-mono text-[12px] uppercase tracking-[0.04em] text-white/45 transition-colors hover:bg-white/[0.08] hover:text-white/80 " + (collapsed ? "justify-center" : "")}
+        />
         <button
           type="button"
           onClick={() => setCollapsed(!collapsed)}

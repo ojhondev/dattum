@@ -48,6 +48,19 @@ export async function POST(req: Request) {
   const agencia = await db.query.agencias.findFirst({ where: eq(agencias.id, sessao.agenciaId) });
   if (!agencia) return NextResponse.json({ ok: false, error: "Agência não encontrada." }, { status: 404 });
 
+  if (agencia.clientesContratados != null) {
+    const ativas = await db.query.contasCliente.findMany({ where: eq(contasCliente.agenciaId, sessao.agenciaId), columns: { id: true } });
+    if (ativas.length >= agencia.clientesContratados) {
+      return NextResponse.json(
+        {
+          ok: false,
+          error: `Seu plano cobre ${agencia.clientesContratados} cliente(s) e todos já estão ativos. Fale com a Dattis pra incluir mais clientes.`,
+        },
+        { status: 403 },
+      );
+    }
+  }
+
   const [conta] = await db
     .insert(contasCliente)
     .values({

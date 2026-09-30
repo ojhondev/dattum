@@ -14,6 +14,7 @@ export const agencias = pgTable("agencias", {
   senhaHash: text("senha_hash").notNull(),
   cnpj: text("cnpj"),
   plano: text("plano").notNull().default("growth"), // start | growth | scale
+  clientesContratados: integer("clientes_contratados"), // nulo = sem limite (ex.: demo)
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
@@ -117,7 +118,7 @@ export const codigosAtivacao = pgTable("codigos_ativacao", {
   clienteNome: text("cliente_nome").notNull(),
   clienteContato: text("cliente_contato"),
   plano: text("plano").notNull(), // start | growth | scale
-  usuarios: integer("usuarios").notNull().default(1),
+  clientes: integer("clientes").notNull().default(1), // quantidade de contas de cliente contratadas
   criadoEm: timestamp("criado_em").notNull().defaultNow(),
   usadoEm: timestamp("usado_em"),
   agenciaId: uuid("agencia_id").references(() => agencias.id, { onDelete: "set null" }),

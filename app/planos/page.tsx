@@ -17,15 +17,15 @@ const SPRINT = [
 
 export const metadata: Metadata = {
   title: "Planos",
-  description: "Planos da Dattis de R$ 47 a R$ 297 por usuário/mês. Uma assinatura custa muito menos que uma multa da LGPD.",
+  description: "Planos da Dattis de R$ 47 a R$ 297 por cliente da agência, por mês. Uma assinatura custa muito menos que uma multa da LGPD.",
 };
 
 const PILARES = Array.from(new Set(RECURSOS.map((r) => r.pilar)));
 
 const FAQ_PLANOS = [
   {
-    q: "Como funciona a cobrança por usuário?",
-    a: "Você paga o valor do plano para cada pessoa da agência que acessa a Dattis. Uma agência com o dono e dois gestores de tráfego no Growth, por exemplo, paga 3 × R$ 97 por mês.",
+    q: "Como funciona a cobrança por cliente?",
+    a: "Você paga o valor do plano para cada cliente que sua agência atende e documenta na Dattis. Uma agência com 10 clientes no Growth, por exemplo, paga 10 × R$ 97 por mês — e pode repassar esse custo na mensalidade do próprio cliente.",
   },
   {
     q: "Qual plano faz sentido pra minha agência?",
@@ -37,7 +37,7 @@ const FAQ_PLANOS = [
   },
   {
     q: "Uma multa sai mesmo mais cara que a assinatura?",
-    a: "A multa simples da LGPD chega a 2% do faturamento, limitada a R$ 50 milhões por infração (art. 52), fora a possibilidade de suspender o tratamento de dados — o que, pra uma agência, significa parar de rodar campanha. O Growth custa R$ 97 por usuário/mês.",
+    a: "A multa simples da LGPD chega a 2% do faturamento, limitada a R$ 50 milhões por infração (art. 52), fora a possibilidade de suspender o tratamento de dados — o que, pra uma agência, significa parar de rodar campanha. O Growth custa R$ 97 por cliente, por mês.",
   },
   {
     q: "Posso ver a plataforma antes de assinar?",
@@ -71,7 +71,7 @@ function PlanoCard({ p }: { p: Plano }) {
       <div className="mt-8 flex items-end gap-2">
         <span className={"font-display text-[20px] leading-none " + (dark ? "text-brand" : "text-ink")}>R$</span>
         <span className={"font-display text-[64px] leading-[0.85] " + (dark ? "text-brand" : "text-ink")}>{p.preco}</span>
-        <span className={"pb-1 text-[14px] " + (dark ? "text-white/70" : "text-muted")}>/usuário/mês</span>
+        <span className={"pb-1 text-[14px] " + (dark ? "text-white/70" : "text-muted")}>/cliente/mês</span>
       </div>
 
       <ul className="mt-9 flex flex-1 flex-col gap-3">
@@ -108,11 +108,11 @@ export default function PlanosPage() {
           <h1 className="t-hero mx-auto mt-5 max-w-[16ch]">Uma assinatura custa muito menos que uma multa.</h1>
           <p className="mx-auto mt-6 max-w-2xl text-[18px] leading-relaxed text-body">
             Cada plano cobre os pilares da Dattis — documentação, proteção, relacionamento com o cliente e governança — e é
-            cobrado por usuário da sua agência.
+            cobrado por cliente que sua agência atende.
           </p>
           <div className="mt-9 flex flex-wrap items-center justify-center gap-1">
             <span className="tag">De R$ 47 a R$ 297</span>
-            <span className="tag tag-white">por usuário/mês</span>
+            <span className="tag tag-white">por cliente/mês</span>
           </div>
         </section>
 
@@ -128,7 +128,7 @@ export default function PlanosPage() {
             </div>
             <p className="mx-auto mt-10 max-w-2xl text-center text-[15px] leading-relaxed text-rail/85">
               Uma multa simples da LGPD pode chegar a 2% do faturamento, limitada a R$ 50 milhões por infração. Com três
-              usuários no Growth, sua agência investe R$ 291 por mês.
+              clientes no Growth, sua agência investe R$ 291 por mês.
             </p>
           </div>
         </section>

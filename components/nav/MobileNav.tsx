@@ -5,16 +5,13 @@ import { createPortal } from "react-dom";
 import Link from "next/link";
 import { Menu, X, ChevronDown } from "lucide-react";
 import { Logo } from "@/components/brand/Logo";
-
-export type NavGroup = { label: string; items: { href: string; label: string; desc: string }[] };
+import { NAV_GROUPS } from "@/components/nav/nav-data";
 
 export function MobileNav({
-  groups,
   ctaLabel,
   ctaHref,
   enterLabel,
 }: {
-  groups: NavGroup[];
   ctaLabel: string;
   ctaHref: string;
   enterLabel: string;
@@ -43,7 +40,7 @@ export function MobileNav({
           </div>
 
           <nav className="flex-1 overflow-y-auto px-4 pb-32">
-            {groups.map((g) => {
+            {NAV_GROUPS.map((g) => {
               const isOpen = aberto === g.label;
               return (
                 <div key={g.label}>

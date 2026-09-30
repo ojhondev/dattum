@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Montagu_Slab, Public_Sans, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
+import { THEME_COOKIE } from "@/lib/theme";
 
 const slab = Montagu_Slab({
   subsets: ["latin"],
@@ -32,7 +33,15 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="pt-BR" className={cn(slab.variable, sans.variable, mono.variable, "font-ui")}>
+    <html lang="pt-BR" className={cn(slab.variable, sans.variable, mono.variable, "font-ui")} suppressHydrationWarning>
+      <head>
+        {/* Aplica o tema escolhido (cookie do ThemeToggle) antes da primeira pintura, em todas as páginas. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var m=document.cookie.match(/(?:^|; )${THEME_COOKIE}=(light|dark)/);if(m)document.documentElement.setAttribute("data-theme",m[1]);}catch(e){}})();`,
+          }}
+        />
+      </head>
       <body>{children}</body>
     </html>
   );

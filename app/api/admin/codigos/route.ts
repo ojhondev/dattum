@@ -13,15 +13,15 @@ export async function POST(req: Request) {
   const clienteNome = typeof body?.clienteNome === "string" ? body.clienteNome.trim() : "";
   const clienteContato = typeof body?.clienteContato === "string" && body.clienteContato.trim() ? body.clienteContato.trim() : null;
   const plano = ["start", "growth", "scale"].includes(body?.plano) ? (body.plano as string) : null;
-  const usuarios = Number.isInteger(body?.usuarios) && body.usuarios >= 1 && body.usuarios <= 500 ? (body.usuarios as number) : null;
+  const clientes = Number.isInteger(body?.clientes) && body.clientes >= 1 && body.clientes <= 1000 ? (body.clientes as number) : null;
 
-  if (!clienteNome || !plano || !usuarios) {
-    return NextResponse.json({ ok: false, error: "Informe o nome do cliente, o plano e a quantidade de usuários." }, { status: 400 });
+  if (!clienteNome || !plano || !clientes) {
+    return NextResponse.json({ ok: false, error: "Informe o nome do cliente, o plano e a quantidade de clientes." }, { status: 400 });
   }
 
   const [codigo] = await db
     .insert(codigosAtivacao)
-    .values({ codigo: gerarCodigo("ATV"), clienteNome, clienteContato, plano, usuarios })
+    .values({ codigo: gerarCodigo("ATV"), clienteNome, clienteContato, plano, clientes })
     .returning();
 
   return NextResponse.json({ ok: true, codigo });
