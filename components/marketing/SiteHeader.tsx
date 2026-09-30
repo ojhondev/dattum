@@ -7,7 +7,7 @@ const ITEMS = [
   { href: "/#modulos", label: "Módulos" },
   { href: "/#por-que-agora", label: "Por que agora" },
   { href: "/diagnostico", label: "Diagnóstico" },
-  { href: "/auditoria", label: "Auditoria" },
+  { href: "/planos", label: "Planos" },
   { href: "/#faq", label: "FAQ" },
 ];
 

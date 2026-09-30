@@ -23,6 +23,7 @@ const COLUMNS: { title: string; links: { label: string; href: string }[] }[] = [
   {
     title: "Sobre",
     links: [
+      { label: "Planos", href: "/planos" },
       { label: "Por que agora", href: "/#por-que-agora" },
       { label: "Perguntas frequentes", href: "/#faq" },
       { label: "Contato", href: "mailto:contato@dattis.com" },
