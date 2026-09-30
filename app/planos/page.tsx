@@ -1,70 +1,12 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-import {
-  ArrowRight,
-  CircleCheck,
-  FileText,
-  FileSignature,
-  Network,
-  FileCheck,
-  ShieldCheck,
-  Radar,
-} from "lucide-react";
+import { Check, Minus, CircleCheck } from "lucide-react";
 import { SiteHeader } from "@/components/marketing/SiteHeader";
 import { SiteFooter } from "@/components/marketing/SiteFooter";
 import { PixelEdge } from "@/components/marketing/PixelEdge";
-import { MetaChips, ArrowLink } from "@/components/marketing/MetaChips";
+import { ArrowLink } from "@/components/marketing/MetaChips";
 import { Faq } from "@/components/marketing/Faq";
-
-export const metadata: Metadata = {
-  title: "Planos",
-  description: "Planos da Dattis por faixa de contas de cliente ativas — não pelo faturamento da agência.",
-};
-
-const CONTATO = "mailto:contato@dattis.com?subject=Planos%20Dattis";
-
-type Plano = {
-  nome: string;
-  faixa: string;
-  itens: string[];
-  cta: string;
-  destaque?: boolean;
-};
-
-const PLANOS: Plano[] = [
-  {
-    nome: "Start",
-    faixa: "Até 10 contas de cliente ativas",
-    itens: ["Auditoria trimestral de pixel e consentimento", "Canal do titular: SLA de 15 dias úteis", "Suporte por e-mail e chat"],
-    cta: "Falar com a gente",
-  },
-  {
-    nome: "Growth",
-    faixa: "11 a 30 contas de cliente ativas",
-    itens: ["Auditoria mensal de pixel e consentimento", "Canal do titular: SLA de 10 dias úteis", "Suporte prioritário"],
-    cta: "Falar com a gente",
-    destaque: true,
-  },
-  {
-    nome: "Scale",
-    faixa: "31 a 100 contas de cliente ativas",
-    itens: ["Auditoria semanal de pixel e consentimento", "Canal do titular: SLA de 5 dias úteis", "Gestor de conta dedicado"],
-    cta: "Falar com a gente",
-  },
-  {
-    nome: "Enterprise",
-    faixa: "Mais de 100 contas de cliente ativas",
-    itens: ["Auditoria contínua com alertas", "SLA definido em contrato", "DPO dedicado e integração customizada"],
-    cta: "Falar com o time",
-  },
-];
-
-const COMPARATIVO: { linha: string; valores: string[] }[] = [
-  { linha: "Contas de cliente ativas", valores: ["Até 10", "11 a 30", "31 a 100", "100+"] },
-  { linha: "Auditoria de pixel e consentimento", valores: ["Trimestral", "Mensal", "Semanal", "Contínua + alertas"] },
-  { linha: "SLA do canal do titular", valores: ["15 dias úteis", "10 dias úteis", "5 dias úteis", "Em contrato"] },
-  { linha: "Suporte", valores: ["E-mail + chat", "Prioritário", "Gestor dedicado", "DPO dedicado"] },
-];
+import { PLANOS, RECURSOS, destaquesDoPlano, type Plano } from "@/lib/planos";
+import { linkAssinar } from "@/lib/contato";
 
 const SPRINT = [
   "Contrato de operador (DPA) padrão para a carteira",
@@ -73,62 +15,85 @@ const SPRINT = [
   "Protocolo básico de resposta a incidente",
 ];
 
+export const metadata: Metadata = {
+  title: "Planos",
+  description: "Planos da Dattis de R$ 47 a R$ 297 por usuário/mês. Uma assinatura custa muito menos que uma multa da LGPD.",
+};
+
+const PILARES = Array.from(new Set(RECURSOS.map((r) => r.pilar)));
+
 const FAQ_PLANOS = [
   {
-    q: "Por que o preço é por conta de cliente, e não pelo faturamento da agência?",
-    a: "Porque é o número de contas que define o trabalho e a exposição: cada conta tem o próprio RAT, o próprio contrato e as próprias ferramentas tocando dado. É a mesma régua da contabilidade — por volume, não por quão importante é o cliente.",
+    q: "Como funciona a cobrança por usuário?",
+    a: "Você paga o valor do plano para cada pessoa da agência que acessa a Dattis. Uma agência com o dono e dois gestores de tráfego no Growth, por exemplo, paga 3 × R$ 97 por mês.",
   },
   {
-    q: "O que conta como conta de cliente ativa?",
-    a: "Cada cliente que sua agência ativa no painel da Dattis e que continua em operação. Conta encerrada sai da contagem no ciclo seguinte.",
+    q: "Qual plano faz sentido pra minha agência?",
+    a: "O Growth é o essencial: contrato com assinatura eletrônica, certificado e selo, Dossiê para BM, auditoria mensal e DAT. O Start organiza só a documentação básica. O Scale é pra quem quer a Dattis atuando como DPO (encarregado) da agência.",
   },
   {
-    q: "Posso testar antes de contratar?",
-    a: "Sim. Você pode criar uma conta grátis e ativar clientes no painel, ou entrar direto na demonstração com dados de exemplo, sem senha, pela página de login.",
+    q: "O certificado vale pros meus clientes também?",
+    a: "Sim. Nos planos Growth e Scale você emite certificado e selo pra própria agência e pra cada cliente, e coloca no rodapé dos sites. Qualquer pessoa confere pelo QR Code ou clicando no selo.",
+  },
+  {
+    q: "Uma multa sai mesmo mais cara que a assinatura?",
+    a: "A multa simples da LGPD chega a 2% do faturamento, limitada a R$ 50 milhões por infração (art. 52), fora a possibilidade de suspender o tratamento de dados — o que, pra uma agência, significa parar de rodar campanha. O Growth custa R$ 97 por usuário/mês.",
+  },
+  {
+    q: "Posso ver a plataforma antes de assinar?",
+    a: "Sim. Na página de login há um acesso de demonstração com dados de exemplo, sem senha.",
+  },
+  {
+    q: "Como eu contrato?",
+    a: "Fale com a gente pelo botão do plano: marcamos uma conversa rápida, enviamos o link de pagamento pelo WhatsApp e, confirmado o pagamento, você recebe o código de ativação pra criar o acesso da agência.",
   },
   {
     q: "Existe fidelidade?",
-    a: "O contrato mínimo sugerido é de 12 meses, com aviso de 30 dias para encerrar. Compliance de operador não é algo que se liga e desliga sem deixar a agência exposta no meio do caminho.",
+    a: "O contrato mínimo é de 12 meses, com aviso de 30 dias para encerrar. Compliance não é algo que se liga e desliga sem deixar a agência exposta no meio do caminho.",
   },
 ];
 
 function PlanoCard({ p }: { p: Plano }) {
   const dark = p.destaque;
+  const itens = destaquesDoPlano(p.id);
   return (
-    <div
-      className={
-        "flex flex-col rounded-[40px] px-8 py-10 sm:px-10 " +
-        (dark ? "bg-rail text-white" : "block-card")
-      }
-    >
+    <div className={"flex flex-col rounded-[40px] px-8 py-10 sm:px-10 " + (dark ? "bg-rail text-white" : "block-card")}>
       <div className="flex items-start justify-between gap-3">
         <div>
           <p className={"font-display text-[18px] " + (dark ? "text-white" : "text-ink")}>Dattis</p>
           <p className={"t-label mt-1 " + (dark ? "text-white" : "text-ink")}>{p.nome}</p>
         </div>
-        {dark && <span className="tag !px-3 !py-2 text-[11px]">Mais comum</span>}
+        {dark && <span className="tag !px-3 !py-2 text-[11px]">Mais escolhido</span>}
       </div>
 
-      <p className={"font-display mt-8 text-[26px] leading-tight " + (dark ? "text-white" : "text-ink")}>{p.faixa}</p>
+      <p className={"mt-6 text-[15px] leading-snug " + (dark ? "text-white/80" : "text-body")}>{p.resumo}</p>
 
-      <div className="mt-6 flex items-baseline gap-2">
-        <span className={"font-display text-[34px] leading-none " + (dark ? "text-brand" : "text-ink")}>Sob consulta</span>
+      <div className="mt-8 flex items-end gap-2">
+        <span className={"font-display text-[20px] leading-none " + (dark ? "text-brand" : "text-ink")}>R$</span>
+        <span className={"font-display text-[64px] leading-[0.85] " + (dark ? "text-brand" : "text-ink")}>{p.preco}</span>
+        <span className={"pb-1 text-[14px] " + (dark ? "text-white/70" : "text-muted")}>/usuário/mês</span>
       </div>
 
-      <ul className="mt-8 flex flex-1 flex-col gap-3.5">
-        {p.itens.map((it) => (
-          <li key={it} className={"flex items-start gap-2.5 text-[15px] leading-snug " + (dark ? "text-white/85" : "text-body")}>
+      <ul className="mt-9 flex flex-1 flex-col gap-3">
+        {itens.map((it) => (
+          <li key={it} className={"flex items-start gap-2.5 text-[15px] leading-snug " + (dark ? "text-white/90" : "text-body")}>
             <CircleCheck size={19} strokeWidth={1.5} className={"mt-px shrink-0 " + (dark ? "text-brand" : "text-brand-ink")} />
             {it}
           </li>
         ))}
       </ul>
 
-      <Link href={CONTATO} className={"btn btn-lg mt-10 w-full " + (dark ? "btn-primary" : "btn-dark")}>
-        {p.cta}
-      </Link>
+      <a href={linkAssinar(p.nome)} target="_blank" rel="noopener" className={"btn btn-lg mt-10 w-full " + (dark ? "btn-primary" : "btn-dark")}>
+        Assinar o {p.nome}
+      </a>
     </div>
   );
+}
+
+function Celula({ v }: { v: boolean | string }) {
+  if (v === true) return <Check size={18} strokeWidth={2.2} className="text-brand-ink" aria-label="Incluso" />;
+  if (v === false) return <Minus size={18} className="text-faint" aria-label="Não incluso" />;
+  return <span className="text-[15px]">{v}</span>;
 }
 
 export default function PlanosPage() {
@@ -140,14 +105,14 @@ export default function PlanosPage() {
         {/* HERO */}
         <section className="px-5 pb-16 pt-14 text-center sm:pt-20">
           <p className="t-eyebrow">Planos</p>
-          <h1 className="t-hero mx-auto mt-5 max-w-[18ch]">Você paga por conta de cliente, não pelo faturamento.</h1>
+          <h1 className="t-hero mx-auto mt-5 max-w-[16ch]">Uma assinatura custa muito menos que uma multa.</h1>
           <p className="mx-auto mt-6 max-w-2xl text-[18px] leading-relaxed text-body">
-            O que define o trabalho de compliance é quantas contas sua agência opera. Por isso a Dattis cobra por faixa de
-            contas de cliente ativas — a mesma régua da contabilidade.
+            Cada plano cobre os pilares da Dattis — documentação, proteção, relacionamento com o cliente e governança — e é
+            cobrado por usuário da sua agência.
           </p>
           <div className="mt-9 flex flex-wrap items-center justify-center gap-1">
-            <span className="tag">15% de desconto</span>
-            <span className="tag tag-white">no plano anual</span>
+            <span className="tag">De R$ 47 a R$ 297</span>
+            <span className="tag tag-white">por usuário/mês</span>
           </div>
         </section>
 
@@ -155,81 +120,45 @@ export default function PlanosPage() {
 
         {/* PLANOS */}
         <section className="on-light bg-brand">
-          <div className="w-full px-4 pb-20 pt-10 sm:px-6 lg:px-8">
-            <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+          <div className="w-full px-4 pb-24 pt-10 sm:px-6 lg:px-8">
+            <div className="grid gap-5 lg:grid-cols-3">
               {PLANOS.map((p) => (
-                <PlanoCard key={p.nome} p={p} />
+                <PlanoCard key={p.id} p={p} />
               ))}
             </div>
-            <p className="mx-auto mt-10 max-w-3xl text-center text-[15px] leading-relaxed text-rail/85">
-              Valores por faixa em definição: estamos fechando preço junto com as primeiras agências. Fale com a gente pra
-              entrar nessa conversa — ou comece grátis e ative suas contas agora.
+            <p className="mx-auto mt-10 max-w-2xl text-center text-[15px] leading-relaxed text-rail/85">
+              Uma multa simples da LGPD pode chegar a 2% do faturamento, limitada a R$ 50 milhões por infração. Com três
+              usuários no Growth, sua agência investe R$ 291 por mês.
             </p>
-
-            {/* INCLUSO */}
-            <div className="block-card mt-16 grid items-center gap-12 px-8 py-12 sm:px-14 sm:py-16 lg:grid-cols-[1fr_auto]">
-              <div>
-                <p className="t-eyebrow">Incluso em todos os planos</p>
-                <h2 className="t-display mt-4 max-w-xl">Os módulos da plataforma, sem cobrança por módulo</h2>
-                <p className="mt-5 max-w-lg text-[17px] leading-relaxed text-body">
-                  Toda conta de cliente que você ativa já sai com o RAT, o contrato e o registro de subprocessadores. O plano
-                  muda o volume de contas, a frequência da auditoria e o nível de suporte.
-                </p>
-                <ArrowLink href="/#modulos" className="mt-8">
-                  Ver os módulos
-                </ArrowLink>
-              </div>
-              <MetaChips
-                items={[
-                  { icon: FileText, label: "RAT por conta de cliente", status: "sim" },
-                  { icon: FileSignature, label: "DPA com assinatura eletrônica", status: "sim" },
-                  { icon: Network, label: "Registro de subprocessadores", status: "sim" },
-                  { icon: FileCheck, label: "DAT pra enviar ao cliente", status: "sim" },
-                  { icon: Radar, label: "Auditoria de pixel e consentimento", status: "sim" },
-                  { icon: ShieldCheck, label: "Diagnóstico Expresso", status: "sim" },
-                ]}
-              />
-            </div>
           </div>
         </section>
 
-        {/* COMPARATIVO */}
+        {/* COMPARATIVO POR PILAR */}
         <section className="bg-canvas">
           <div className="w-full px-5 py-24 sm:px-10 lg:px-14">
-            <h2 className="t-display">Compare os planos</h2>
+            <h2 className="t-display">O que cada plano cobre, pilar por pilar</h2>
             <div className="card-flush mt-10 overflow-x-auto">
               <table className="w-full min-w-[720px] border-collapse text-left">
                 <thead>
                   <tr className="bg-surface-2">
-                    <th className="border-b border-line px-6 py-4 font-mono text-[12px] font-normal uppercase tracking-[0.04em] text-muted">
-                      &nbsp;
-                    </th>
+                    <th className="w-[40%] border-b border-line px-6 py-4" />
                     {PLANOS.map((p) => (
                       <th
-                        key={p.nome}
+                        key={p.id}
                         className={
                           "border-b border-line px-6 py-4 font-mono text-[14px] font-normal uppercase tracking-[0.03em] " +
                           (p.destaque ? "bg-brand-tint text-brand-ink" : "text-ink")
                         }
                       >
                         {p.nome}
+                        <span className="mt-1 block font-display text-[20px] normal-case tracking-normal text-ink">R$ {p.preco}</span>
                       </th>
                     ))}
                   </tr>
                 </thead>
                 <tbody>
-                  {COMPARATIVO.map((row) => (
-                    <tr key={row.linha} className="[&:last-child>*]:border-b-0">
-                      <td className="border-b border-line px-6 py-5 text-[15px] text-muted">{row.linha}</td>
-                      {row.valores.map((v, i) => (
-                        <td
-                          key={i}
-                          className={"border-b border-line px-6 py-5 font-display text-[18px] " + (PLANOS[i].destaque ? "bg-brand-tint/60" : "")}
-                        >
-                          {v}
-                        </td>
-                      ))}
-                    </tr>
+                  {PILARES.map((pilar) => (
+                    <PilarRows key={pilar} pilar={pilar} />
                   ))}
                 </tbody>
               </table>
@@ -237,37 +166,63 @@ export default function PlanosPage() {
           </div>
         </section>
 
-        <PixelEdge bg="var(--color-rail)" fill="var(--color-canvas)" flip />
+        <PixelEdge flip bg="var(--color-rail)" fill="var(--color-canvas)" />
 
-        {/* SPRINT */}
+        {/* DPO */}
         <section className="bg-rail text-white">
           <div className="grid w-full gap-14 px-5 pb-24 pt-14 sm:px-10 lg:grid-cols-2 lg:px-14">
             <div>
-              <p className="font-mono text-[clamp(1.1rem,2vw,1.4rem)] uppercase tracking-[0.02em] text-brand">Pra começar</p>
+              <p className="font-mono text-[clamp(1.1rem,2vw,1.4rem)] uppercase tracking-[0.02em] text-brand">Plano Scale</p>
               <h2 className="mt-6 font-display text-[clamp(2rem,4vw,3.2rem)] leading-[1.1] text-white">
-                Sprint de Higienização: sua agência regularizada em 10 dias úteis.
+                A Dattis como DPO da sua agência.
               </h2>
               <p className="mt-6 max-w-lg text-[17px] leading-relaxed text-white/80">
-                Taxa única, cobrada à parte. Se você fechar o plano anual junto, 50% do valor do sprint é abatido da
-                primeira mensalidade.
+                O encarregado de dados é quem responde pela privacidade da empresa: atende os titulares, fala com a ANPD e
+                orienta a equipe. No Scale, esse papel é nosso — sem você contratar ninguém.
               </p>
-              <div className="mt-10 flex items-center gap-2">
-                <Link href={CONTATO} className="tag">
-                  Agendar o sprint
-                </Link>
-                <Link href={CONTATO} aria-label="Agendar o sprint" className="arrow-circle">
-                  <ArrowRight size={18} strokeWidth={1.6} />
-                </Link>
-              </div>
+              <ArrowLink href={linkAssinar("Scale")} className="mt-10 !text-white">
+                Assinar o Scale
+              </ArrowLink>
             </div>
-
             <ul className="flex flex-col gap-3 self-center">
-              {SPRINT.map((s, i) => (
+              {[
+                "Recebe e responde pedidos dos donos dos dados",
+                "Responde às comunicações da ANPD",
+                "Orienta sua equipe sobre boas práticas",
+                "Conduz a resposta a incidentes de segurança",
+              ].map((s, i) => (
                 <li key={s} className="flex items-center gap-4 rounded-[20px] bg-white/[0.06] px-6 py-5">
                   <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-brand font-mono text-[14px] text-on-brand">
                     {i + 1}
                   </span>
                   <span className="text-[16px] text-white">{s}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+
+        {/* SPRINT */}
+        <section className="bg-canvas">
+          <div className="grid w-full gap-14 px-5 py-24 sm:px-10 lg:grid-cols-2 lg:px-14">
+            <div>
+              <p className="t-eyebrow">Pra começar</p>
+              <h2 className="t-display mt-4">Sprint de Higienização: sua agência regularizada em 10 dias úteis.</h2>
+              <p className="mt-6 max-w-lg text-[17px] leading-relaxed text-body">
+                Taxa única, cobrada à parte. Se você fechar o plano anual junto, 50% do valor do sprint é abatido da
+                primeira mensalidade.
+              </p>
+              <ArrowLink href={linkAssinar()} className="mt-9">
+                Agendar o sprint
+              </ArrowLink>
+            </div>
+            <ul className="flex flex-col gap-3 self-center">
+              {SPRINT.map((s, i) => (
+                <li key={s} className="flex items-center gap-4 rounded-[20px] border border-line bg-surface px-6 py-5">
+                  <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-brand font-mono text-[14px] text-on-brand">
+                    {i + 1}
+                  </span>
+                  <span className="text-[16px]">{s}</span>
                 </li>
               ))}
             </ul>
@@ -280,7 +235,7 @@ export default function PlanosPage() {
             <h2 className="t-display">Condições</h2>
             <ul className="mt-10 grid gap-5 md:grid-cols-3">
               {[
-                { t: "12 meses", d: "Contrato mínimo sugerido" },
+                { t: "12 meses", d: "Contrato mínimo" },
                 { t: "30 dias", d: "Aviso prévio para encerrar" },
                 { t: "15%", d: "De desconto no plano anual" },
               ].map((c) => (
@@ -298,13 +253,13 @@ export default function PlanosPage() {
         {/* CTA */}
         <section className="on-light bg-orange">
           <div className="w-full px-5 py-16 sm:px-10 lg:px-14">
-            <h2 className="font-display text-[clamp(1.6rem,3vw,2.2rem)] leading-tight">
-              Quer ver funcionando antes de falar de preço?
+            <h2 className="max-w-3xl font-display text-[clamp(1.6rem,3vw,2.2rem)] leading-tight">
+              Quer ver a plataforma antes de assinar?
             </h2>
             <div className="mt-12 flex flex-wrap gap-3">
-              <Link href="/cadastro" className="btn btn-leaf">
-                Começar grátis
-              </Link>
+              <a href={linkAssinar("Growth")} target="_blank" rel="noopener" className="btn btn-leaf">
+                Falar com a Dattis
+              </a>
               <a href="/api/auth/demo" className="btn btn-dark">
                 Ver a demonstração
               </a>
@@ -315,5 +270,28 @@ export default function PlanosPage() {
 
       <SiteFooter />
     </div>
+  );
+}
+
+function PilarRows({ pilar }: { pilar: string }) {
+  const linhas = RECURSOS.filter((r) => r.pilar === pilar);
+  return (
+    <>
+      <tr>
+        <td colSpan={PLANOS.length + 1} className="border-b border-line bg-canvas px-6 pb-3 pt-7 font-mono text-[12px] uppercase tracking-[0.05em] text-muted">
+          {pilar}
+        </td>
+      </tr>
+      {linhas.map((r) => (
+        <tr key={r.nome}>
+          <td className="border-b border-line px-6 py-4 text-[15px]">{r.nome}</td>
+          {PLANOS.map((p) => (
+            <td key={p.id} className={"border-b border-line px-6 py-4 " + (p.destaque ? "bg-brand-tint/60" : "")}>
+              <Celula v={r.valores[p.id]} />
+            </td>
+          ))}
+        </tr>
+      ))}
+    </>
   );
 }

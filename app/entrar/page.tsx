@@ -75,7 +75,7 @@ function EntrarForm() {
         <span className="h-px flex-1 bg-line" />
       </div>
 
-      <a href="/api/auth/demo" className="btn btn-primary btn-lg mt-6 w-full">
+      <a href="/api/auth/demo" className="btn btn-primary btn-lg mt-6 w-full whitespace-normal text-center leading-snug">
         Testar a plataforma sem senha →
       </a>
       <p className="font-ui mt-2 text-caption text-faint">
@@ -83,9 +83,9 @@ function EntrarForm() {
       </p>
 
       <p className="font-ui mt-8 text-body-sm">
-        Ainda não tem conta?{" "}
-        <Link href="/cadastro" className="nav-link">
-          Criar conta grátis
+        Ainda não é cliente?{" "}
+        <Link href="/planos" className="nav-link">
+          Ver planos e assinar
         </Link>
       </p>
     </AuthShell>

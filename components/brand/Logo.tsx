@@ -25,7 +25,7 @@ export function Logo({
   const dark = markOnly ? markDark : logoDark;
 
   return (
-    <Link href="/" aria-label="Dattis" className={"inline-flex " + className}>
+    <Link href="/" aria-label="Dattis" className={"inline-flex shrink-0 " + className}>
       <Image src={light} alt="Dattis" height={height} width={w(light)} priority className="logo-light" />
       <Image src={dark} alt="Dattis" height={height} width={w(dark)} priority className="logo-dark" />
     </Link>

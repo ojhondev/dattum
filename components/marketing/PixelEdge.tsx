@@ -29,7 +29,7 @@ function Half({ side, fill }: { side: "l" | "r"; fill: string }) {
       viewBox={`0 0 ${COLS} 4`}
       preserveAspectRatio={side === "l" ? "xMinYMax slice" : "xMaxYMax slice"}
       shapeRendering="crispEdges"
-      className={"block h-[64px] w-1/2 sm:h-[96px] " + (side === "r" ? "-ml-px" : "")}
+      className={"block h-[88px] w-1/2 sm:h-[96px] " + (side === "r" ? "-ml-px" : "")}
     >
       {rects.map(({ x, y }) => (
         <rect key={`${x}-${y}`} x={x} y={y} width="1.03" height="1.03" fill={fill} />

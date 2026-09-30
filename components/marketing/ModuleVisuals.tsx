@@ -1,4 +1,4 @@
-import { Check, X, PenLine, Sparkles, Send, AlertTriangle } from "lucide-react";
+import { Check, X, PenLine, Sparkles, Send, AlertTriangle, FileSignature } from "lucide-react";
 import { MetaChips } from "@/components/marketing/MetaChips";
 
 /* Telas de exemplo dos módulos, montadas com o próprio sistema visual. Decorativas. */
@@ -154,6 +154,113 @@ export function DatVisual() {
       <div className="mt-4 inline-flex items-center gap-2 rounded-full bg-[#002820] px-4 py-2 font-mono text-[11px] uppercase text-white">
         <Send size={12} /> Enviar pro cliente
       </div>
+    </div>
+  );
+}
+
+/* QR decorativo (não aponta pra lugar nenhum) — só ilustra o certificado. */
+function QrDecor({ size = 104 }: { size?: number }) {
+  const n = 21;
+  const on = (x: number, y: number) => {
+    const finder = (fx: number, fy: number) =>
+      x >= fx && x < fx + 7 && y >= fy && y < fy + 7 && (x === fx || x === fx + 6 || y === fy || y === fy + 6 || (x >= fx + 2 && x <= fx + 4 && y >= fy + 2 && y <= fy + 4));
+    if (finder(0, 0) || finder(n - 7, 0) || finder(0, n - 7)) return true;
+    if ((x < 8 && y < 8) || (x > n - 9 && y < 8) || (x < 8 && y > n - 9)) return false;
+    return (x * 7 + y * 13 + x * y) % 5 < 2;
+  };
+  const cells = [];
+  for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) if (on(x, y)) cells.push(<rect key={`${x}-${y}`} x={x} y={y} width="1" height="1" />);
+  return (
+    <svg viewBox={`-1 -1 ${n + 2} ${n + 2}`} width={size} height={size} shapeRendering="crispEdges" className="rounded-lg bg-white" fill="#002820">
+      {cells}
+    </svg>
+  );
+}
+
+export function CertVisual() {
+  return (
+    <div aria-hidden="true" className="relative">
+      <div className={SCREEN}>
+        <p className="font-mono text-[11px] uppercase tracking-[0.05em] text-[#59645f]">Certificado de privacidade</p>
+        <div className="mt-4 flex items-center gap-5">
+          <QrDecor />
+          <div className="min-w-0">
+            <p className="font-display text-[20px] leading-tight">Loja Aurora</p>
+            <p className="mt-1 font-mono text-[11px] text-[#59645f]">DTS-7K3F-9QPA · lojaaurora.com.br</p>
+            <p className="mt-2 text-[12px] text-[#59645f]">Válido até 30/09/2027</p>
+          </div>
+        </div>
+        <p className="mt-6 font-mono text-[10px] uppercase tracking-[0.05em] text-[#59645f]">Selo no rodapé do site</p>
+        <div className="mt-2 inline-flex items-center gap-3 rounded-full bg-[#002820] py-2 pl-2 pr-5 text-white">
+          <span className="grid h-9 w-9 place-items-center rounded-full bg-[#6ceead] text-[#002820]">
+            <Check size={16} strokeWidth={3} />
+          </span>
+          <span>
+            <span className="block font-mono text-[8px] tracking-[0.1em] text-[#6ceead]">DATTIS · LGPD</span>
+            <span className="block font-display text-[14px] leading-tight">Privacidade verificada</span>
+          </span>
+        </div>
+      </div>
+      <MetaChips className="absolute -top-5 right-4" items={[{ icon: Sparkles, label: "Verificável por QR Code", status: "sim" }]} />
+    </div>
+  );
+}
+
+export function DossieVisual() {
+  const itens = ["Dados da empresa", "Contrato de operação assinado", "Registro de atividades (RAT)", "Ferramentas que tratam dados", "Certificado verificável", "Texto-base da contestação"];
+  return (
+    <div aria-hidden="true" className="relative">
+      <div className={SCREEN}>
+        <p className="font-mono text-[11px] uppercase tracking-[0.05em] text-[#59645f]">Dossiê para BM · Loja Aurora</p>
+        <ul className="mt-4 space-y-2 text-[13px]">
+          {itens.map((t) => (
+            <li key={t} className="flex items-center gap-3 rounded-2xl bg-[#f4f4f2] px-3 py-2.5">
+              <span className="grid h-5 w-5 shrink-0 place-items-center rounded-full bg-[#45d190] text-[#002820]">
+                <Check size={12} strokeWidth={2.5} />
+              </span>
+              {t}
+            </li>
+          ))}
+        </ul>
+      </div>
+      <MetaChips className="absolute -top-5 right-4" items={[{ icon: Send, label: "Pronto pra contestação", status: "sim" }]} />
+    </div>
+  );
+}
+
+export function BmAlertVisual() {
+  return (
+    <div aria-hidden="true" className="relative">
+      <div className="rounded-[24px] bg-white p-6 text-[#0a120f] shadow-[0_20px_60px_rgba(0,0,0,0.35)]">
+        <div className="flex items-start gap-3">
+          <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-[#fdebdc] text-[#c8641b]">
+            <AlertTriangle size={18} />
+          </span>
+          <div>
+            <p className="font-display text-[19px] leading-tight">Conta de anúncios restrita</p>
+            <p className="mt-1 text-[13px] text-[#59645f]">Os anúncios desta conta foram pausados. Você pode solicitar uma análise.</p>
+          </div>
+        </div>
+        <div className="mt-5 grid grid-cols-3 gap-2 text-center">
+          {[
+            ["12", "campanhas paradas"],
+            ["4", "clientes afetados"],
+            ["0", "leads hoje"],
+          ].map(([v, l]) => (
+            <div key={l} className="rounded-2xl bg-[#f4f4f2] px-2 py-3">
+              <p className="font-display text-[24px] leading-none">{v}</p>
+              <p className="mt-1 text-[11px] text-[#59645f]">{l}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+      <MetaChips
+        className="absolute -bottom-10 left-4"
+        items={[
+          { icon: FileSignature, label: "Contrato de operação anexado", status: "sim" },
+          { icon: Sparkles, label: "Dossiê Dattis enviado", status: "sim" },
+        ]}
+      />
     </div>
   );
 }

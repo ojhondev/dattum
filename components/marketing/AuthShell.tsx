@@ -5,7 +5,7 @@ import { MetaChips } from "@/components/marketing/MetaChips";
 
 export function AuthShell({ children, panelHeadline }: { children: React.ReactNode; panelHeadline: string }) {
   return (
-    <div className="grid min-h-svh bg-canvas lg:grid-cols-[minmax(0,500px)_1fr]">
+    <div className="grid min-h-svh grid-cols-1 bg-canvas lg:grid-cols-[minmax(0,500px)_1fr]">
       <div className="flex flex-col px-6 py-8 sm:px-12">
         <Logo height={26} />
         <div className="mx-auto flex w-full max-w-sm flex-1 flex-col justify-center py-12">{children}</div>

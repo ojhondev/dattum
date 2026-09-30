@@ -211,13 +211,14 @@
   * { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
 }
 
+@layer components {
 .font-ui { font-family: var(--font-ui); }
 
 /* ---------- Escala de títulos ---------- */
 .t-hero {
   font-family: var(--font-display);
   font-weight: 400;
-  font-size: clamp(2.6rem, 6vw, var(--text-hero));
+  font-size: clamp(3rem, 6vw, var(--text-hero));
   line-height: 1.04;
   letter-spacing: -0.012em;
 }
@@ -384,6 +385,8 @@
   padding: 12px 13px; border-radius: 999px; color: #0a120f; margin-left: -10px;
 }
 .meta-yes { background: var(--color-brand-strong); }
+.meta-wrap .meta-row { max-width: 100%; }
+.meta-wrap .meta-label { white-space: normal; line-height: 1.3; padding-block: 10px; }
 .meta-no { background: var(--color-orange); }
 
 /* ---------- Animação ---------- */
@@ -493,4 +496,23 @@ table.painel-table a:hover { text-decoration: underline; }
 
 @media (max-width: 860px) {
   .rat-grid { grid-template-columns: 1fr; }
+}
+}
+
+/* ---------- Faixa de aviso do topo (contraste nos dois temas) ---------- */
+.announce { background: #002820; color: #ffffff; }
+.announce a:hover { color: var(--color-brand); }
+:root[data-theme="dark"] .announce { background: var(--color-brand); color: var(--color-on-brand); }
+:root[data-theme="dark"] .announce a:hover { color: #0d3a2f; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .announce { background: var(--color-brand); color: var(--color-on-brand); }
+  :root:not([data-theme="light"]) .announce a:hover { color: #0d3a2f; }
+}
+
+/* ---------- Impressão (dossiê → PDF) ---------- */
+@media print {
+  aside, .no-print, button[aria-label="Menu"] { display: none !important; }
+  body { background: #fff; }
+  main { padding: 0 !important; }
+  section { break-inside: avoid; }
 }

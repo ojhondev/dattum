@@ -218,7 +218,9 @@
 .diag-btn { font-family: var(--font-mono); text-transform: uppercase; letter-spacing: .02em; font-size: .8rem; }
 .diag-btn.primary { background: linear-gradient(90deg, var(--color-brand) 0%, #b9f6d6 100%); border-color: var(--color-brand-strong); color: var(--color-on-brand); }
 .diag-btn.primary:hover { background: var(--color-brand); }
-.diag-answer-btn { border-radius: 999px; font-weight: 500; padding: 17px 26px; }
+.diag-answer-btn { border-radius: 16px; font-weight: 500; padding: 18px 22px; text-align: left; }
+.diag-q { max-width: 600px; }
+.diag-intro-sub { margin-bottom: 24px; }
 .diag-cta { background: var(--color-rail); border-radius: 40px; padding: 40px; }
 .diag-cta-btn { font-family: var(--font-mono); text-transform: uppercase; font-weight: 500; letter-spacing: .02em; font-size: .85rem; }
 .diag-cta-btn:not(.ghost) { background: var(--color-brand); border-color: var(--color-brand); color: var(--color-on-brand); }

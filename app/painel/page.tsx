@@ -49,8 +49,11 @@ export default async function PainelDashboard() {
         <Link href="/painel/contas/novo" className="btn btn-primary btn-lg">
           Ativar conta nova <ArrowRight size={16} />
         </Link>
-        <Link href="/diagnostico" className="btn btn-ghost btn-lg">
-          Refazer diagnóstico
+        <Link href="/painel/certificados" className="btn btn-ghost btn-lg">
+          Emitir certificado
+        </Link>
+        <Link href="/painel/dossie" className="btn btn-ghost btn-lg">
+          Dossiê para BM
         </Link>
         <Link href="/auditoria" className="btn btn-ghost btn-lg">
           Auditar um site

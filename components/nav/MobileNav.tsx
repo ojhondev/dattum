@@ -1,54 +1,89 @@
 "use client";
 
 import { useState } from "react";
+import { createPortal } from "react-dom";
 import Link from "next/link";
-import { Menu, X } from "lucide-react";
+import { Menu, X, ChevronDown } from "lucide-react";
+import { Logo } from "@/components/brand/Logo";
 
-type Item = { href: string; label: string };
+export type NavGroup = { label: string; items: { href: string; label: string; desc: string }[] };
 
 export function MobileNav({
-  items,
+  groups,
   ctaLabel,
   ctaHref,
   enterLabel,
 }: {
-  items: Item[];
+  groups: NavGroup[];
   ctaLabel: string;
   ctaHref: string;
   enterLabel: string;
 }) {
   const [open, setOpen] = useState(false);
+  const [aberto, setAberto] = useState<string | null>(null);
+  const fechar = () => {
+    setOpen(false);
+    setAberto(null);
+  };
 
   return (
     <div className="lg:hidden">
       <button type="button" aria-label="Menu" aria-expanded={open} onClick={() => setOpen(true)} className="rounded-full p-2 text-ink">
-        <Menu size={24} />
+        <Menu size={26} />
       </button>
 
-      {open && (
-        <div className="fixed inset-0 z-50 overflow-y-auto bg-canvas">
-          <div className="flex h-[76px] items-center justify-end px-5">
-            <button type="button" aria-label="Fechar" onClick={() => setOpen(false)} className="rounded-full p-2">
-              <X size={24} />
+      {open &&
+        createPortal(
+        <div className="fixed inset-0 z-50 flex flex-col bg-canvas">
+          <div className="flex h-[76px] shrink-0 items-center justify-between px-4">
+            <Logo height={26} />
+            <button type="button" aria-label="Fechar" onClick={fechar} className="rounded-full p-2 text-ink">
+              <X size={26} />
             </button>
           </div>
-          <nav className="flex flex-col px-5 pt-2">
-            {items.map((it) => (
-              <Link key={it.href} href={it.href} onClick={() => setOpen(false)} className="font-display border-b border-line py-4 text-[26px]">
-                {it.label}
-              </Link>
-            ))}
-            <div className="mt-8 flex flex-col gap-3">
-              <Link href={ctaHref} onClick={() => setOpen(false)} className="btn btn-dark btn-lg">
-                {ctaLabel}
-              </Link>
-              <Link href="/entrar" onClick={() => setOpen(false)} className="btn btn-primary btn-lg">
-                {enterLabel}
-              </Link>
-            </div>
+
+          <nav className="flex-1 overflow-y-auto px-4 pb-32">
+            {groups.map((g) => {
+              const isOpen = aberto === g.label;
+              return (
+                <div key={g.label}>
+                  <button
+                    type="button"
+                    aria-expanded={isOpen}
+                    onClick={() => setAberto(isOpen ? null : g.label)}
+                    className="flex w-full items-center justify-between py-5 text-left text-[16px] text-ink"
+                  >
+                    {g.label}
+                    <ChevronDown size={22} strokeWidth={1.5} className={"transition-transform " + (isOpen ? "rotate-180" : "")} />
+                  </button>
+                  {isOpen && (
+                    <ul className="flex flex-col gap-5 border-t border-line pb-6 pt-5">
+                      {g.items.map((it) => (
+                        <li key={it.href + it.label}>
+                          <Link href={it.href} onClick={fechar} className="block">
+                            <span className="block text-[15px] font-medium text-ink">{it.label}</span>
+                            <span className="mt-0.5 block text-[14px] text-muted">{it.desc}</span>
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              );
+            })}
           </nav>
-        </div>
-      )}
+
+          <div className="absolute inset-x-0 bottom-0 flex justify-center gap-4 bg-gradient-to-t from-canvas via-canvas to-transparent px-4 pb-8 pt-10">
+            <Link href={ctaHref} onClick={fechar} className="btn btn-dark">
+              {ctaLabel}
+            </Link>
+            <Link href="/entrar" onClick={fechar} className="btn btn-primary">
+              {enterLabel}
+            </Link>
+          </div>
+        </div>,
+          document.body,
+        )}
     </div>
   );
 }

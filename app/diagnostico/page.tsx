@@ -1,6 +1,9 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
+import Link from "next/link";
+import { X, ChevronRight } from "lucide-react";
+import { Logo } from "@/components/brand/Logo";
 import "./diagnostico.css";
 
 type AnswerKey = "sim" | "parcial" | "nao";
@@ -384,251 +387,280 @@ export default function Diagnostico() {
   const progressPct = step < 0 ? 0 : inResults ? 100 : Math.round((step / TOTAL_QUESTIONS) * 100);
   const current = inQuestion ? ALL_QUESTIONS[step] : null;
 
-  return (
-    <div className="diag-page">
-      {step >= 0 && (
-        <div className="diag-progressbar">
-          <div className="diag-progressbar-fill" style={{ width: `${progressPct}%` }}></div>
-        </div>
-      )}
+  const answered = current ? Boolean(answers[current.item.id]) : false;
+  const leftEyebrow = inQuestion && current ? `${current.catKey} · ${current.catName}` : inResults ? "Resultado" : "Diagnóstico Expresso";
+  const leftTitle = inResults
+    ? computed.hasAnyRiskAnswer
+      ? `Risco ${computed.level.label.toLowerCase()}: ${computed.overallPct}% de exposição`
+      : "Diagnóstico sem respostas ainda"
+    : inQuestion
+      ? "Cada resposta mostra onde sua agência está exposta — e onde seu cliente também está."
+      : "Descubra quanto a sua agência está exposta à LGPD";
 
-      <div className="diag-header-fixed">
-        <div className="diag-header-eyebrow">Dattis · Diagnóstico Expresso</div>
-        {step >= 0 && (
-          <div className="diag-score-chip">
-            <span className="diag-score-ring" style={scoreChipStyle}>
-              <span className="diag-score-ring-inner">{computed.hasAnyRiskAnswer ? computed.overallPct : "—"}</span>
-            </span>
-            <span className="diag-score-chip-text">
-              <b style={{ color: computed.hasAnyRiskAnswer ? computed.level.color : "var(--aiki-carbon-60)" }}>
-                {computed.hasAnyRiskAnswer ? computed.level.label : "aguardando"}
-              </b>
-              <span>{computed.answeredTotal}/{TOTAL_QUESTIONS} respondidas</span>
-            </span>
-          </div>
-        )}
+  return (
+    <div className="diag-page fixed inset-0 z-[60] flex">
+      <div className="relative hidden h-full w-1/2 shrink-0 overflow-hidden md:block">
+        <div className="absolute inset-0 bg-rail bg-cover bg-center" style={{ backgroundImage: "url(/marketing/solucao-glow.png)" }} />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/25 to-black/10" />
+        <div className="absolute inset-0 flex flex-col justify-end p-10 text-white">
+          {step >= 0 && (
+            <div className="diag-score-chip mb-8">
+              <span className="diag-score-ring" style={scoreChipStyle}>
+                <span className="diag-score-ring-inner">{computed.hasAnyRiskAnswer ? computed.overallPct : "—"}</span>
+              </span>
+              <span className="diag-score-chip-text text-white">
+                <b>{computed.hasAnyRiskAnswer ? `Risco ${computed.level.label}` : "Aguardando respostas"}</b>
+                <span className="!text-white/70">
+                  {computed.answeredTotal}/{TOTAL_QUESTIONS} respondidas
+                </span>
+              </span>
+            </div>
+          )}
+          <p className="mb-3 font-mono text-[13px] uppercase tracking-[0.04em] text-brand">{leftEyebrow}</p>
+          <h2 className="max-w-md font-display text-[clamp(26px,3vw,38px)] leading-[1.12] text-white">{leftTitle}</h2>
+        </div>
       </div>
 
-      {step === -1 && (
-        <div className="diag-stage intro">
-          <div className="diag-q" key="intro">
-            <h1 className="diag-intro-title">Checklist de Diagnóstico</h1>
-            <p className="diag-intro-sub">
-              Pra rodar ao vivo em ~15–20 min com uma agência de tráfego pago. Uma
-              pergunta de cada vez — responda conforme a conversa avança, o score de
-              risco atualiza sozinho e fica visível até o fim.
-            </p>
-            <div className="diag-intro-form">
-              <div className="diag-field">
-                <label htmlFor="agencyName">Agência</label>
-                <input
-                  id="agencyName"
-                  type="text"
-                  placeholder="Nome da agência"
-                  value={agencyName}
-                  onChange={(e) => setAgencyName(e.target.value)}
-                />
-              </div>
-              <div className="diag-field">
-                <label htmlFor="agencyDate">Data</label>
-                <input
-                  id="agencyDate"
-                  type="date"
-                  value={agencyDate}
-                  onChange={(e) => setAgencyDate(e.target.value)}
-                />
-              </div>
-            </div>
-            <button className="diag-btn primary diag-intro-btn" onClick={() => goTo(0, "fwd")}>
-              Começar diagnóstico →
-            </button>
-          </div>
+      <div className="flex min-w-0 flex-1 flex-col bg-white">
+        <div className="h-1 shrink-0 bg-[#e3e3e1]">
+          <div className="h-full bg-brand-strong transition-all duration-300" style={{ width: `${progressPct}%` }} />
         </div>
-      )}
 
-      {inQuestion && current && (
-        <div className="diag-stage">
-          <div className="diag-q" key={step} data-dir={direction}>
-            <button className="diag-back" onClick={() => goTo(step - 1, "back")}>
-              ← Voltar
-            </button>
-            <div className="diag-q-eyebrow" style={{ color: current.color }}>
-              {current.catKey} · {current.catName}
-            </div>
-            <p className="diag-q-count">
-              Pergunta {step + 1} de {TOTAL_QUESTIONS}
-            </p>
-            <h2 className="diag-q-text">{current.item.text}</h2>
-            <p className="diag-q-help">{current.item.help}</p>
-            <div className="diag-answers">
-              {(current.isSignal
-                ? [
-                    { key: "sim" as AnswerKey, label: "Sim" },
-                    { key: "nao" as AnswerKey, label: "Não" },
-                  ]
-                : STATES
-              ).map((opt) => (
-                <button
-                  key={opt.key}
-                  type="button"
-                  className={`diag-answer-btn ${opt.key}`}
-                  aria-pressed={answers[current.item.id] === opt.key}
-                  onClick={() => chooseAnswer(current.item.id, opt.key)}
-                >
-                  {opt.label}
-                </button>
-              ))}
-            </div>
-          </div>
+        <div className="flex shrink-0 items-center justify-between px-4 py-[17px] md:px-8">
+          <Logo height={26} />
+          <Link href="/" aria-label="Fechar" className="rounded-full p-2 text-[#59645f] hover:text-[#0a120f]">
+            <X size={22} />
+          </Link>
         </div>
-      )}
 
-      {inResults && (
-        <div className="diag-stage results">
-          <div className="diag-q" key="results">
-            <p className="diag-panel-label">Diagnóstico completo</p>
-            <h1 className="diag-intro-title" style={{ fontSize: "clamp(1.6rem, 3vw, 2.1rem)" }}>
-              {agencyName || "Diagnóstico"} — resultado
-            </h1>
+        <div className={"flex flex-1 justify-center overflow-y-auto px-4 py-6 md:px-8 " + (inResults ? "items-start" : "items-center")}>
+          {step === -1 && (
+            <div className="diag-q" key="intro" data-dir="fwd">
+              <p className="diag-panel-label">Checklist de diagnóstico</p>
+              <h1 className="diag-intro-title">Sua agência e seus clientes estão protegidos?</h1>
+              <p className="diag-intro-sub">
+                {TOTAL_QUESTIONS} perguntas sobre como a agência trata dado de lead, uma de cada vez. O score de risco
+                atualiza a cada resposta e fica visível até o fim.
+              </p>
+              <div className="diag-intro-form">
+                <div className="diag-field">
+                  <label htmlFor="agencyName">Agência</label>
+                  <input
+                    id="agencyName"
+                    type="text"
+                    placeholder="Nome da agência"
+                    value={agencyName}
+                    onChange={(e) => setAgencyName(e.target.value)}
+                  />
+                </div>
+                <div className="diag-field">
+                  <label htmlFor="agencyDate">Data</label>
+                  <input id="agencyDate" type="date" value={agencyDate} onChange={(e) => setAgencyDate(e.target.value)} />
+                </div>
+              </div>
+            </div>
+          )}
 
-            <div className="diag-results-grid">
-              <div>
-                <p className="diag-panel-label">Score de risco</p>
-                <div className="diag-gauge-wrap">
-                  <div className="diag-gauge" style={gaugeStyle}>
-                    <div className="diag-gauge-inner">
-                      <div className="diag-gauge-pct">{computed.hasAnyRiskAnswer ? `${computed.overallPct}%` : "—"}</div>
-                      <div
-                        className="diag-gauge-level"
-                        style={{ color: computed.hasAnyRiskAnswer ? computed.level.color : "var(--aiki-carbon-60)" }}
-                      >
-                        {computed.hasAnyRiskAnswer ? computed.level.label : "aguardando"}
+          {inQuestion && current && (
+            <div className="diag-q" key={step} data-dir={direction}>
+              <p className="diag-q-count">
+                Pergunta {step + 1} de {TOTAL_QUESTIONS}
+              </p>
+              <h1 className="diag-q-text">{current.item.text}</h1>
+              <p className="diag-q-help">{current.item.help}</p>
+              <div className="diag-answers">
+                {(current.isSignal
+                  ? [
+                      { key: "sim" as AnswerKey, label: "Sim" },
+                      { key: "nao" as AnswerKey, label: "Não" },
+                    ]
+                  : STATES
+                ).map((opt) => (
+                  <button
+                    key={opt.key}
+                    type="button"
+                    className={`diag-answer-btn ${opt.key}`}
+                    aria-pressed={answers[current.item.id] === opt.key}
+                    onClick={() => chooseAnswer(current.item.id, opt.key)}
+                  >
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {inResults && (
+            <div className="diag-q w-full max-w-2xl" key="results" data-dir="fwd">
+              <p className="diag-panel-label">Diagnóstico completo</p>
+              <h1 className="diag-intro-title" style={{ fontSize: "clamp(1.6rem, 3vw, 2.1rem)" }}>
+                {agencyName || "Diagnóstico"} — resultado
+              </h1>
+
+              <div className="diag-results-grid">
+                <div>
+                  <p className="diag-panel-label">Score de risco</p>
+                  <div className="diag-gauge-wrap">
+                    <div className="diag-gauge" style={gaugeStyle}>
+                      <div className="diag-gauge-inner">
+                        <div className="diag-gauge-pct">{computed.hasAnyRiskAnswer ? `${computed.overallPct}%` : "—"}</div>
+                        <div
+                          className="diag-gauge-level"
+                          style={{ color: computed.hasAnyRiskAnswer ? computed.level.color : "var(--aiki-carbon-60)" }}
+                        >
+                          {computed.hasAnyRiskAnswer ? computed.level.label : "aguardando"}
+                        </div>
                       </div>
                     </div>
                   </div>
+
+                  <p className="diag-panel-label" style={{ marginTop: "20px" }}>
+                    Sinal comercial
+                  </p>
+                  <div className={`diag-signal-badge ${computed.signalCount > 0 ? "on" : "off"}`}>
+                    <span>
+                      {computed.signalCount === 2
+                        ? "Já pediu prova e quase perdeu contrato"
+                        : computed.signalCount === 1
+                          ? "Já existe pressão comercial por conformidade"
+                          : "Nenhum gatilho identificado ainda"}
+                    </span>
+                    <b>{computed.signalCount > 0 ? (computed.signalCount === 2 ? "Alto" : "Presente") : "—"}</b>
+                  </div>
                 </div>
 
-                <p className="diag-panel-label" style={{ marginTop: "20px" }}>
-                  Sinal comercial
-                </p>
-                <div className={`diag-signal-badge ${computed.signalCount > 0 ? "on" : "off"}`}>
-                  <span>
-                    {computed.signalCount === 2
-                      ? "Já pediu prova e quase perdeu contrato"
-                      : computed.signalCount === 1
-                      ? "Já existe pressão comercial por conformidade"
-                      : "Nenhum gatilho identificado ainda"}
-                  </span>
-                  <b>{computed.signalCount > 0 ? (computed.signalCount === 2 ? "Alto" : "Presente") : "—"}</b>
+                <div>
+                  <p className="diag-panel-label">Por categoria</p>
+                  <div className="diag-cb">
+                    {computed.catBreakdown.map((c) => (
+                      <div className="diag-cb-row" key={c.key}>
+                        <span className="diag-cb-name">{c.name}</span>
+                        <span className="diag-cb-track">
+                          <span
+                            className="diag-cb-fill"
+                            style={{ width: `${c.answered > 0 ? c.pct : 0}%`, background: c.answered > 0 ? c.color : "var(--aiki-carbon-20)" }}
+                          ></span>
+                        </span>
+                        <span className="diag-cb-val">{c.answered > 0 ? `${c.pct}%` : "—"}</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
 
-              <div>
-                <p className="diag-panel-label">Por categoria</p>
-                <div className="diag-cb">
-                  {computed.catBreakdown.map((c) => (
-                    <div className="diag-cb-row" key={c.key}>
-                      <span className="diag-cb-name">{c.name}</span>
-                      <span className="diag-cb-track">
-                        <span
-                          className="diag-cb-fill"
-                          style={{ width: `${c.answered > 0 ? c.pct : 0}%`, background: c.answered > 0 ? c.color : "var(--aiki-carbon-20)" }}
-                        ></span>
-                      </span>
-                      <span className="diag-cb-val">{c.answered > 0 ? `${c.pct}%` : "—"}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            <p className="diag-panel-label" style={{ marginTop: "24px" }}>
-              Resumo pra copiar
-            </p>
-            <textarea className="diag-textarea" readOnly value={mounted ? summaryText : ""} />
-            <div className="diag-btn-row" style={{ marginTop: "10px" }}>
-              <button className="diag-btn primary" onClick={saveToHistory}>
-                Salvar no histórico
-              </button>
-              <button className="diag-btn" onClick={() => goTo(TOTAL_QUESTIONS - 1, "back")}>
-                ← Revisar respostas
-              </button>
-              <button className="diag-btn" onClick={resetAll}>
-                Novo diagnóstico
-              </button>
-            </div>
-
-            <div className="diag-cta">
-              <h3>Corrija isso de verdade, não só descubra o problema</h3>
-              <p>
-                Crie sua conta grátis — a Dattis já gera o registro do que vocês fazem com
-                o dado de cada cliente e o contrato entre vocês, prontos pra assinar.
+              <p className="diag-panel-label" style={{ marginTop: "24px" }}>
+                Resumo pra copiar
               </p>
-              <div className="diag-cta-row">
-                <a className="diag-cta-btn" href="/cadastro">
-                  Criar conta grátis →
-                </a>
-                <a className="diag-cta-btn ghost" href="/auditoria">
-                  Auditar um site →
-                </a>
+              <textarea className="diag-textarea" readOnly value={mounted ? summaryText : ""} />
+              <div className="diag-btn-row" style={{ marginTop: "10px" }}>
+                <button className="diag-btn primary" onClick={saveToHistory}>
+                  Salvar no histórico
+                </button>
+                <button className="diag-btn" onClick={() => goTo(TOTAL_QUESTIONS - 1, "back")}>
+                  Revisar respostas
+                </button>
+                <button className="diag-btn" onClick={resetAll}>
+                  Novo diagnóstico
+                </button>
               </div>
-            </div>
 
-            <section className="diag-history">
-              <h2>Histórico local</h2>
-              <p className="hint">Salvo apenas neste navegador — não sincroniza entre dispositivos.</p>
-              <div className="diag-table-wrap">
-                <table className="diag-table">
-                  <thead>
-                    <tr>
-                      <th>Agência</th>
-                      <th>Data</th>
-                      <th>Score</th>
-                      <th>Nível</th>
-                      <th>Sinal comercial</th>
-                      <th></th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {!mounted || history.length === 0 ? (
-                      <tr className="diag-empty-row">
-                        <td colSpan={6}>Nenhum diagnóstico salvo ainda.</td>
+              <div className="diag-cta">
+                <h3>Você e seu cliente estão expostos. Corrija isso antes da multa.</h3>
+                <p>
+                  A Dattis gera o registro do que vocês fazem com o dado de cada cliente, o contrato entre vocês, o
+                  certificado pro rodapé do site e o dossiê pra contestar BM suspensa.
+                </p>
+                <div className="diag-cta-row">
+                  <a className="diag-cta-btn" href="/planos">
+                    Ver planos →
+                  </a>
+                  <a className="diag-cta-btn ghost" href="/auditoria">
+                    Auditar um site →
+                  </a>
+                </div>
+              </div>
+
+              <section className="diag-history">
+                <h2>Histórico local</h2>
+                <p className="hint">Salvo apenas neste navegador — não sincroniza entre dispositivos.</p>
+                <div className="diag-table-wrap">
+                  <table className="diag-table">
+                    <thead>
+                      <tr>
+                        <th>Agência</th>
+                        <th>Data</th>
+                        <th>Score</th>
+                        <th>Nível</th>
+                        <th>Sinal comercial</th>
+                        <th></th>
                       </tr>
-                    ) : (
-                      [...history]
-                        .map((entry, realIdx) => ({ entry, realIdx }))
-                        .reverse()
-                        .map(({ entry, realIdx }) => {
-                          const lvl = levelFor(entry.score);
-                          return (
-                            <tr key={realIdx}>
-                              <td>{entry.name}</td>
-                              <td>{entry.date}</td>
-                              <td className="num">{entry.score}%</td>
-                              <td>
-                                <span className="diag-level-pill" style={{ background: lvl.soft, color: lvl.color }}>
-                                  {lvl.label}
-                                </span>
-                              </td>
-                              <td>{entry.signal}</td>
-                              <td>
-                                <button className="diag-remove-btn" onClick={() => removeFromHistory(realIdx)}>
-                                  Remover
-                                </button>
-                              </td>
-                            </tr>
-                          );
-                        })
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            </section>
+                    </thead>
+                    <tbody>
+                      {!mounted || history.length === 0 ? (
+                        <tr className="diag-empty-row">
+                          <td colSpan={6}>Nenhum diagnóstico salvo ainda.</td>
+                        </tr>
+                      ) : (
+                        [...history]
+                          .map((entry, realIdx) => ({ entry, realIdx }))
+                          .reverse()
+                          .map(({ entry, realIdx }) => {
+                            const lvl = levelFor(entry.score);
+                            return (
+                              <tr key={realIdx}>
+                                <td>{entry.name}</td>
+                                <td>{entry.date}</td>
+                                <td className="num">{entry.score}%</td>
+                                <td>
+                                  <span className="diag-level-pill" style={{ background: lvl.soft, color: lvl.color }}>
+                                    {lvl.label}
+                                  </span>
+                                </td>
+                                <td>{entry.signal}</td>
+                                <td>
+                                  <button className="diag-remove-btn" onClick={() => removeFromHistory(realIdx)}>
+                                    Remover
+                                  </button>
+                                </td>
+                              </tr>
+                            );
+                          })
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </section>
 
-            <footer className="diag-foot">Dattis — ferramenta interna de diagnóstico, não substitui parecer jurídico.</footer>
-          </div>
+              <footer className="diag-foot">Dattis — ferramenta de diagnóstico, não substitui parecer jurídico.</footer>
+            </div>
+          )}
         </div>
-      )}
+
+        {!inResults && (
+          <div className="flex shrink-0 items-center justify-between gap-3 border-t border-[#e3e3e1] px-4 py-[17px] md:px-8">
+            {step >= 0 ? (
+              <button type="button" onClick={() => goTo(step - 1, "back")} className="text-[14px] text-[#59645f] hover:text-[#0a120f]">
+                Voltar
+              </button>
+            ) : (
+              <span />
+            )}
+            {step >= 0 && (
+              <span className="font-mono text-[12px] uppercase tracking-[0.04em] text-[#59645f] md:hidden">
+                {computed.hasAnyRiskAnswer ? `Risco ${computed.level.label} · ${computed.overallPct}%` : `${step + 1}/${TOTAL_QUESTIONS}`}
+              </span>
+            )}
+            <button
+              type="button"
+              onClick={() => goTo(step + 1, "fwd")}
+              disabled={inQuestion && !answered}
+              className="btn btn-dark btn-lg disabled:opacity-30"
+            >
+              {step === -1 ? "Começar" : step === TOTAL_QUESTIONS - 1 ? "Ver resultado" : "Continuar"} <ChevronRight size={16} />
+            </button>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

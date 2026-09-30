@@ -276,12 +276,12 @@ export default function Auditoria() {
             <div className="audit-cta">
               <h3>Corrija isso de verdade, não só descubra o problema</h3>
               <p>
-                Crie sua conta grátis — a Dattis já gera o registro do que vocês fazem com
-                o dado desse cliente e o contrato entre vocês, prontos pra assinar.
+                Assine a Dattis — ela gera o registro do que vocês fazem com o dado desse
+                cliente, o contrato entre vocês e o certificado pro rodapé do site.
               </p>
               <div className="audit-cta-row">
-                <a className="audit-cta-btn" href="/cadastro">
-                  Criar conta grátis →
+                <a className="audit-cta-btn" href="/planos">
+                  Ver planos →
                 </a>
                 <a className="audit-cta-btn ghost" href="/diagnostico">
                   Fazer o Diagnóstico Expresso →

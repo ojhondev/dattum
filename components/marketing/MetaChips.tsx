@@ -4,9 +4,9 @@ import { ArrowRight, type LucideIcon } from "lucide-react";
 export type Meta = { icon: LucideIcon; label: string; status?: "sim" | "nao" };
 
 /** Pilha de chips de metadados: ícone num círculo + rótulo + SIM/NÃO opcional. */
-export function MetaChips({ items, className = "" }: { items: Meta[]; className?: string }) {
+export function MetaChips({ items, className = "", wrap = false }: { items: Meta[]; className?: string; wrap?: boolean }) {
   return (
-    <div className={"flex flex-col items-start gap-2.5 " + className}>
+    <div className={"flex flex-col items-start gap-2.5 " + (wrap ? "meta-wrap " : "") + className}>
       {items.map(({ icon: Icon, label, status }) => (
         <div key={label} className="meta-row">
           <span className="meta-icon">

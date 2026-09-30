@@ -10,11 +10,13 @@ const COLUMNS: { title: string; links: { label: string; href: string }[] }[] = [
       { label: "DPA", href: "/#modulos" },
       { label: "Subprocessadores", href: "/#modulos" },
       { label: "Auditoria", href: "/#modulos" },
+      { label: "Certificado e selo", href: "/#modulos" },
+      { label: "Dossiê para BM", href: "/#bm-suspensa" },
       { label: "DAT", href: "/#modulos" },
     ],
   },
   {
-    title: "Ferramentas grátis",
+    title: "Ferramentas",
     links: [
       { label: "Diagnóstico Expresso", href: "/diagnostico" },
       { label: "Auditoria de site", href: "/auditoria" },
@@ -24,7 +26,8 @@ const COLUMNS: { title: string; links: { label: string; href: string }[] }[] = [
     title: "Sobre",
     links: [
       { label: "Planos", href: "/planos" },
-      { label: "Por que agora", href: "/#por-que-agora" },
+      { label: "Diferencial competitivo", href: "/#diferencial" },
+      { label: "O papel do DPO", href: "/#dpo" },
       { label: "Perguntas frequentes", href: "/#faq" },
       { label: "Contato", href: "mailto:contato@dattis.com" },
     ],
@@ -53,7 +56,7 @@ export function SiteFooter() {
             width={Math.round((markDark.width / markDark.height) * 56)}
           />
 
-          <div className="grid grid-cols-2 gap-10 md:grid-cols-4">
+          <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 md:grid-cols-4">
             {COLUMNS.map((col) => (
               <div key={col.title}>
                 <p className="font-mono text-[15px] uppercase tracking-[0.03em]">{col.title}</p>
@@ -77,8 +80,8 @@ export function SiteFooter() {
             <p>Compliance LGPD para agências de tráfego pago. Baseado na Lei nº 13.709/2018 (LGPD).</p>
           </div>
           <div className="flex flex-wrap gap-3">
-            <Link href="/cadastro" className="btn btn-primary">
-              Criar conta grátis
+            <Link href="/planos" className="btn btn-primary">
+              Ver planos
             </Link>
             <Link href="/diagnostico" className="btn border-white/25 text-white hover:border-white/60">
               Fazer diagnóstico

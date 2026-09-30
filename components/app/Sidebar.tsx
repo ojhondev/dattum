@@ -9,6 +9,8 @@ import {
   LayoutDashboard,
   Users,
   Network,
+  BadgeCheck,
+  FolderOpen,
   PanelLeftClose,
   PanelLeftOpen,
   Menu,
@@ -30,6 +32,13 @@ const GROUPS: { title: string; items: Item[] }[] = [
     items: [
       { href: "/painel/contas", label: "Contas de cliente", icon: Users },
       { href: "/painel/subprocessadores", label: "Subprocessadores", icon: Network },
+    ],
+  },
+  {
+    title: "Proteção",
+    items: [
+      { href: "/painel/certificados", label: "Certificados e selo", icon: BadgeCheck },
+      { href: "/painel/dossie", label: "Dossiê para BM", icon: FolderOpen },
     ],
   },
 ];

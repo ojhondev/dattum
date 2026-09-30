@@ -13,6 +13,7 @@ export const agencias = pgTable("agencias", {
   email: text("email").notNull().unique(),
   senhaHash: text("senha_hash").notNull(),
   cnpj: text("cnpj"),
+  plano: text("plano").notNull().default("growth"), // start | growth | scale
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
@@ -92,4 +93,19 @@ export const dpas = pgTable("dpas", {
   assinadoEm: timestamp("assinado_em"),
   assinadoIp: text("assinado_ip"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+// Certificado de privacidade verificável (selo + QR Code). contaClienteId nulo = certificado da própria agência.
+export const certificados = pgTable("certificados", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  agenciaId: uuid("agencia_id")
+    .notNull()
+    .references(() => agencias.id, { onDelete: "cascade" }),
+  contaClienteId: uuid("conta_cliente_id").references(() => contasCliente.id, { onDelete: "cascade" }),
+  codigo: text("codigo").notNull().unique(),
+  titular: text("titular").notNull(),
+  dominio: text("dominio"),
+  emitidoEm: timestamp("emitido_em").notNull().defaultNow(),
+  validoAte: timestamp("valido_ate").notNull(),
+  revogado: boolean("revogado").notNull().default(false),
 });
