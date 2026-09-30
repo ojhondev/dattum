@@ -109,3 +109,17 @@ export const certificados = pgTable("certificados", {
   validoAte: timestamp("valido_ate").notNull(),
   revogado: boolean("revogado").notNull().default(false),
 });
+
+// Código de ativação individual, gerado pela equipe Dattis depois do pagamento. Uso único.
+export const codigosAtivacao = pgTable("codigos_ativacao", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  codigo: text("codigo").notNull().unique(),
+  clienteNome: text("cliente_nome").notNull(),
+  clienteContato: text("cliente_contato"),
+  plano: text("plano").notNull(), // start | growth | scale
+  usuarios: integer("usuarios").notNull().default(1),
+  criadoEm: timestamp("criado_em").notNull().defaultNow(),
+  usadoEm: timestamp("usado_em"),
+  agenciaId: uuid("agencia_id").references(() => agencias.id, { onDelete: "set null" }),
+  revogado: boolean("revogado").notNull().default(false),
+});

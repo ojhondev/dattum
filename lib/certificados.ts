@@ -15,10 +15,10 @@ export type StatusCertificado = {
 
 const ALFABETO = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
 
-export function gerarCodigo() {
+export function gerarCodigo(prefixo = "DTS") {
   const bytes = crypto.getRandomValues(new Uint8Array(8));
   const s = Array.from(bytes, (b) => ALFABETO[b % ALFABETO.length]).join("");
-  return `DTS-${s.slice(0, 4)}-${s.slice(4)}`;
+  return `${prefixo}-${s.slice(0, 4)}-${s.slice(4)}`;
 }
 
 /** Requisitos de uma conta de cliente: RAT registrado, DPA assinado, subprocessadores mapeados. */

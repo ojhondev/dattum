@@ -1,29 +1,22 @@
 import { NextResponse } from "next/server";
-import { eq } from "drizzle-orm";
+import { and, eq, isNull } from "drizzle-orm";
 import { db } from "@/lib/db";
-import { agencias } from "@/lib/db/schema";
+import { agencias, codigosAtivacao } from "@/lib/db/schema";
 import { hashSenha, criarSessao } from "@/lib/auth";
 
 export const runtime = "nodejs";
+
+const CODIGO_INVALIDO =
+  "Código de ativação inválido ou já usado. Ele é enviado pela equipe Dattis depois da confirmação do pagamento.";
 
 export async function POST(req: Request) {
   const body = await req.json().catch(() => null);
   const nome = typeof body?.nome === "string" ? body.nome.trim() : "";
   const email = typeof body?.email === "string" ? body.email.trim().toLowerCase() : "";
   const senha = typeof body?.senha === "string" ? body.senha : "";
-  const plano = ["start", "growth", "scale"].includes(body?.plano) ? (body.plano as string) : "growth";
-
   const codigo = typeof body?.codigo === "string" ? body.codigo.trim().toUpperCase() : "";
-  const codigosValidos = (process.env.CODIGOS_ATIVACAO ?? "")
-    .split(",")
-    .map((c) => c.trim().toUpperCase())
-    .filter(Boolean);
-  if (!codigo || !codigosValidos.includes(codigo)) {
-    return NextResponse.json(
-      { ok: false, error: "Código de ativação inválido. Ele é enviado pela equipe Dattis depois da confirmação do pagamento." },
-      { status: 403 }
-    );
-  }
+
+  if (!codigo) return NextResponse.json({ ok: false, error: CODIGO_INVALIDO }, { status: 403 });
 
   if (!nome || !email || senha.length < 8) {
     return NextResponse.json(
@@ -40,10 +33,26 @@ export async function POST(req: Request) {
     );
   }
 
-  const senhaHash = await hashSenha(senha);
-  const [agencia] = await db.insert(agencias).values({ nome, email, senhaHash, plano }).returning();
+  // Reserva o código de forma atômica: só um cadastro consegue marcar como usado.
+  const [reservado] = await db
+    .update(codigosAtivacao)
+    .set({ usadoEm: new Date() })
+    .where(and(eq(codigosAtivacao.codigo, codigo), isNull(codigosAtivacao.usadoEm), eq(codigosAtivacao.revogado, false)))
+    .returning();
+  if (!reservado) return NextResponse.json({ ok: false, error: CODIGO_INVALIDO }, { status: 403 });
 
-  await criarSessao(agencia.id);
+  try {
+    const senhaHash = await hashSenha(senha);
+    const [agencia] = await db
+      .insert(agencias)
+      .values({ nome, email, senhaHash, plano: reservado.plano })
+      .returning();
+    await db.update(codigosAtivacao).set({ agenciaId: agencia.id }).where(eq(codigosAtivacao.id, reservado.id));
+    await criarSessao(agencia.id);
+  } catch {
+    await db.update(codigosAtivacao).set({ usadoEm: null }).where(eq(codigosAtivacao.id, reservado.id));
+    return NextResponse.json({ ok: false, error: "Não foi possível criar a conta agora. Tenta de novo." }, { status: 500 });
+  }
 
   return NextResponse.json({ ok: true });
 }
