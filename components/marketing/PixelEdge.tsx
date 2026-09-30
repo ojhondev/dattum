@@ -40,7 +40,7 @@ function Half({ side, fill }: { side: "l" | "r"; fill: string }) {
 
 export function PixelEdge({ bg, fill, flip = false }: { bg: string; fill: string; flip?: boolean }) {
   return (
-    <div aria-hidden="true" className={"relative z-10 -my-px flex w-full " + (flip ? "-scale-y-100" : "")} style={{ background: bg }}>
+    <div aria-hidden="true" className={"relative z-10 -my-px flex w-full " + (flip ? "-scale-y-100" : "")} style={{ background: `linear-gradient(to bottom, ${bg} calc(100% - 3px), ${fill} calc(100% - 3px))` }}>
       <Half side="l" fill={fill} />
       <Half side="r" fill={fill} />
     </div>

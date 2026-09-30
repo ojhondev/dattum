@@ -166,32 +166,32 @@ export default function LandingPage() {
           <HeroStrip />
         </section>
 
+        <PixelEdge bg="var(--color-canvas)" fill="var(--color-rail)" />
+
         {/* O PROBLEMA */}
-        <section id="problema" className="bg-canvas">
+        <section id="problema" className="bg-rail text-white">
           <div className="w-full px-5 pb-24 pt-16 sm:px-10 lg:px-14">
-            <p className="t-eyebrow !text-ink">O problema</p>
-            <h2 className="mt-5 max-w-5xl font-display text-[clamp(1.8rem,3.6vw,3rem)] leading-[1.15] text-muted">
+            <p className="t-eyebrow !text-white/80">O problema</p>
+            <h2 className="mt-5 max-w-5xl font-display text-[clamp(1.8rem,3.6vw,3rem)] leading-[1.15] text-white/60">
               Sua agência gera, coleta, cruza e compartilha dados pessoais todos os dias para criar e executar campanhas.
               <br />
-              Mas quem garante que todo esse tratamento está de <span className="text-brand-ink">acordo com a lei?</span>
+              Mas quem garante que todo esse tratamento está de <span className="text-brand">acordo com a lei?</span>
             </h2>
             <div className="mt-16 grid gap-10 md:grid-cols-3">
               {RISCOS.map((r) => (
                 <div key={r.t}>
-                  <h3 className="whitespace-pre-line font-display text-[clamp(1.6rem,2.6vw,2.2rem)] leading-[1.1] text-rail">{r.t}</h3>
-                  <p className="mt-4 max-w-sm text-[14px] leading-relaxed text-body">{r.d}</p>
+                  <h3 className="whitespace-pre-line font-display text-[clamp(1.6rem,2.6vw,2.2rem)] leading-[1.1] text-white">{r.t}</h3>
+                  <p className="mt-4 max-w-sm text-[14px] leading-relaxed text-white/70">{r.d}</p>
                 </div>
               ))}
             </div>
           </div>
         </section>
 
-        <PixelEdge bg="var(--color-canvas)" fill="var(--color-rail)" />
-
         {/* BM SUSPENSA */}
         <section
           id="bm-suspensa"
-          className="relative bg-rail bg-cover bg-center text-white"
+          className="relative border-t border-white/10 bg-rail bg-cover bg-center text-white"
           style={{ backgroundImage: "linear-gradient(180deg, rgba(0,40,32,0.6), rgba(0,40,32,0.95)), url(/marketing/solucao-glow.png)" }}
         >
           <div className="grid w-full items-center gap-16 px-5 pb-28 pt-14 sm:px-10 lg:grid-cols-[1.15fr_1fr] lg:px-14">
