@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import chromium from "@sparticuz/chromium-min";
 import puppeteer, { type Browser } from "puppeteer-core";
 import { resolveExecutablePath } from "@/lib/browser";
+import { SITE_URL } from "@/lib/site";
 
 export const runtime = "nodejs";
 export const maxDuration = 60; // cold start now includes downloading the Chromium pack (~70MB) into /tmp
@@ -105,7 +106,7 @@ export async function POST(req: Request) {
 
     const page = await browser.newPage();
     await page.setUserAgent(
-      "Mozilla/5.0 (compatible; DattisAuditBot/2.0; +https://dattum-rho.vercel.app/auditoria)"
+      `Mozilla/5.0 (compatible; DattisAuditBot/2.0; +${SITE_URL}/auditoria)`
     );
 
     page.on("request", (r) => {

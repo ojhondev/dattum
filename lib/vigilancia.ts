@@ -14,8 +14,9 @@ import {
   varreduraResultados,
 } from "@/lib/db/schema";
 import { contarSeveridades, notaDosAchados, type Achado } from "@/lib/vigilancia-tipos";
+import { SITE_URL } from "@/lib/site";
 
-const UA = "Mozilla/5.0 (compatible; DattisVigilancia/1.0; +https://dattum-rho.vercel.app)";
+const UA = `Mozilla/5.0 (compatible; DattisVigilancia/1.0; +${SITE_URL})`;
 const TIMEOUT_MS = 12_000;
 const LIMITE_HTML = 1_500_000;
 const PARALELO = 6;
