@@ -8,7 +8,7 @@ const ROTULO = "block font-mono text-[11px] uppercase tracking-[0.05em] text-mut
 
 type Config = Record<string, string>;
 
-const CAMPOS: { chave: string; rotulo: string; ajuda: string; area?: boolean }[] = [
+const CAMPOS: { chave: string; rotulo: string; ajuda: string; area?: boolean; grupo?: string }[] = [
   {
     chave: "google_verificacao",
     rotulo: "Google Search Console — código de verificação",
@@ -24,6 +24,17 @@ const CAMPOS: { chave: string; rotulo: string; ajuda: string; area?: boolean }[]
   { chave: "instagram", rotulo: "Instagram (URL)", ajuda: "Entra nos dados da organização (sameAs) pro Google ligar os perfis à marca." },
   { chave: "linkedin", rotulo: "LinkedIn (URL)", ajuda: "" },
   { chave: "youtube", rotulo: "YouTube (URL)", ajuda: "" },
+  {
+    chave: "empresa_razao_social",
+    rotulo: "Razão social da Dattis",
+    ajuda: "Aparece nos Termos de Uso, na Política de Privacidade e no contrato de dados. Sem preencher, fica só “Dattis”.",
+    grupo: "Dados da empresa (documentos legais)",
+  },
+  { chave: "empresa_cnpj", rotulo: "CNPJ da Dattis", ajuda: "" },
+  { chave: "empresa_endereco", rotulo: "Endereço da sede", ajuda: "Rua, número, bairro, cidade/UF e CEP. Define também o foro dos Termos." },
+  { chave: "email_contato", rotulo: "E-mail de contato", ajuda: "Só preencha quando a caixa existir. Sem e-mail, os documentos indicam o WhatsApp." },
+  { chave: "encarregado_nome", rotulo: "Encarregado de dados (DPO) da Dattis", ajuda: "Nome de quem responde pela privacidade na Dattis (art. 41 da LGPD)." },
+  { chave: "encarregado_email", rotulo: "E-mail do encarregado", ajuda: "Ex.: privacidade@dattis.com.br. Sem preencher, usa o e-mail de contato." },
 ];
 
 export function ConfiguracoesSeo({ inicial }: { inicial: Config }) {
@@ -50,6 +61,7 @@ export function ConfiguracoesSeo({ inicial }: { inicial: Config }) {
     >
       {CAMPOS.map((c) => (
         <div key={c.chave}>
+          {c.grupo && <p className="mb-4 mt-4 border-t border-line pt-6 font-display text-[20px] text-ink">{c.grupo}</p>}
           <label htmlFor={c.chave} className={ROTULO}>
             {c.rotulo}
           </label>

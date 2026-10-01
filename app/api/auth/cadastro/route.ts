@@ -3,7 +3,7 @@ import { eq } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { agencias } from "@/lib/db/schema";
 import { criarSessao } from "@/lib/auth";
-import { ativarAgencia, CODIGO_INVALIDO } from "@/lib/ativacao";
+import { ativarAgencia, CODIGO_INVALIDO, TERMOS_NAO_ACEITOS } from "@/lib/ativacao";
 
 export const runtime = "nodejs";
 
@@ -15,6 +15,7 @@ export async function POST(req: Request) {
   const codigo = typeof body?.codigo === "string" ? body.codigo.trim().toUpperCase() : "";
 
   if (!codigo) return NextResponse.json({ ok: false, error: CODIGO_INVALIDO }, { status: 403 });
+  if (body?.aceite !== true) return NextResponse.json({ ok: false, error: TERMOS_NAO_ACEITOS }, { status: 400 });
 
   if (!nome || !email || senha.length < 8) {
     return NextResponse.json(
@@ -31,7 +32,7 @@ export async function POST(req: Request) {
     );
   }
 
-  const r = await ativarAgencia({ codigo, nome, email, senha });
+  const r = await ativarAgencia({ codigo, nome, email, senha, aceitouTermos: true });
   if (!r.ok) return NextResponse.json({ ok: false, error: r.erro }, { status: r.erro === CODIGO_INVALIDO ? 403 : 500 });
 
   await criarSessao(r.agencia.id);

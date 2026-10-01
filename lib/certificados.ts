@@ -2,6 +2,7 @@ import { and, eq, inArray } from "drizzle-orm";
 import { headers } from "next/headers";
 import { db } from "@/lib/db";
 import { atividadesTratamento, contaSubprocessadores, contasCliente, dpas, certificados } from "@/lib/db/schema";
+import { dataAssinaturaCompleta, dpaVigente, filtroVigente, situacaoDpa, ROTULO_SITUACAO } from "@/lib/dpa";
 
 export type Certificado = typeof certificados.$inferSelect;
 
@@ -25,7 +26,7 @@ export function gerarCodigo(prefixo = "DTS") {
 export async function requisitosConta(contaId: string): Promise<Requisito[]> {
   const [atividades, dpa, subs] = await Promise.all([
     db.query.atividadesTratamento.findMany({ where: eq(atividadesTratamento.contaClienteId, contaId) }),
-    db.query.dpas.findFirst({ where: eq(dpas.contaClienteId, contaId) }),
+    dpaVigente(contaId),
     db.query.contaSubprocessadores.findMany({
       where: and(eq(contaSubprocessadores.contaClienteId, contaId), eq(contaSubprocessadores.ativo, true)),
     }),
@@ -38,11 +39,12 @@ export async function requisitosConta(contaId: string): Promise<Requisito[]> {
     },
     {
       label: "Contrato de operação de dados (DPA)",
-      ok: dpa?.status === "assinado",
-      detalhe:
-        dpa?.status === "assinado" && dpa.assinadoEm
-          ? `Assinado em ${dpa.assinadoEm.toLocaleDateString("pt-BR")}`
-          : "Aguardando assinatura",
+      ok: !!dpa && situacaoDpa(dpa) === "assinado",
+      detalhe: !dpa
+        ? "Contrato não gerado"
+        : situacaoDpa(dpa) === "assinado"
+          ? `Assinado pela agência e pelo cliente em ${dataAssinaturaCompleta(dpa)!.toLocaleDateString("pt-BR")}`
+          : ROTULO_SITUACAO[situacaoDpa(dpa)],
     },
     {
       label: "Registro de subprocessadores",
@@ -58,7 +60,7 @@ export async function requisitosAgencia(agenciaId: string): Promise<Requisito[]>
   const ids = contas.map((c) => c.id);
   const [todosDpas, atividades] = ids.length
     ? await Promise.all([
-        db.query.dpas.findMany({ where: inArray(dpas.contaClienteId, ids) }),
+        db.query.dpas.findMany({ where: and(inArray(dpas.contaClienteId, ids), filtroVigente) }),
         db.query.atividadesTratamento.findMany({ where: inArray(atividadesTratamento.contaClienteId, ids) }),
       ])
     : [[], []];

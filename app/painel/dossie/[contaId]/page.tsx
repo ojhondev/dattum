@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { and, desc, eq } from "drizzle-orm";
+import { dataAssinaturaCompleta, dpaVigente } from "@/lib/dpa";
 import { Check, Circle } from "lucide-react";
 import { getSessao } from "@/lib/auth";
 import { db } from "@/lib/db";
@@ -10,7 +11,6 @@ import {
   certificados,
   contaSubprocessadores,
   contasCliente,
-  dpas,
   subprocessadoresCatalogo,
 } from "@/lib/db/schema";
 import { origemAtual, statusCertificado } from "@/lib/certificados";
@@ -69,7 +69,7 @@ export default async function DossieContaPage({
   const [agencia, atividades, dpa, subs, cert, origem, vig] = await Promise.all([
     db.query.agencias.findFirst({ where: eq(agencias.id, sessao.agenciaId) }),
     db.query.atividadesTratamento.findMany({ where: eq(atividadesTratamento.contaClienteId, conta.id) }),
-    db.query.dpas.findFirst({ where: eq(dpas.contaClienteId, conta.id) }),
+    dpaVigente(conta.id),
     db
       .select({
         nomeCustomizado: contaSubprocessadores.nomeCustomizado,
@@ -100,7 +100,7 @@ export default async function DossieContaPage({
     conta: { nome: conta.nome, cnpj: conta.cnpj, site: conta.site },
     agenciaNome,
     atividades: atividades.length,
-    assinadoEm: assinado ? (dpa?.assinadoEm ?? null) : null,
+    assinadoEm: assinado && dpa ? dataAssinaturaCompleta(dpa) : null,
     ferramentas: nomesSubs,
     certificadoUrl: certOk && cert ? `${origem}/verificar/${cert.codigo}` : null,
     vigilancia: vig ? { nota: vig.nota, https: achou("https"), politica: achou("sem-politica"), consentimento: achou("pixel-sem-consentimento") } : null,
@@ -178,9 +178,10 @@ export default async function DossieContaPage({
             <Linha k="Status" v={assinado ? <span className="pill pill-ok">Assinado</span> : <span className="pill pill-warn">Pendente de assinatura</span>} />
             {assinado && dpa && (
               <>
-                <Linha k="Assinado por" v={`${dpa.assinanteNome ?? "—"}${dpa.assinanteCargo ? ` · ${dpa.assinanteCargo}` : ""}`} />
-                <Linha k="Data" v={dpa.assinadoEm?.toLocaleString("pt-BR") ?? "—"} />
-                <Linha k="IP registrado" v={<span className="font-mono text-[13px]">{dpa.assinadoIp ?? "—"}</span>} />
+                <Linha k="Pela agência" v={`${dpa.assinanteNome ?? "—"}${dpa.assinanteCargo ? ` · ${dpa.assinanteCargo}` : ""} · ${dpa.assinadoEm?.toLocaleString("pt-BR") ?? "—"}`} />
+                <Linha k="Pelo cliente" v={`${dpa.clienteNome ?? "—"}${dpa.clienteCargo ? ` · ${dpa.clienteCargo}` : ""} · ${dpa.clienteAssinadoEm?.toLocaleString("pt-BR") ?? "—"}`} />
+                <Linha k="IPs registrados" v={<span className="font-mono text-[13px]">{dpa.assinadoIp ?? "—"} · {dpa.clienteIp ?? "—"}</span>} />
+                {dpa.hashConteudo && <Linha k="SHA-256 do texto" v={<span className="break-all font-mono text-[12px]">{dpa.hashConteudo}</span>} />}
               </>
             )}
           </dl>

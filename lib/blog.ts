@@ -51,6 +51,13 @@ export const CHAVES_CONFIG = [
   "instagram",
   "linkedin",
   "youtube",
+  // Dados da empresa (Termos, Privacidade, contrato de dados)
+  "empresa_razao_social",
+  "empresa_cnpj",
+  "empresa_endereco",
+  "email_contato",
+  "encarregado_nome",
+  "encarregado_email",
 ] as const;
 export type ChaveConfig = (typeof CHAVES_CONFIG)[number];
 

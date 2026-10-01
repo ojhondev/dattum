@@ -225,6 +225,10 @@
   .artigo tr:last-child td { border-bottom: 0; }
   @media (min-width: 1024px) { .artigo figure { margin-left: -90px; margin-right: -90px; } }
   @media (max-width: 640px) { .artigo { font-size: 17.5px; } }
+  .artigo-legal { font-size: 17px; line-height: 1.72; }
+  .artigo-legal h2 { font-size: clamp(1.4rem, 2.2vw, 1.75rem); }
+  .artigo-legal table { font-size: 14.5px; min-width: 560px; }
+  @media (max-width: 640px) { .artigo-legal { font-size: 16.5px; } }
 
   /* Elementos fixos que saem da frente durante a leitura em tela cheia (O problema). */
   .sai-no-foco { transition: opacity 200ms ease, transform 200ms ease; }

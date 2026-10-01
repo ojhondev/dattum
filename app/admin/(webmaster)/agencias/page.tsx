@@ -1,7 +1,7 @@
 import { carregarAgencias, brl } from "@/lib/admin-dados";
 import { formatarTelefone, linkWhatsappPara } from "@/lib/contato";
 import { NotaVigilancia, ContagemSeveridades } from "@/components/app/VigilanciaChips";
-import { RodarVarredura, ExportarCsv } from "../AcoesAdmin";
+import { RodarVarredura, ExportarCsv, LinkSenha } from "../AcoesAdmin";
 
 export const dynamic = "force-dynamic";
 
@@ -99,7 +99,10 @@ export default async function AdminAgencias() {
                     )}
                   </td>
                   <td className={TD}>
-                    <RodarVarredura agenciaId={a.id} rotulo="Varrer" className="btn btn-ghost" />
+                    <span className="flex flex-col gap-1.5">
+                      <RodarVarredura agenciaId={a.id} rotulo="Varrer" className="btn btn-ghost" />
+                      {!a.demo && <LinkSenha agenciaId={a.id} agenciaNome={a.nome} contato={a.contato} />}
+                    </span>
                   </td>
                 </tr>
               );

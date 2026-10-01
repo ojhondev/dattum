@@ -23,6 +23,7 @@ export async function GET(req: Request) {
   const codigo = (url.searchParams.get("codigo") ?? "").trim().toUpperCase();
   const voltar = codigo ? `/cadastro?codigo=${encodeURIComponent(codigo)}&` : "/entrar?";
 
+  if (codigo && url.searchParams.get("aceite") !== "1") return NextResponse.redirect(new URL(`${voltar}erro=termos`, url.origin));
   if (!googleConfigurado()) return NextResponse.redirect(new URL(`${voltar}erro=google_indisponivel`, url.origin));
 
   const state = novoState();

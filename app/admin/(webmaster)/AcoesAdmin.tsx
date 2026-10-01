@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Download, RefreshCw } from "lucide-react";
+import { linkWhatsappPara } from "@/lib/contato";
 
 /** Dispara a vigilância agora: tudo, uma agência ou uma conta. */
 export function RodarVarredura({
@@ -64,5 +65,45 @@ export function ExportarCsv({ nome, linhas }: { nome: string; linhas: (string | 
     <button type="button" onClick={baixar} className="btn btn-ghost">
       <Download size={15} /> Exportar CSV
     </button>
+  );
+}
+
+/** Gera um link de redefinição de senha (vale 3 dias) e oferece copiar ou mandar pelo WhatsApp da agência. */
+export function LinkSenha({ agenciaId, agenciaNome, contato }: { agenciaId: string; agenciaNome: string; contato: string | null }) {
+  const [url, setUrl] = useState<string | null>(null);
+  const [estado, setEstado] = useState("");
+
+  const gerar = async () => {
+    if (!confirm(`Gerar um link de redefinição de senha para ${agenciaNome}? Ele vale por 3 dias e só pode ser usado uma vez.`)) return;
+    setEstado("gerando");
+    const r = await fetch(`/api/admin/agencias/${agenciaId}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ acao: "link-senha" }),
+    })
+      .then((x) => x.json())
+      .catch(() => ({ ok: false }));
+    setEstado(r.ok ? "" : "erro");
+    if (r.ok) setUrl(r.url);
+  };
+
+  if (!url) {
+    return (
+      <button type="button" onClick={gerar} disabled={estado === "gerando"} className="btn btn-ghost">
+        {estado === "gerando" ? "Gerando..." : estado === "erro" ? "Tentar de novo" : "Link de senha"}
+      </button>
+    );
+  }
+  const msg = `Olá! Aqui é da Dattis. Segue o link para criar uma nova senha de acesso da ${agenciaNome} (vale por 3 dias): ${url}`;
+  const wa = linkWhatsappPara(contato, msg) ?? `https://wa.me/?text=${encodeURIComponent(msg)}`;
+  return (
+    <span className="flex flex-col gap-1.5">
+      <button type="button" className="btn btn-ghost" onClick={() => navigator.clipboard.writeText(url).then(() => setEstado("copiado"))}>
+        {estado === "copiado" ? "Copiado" : "Copiar link"}
+      </button>
+      <a href={wa} target="_blank" rel="noopener" className="btn btn-primary">
+        Enviar no WhatsApp
+      </a>
+    </span>
   );
 }

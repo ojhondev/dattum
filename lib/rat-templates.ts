@@ -73,11 +73,12 @@ export const FLOW_TEMPLATES: Record<FlowKey, FlowTemplate> = {
 
 export function gerarConteudoDpa(params: {
   agenciaNome: string;
+  agenciaCnpj?: string | null;
   contaNome: string;
   contaCnpj: string | null;
   subprocessadores: string[];
 }) {
-  const { agenciaNome, contaNome, contaCnpj, subprocessadores } = params;
+  const { agenciaNome, agenciaCnpj, contaNome, contaCnpj, subprocessadores } = params;
   const listaSub =
     subprocessadores.length > 0
       ? subprocessadores.map((s) => `  - ${s}`).join("\n")
@@ -88,7 +89,7 @@ export function gerarConteudoDpa(params: {
 Este instrumento, firmado nos termos da Lei nº 13.709/2018 (LGPD), formaliza a relação
 entre:
 
-OPERADORA: ${agenciaNome}, doravante "Agência".
+OPERADORA: ${agenciaNome}${agenciaCnpj ? ` (CNPJ ${agenciaCnpj})` : ""}, doravante "Agência".
 CONTROLADORA: ${contaNome}${contaCnpj ? ` (CNPJ ${contaCnpj})` : ""}, doravante "Cliente".
 
 1. OBJETO
@@ -123,7 +124,8 @@ Fica eleito o foro do domicílio do Cliente para dirimir eventuais controvérsia
 decorrentes deste instrumento.
 
 Documento gerado automaticamente pela plataforma Dattis a partir do Registro de
-Atividades de Tratamento desta conta. A assinatura eletrônica abaixo (nome, cargo,
-data/hora e IP do responsável) tem validade de aceite entre as partes nos termos do
-art. 10, §2º, da Medida Provisória nº 2.200-2/2001.`;
+Atividades de Tratamento desta conta. As assinaturas eletrônicas da Agência e do Cliente
+(nome, cargo, e-mail, data/hora, IP e navegador de cada responsável, além do resumo
+SHA-256 deste texto) valem como aceite entre as partes nos termos do art. 10, §2º, da
+Medida Provisória nº 2.200-2/2001 e da Lei nº 14.063/2020.`;
 }

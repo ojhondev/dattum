@@ -1,4 +1,4 @@
-import { eq, inArray } from "drizzle-orm";
+import { and, eq, inArray } from "drizzle-orm";
 import { db } from "@/lib/db";
 import {
   contasCliente,
@@ -9,6 +9,7 @@ import {
 } from "@/lib/db/schema";
 import { FLOW_TEMPLATES, gerarConteudoDpa } from "@/lib/rat-templates";
 import { FLUXOS, type FlowKey } from "@/lib/fluxos";
+import { atualizarDpaDaConta, hashTexto } from "@/lib/dpa";
 
 export const CHAVES_FLUXO = FLUXOS.map((f) => f.key);
 
@@ -34,14 +35,17 @@ export function normalizarSite(input: unknown): string | null {
 export async function ativarConta(params: {
   agenciaId: string;
   agenciaNome: string;
+  agenciaCnpj?: string | null;
   nome: string;
   cnpj?: string | null;
   contatoNome?: string | null;
   contatoEmail?: string | null;
+  contatoWhatsapp?: string | null;
   site?: string | null;
   crmNome?: string | null;
   flows: FlowKey[];
-  assinatura?: { nome: string; cargo: string; ip: string };
+  /** Só para a demonstração: contrato já assinado pelas duas partes. */
+  assinatura?: { agencia: { nome: string; cargo: string }; cliente: { nome: string; cargo: string; email: string }; ip: string };
 }) {
   const { agenciaId, agenciaNome, nome, flows } = params;
   const crmNome = params.crmNome ?? null;
@@ -55,6 +59,7 @@ export async function ativarConta(params: {
       cnpj: params.cnpj ?? null,
       contatoNome: params.contatoNome ?? null,
       contatoEmail: params.contatoEmail ?? null,
+      contatoWhatsapp: params.contatoWhatsapp ?? null,
       site: params.site ?? null,
       flowPublicos: tem("publicos"),
       flowCapi: tem("capi"),
@@ -79,6 +84,7 @@ export async function ativarConta(params: {
           baseLegal: t.baseLegal,
           titulares: t.titulares,
           prazoRetencao: t.prazoRetencao,
+          fluxo: f,
         };
       }),
     );
@@ -104,12 +110,14 @@ export async function ativarConta(params: {
 
   const conteudoSnapshot = gerarConteudoDpa({
     agenciaNome,
+    agenciaCnpj: params.agenciaCnpj ?? null,
     contaNome: nome,
     contaCnpj: params.cnpj ?? null,
     subprocessadores: [...catalogo.map((c) => c.nome), ...(tem("crm") && crmNome ? [crmNome] : [])],
   });
 
   const a = params.assinatura;
+  const agora = a ? new Date() : null;
   const [dpa] = await db
     .insert(dpas)
     .values({
@@ -117,10 +125,16 @@ export async function ativarConta(params: {
       contaClienteId: conta.id,
       conteudoSnapshot,
       status: a ? "assinado" : "rascunho",
-      assinanteNome: a?.nome ?? null,
-      assinanteCargo: a?.cargo ?? null,
-      assinadoEm: a ? new Date() : null,
+      hashConteudo: a ? hashTexto(conteudoSnapshot) : null,
+      assinanteNome: a?.agencia.nome ?? null,
+      assinanteCargo: a?.agencia.cargo ?? null,
+      assinadoEm: agora,
       assinadoIp: a?.ip ?? null,
+      clienteNome: a?.cliente.nome ?? null,
+      clienteCargo: a?.cliente.cargo ?? null,
+      clienteEmail: a?.cliente.email ?? null,
+      clienteAssinadoEm: agora,
+      clienteIp: a?.ip ?? null,
     })
     .returning();
 
@@ -130,4 +144,105 @@ export async function ativarConta(params: {
 export async function contaDaAgencia(id: string, agenciaId: string) {
   const conta = await db.query.contasCliente.findFirst({ where: eq(contasCliente.id, id) });
   return conta && conta.agenciaId === agenciaId ? conta : null;
+}
+
+export type EdicaoConta = {
+  nome?: string;
+  cnpj?: string | null;
+  contatoNome?: string | null;
+  contatoEmail?: string | null;
+  contatoWhatsapp?: string | null;
+  site?: string | null;
+  crmNome?: string | null;
+  flows?: FlowKey[];
+};
+
+const COLUNA_FLUXO: Record<FlowKey, "flowPublicos" | "flowCapi" | "flowAds" | "flowFormularios" | "flowWhatsapp" | "flowCrm"> = {
+  publicos: "flowPublicos",
+  capi: "flowCapi",
+  ads: "flowAds",
+  formularios: "flowFormularios",
+  whatsapp: "flowWhatsapp",
+  crm: "flowCrm",
+};
+
+/**
+ * Edita a conta e mantém a documentação coerente: atividades de RAT e ferramentas acompanham
+ * as operações marcadas, e o contrato é refeito (nova versão, se já tinha assinatura).
+ */
+export async function editarConta(contaId: string, agenciaId: string, e: EdicaoConta) {
+  const conta = await contaDaAgencia(contaId, agenciaId);
+  if (!conta) return null;
+
+  const set: Partial<typeof contasCliente.$inferInsert> = {};
+  if (e.nome !== undefined) set.nome = e.nome;
+  if (e.cnpj !== undefined) set.cnpj = e.cnpj;
+  if (e.contatoNome !== undefined) set.contatoNome = e.contatoNome;
+  if (e.contatoEmail !== undefined) set.contatoEmail = e.contatoEmail;
+  if (e.contatoWhatsapp !== undefined) set.contatoWhatsapp = e.contatoWhatsapp;
+  if (e.site !== undefined) set.site = e.site;
+  if (e.crmNome !== undefined) set.crmNome = e.crmNome;
+  if (e.flows) for (const f of CHAVES_FLUXO) set[COLUNA_FLUXO[f]] = e.flows.includes(f);
+  const [atual] = Object.keys(set).length
+    ? await db.update(contasCliente).set(set).where(eq(contasCliente.id, contaId)).returning()
+    : [conta];
+
+  if (e.flows) {
+    const antes = CHAVES_FLUXO.filter((f) => conta[COLUNA_FLUXO[f]]);
+    const depois = e.flows;
+    const saiu = antes.filter((f) => !depois.includes(f));
+    const entrou = depois.filter((f) => !antes.includes(f));
+
+    if (saiu.length) {
+      await db.delete(atividadesTratamento).where(and(eq(atividadesTratamento.contaClienteId, contaId), inArray(atividadesTratamento.fluxo, saiu)));
+    }
+    if (entrou.length) {
+      await db.insert(atividadesTratamento).values(
+        entrou.map((f) => {
+          const t = FLOW_TEMPLATES[f];
+          return {
+            agenciaId,
+            contaClienteId: contaId,
+            nomeAtividade: t.nomeAtividade,
+            categoriasDado: t.categoriasDado,
+            finalidade: t.finalidade,
+            baseLegal: t.baseLegal,
+            titulares: t.titulares,
+            prazoRetencao: t.prazoRetencao,
+            fluxo: f,
+          };
+        }),
+      );
+    }
+  }
+
+  if (e.flows || e.crmNome !== undefined) {
+    // Ferramentas: as do catálogo seguem as operações; a ferramenta própria é o CRM informado.
+    const flows = CHAVES_FLUXO.filter((f) => atual[COLUNA_FLUXO[f]]);
+    const crmNome = atual.crmNome;
+    const chaves = [...new Set(flows.flatMap((f) => FLOW_TEMPLATES[f].subprocessadorChaves))];
+    if (flows.includes("crm") && !crmNome) chaves.push("rd-station");
+    const catalogo = chaves.length
+      ? await db.query.subprocessadoresCatalogo.findMany({ where: inArray(subprocessadoresCatalogo.chave, chaves) })
+      : [];
+    const existentes = await db.query.contaSubprocessadores.findMany({ where: eq(contaSubprocessadores.contaClienteId, contaId) });
+
+    const querIds = new Set(catalogo.map((c) => c.id));
+    const remover = existentes.filter((s) =>
+      s.subprocessadorCatalogoId ? !querIds.has(s.subprocessadorCatalogoId) : !(flows.includes("crm") && crmNome && s.nomeCustomizado === crmNome),
+    );
+    if (remover.length) await db.delete(contaSubprocessadores).where(inArray(contaSubprocessadores.id, remover.map((s) => s.id)));
+
+    const temIds = new Set(existentes.map((s) => s.subprocessadorCatalogoId).filter(Boolean));
+    const novos = catalogo
+      .filter((c) => !temIds.has(c.id))
+      .map((c) => ({ contaClienteId: contaId, subprocessadorCatalogoId: c.id as string | null, nomeCustomizado: null as string | null, finalidade: c.finalidadePadrao }));
+    if (flows.includes("crm") && crmNome && !existentes.some((s) => !s.subprocessadorCatalogoId && s.nomeCustomizado === crmNome)) {
+      novos.push({ contaClienteId: contaId, subprocessadorCatalogoId: null, nomeCustomizado: crmNome, finalidade: FLOW_TEMPLATES.crm.finalidade });
+    }
+    if (novos.length) await db.insert(contaSubprocessadores).values(novos);
+  }
+
+  const contrato = await atualizarDpaDaConta(contaId, { novaVersaoSeAssinado: true });
+  return { conta: atual, contrato: contrato.acao };
 }

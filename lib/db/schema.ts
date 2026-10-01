@@ -18,6 +18,14 @@ export const agencias = pgTable("agencias", {
   cnpj: text("cnpj"),
   plano: text("plano").notNull().default("growth"), // start | growth | scale
   clientesContratados: integer("clientes_contratados"), // nulo = sem limite (ex.: demo)
+  senhaDefinida: boolean("senha_definida").notNull().default(true), // false = criada pelo Google, ainda sem senha própria
+  whatsapp: text("whatsapp"),
+  endereco: text("endereco"), // qualificação nos contratos
+  responsavelNome: text("responsavel_nome"), // quem assina pela agência
+  responsavelCargo: text("responsavel_cargo"),
+  termosVersao: text("termos_versao"), // versão dos Termos/Privacidade/DPA da Dattis aceita no cadastro
+  termosAceitosEm: timestamp("termos_aceitos_em"),
+  suspensa: boolean("suspensa").notNull().default(false), // bloqueio pelo admin (ex.: inadimplência)
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
@@ -38,6 +46,8 @@ export const contasCliente = pgTable("contas_cliente", {
   flowWhatsapp: boolean("flow_whatsapp").notNull().default(false),
   flowCrm: boolean("flow_crm").notNull().default(false),
   crmNome: text("crm_nome"),
+  contatoWhatsapp: text("contato_whatsapp"),
+  tokenPublico: text("token_publico").unique(), // link do DAT que a agência manda pro cliente
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
@@ -79,6 +89,7 @@ export const atividadesTratamento = pgTable("atividades_tratamento", {
   baseLegal: text("base_legal").notNull(),
   titulares: text("titulares").notNull(),
   prazoRetencao: text("prazo_retencao").notNull(),
+  fluxo: text("fluxo"), // FlowKey que gerou a atividade; nulo = atividade manual
   status: text("status").notNull().default("ativo"), // rascunho | ativo
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
@@ -92,13 +103,25 @@ export const dpas = pgTable("dpas", {
   contaClienteId: uuid("conta_cliente_id")
     .notNull()
     .references(() => contasCliente.id, { onDelete: "cascade" }),
-  status: text("status").notNull().default("rascunho"), // rascunho | assinado
+  status: text("status").notNull().default("rascunho"), // rascunho | assinado (assinado = agência E cliente assinaram)
   conteudoSnapshot: text("conteudo_snapshot").notNull(),
   versao: integer("versao").notNull().default(1),
+  hashConteudo: text("hash_conteudo"), // SHA-256 do texto, gravado na primeira assinatura
+  // Assinatura da agência (operadora)
   assinanteNome: text("assinante_nome"),
   assinanteCargo: text("assinante_cargo"),
   assinadoEm: timestamp("assinado_em"),
   assinadoIp: text("assinado_ip"),
+  assinadoUserAgent: text("assinado_user_agent"),
+  // Assinatura do cliente (controlador), pelo link público
+  clienteNome: text("cliente_nome"),
+  clienteCargo: text("cliente_cargo"),
+  clienteEmail: text("cliente_email"),
+  clienteAssinadoEm: timestamp("cliente_assinado_em"),
+  clienteIp: text("cliente_ip"),
+  clienteUserAgent: text("cliente_user_agent"),
+  tokenAssinatura: text("token_assinatura").unique(),
+  substituidoEm: timestamp("substituido_em"), // nova versão gerada depois de mudar a conta; nulo = vigente
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
@@ -130,6 +153,19 @@ export const codigosAtivacao = pgTable("codigos_ativacao", {
   usadoEm: timestamp("usado_em"),
   agenciaId: uuid("agencia_id").references(() => agencias.id, { onDelete: "set null" }),
   revogado: boolean("revogado").notNull().default(false),
+});
+
+// Link de redefinição de senha (por e-mail quando houver provedor; senão gerado no admin e enviado por WhatsApp).
+export const redefinicoesSenha = pgTable("redefinicoes_senha", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  agenciaId: uuid("agencia_id")
+    .notNull()
+    .references(() => agencias.id, { onDelete: "cascade" }),
+  tokenHash: text("token_hash").notNull().unique(), // SHA-256 do token; o token em si só existe no link
+  origem: text("origem").notNull(), // email | admin
+  expiraEm: timestamp("expira_em").notNull(),
+  usadoEm: timestamp("usado_em"),
+  criadoEm: timestamp("criado_em").notNull().defaultNow(),
 });
 
 // Lead captado na "Auditoria da sua agência" (diagnóstico público). Guardado pra marketing/comercial.

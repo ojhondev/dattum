@@ -1,4 +1,5 @@
-import { and, count, desc, eq, gte, inArray } from "drizzle-orm";
+import { and, count, desc, eq, gte, inArray, isNull } from "drizzle-orm";
+import { dataAssinaturaCompleta } from "@/lib/dpa";
 import { db } from "@/lib/db";
 import {
   agencias,
@@ -31,7 +32,7 @@ export async function dadosDoPainel(agenciaId: string, opts: { dias: number }) {
   const [agencia, contas, todosDpas, resultados, certs, historico] = await Promise.all([
     db.query.agencias.findFirst({ where: eq(agencias.id, agenciaId) }),
     db.query.contasCliente.findMany({ where: eq(contasCliente.agenciaId, agenciaId), orderBy: (t, { desc }) => desc(t.createdAt) }),
-    db.query.dpas.findMany({ where: eq(dpas.agenciaId, agenciaId) }),
+    db.query.dpas.findMany({ where: and(eq(dpas.agenciaId, agenciaId), isNull(dpas.substituidoEm)) }),
     ultimosResultados(agenciaId),
     db.query.certificados.findMany({ where: eq(certificados.agenciaId, agenciaId), orderBy: desc(certificados.emitidoEm) }),
     db
@@ -63,7 +64,10 @@ export async function dadosDoPainel(agenciaId: string, opts: { dias: number }) {
   const assinados = contas.filter((c) => dpaPor.get(c.id)?.status === "assinado").length;
   const atividades = ratRows.reduce((s, r) => s + Number(r.n), 0);
   const novas30 = contas.filter((c) => agora - c.createdAt.getTime() < 30 * DIA).length;
-  const assinados30 = todosDpas.filter((d) => d.assinadoEm && agora - d.assinadoEm.getTime() < 30 * DIA).length;
+  const assinados30 = todosDpas.filter((d) => {
+    const em = dataAssinaturaCompleta(d);
+    return em && agora - em.getTime() < 30 * DIA;
+  }).length;
 
   const usoFerramenta = new Map<string, Set<string>>();
   for (const f of ferramentasRows) {
@@ -117,8 +121,12 @@ export async function dadosDoPainel(agenciaId: string, opts: { dias: number }) {
   const eventos: Evento[] = [];
   for (const c of contas) eventos.push({ quando: c.createdAt, tipo: "conta", titulo: "Conta ativada", conta: c.nome, contaId: c.id, status: "ok", detalhe: `${fluxosDaConta(c).length} operação(ões) de tráfego mapeada(s)` });
   for (const d of todosDpas) {
-    if (d.assinadoEm) eventos.push({ quando: d.assinadoEm, tipo: "contrato", titulo: "Contrato assinado", conta: nomePor.get(d.contaClienteId) ?? "—", contaId: d.contaClienteId, status: "ok", detalhe: `${d.assinanteNome ?? ""}${d.assinanteCargo ? `, ${d.assinanteCargo}` : ""}` });
-    else eventos.push({ quando: d.createdAt, tipo: "contrato", titulo: "Contrato gerado", conta: nomePor.get(d.contaClienteId) ?? "—", contaId: d.contaClienteId, status: "pendente", detalhe: "Aguardando assinatura do cliente" });
+    const conta = nomePor.get(d.contaClienteId) ?? "—";
+    const completo = dataAssinaturaCompleta(d);
+    if (completo) eventos.push({ quando: completo, tipo: "contrato", titulo: "Contrato assinado pelas duas partes", conta, contaId: d.contaClienteId, status: "ok", detalhe: `${d.clienteNome ?? ""}${d.clienteCargo ? `, ${d.clienteCargo}` : ""}` });
+    else if (d.clienteAssinadoEm) eventos.push({ quando: d.clienteAssinadoEm, tipo: "contrato", titulo: "Cliente assinou o contrato", conta, contaId: d.contaClienteId, status: "pendente", detalhe: "Falta a assinatura da agência" });
+    else if (d.assinadoEm) eventos.push({ quando: d.assinadoEm, tipo: "contrato", titulo: "Agência assinou o contrato", conta, contaId: d.contaClienteId, status: "pendente", detalhe: "Falta o cliente assinar pelo link" });
+    else eventos.push({ quando: d.createdAt, tipo: "contrato", titulo: d.versao > 1 ? `Contrato atualizado (versão ${d.versao})` : "Contrato gerado", conta, contaId: d.contaClienteId, status: "pendente", detalhe: "Aguardando assinaturas" });
   }
   for (const c of certs) eventos.push({ quando: c.emitidoEm, tipo: "certificado", titulo: c.automatico ? "Certificado emitido automaticamente" : "Certificado emitido", conta: c.titular, contaId: c.contaClienteId, status: c.revogado ? "alerta" : "ok", detalhe: c.codigo });
   for (const r of resultados) {
@@ -132,7 +140,7 @@ export async function dadosDoPainel(agenciaId: string, opts: { dias: number }) {
   for (const s of situacao) {
     const base = { conta: s.conta.nome, contaId: s.conta.id };
     for (const a of ordenarAchados(s.vig?.achados ?? []).filter((a) => a.severidade === "critico" && a.grupo === "site")) pendencias.push({ ...base, severidade: "critico", texto: a.titulo });
-    if (!s.assinado) pendencias.push({ ...base, severidade: "alto", texto: "Contrato aguardando assinatura" });
+    if (!s.assinado) pendencias.push({ ...base, severidade: "alto", texto: "Contrato aguardando assinatura da agência e do cliente" });
     if (s.rat === 0) pendencias.push({ ...base, severidade: "alto", texto: "Registro de tratamento vazio" });
     if (!s.conta.site) pendencias.push({ ...base, severidade: "medio", texto: "Site não cadastrado" });
   }

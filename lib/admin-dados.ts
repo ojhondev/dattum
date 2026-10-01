@@ -1,4 +1,4 @@
-import { count, desc, eq } from "drizzle-orm";
+import { and, count, desc, eq, isNull } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { agencias, contasCliente, dpas, certificados, codigosAtivacao } from "@/lib/db/schema";
 import { PLANOS } from "@/lib/planos";
@@ -11,7 +11,7 @@ export async function carregarAgencias() {
   const [ags, contasPor, assinadosPor, certsAtivos, codigos, resultados] = await Promise.all([
     db.select().from(agencias).orderBy(desc(agencias.createdAt)),
     db.select({ ag: contasCliente.agenciaId, n: count() }).from(contasCliente).groupBy(contasCliente.agenciaId),
-    db.select({ ag: dpas.agenciaId, n: count() }).from(dpas).where(eq(dpas.status, "assinado")).groupBy(dpas.agenciaId),
+    db.select({ ag: dpas.agenciaId, n: count() }).from(dpas).where(and(eq(dpas.status, "assinado"), isNull(dpas.substituidoEm))).groupBy(dpas.agenciaId),
     db.select({ ag: certificados.agenciaId, validoAte: certificados.validoAte, revogado: certificados.revogado }).from(certificados),
     db.select({ ag: codigosAtivacao.agenciaId, contato: codigosAtivacao.clienteContato }).from(codigosAtivacao),
     ultimosResultados(),

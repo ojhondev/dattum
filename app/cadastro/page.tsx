@@ -16,6 +16,7 @@ function CadastroForm() {
   const [senha, setSenha] = useState("");
   const [erro, setErro] = useState(() => mensagemErroGoogle(params.get("erro")) ?? "");
   const [enviando, setEnviando] = useState(false);
+  const [aceite, setAceite] = useState(false);
 
   const submit = async (e: FormEvent) => {
     e.preventDefault();
@@ -25,7 +26,7 @@ function CadastroForm() {
       const res = await fetch("/api/auth/cadastro", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ nome, email, senha, codigo }),
+        body: JSON.stringify({ nome, email, senha, codigo, aceite }),
       });
       const data = await res.json();
       if (!data.ok) {
@@ -61,10 +62,23 @@ function CadastroForm() {
             className="field-input mt-1.5 font-mono uppercase"
           />
         </label>
+        <label className="flex items-start gap-3 rounded-2xl border border-line bg-surface px-4 py-3.5 text-body-sm leading-snug text-body">
+          <input type="checkbox" checked={aceite} onChange={(e) => setAceite(e.target.checked)} required className="mt-0.5 h-4 w-4 shrink-0 accent-[var(--color-brand-strong)]" />
+          <span>
+            Li e aceito os{" "}
+            <a href="/termos" target="_blank" className="nav-link">Termos de Uso</a>, a{" "}
+            <a href="/privacidade" target="_blank" className="nav-link">Política de Privacidade</a> e o{" "}
+            <a href="/contrato-de-dados" target="_blank" className="nav-link">Contrato de dados</a> da Dattis.
+          </span>
+        </label>
         <div className="pt-1">
-          <BotaoGoogle codigo={codigo} desabilitado={codigo.trim().length < 6} rotulo="Ativar com Google" />
+          <BotaoGoogle codigo={codigo} desabilitado={codigo.trim().length < 6 || !aceite} rotulo="Ativar com Google" />
           <p className="mt-2 text-caption text-faint">
-            {codigo.trim().length < 6 ? "Digite o código acima para ativar com o Google." : "Usa o nome da agência informado no seu código e o e-mail da conta Google."}
+            {codigo.trim().length < 6
+              ? "Digite o código acima para ativar com o Google."
+              : !aceite
+                ? "Marque o aceite acima para ativar com o Google."
+                : "Usa o nome da agência informado no seu código e o e-mail da conta Google."}
           </p>
         </div>
         <div className="flex items-center gap-3 font-mono text-caption uppercase text-faint">

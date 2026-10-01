@@ -2,6 +2,9 @@ import { and, eq, isNull } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { agencias, codigosAtivacao } from "@/lib/db/schema";
 import { hashSenha } from "@/lib/auth";
+import { VERSAO_LEGAL } from "@/lib/legal";
+
+export const TERMOS_NAO_ACEITOS = "Para ativar, aceite os Termos de Uso, a Política de Privacidade e o Contrato de dados.";
 
 export const CODIGO_INVALIDO =
   "Código de ativação inválido ou já usado. Ele é enviado pela equipe Dattis depois da confirmação do pagamento.";
@@ -10,7 +13,8 @@ export const CODIGO_INVALIDO =
  * Cria a agência consumindo o código de ativação de forma atômica (só um cadastro marca o código como usado).
  * Se a criação falhar, o código volta a ficar disponível.
  */
-export async function ativarAgencia(params: { codigo: string; nome: string; email: string; senha?: string; googleSub?: string }) {
+export async function ativarAgencia(params: { codigo: string; nome: string; email: string; senha?: string; googleSub?: string; aceitouTermos: boolean }) {
+  if (!params.aceitouTermos) return { ok: false as const, erro: TERMOS_NAO_ACEITOS };
   const codigo = params.codigo.trim().toUpperCase();
   if (!codigo) return { ok: false as const, erro: CODIGO_INVALIDO };
 
@@ -31,6 +35,9 @@ export async function ativarAgencia(params: { codigo: string; nome: string; emai
         email: params.email.trim().toLowerCase(),
         senhaHash,
         googleSub: params.googleSub ?? null,
+        senhaDefinida: !!params.senha,
+        termosVersao: VERSAO_LEGAL,
+        termosAceitosEm: new Date(),
         plano: reservado.plano,
         clientesContratados: reservado.clientes,
       })

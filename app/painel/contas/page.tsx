@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { eq } from "drizzle-orm";
+import { and, eq, isNull } from "drizzle-orm";
 import { ArrowRight } from "lucide-react";
 import { getSessao } from "@/lib/auth";
 import { db } from "@/lib/db";
@@ -24,7 +24,7 @@ export default async function ContasPage({ searchParams }: { searchParams: Promi
   const contas = termo ? todasContas.filter((c) => [c.nome, c.cnpj, c.site].some((v) => v?.toLowerCase().includes(termo))) : todasContas;
 
   const [todosDpas, resultados] = await Promise.all([
-    db.query.dpas.findMany({ where: eq(dpas.agenciaId, sessao.agenciaId) }),
+    db.query.dpas.findMany({ where: and(eq(dpas.agenciaId, sessao.agenciaId), isNull(dpas.substituidoEm)) }),
     ultimosResultados(sessao.agenciaId),
   ]);
   const notaPorConta = new Map(resultados.map((r) => [r.contaClienteId, r.nota]));
@@ -98,7 +98,11 @@ export default async function ContasPage({ searchParams }: { searchParams: Promi
                       )}
                     </td>
                     <td className={TD}>
-                      {dpa?.status === "assinado" ? <span className="pill pill-ok">Assinado</span> : <span className="pill pill-warn">Pendente</span>}
+                      {dpa?.status === "assinado" ? (
+                        <span className="pill pill-ok">Assinado</span>
+                      ) : (
+                        <span className="pill pill-warn">{dpa?.assinadoEm ? "Falta o cliente" : dpa?.clienteAssinadoEm ? "Falta a agência" : "Pendente"}</span>
+                      )}
                     </td>
                     <td className={TD}>
                       <NotaVigilancia nota={notaPorConta.get(conta.id)} />

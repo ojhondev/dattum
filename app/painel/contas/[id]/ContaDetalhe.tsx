@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { FLUXO_POR_CHAVE, type FlowKey } from "@/lib/fluxos";
 import { SiteDaConta, VigilanciaDaConta, type ResultadoVigilancia } from "./VigilanciaConta";
+import { ContratoConta, type ContratoDados, type VersaoContrato } from "./ContratoConta";
 
 type Atividade = {
   id: string;
@@ -24,26 +25,18 @@ type Subprocessador = {
   ativo: boolean;
 };
 
-type Dpa = {
-  id: string;
-  status: string;
-  conteudoSnapshot: string;
-  versao: number;
-  assinanteNome: string | null;
-  assinanteCargo: string | null;
-  assinadoEm: string | null;
-  assinadoIp: string | null;
-};
-
 type Conta = {
   id: string;
   nome: string;
   cnpj: string | null;
   contatoNome: string | null;
   contatoEmail: string | null;
+  contatoWhatsapp: string | null;
   site: string | null;
   fluxos: FlowKey[];
 };
+
+type Aba = "rat" | "dpa" | "sub" | "vig";
 
 const CAMPOS: { chave: keyof Atividade; label: string; full?: boolean }[] = [
   { chave: "nomeAtividade", label: "Atividade", full: true },
@@ -113,46 +106,24 @@ export default function ContaDetalhe({
   conta,
   atividadesIniciais,
   subprocessadores,
-  dpaInicial,
+  contrato,
+  versoes,
+  responsavelPadrao,
   vigilancia,
+  abaInicial,
 }: {
   conta: Conta;
   atividadesIniciais: Atividade[];
   subprocessadores: Subprocessador[];
-  dpaInicial: Dpa | null;
+  contrato: ContratoDados | null;
+  versoes: VersaoContrato[];
+  responsavelPadrao: { nome: string; cargo: string };
   vigilancia: ResultadoVigilancia;
+  abaInicial: Aba;
 }) {
   const router = useRouter();
-  const [aba, setAba] = useState<"rat" | "dpa" | "sub" | "vig">("rat");
-  const [dpa, setDpa] = useState(dpaInicial);
-  const [assNome, setAssNome] = useState("");
-  const [assCargo, setAssCargo] = useState("");
-  const [aceite, setAceite] = useState(false);
-  const [assinando, setAssinando] = useState(false);
-  const [erroAssinatura, setErroAssinatura] = useState("");
+  const [aba, setAba] = useState<Aba>(abaInicial);
   const [excluindo, setExcluindo] = useState(false);
-
-  const assinar = async () => {
-    if (!dpa) return;
-    if (!assNome.trim() || !assCargo.trim() || !aceite) {
-      setErroAssinatura("Preenche nome, cargo e confirma que leu e concorda.");
-      return;
-    }
-    setAssinando(true);
-    setErroAssinatura("");
-    const res = await fetch(`/api/dpa/${dpa.id}/assinar`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ nome: assNome, cargo: assCargo, aceite }),
-    });
-    const data = await res.json();
-    setAssinando(false);
-    if (!data.ok) {
-      setErroAssinatura(data.error ?? "Não foi possível assinar agora.");
-      return;
-    }
-    setDpa(data.dpa);
-  };
 
   const excluirConta = async () => {
     if (!confirm(`Excluir a conta "${conta.nome}"? Isso remove o RAT, o contrato e os subprocessadores dela.`)) return;
@@ -169,6 +140,10 @@ export default function ContaDetalhe({
       <p className="painel-lede">
         {conta.cnpj ? `CNPJ ${conta.cnpj} · ` : ""}
         {conta.contatoNome ? `Responsável: ${conta.contatoNome}` : "Sem responsável informado"}
+        {" · "}
+        <a href={`/painel/contas/${conta.id}/editar`} className="underline underline-offset-2 hover:text-ink">
+          Editar dados e operações
+        </a>
       </p>
       <div className="mb-8 -mt-2">
         <SiteDaConta contaId={conta.id} siteInicial={conta.site} />
@@ -182,6 +157,7 @@ export default function ContaDetalhe({
           <a href={`/painel/dossie/${conta.id}`} className="btn btn-ghost">
             Dossiê para BM
           </a>
+
         </div>
       </div>
 
@@ -240,59 +216,16 @@ export default function ContaDetalhe({
       {aba === "dpa" && (
         <div>
           <p className="painel-lede" style={{ marginBottom: 20 }}>
-            Contrato de Operador de Dados (DPA) — gerado a partir do RAT e da lista de
-            subprocessadores desta conta.
+            Contrato de Operador de Dados (DPA), gerado a partir do registro de atividades e das ferramentas desta conta. Ele só vale
+            completo com a assinatura da agência e a do cliente.
           </p>
-          {!dpa ? (
-            <div className="painel-table-wrap">
-              <div className="painel-empty">Nenhum contrato gerado para esta conta.</div>
-            </div>
-          ) : (
-            <div className="dpa-doc">
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
-                {dpa.status === "assinado" ? (
-                  <span className="painel-pill ok">Assinado</span>
-                ) : (
-                  <span className="painel-pill pendente">Pendente de assinatura</span>
-                )}
-                <a className="painel-btn ghost" href={`/api/dpa/${dpa.id}/pdf`} target="_blank" rel="noopener noreferrer">
-                  Baixar PDF
-                </a>
-              </div>
-              <pre>{dpa.conteudoSnapshot}</pre>
-
-              {dpa.status === "assinado" ? (
-                <div className="dpa-signed-box">
-                  Assinado eletronicamente por <b>{dpa.assinanteNome}</b> ({dpa.assinanteCargo}) em{" "}
-                  {dpa.assinadoEm ? new Date(dpa.assinadoEm).toLocaleString("pt-BR") : "-"} · IP {dpa.assinadoIp}
-                </div>
-              ) : (
-                <div className="dpa-signbox">
-                  <p style={{ margin: "0 0 12px", fontWeight: 600 }}>Assinar este contrato</p>
-                  <div className="painel-form" style={{ maxWidth: "100%" }}>
-                    <div className="painel-field">
-                      <label>Nome do responsável pela agência</label>
-                      <input type="text" value={assNome} onChange={(e) => setAssNome(e.target.value)} />
-                    </div>
-                    <div className="painel-field">
-                      <label>Cargo</label>
-                      <input type="text" value={assCargo} onChange={(e) => setAssCargo(e.target.value)} />
-                    </div>
-                    <label className="painel-checkbox" style={{ maxWidth: 480 }}>
-                      <input type="checkbox" checked={aceite} onChange={(e) => setAceite(e.target.checked)} />
-                      <span className="painel-checkbox-label">Li e concordo com os termos deste contrato.</span>
-                    </label>
-                    {erroAssinatura && <div className="painel-error">{erroAssinatura}</div>}
-                    <div>
-                      <button className="painel-btn" type="button" onClick={assinar} disabled={assinando}>
-                        {assinando ? "Assinando..." : "Assinar contrato"}
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
+          <ContratoConta
+            contrato={contrato}
+            versoes={versoes}
+            contaNome={conta.nome}
+            contato={{ nome: conta.contatoNome, email: conta.contatoEmail, whatsapp: conta.contatoWhatsapp }}
+            responsavelPadrao={responsavelPadrao}
+          />
         </div>
       )}
 

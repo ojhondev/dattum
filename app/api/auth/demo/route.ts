@@ -23,7 +23,7 @@ export async function GET(req: Request) {
     const senhaHash = await hashSenha(crypto.randomUUID());
     const [novaAgencia] = await db
       .insert(agencias)
-      .values({ nome: DEMO_NOME, email: DEMO_EMAIL, senhaHash })
+      .values({ nome: DEMO_NOME, email: DEMO_EMAIL, senhaHash, cnpj: "11.222.333/0001-44", responsavelNome: "Rafael Lima", responsavelCargo: "Sócio-diretor" })
       .returning();
     agencia = novaAgencia;
 
@@ -35,7 +35,10 @@ export async function GET(req: Request) {
         cnpj: def.cnpj,
         site: def.site,
         flows: def.flows,
-        assinatura: def.assinado ? { nome: "Ana Souza", cargo: "Sócia-diretora", ip: "203.0.113.10" } : undefined,
+        agenciaCnpj: "11.222.333/0001-44",
+        assinatura: def.assinado
+          ? { agencia: { nome: "Rafael Lima", cargo: "Sócio-diretor" }, cliente: { nome: "Ana Souza", cargo: "Sócia-diretora", email: "ana@lojaaurora.com.br" }, ip: "203.0.113.10" }
+          : undefined,
       });
     }
   }

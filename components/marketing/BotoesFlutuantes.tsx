@@ -8,7 +8,7 @@ import { linkContato } from "@/lib/contato";
 import foto from "../../public/marketing/especialista.png";
 
 // Áreas logadas e o fluxo da auditoria (tela cheia) ficam sem os botões.
-const OCULTAR = ["/painel", "/admin", "/diagnostico"];
+const OCULTAR = ["/painel", "/admin", "/diagnostico", "/assinar", "/redefinir-senha"]; // /assinar é a página que o cliente da agência vê
 
 /** Especialista no WhatsApp (canto inferior esquerdo) e voltar ao topo (canto inferior direito). */
 export function BotoesFlutuantes() {

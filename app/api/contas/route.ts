@@ -55,10 +55,12 @@ export async function POST(req: Request) {
   const { conta, dpa } = await ativarConta({
     agenciaId: sessao.agenciaId,
     agenciaNome: agencia.nome,
+    agenciaCnpj: agencia.cnpj,
     nome,
     cnpj: texto(body?.cnpj),
     contatoNome: texto(body?.contatoNome),
     contatoEmail: texto(body?.contatoEmail),
+    contatoWhatsapp: texto(body?.contatoWhatsapp),
     crmNome: texto(body?.crmNome),
     site,
     flows,

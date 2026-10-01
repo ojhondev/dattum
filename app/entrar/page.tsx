@@ -77,6 +77,11 @@ function EntrarForm() {
         <button type="submit" disabled={enviando} className="btn btn-dark btn-lg w-full">
           {enviando ? "Entrando..." : "Entrar →"}
         </button>
+        <p className="text-right text-body-sm">
+          <Link href="/recuperar-senha" className="nav-link">
+            Esqueci minha senha
+          </Link>
+        </p>
       </form>
 
       <div className="mt-6 flex items-center gap-3 font-mono text-caption uppercase text-faint">

@@ -43,6 +43,14 @@ const COLUMNS: { title: string; links: { label: string; href: string }[] }[] = [
       { label: "Painel", href: "/painel" },
     ],
   },
+  {
+    title: "Legal",
+    links: [
+      { label: "Termos de uso", href: "/termos" },
+      { label: "Política de privacidade", href: "/privacidade" },
+      { label: "Contrato de dados (DPA)", href: "/contrato-de-dados" },
+    ],
+  },
 ];
 
 export function SiteFooter() {
@@ -59,7 +67,7 @@ export function SiteFooter() {
             width={64}
           />
 
-          <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 md:grid-cols-4">
+          <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5">
             {COLUMNS.map((col) => (
               <div key={col.title}>
                 <p className="font-mono text-[15px] uppercase tracking-[0.03em]">{col.title}</p>

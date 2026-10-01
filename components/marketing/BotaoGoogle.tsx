@@ -5,6 +5,7 @@ const ERROS: Record<string, string> = {
   google_falhou: "Não foi possível entrar com o Google agora. Tente de novo.",
   google_email: "Esse e-mail do Google ainda não foi verificado.",
   google_sem_conta: "Não encontramos uma conta da Dattis com esse e-mail. Para criar o acesso, use o código de ativação enviado pela Dattis.",
+  termos: "Para ativar, aceite os Termos de Uso, a Política de Privacidade e o Contrato de dados.",
   codigo_invalido: "Código de ativação inválido ou já usado. Ele é enviado pela equipe Dattis depois da confirmação do pagamento.",
 };
 
@@ -24,7 +25,10 @@ function LogoGoogle() {
 /** Botão “Continuar com Google”. Com `codigo`, ativa uma conta nova vinculada ao Google. */
 export function BotaoGoogle({ codigo, proximo, desabilitado = false, rotulo = "Continuar com Google" }: { codigo?: string; proximo?: string | null; desabilitado?: boolean; rotulo?: string }) {
   const params = new URLSearchParams();
-  if (codigo) params.set("codigo", codigo.trim());
+  if (codigo) {
+    params.set("codigo", codigo.trim());
+    params.set("aceite", "1");
+  }
   if (proximo) params.set("proximo", proximo);
   const href = `/api/auth/google${params.size ? `?${params}` : ""}`;
   const classe =

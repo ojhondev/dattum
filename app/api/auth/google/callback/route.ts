@@ -57,7 +57,7 @@ export async function GET(req: Request) {
   }
   if (!agencia) {
     if (!codigo) return falhar("google_sem_conta");
-    const r = await ativarAgencia({ codigo, nome: "", email: perfil.email, googleSub: perfil.sub });
+    const r = await ativarAgencia({ codigo, nome: "", email: perfil.email, googleSub: perfil.sub, aceitouTermos: true }); // o botão só inicia com o aceite marcado
     if (!r.ok) return falhar("codigo_invalido");
     agencia = r.agencia;
   }

@@ -2,21 +2,25 @@ import { notFound } from "next/navigation";
 import { eq, and } from "drizzle-orm";
 import { getSessao } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { contasCliente, atividadesTratamento, contaSubprocessadores, subprocessadoresCatalogo, dpas, varreduraResultados } from "@/lib/db/schema";
+import { agencias, contasCliente, atividadesTratamento, contaSubprocessadores, subprocessadoresCatalogo, varreduraResultados } from "@/lib/db/schema";
 import { fluxosDaConta } from "@/lib/fluxos";
+import { dpaVigente, situacaoDpa, versoesAnteriores } from "@/lib/dpa";
 import ContaDetalhe from "./ContaDetalhe";
 
-export default async function ContaDetalhePage({ params }: { params: Promise<{ id: string }> }) {
+const iso = (d: Date | null) => (d ? d.toISOString() : null);
+
+export default async function ContaDetalhePage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ aba?: string }> }) {
   const sessao = await getSessao();
   if (!sessao) return null;
   const { id } = await params;
+  const { aba } = await searchParams;
 
   const conta = await db.query.contasCliente.findFirst({
     where: and(eq(contasCliente.id, id), eq(contasCliente.agenciaId, sessao.agenciaId)),
   });
   if (!conta) notFound();
 
-  const [atividades, subsRaw, dpa, vig] = await Promise.all([
+  const [atividades, subsRaw, dpa, versoes, vig, agencia] = await Promise.all([
     db.query.atividadesTratamento.findMany({
       where: eq(atividadesTratamento.contaClienteId, id),
       orderBy: (t, { asc }) => asc(t.createdAt),
@@ -34,11 +38,13 @@ export default async function ContaDetalhePage({ params }: { params: Promise<{ i
       .from(contaSubprocessadores)
       .leftJoin(subprocessadoresCatalogo, eq(contaSubprocessadores.subprocessadorCatalogoId, subprocessadoresCatalogo.id))
       .where(eq(contaSubprocessadores.contaClienteId, id)),
-    db.query.dpas.findFirst({ where: eq(dpas.contaClienteId, id) }),
+    dpaVigente(id),
+    versoesAnteriores(id),
     db.query.varreduraResultados.findFirst({
       where: eq(varreduraResultados.contaClienteId, id),
       orderBy: (t, { desc }) => desc(t.verificadoEm),
     }),
+    db.query.agencias.findFirst({ where: eq(agencias.id, sessao.agenciaId) }),
   ]);
 
   const subprocessadores = subsRaw.map((s) => ({
@@ -52,12 +58,14 @@ export default async function ContaDetalhePage({ params }: { params: Promise<{ i
 
   return (
     <ContaDetalhe
+      abaInicial={aba === "dpa" || aba === "sub" || aba === "vig" ? aba : "rat"}
       conta={{
         id: conta.id,
         nome: conta.nome,
         cnpj: conta.cnpj,
         contatoNome: conta.contatoNome,
         contatoEmail: conta.contatoEmail,
+        contatoWhatsapp: conta.contatoWhatsapp,
         site: conta.site,
         fluxos: fluxosDaConta(conta).map((f) => f.key),
       }}
@@ -72,20 +80,28 @@ export default async function ContaDetalhePage({ params }: { params: Promise<{ i
         prazoRetencao: a.prazoRetencao,
       }))}
       subprocessadores={subprocessadores}
-      dpaInicial={
+      responsavelPadrao={{ nome: agencia?.responsavelNome ?? "", cargo: agencia?.responsavelCargo ?? "" }}
+      contrato={
         dpa
           ? {
               id: dpa.id,
-              status: dpa.status,
-              conteudoSnapshot: dpa.conteudoSnapshot,
               versao: dpa.versao,
-              assinanteNome: dpa.assinanteNome,
-              assinanteCargo: dpa.assinanteCargo,
-              assinadoEm: dpa.assinadoEm ? dpa.assinadoEm.toISOString() : null,
-              assinadoIp: dpa.assinadoIp,
+              situacao: situacaoDpa(dpa),
+              conteudoSnapshot: dpa.conteudoSnapshot,
+              hashConteudo: dpa.hashConteudo,
+              temLink: !!dpa.tokenAssinatura,
+              agencia: { nome: dpa.assinanteNome, cargo: dpa.assinanteCargo, em: iso(dpa.assinadoEm), ip: dpa.assinadoIp },
+              cliente: { nome: dpa.clienteNome, cargo: dpa.clienteCargo, email: dpa.clienteEmail, em: iso(dpa.clienteAssinadoEm), ip: dpa.clienteIp },
             }
           : null
       }
+      versoes={versoes.map((v) => ({
+        id: v.id,
+        versao: v.versao,
+        assinado: situacaoDpa(v) === "assinado",
+        criadoEm: v.createdAt.toISOString(),
+        substituidoEm: iso(v.substituidoEm),
+      }))}
     />
   );
 }

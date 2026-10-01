@@ -348,7 +348,7 @@ export async function executarVarredura(params: { origem: "cron" | "manual" | "a
     const ids = contas.map((c) => c.id);
 
     const [dpasRows, ratRows, subRows, certRows] = await Promise.all([
-      ids.length ? db.select({ conta: dpas.contaClienteId, status: dpas.status }).from(dpas).where(inArray(dpas.contaClienteId, ids)) : [],
+      ids.length ? db.select({ conta: dpas.contaClienteId, status: dpas.status }).from(dpas).where(and(inArray(dpas.contaClienteId, ids), isNull(dpas.substituidoEm))) : [],
       ids.length
         ? db.select({ conta: atividadesTratamento.contaClienteId, n: count() }).from(atividadesTratamento).where(inArray(atividadesTratamento.contaClienteId, ids)).groupBy(atividadesTratamento.contaClienteId)
         : [],
