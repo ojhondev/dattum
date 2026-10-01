@@ -14,6 +14,8 @@ import {
   subprocessadoresCatalogo,
 } from "@/lib/db/schema";
 import { origemAtual, statusCertificado } from "@/lib/certificados";
+import { MOTIVOS, prontidaoDossie, textoContestacao, type MotivoId } from "@/lib/dossie";
+import { varreduraResultados } from "@/lib/db/schema";
 import { DossieActions } from "./DossieActions";
 
 const ANEXAR = [
@@ -46,7 +48,15 @@ function Linha({ k, v }: { k: string; v: React.ReactNode }) {
   );
 }
 
-export default async function DossieContaPage({ params }: { params: Promise<{ contaId: string }> }) {
+export default async function DossieContaPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ contaId: string }>;
+  searchParams: Promise<{ motivo?: string }>;
+}) {
+  const { motivo: motivoParam } = await searchParams;
+  const motivo: MotivoId = MOTIVOS.find((m) => m.id === motivoParam)?.id ?? "naosei";
   const sessao = await getSessao();
   if (!sessao) return null;
   const { contaId } = await params;
@@ -56,7 +66,7 @@ export default async function DossieContaPage({ params }: { params: Promise<{ co
   });
   if (!conta) notFound();
 
-  const [agencia, atividades, dpa, subs, cert, origem] = await Promise.all([
+  const [agencia, atividades, dpa, subs, cert, origem, vig] = await Promise.all([
     db.query.agencias.findFirst({ where: eq(agencias.id, sessao.agenciaId) }),
     db.query.atividadesTratamento.findMany({ where: eq(atividadesTratamento.contaClienteId, conta.id) }),
     db.query.dpas.findFirst({ where: eq(dpas.contaClienteId, conta.id) }),
@@ -75,6 +85,7 @@ export default async function DossieContaPage({ params }: { params: Promise<{ co
       orderBy: desc(certificados.emitidoEm),
     }),
     origemAtual(),
+    db.query.varreduraResultados.findFirst({ where: eq(varreduraResultados.contaClienteId, conta.id), orderBy: desc(varreduraResultados.verificadoEm) }),
   ]);
 
   const certStatus = cert ? await statusCertificado(cert) : null;
@@ -84,24 +95,18 @@ export default async function DossieContaPage({ params }: { params: Promise<{ co
   const nomesSubs = subs.map((s) => s.nomeCustomizado ?? s.nome ?? "—");
   const agenciaNome = agencia?.nome ?? "[agência]";
 
-  const texto = [
-    "Olá, equipe de suporte do Meta.",
-    "",
-    `Solicitamos a revisão da restrição aplicada à Business Manager / conta de anúncios da empresa ${conta.nome}${conta.cnpj ? ` (CNPJ ${conta.cnpj})` : ""}, operada pela agência ${agenciaNome}.`,
-    "",
-    "A empresa trata os dados pessoais dos seus clientes de acordo com a Lei Geral de Proteção de Dados (Lei nº 13.709/2018) e mantém documentados:",
-    `- o registro das atividades de tratamento de dados (${atividades.length} atividade(s));`,
-    assinado && dpa?.assinadoEm
-      ? `- o contrato de operação de dados entre a agência e o anunciante, assinado em ${dpa.assinadoEm.toLocaleDateString("pt-BR")};`
-      : "- o contrato de operação de dados entre a agência e o anunciante;",
-    `- a relação das ferramentas que tratam esses dados (${nomesSubs.join(", ") || "nenhuma registrada"}).`,
-    ...(certOk && cert ? ["", `Essa documentação pode ser verificada publicamente em ${origem}/verificar/${cert.codigo}.`] : []),
-    "",
-    "Anexamos os documentos da empresa e a documentação acima. Ficamos à disposição para qualquer informação adicional.",
-    "",
-    "Atenciosamente,",
+  const achou = (codigo: string) => vig?.achados.some((x) => x.codigo === codigo && x.severidade === "ok") ?? false;
+  const dadosDossie = {
+    conta: { nome: conta.nome, cnpj: conta.cnpj, site: conta.site },
     agenciaNome,
-  ].join("\n");
+    atividades: atividades.length,
+    assinadoEm: assinado ? (dpa?.assinadoEm ?? null) : null,
+    ferramentas: nomesSubs,
+    certificadoUrl: certOk && cert ? `${origem}/verificar/${cert.codigo}` : null,
+    vigilancia: vig ? { nota: vig.nota, https: achou("https"), politica: achou("sem-politica"), consentimento: achou("pixel-sem-consentimento") } : null,
+  };
+  const prontidao = prontidaoDossie(dadosDossie);
+  const texto = textoContestacao(motivo, dadosDossie);
 
   return (
     <div className="max-w-5xl">
@@ -117,6 +122,44 @@ export default async function DossieContaPage({ params }: { params: Promise<{ co
           <h1 className="t-display mt-3">{conta.nome}</h1>
         </div>
         <DossieActions texto={texto} />
+      </div>
+
+      <div className="no-print mt-8 grid gap-4 lg:grid-cols-[1fr_1.4fr]">
+        <section className="rounded-[20px] border border-line bg-surface p-6">
+          <div className="flex items-baseline justify-between">
+            <h2 className="t-heading">Prontidão do dossiê</h2>
+            <span className="font-display text-[2rem] tabular-nums text-ink">{prontidao.pct}%</span>
+          </div>
+          <div className="mt-3 h-2 overflow-hidden rounded-full bg-surface-2">
+            <div className="h-full rounded-full bg-grafico-ok" style={{ width: `${prontidao.pct}%` }} />
+          </div>
+          <ul className="mt-4 flex flex-col gap-2">
+            {prontidao.itens.map((i) => (
+              <li key={i.label} className="flex items-center gap-2.5 text-[14px]">
+                {i.ok ? <Check size={15} className="shrink-0 text-brand-ink" /> : <Circle size={15} className="shrink-0 text-warn" />}
+                <span className={i.ok ? "text-body" : "text-ink"}>{i.label}</span>
+              </li>
+            ))}
+          </ul>
+          <p className="mt-4 text-[12.5px] text-muted">Atualizado sozinho: contrato assinado, certificado emitido e varredura diária entram aqui na hora.</p>
+        </section>
+        <section className="rounded-[20px] border border-line bg-surface p-6">
+          <h2 className="t-heading">Qual foi o motivo da restrição?</h2>
+          <p className="mt-1 text-[14px] text-muted">O texto da contestação se adapta ao motivo. Na dúvida, use “Não sei o motivo”.</p>
+          <div className="mt-4 grid gap-2 sm:grid-cols-2">
+            {MOTIVOS.map((m) => (
+              <Link
+                key={m.id}
+                href={`/painel/dossie/${conta.id}?motivo=${m.id}`}
+                scroll={false}
+                className={"rounded-2xl border px-4 py-3 transition-colors " + (m.id === motivo ? "border-brand-strong bg-brand-tint" : "border-line hover:border-faint")}
+              >
+                <span className="block text-[14.5px] font-medium text-ink">{m.nome}</span>
+                <span className="mt-0.5 block text-[12.5px] leading-snug text-muted">{m.dica}</span>
+              </Link>
+            ))}
+          </div>
+        </section>
       </div>
 
       <div className="mt-10 flex flex-col gap-5">

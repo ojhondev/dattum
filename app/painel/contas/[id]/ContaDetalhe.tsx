@@ -172,6 +172,17 @@ export default function ContaDetalhe({
       </p>
       <div className="mb-8 -mt-2">
         <SiteDaConta contaId={conta.id} siteInicial={conta.site} />
+        <div className="mt-4 flex flex-wrap gap-2">
+          <a href={`/painel/documentos?conta=${conta.id}&tipo=clausula-contrato`} className="btn btn-ghost">
+            Gerar cláusula de LGPD
+          </a>
+          <a href={`/painel/documentos?conta=${conta.id}&tipo=politica-privacidade`} className="btn btn-ghost">
+            Política de privacidade do site
+          </a>
+          <a href={`/painel/dossie/${conta.id}`} className="btn btn-ghost">
+            Dossiê para BM
+          </a>
+        </div>
       </div>
 
       <div className="painel-tabs">

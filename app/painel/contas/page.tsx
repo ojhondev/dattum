@@ -11,14 +11,17 @@ import { NotaVigilancia } from "@/components/app/VigilanciaChips";
 const TH = "border-b border-line px-5 py-3.5 text-left font-mono text-[12px] font-normal uppercase tracking-[0.04em] text-muted";
 const TD = "border-b border-line px-5 py-4";
 
-export default async function ContasPage() {
+export default async function ContasPage({ searchParams }: { searchParams: Promise<{ q?: string }> }) {
+  const { q } = await searchParams;
+  const termo = (q ?? "").trim().toLowerCase();
   const sessao = await getSessao();
   if (!sessao) return null;
 
-  const contas = await db.query.contasCliente.findMany({
+  const todasContas = await db.query.contasCliente.findMany({
     where: eq(contasCliente.agenciaId, sessao.agenciaId),
     orderBy: (t, { desc }) => desc(t.createdAt),
   });
+  const contas = termo ? todasContas.filter((c) => [c.nome, c.cnpj, c.site].some((v) => v?.toLowerCase().includes(termo))) : todasContas;
 
   const [todosDpas, resultados] = await Promise.all([
     db.query.dpas.findMany({ where: eq(dpas.agenciaId, sessao.agenciaId) }),
@@ -27,7 +30,7 @@ export default async function ContasPage() {
   const notaPorConta = new Map(resultados.map((r) => [r.contaClienteId, r.nota]));
   const agencia = await db.query.agencias.findFirst({ where: eq(agencias.id, sessao.agenciaId) });
   const limite = agencia?.clientesContratados ?? null;
-  const noLimite = limite != null && contas.length >= limite;
+  const noLimite = limite != null && todasContas.length >= limite;
   const dpaPorConta = new Map(todosDpas.map((d) => [d.contaClienteId, d]));
 
   return (
@@ -51,14 +54,14 @@ export default async function ContasPage() {
         )}
         {limite != null && (
           <span className="tag tag-white border border-line">
-            {contas.length} de {limite} clientes contratados
+            {todasContas.length} de {limite} clientes contratados
           </span>
         )}
       </div>
 
       <div className="card-flush mt-10 overflow-x-auto">
         {contas.length === 0 ? (
-          <div className="p-12 text-center text-body-sm text-muted">Nenhuma conta ativada ainda.</div>
+          <div className="p-12 text-center text-body-sm text-muted">{termo ? `Nenhum cliente encontrado para “${q}”.` : "Nenhuma conta ativada ainda."}</div>
         ) : (
           <table className="w-full min-w-[760px] border-collapse text-body-sm">
             <thead>

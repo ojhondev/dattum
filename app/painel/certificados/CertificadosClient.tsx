@@ -72,6 +72,7 @@ type CertView = {
   titular: string;
   dominio: string | null;
   tipo: string;
+  automatico: boolean;
   validoAte: string;
   revogado: boolean;
   estado: "ok" | "pendente" | "invalido";
@@ -112,6 +113,7 @@ export function CertificadoCard({ cert, origem }: { cert: CertView; origem: stri
         <div className="flex flex-wrap items-center gap-2">
           <span className="font-display text-[22px]">{cert.titular}</span>
           <span className="pill pill-neutral">{cert.tipo}</span>
+          {cert.automatico && <span className="pill pill-brand">Automático</span>}
           {pill}
         </div>
         <p className="mt-1 font-mono text-[13px] text-muted">

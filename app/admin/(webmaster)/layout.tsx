@@ -11,7 +11,7 @@ export default async function WebMasterLayout({ children }: { children: React.Re
   return (
     <div className="flex min-h-svh bg-canvas">
       <Sidebar variante="admin" agenciaNome="Área Dattis · WebMaster" sairSlot={<SairAdmin />} />
-      <main className="min-w-0 flex-1 px-5 pb-16 pt-20 sm:px-10 lg:px-14 lg:pt-12">{children}</main>
+      <main className="min-w-0 flex-1 px-4 pb-16 pt-20 sm:px-10 lg:pt-10">{children}</main>
     </div>
   );
 }

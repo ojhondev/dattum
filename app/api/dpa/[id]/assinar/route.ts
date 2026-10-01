@@ -3,6 +3,7 @@ import { eq, and } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { dpas } from "@/lib/db/schema";
 import { getSessao } from "@/lib/auth";
+import { automatizarCertificados } from "@/lib/automacao";
 
 export const runtime = "nodejs";
 
@@ -48,5 +49,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     .where(eq(dpas.id, id))
     .returning();
 
-  return NextResponse.json({ ok: true, dpa });
+  // Contrato assinado costuma destravar o certificado: emite na hora, sem a agência pedir.
+  const auto = await automatizarCertificados(sessao.agenciaId).catch(() => ({ emitidos: 0, renovados: 0 }));
+  return NextResponse.json({ ok: true, dpa, certificadosEmitidos: auto.emitidos });
 }

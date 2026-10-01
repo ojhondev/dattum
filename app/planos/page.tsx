@@ -32,7 +32,7 @@ const FAQ_PLANOS = [
   },
   {
     q: "Qual plano faz sentido pra minha agência?",
-    a: "O Growth é o essencial: contrato com assinatura eletrônica, certificado e selo, Dossiê para BM, auditoria mensal e DAT. O Start organiza só a documentação básica. O Scale é pra quem quer a Dattis atuando como DPO (encarregado) da agência.",
+    a: "O Growth é o essencial: contrato com assinatura eletrônica, certificado e selo, Dossiê para BM, vigilância diária dos sites e DAT. O Start organiza só a documentação básica. O Scale é pra quem quer a Dattis atuando como DPO (encarregado) da agência.",
   },
   {
     q: "O certificado vale pros meus clientes também?",

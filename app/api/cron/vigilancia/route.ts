@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { executarVarredura } from "@/lib/vigilancia";
+import { automatizarTodas } from "@/lib/automacao";
 
 export const runtime = "nodejs";
 export const maxDuration = 300;
@@ -10,6 +11,7 @@ export async function GET(req: Request) {
   if (!segredo || req.headers.get("authorization") !== `Bearer ${segredo}`) {
     return NextResponse.json({ ok: false, error: "Não autorizado." }, { status: 401 });
   }
+  const certificados = await automatizarTodas();
   const v = await executarVarredura({ origem: "cron" });
-  return NextResponse.json({ ok: true, varredura: v });
+  return NextResponse.json({ ok: true, varredura: v, certificados });
 }

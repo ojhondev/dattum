@@ -272,7 +272,7 @@ export function Editor({ inicial, autores, categorias, siteUrl }: Props) {
   return (
     <div className="max-w-[1500px]">
       {/* barra superior */}
-      <div className="sticky top-0 z-20 -mx-5 flex flex-wrap items-center gap-3 border-b border-line bg-canvas/95 px-5 py-3 backdrop-blur sm:-mx-10 sm:px-10 lg:-mx-14 lg:px-14">
+      <div className="sticky top-0 z-20 -mx-4 flex flex-wrap items-center gap-3 border-b border-line bg-canvas/95 px-4 py-3 backdrop-blur sm:-mx-10 sm:px-10">
         <Link href="/admin/blog" className="inline-flex items-center gap-1.5 text-[14px] text-muted hover:text-ink">
           <ArrowLeft size={16} /> Artigos
         </Link>

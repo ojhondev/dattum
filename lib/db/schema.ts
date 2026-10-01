@@ -114,6 +114,7 @@ export const certificados = pgTable("certificados", {
   emitidoEm: timestamp("emitido_em").notNull().defaultNow(),
   validoAte: timestamp("valido_ate").notNull(),
   revogado: boolean("revogado").notNull().default(false),
+  automatico: boolean("automatico").notNull().default(false), // emitido/renovado pela Dattis sem ação da agência
 });
 
 // Código de ativação individual, gerado pela equipe Dattis depois do pagamento. Uso único.

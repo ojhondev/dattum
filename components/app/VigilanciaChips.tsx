@@ -5,7 +5,7 @@ export function NotaVigilancia({ nota, compacto = false }: { nota: number | null
   if (nota == null) return <span className="pill pill-neutral">Aguardando</span>;
   const f = faixaDaNota(nota);
   return (
-    <span className={"inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 font-mono text-[12px] uppercase tracking-[0.03em] " + SEVERIDADE[f.severidade].classe}>
+    <span className={"inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-2.5 py-1 font-mono text-[12px] uppercase tracking-[0.03em] " + SEVERIDADE[f.severidade].classe}>
       <span className="tabular-nums">{nota}</span>
       {!compacto && <span>· {f.label}</span>}
     </span>

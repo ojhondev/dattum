@@ -114,7 +114,7 @@ const FAQ_ITEMS = [
   },
   {
     q: "Quanto custa?",
-    a: "De R$ 47 a R$ 297 por cliente da agência, por mês. O Growth, de R$ 97, é o plano que cobre o essencial: contrato com assinatura eletrônica, certificado e selo, Dossiê para BM e auditoria mensal.",
+    a: "De R$ 47 a R$ 297 por cliente da agência, por mês. O Growth, de R$ 97, é o plano que cobre o essencial: contrato com assinatura eletrônica, certificado e selo, Dossiê para BM e vigilância diária dos sites.",
   },
   {
     q: "Isso substitui um advogado?",

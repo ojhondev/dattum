@@ -48,6 +48,8 @@
   --color-info-tint: #e7effc;
   --color-caution: #9a7300;
   --color-caution-tint: #fbf1d4;
+  --color-grafico-ok: #1fa86a;
+  --color-grafico-alerta: #e06a1f;
 
   /* ---- Tipografia ---- */
   --font-display: var(--nf-slab), "Montagu Slab", Georgia, serif;
@@ -113,6 +115,8 @@
   --color-info-tint: #17273f;
   --color-caution: #e3b53f;
   --color-caution-tint: #352c12;
+  --color-grafico-ok: #2aa86e;
+  --color-grafico-alerta: #d66a28;
   --shadow-chip: 0 1px 2px rgba(0, 0, 0, 0.35), 0 4px 14px rgba(0, 0, 0, 0.35);
   --shadow-pop: 0 12px 32px rgba(0, 0, 0, 0.5);
 }
