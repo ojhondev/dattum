@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { X, Calculator } from "lucide-react";
 import { abrirCalculadora } from "@/components/marketing/CalculadoraPopup";
 
@@ -16,6 +16,25 @@ const ARTIGOS = [
 /** Faixa fixa no rodapé da tela com a base legal. Fechável; lembra a escolha neste navegador. */
 export function LeiBar() {
   const [visivel, setVisivel] = useState(false);
+  const ref = useRef<HTMLDivElement | null>(null);
+
+  // Publica a altura da faixa em --lei-bar-h pros botões flutuantes ficarem logo acima dela.
+  useEffect(() => {
+    const raiz = document.documentElement;
+    const el = ref.current;
+    if (!visivel || !el) {
+      raiz.style.removeProperty("--lei-bar-h");
+      return;
+    }
+    const medir = () => raiz.style.setProperty("--lei-bar-h", `${el.offsetHeight}px`);
+    medir();
+    const ro = new ResizeObserver(medir);
+    ro.observe(el);
+    return () => {
+      ro.disconnect();
+      raiz.style.removeProperty("--lei-bar-h");
+    };
+  }, [visivel]);
 
   useEffect(() => {
     let fechada = false;
@@ -40,7 +59,7 @@ export function LeiBar() {
   if (!visivel) return null;
 
   return (
-    <div role="region" aria-label="Base legal" className="fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-rail text-white">
+    <div ref={ref} role="region" aria-label="Base legal" className="sai-no-foco fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-rail text-white">
       <div className="flex items-center gap-4 py-3 pl-4 pr-2 sm:pl-10 sm:pr-4">
         <p className="hidden shrink-0 font-mono text-[12px] uppercase tracking-[0.05em] text-brand xl:block">
           Baseado na Lei Geral de Proteção de Dados:

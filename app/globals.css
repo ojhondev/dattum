@@ -179,6 +179,21 @@
 }
 
 @layer components {
+  /* Cantos em degrau (pixel) — mesma linguagem da borda pixelada entre seções. */
+  .pixel-corners {
+    --px: 4px;
+    clip-path: polygon(
+      0 calc(var(--px) * 2), var(--px) calc(var(--px) * 2), var(--px) var(--px), calc(var(--px) * 2) var(--px), calc(var(--px) * 2) 0,
+      calc(100% - var(--px) * 2) 0, calc(100% - var(--px) * 2) var(--px), calc(100% - var(--px)) var(--px), calc(100% - var(--px)) calc(var(--px) * 2), 100% calc(var(--px) * 2),
+      100% calc(100% - var(--px) * 2), calc(100% - var(--px)) calc(100% - var(--px) * 2), calc(100% - var(--px)) calc(100% - var(--px)), calc(100% - var(--px) * 2) calc(100% - var(--px)), calc(100% - var(--px) * 2) 100%,
+      calc(var(--px) * 2) 100%, calc(var(--px) * 2) calc(100% - var(--px)), var(--px) calc(100% - var(--px)), var(--px) calc(100% - var(--px) * 2), 0 calc(100% - var(--px) * 2)
+    );
+  }
+  .pixel-corners-sm { --px: 2px; }
+
+  /* Elementos fixos que saem da frente durante a leitura em tela cheia (O problema). */
+  .sai-no-foco { transition: opacity 200ms ease, transform 200ms ease; }
+
 .font-ui { font-family: var(--font-ui); }
 
 /* ---------- Escala de títulos ---------- */
@@ -487,3 +502,6 @@ table.painel-table a:hover { text-decoration: underline; }
   .letreiro { animation: none !important; display: grid; grid-template-columns: repeat(2, max-content); row-gap: 2px; }
   .letreiro > [aria-hidden="true"], .letreiro > [data-extra] { display: none; }
 }
+
+/* Fora das camadas de propósito: precisa vencer utilitários como opacity-100. */
+[data-foco] .sai-no-foco { opacity: 0 !important; transform: translateY(12px) !important; pointer-events: none !important; }

@@ -65,9 +65,18 @@ export function ScrollRevealText({ eyebrow, trechos }: { eyebrow: string; trecho
       const curso = r.height - window.innerHeight;
       setProgresso(curso > 0 ? Math.min(1, Math.max(0, -r.top / curso)) : 1);
     };
+    // Enquanto o texto está travado na tela, faixa e botões flutuantes saem da frente (data-foco no <html>).
+    const marcarFoco = () => {
+      const r = ref.current?.getBoundingClientRect();
+      const travado = !!r && r.top <= 1 && r.bottom >= window.innerHeight - 1;
+      if (travado) document.documentElement.dataset.foco = "";
+      else delete document.documentElement.dataset.foco;
+    };
     const agendar = () => {
+      marcarFoco();
       if (!raf) raf = requestAnimationFrame(calcular);
     };
+    marcarFoco();
     calcular();
     window.addEventListener("scroll", agendar, { passive: true });
     window.addEventListener("resize", agendar);
@@ -75,6 +84,7 @@ export function ScrollRevealText({ eyebrow, trechos }: { eyebrow: string; trecho
       window.removeEventListener("scroll", agendar);
       window.removeEventListener("resize", agendar);
       if (raf) cancelAnimationFrame(raf);
+      delete document.documentElement.dataset.foco;
     };
   }, []);
 

@@ -3,6 +3,7 @@ import { Montagu_Slab, Public_Sans, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { THEME_COOKIE } from "@/lib/theme";
+import { BotoesFlutuantes } from "@/components/marketing/BotoesFlutuantes";
 
 const slab = Montagu_Slab({
   subsets: ["latin"],
@@ -42,7 +43,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           }}
         />
       </head>
-      <body>{children}</body>
+      <body>
+        {children}
+        <BotoesFlutuantes />
+      </body>
     </html>
   );
 }
