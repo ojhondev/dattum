@@ -4,13 +4,14 @@ import { Suspense, useState, type FormEvent } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { AuthShell } from "@/components/marketing/AuthShell";
+import { BotaoGoogle, mensagemErroGoogle } from "@/components/marketing/BotaoGoogle";
 
 function EntrarForm() {
   const router = useRouter();
   const params = useSearchParams();
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
-  const [erro, setErro] = useState("");
+  const [erro, setErro] = useState(() => mensagemErroGoogle(params.get("erro")) ?? "");
   const [enviando, setEnviando] = useState(false);
 
   const submit = async (e: FormEvent) => {
@@ -42,7 +43,16 @@ function EntrarForm() {
       <h1 className="t-display">Entrar</h1>
       <p className="mt-3 text-body-sm text-muted">Acesse o painel da sua agência.</p>
 
-      <form className="font-ui mt-8 space-y-4" onSubmit={submit}>
+      <div className="mt-8">
+        <BotaoGoogle proximo={params.get("proximo")} />
+      </div>
+      <div className="mt-6 flex items-center gap-3 font-mono text-caption uppercase text-faint">
+        <span className="h-px flex-1 bg-line" />
+        ou com e-mail
+        <span className="h-px flex-1 bg-line" />
+      </div>
+
+      <form className="font-ui mt-6 space-y-4" onSubmit={submit}>
         <label className="block">
           <span className="text-body-sm font-medium text-body">E-mail</span>
           <input

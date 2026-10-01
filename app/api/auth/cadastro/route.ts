@@ -1,13 +1,11 @@
 import { NextResponse } from "next/server";
-import { and, eq, isNull } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { db } from "@/lib/db";
-import { agencias, codigosAtivacao } from "@/lib/db/schema";
-import { hashSenha, criarSessao } from "@/lib/auth";
+import { agencias } from "@/lib/db/schema";
+import { criarSessao } from "@/lib/auth";
+import { ativarAgencia, CODIGO_INVALIDO } from "@/lib/ativacao";
 
 export const runtime = "nodejs";
-
-const CODIGO_INVALIDO =
-  "Código de ativação inválido ou já usado. Ele é enviado pela equipe Dattis depois da confirmação do pagamento.";
 
 export async function POST(req: Request) {
   const body = await req.json().catch(() => null);
@@ -33,26 +31,9 @@ export async function POST(req: Request) {
     );
   }
 
-  // Reserva o código de forma atômica: só um cadastro consegue marcar como usado.
-  const [reservado] = await db
-    .update(codigosAtivacao)
-    .set({ usadoEm: new Date() })
-    .where(and(eq(codigosAtivacao.codigo, codigo), isNull(codigosAtivacao.usadoEm), eq(codigosAtivacao.revogado, false)))
-    .returning();
-  if (!reservado) return NextResponse.json({ ok: false, error: CODIGO_INVALIDO }, { status: 403 });
+  const r = await ativarAgencia({ codigo, nome, email, senha });
+  if (!r.ok) return NextResponse.json({ ok: false, error: r.erro }, { status: r.erro === CODIGO_INVALIDO ? 403 : 500 });
 
-  try {
-    const senhaHash = await hashSenha(senha);
-    const [agencia] = await db
-      .insert(agencias)
-      .values({ nome, email, senhaHash, plano: reservado.plano, clientesContratados: reservado.clientes })
-      .returning();
-    await db.update(codigosAtivacao).set({ agenciaId: agencia.id }).where(eq(codigosAtivacao.id, reservado.id));
-    await criarSessao(agencia.id);
-  } catch {
-    await db.update(codigosAtivacao).set({ usadoEm: null }).where(eq(codigosAtivacao.id, reservado.id));
-    return NextResponse.json({ ok: false, error: "Não foi possível criar a conta agora. Tenta de novo." }, { status: 500 });
-  }
-
+  await criarSessao(r.agencia.id);
   return NextResponse.json({ ok: true });
 }

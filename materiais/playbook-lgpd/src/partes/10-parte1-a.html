@@ -1,0 +1,188 @@
+<!-- ================= PARTE I ================= -->
+<div class="page part" id="p1">
+  <span class="pn">Parte I · Capítulos 01 a 09</span>
+  <div class="big">I</div>
+  <h1>A lei destrinchada para quem roda mídia</h1>
+  <p class="desc">Os artigos da LGPD que realmente importam para uma agência de tráfego — com o texto da lei, o comentário e o exemplo do dia a dia de quem sobe campanha, integra CRM e entrega relatório.</p>
+  <div class="caps"><span>Cenário</span><span>Conceitos</span><span>Princípios</span><span>Bases legais</span><span>Papéis</span><span>Direitos</span><span>Segurança</span><span>Transferência</span><span>Sanções</span></div>
+</div>
+
+<!-- ================= CAP 1 ================= -->
+<section data-label="Cap. 01 · O problema">
+  <div class="chap-head" id="c1">
+    <span class="num">Capítulo 01</span><span class="big">01</span>
+    <h1>Por que a LGPD é um problema de agência de tráfego</h1>
+    <p>A agência está no centro do fluxo de dados do cliente: recebe bases, conecta ferramentas, envia eventos para plataformas estrangeiras e guarda relatórios. É exatamente aí que a lei olha.</p>
+  </div>
+  <p class="lead">Durante anos, o mercado tratou a privacidade como assunto do site do cliente — “o banner de cookies é com o dev”. Só que a mídia paga moderna é movida a dados de primeira parte, e quem manipula esses dados, na prática, é a agência.</p>
+  <p>Pense no fluxo típico de um cliente de e-commerce ou de geração de leads. O cliente coleta dados no site, no WhatsApp e na loja física. A agência recebe acesso ao Gerenciador de Negócios, ao Google Ads, ao Analytics, ao CRM e, muitas vezes, recebe a base de clientes em planilha “para subir público”. Em seguida configura pixel e API de Conversões, liga formulários de cadastro a ferramentas de automação, cria públicos semelhantes, monta dashboards e armazena tudo no Drive da agência. Cada uma dessas etapas é uma operação de tratamento de dados pessoais.</p>
+  <h2>Onde a agência toca em dado pessoal</h2>
+  <table class="tbl">
+    <thead><tr><th>Atividade comum</th><th>Dados envolvidos</th><th>Por que é tratamento</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Subir lista para Custom Audiences / Customer Match</strong></td><td>E-mail, telefone, nome, CEP, cidade</td><td>Utilização, transmissão e transferência internacional para a plataforma</td></tr>
+      <tr><td><strong>Configurar pixel, tag e API de Conversões</strong></td><td>Cookies, IP, user agent, e-mail e telefone (hash), valor da compra</td><td>Coleta e comunicação de dados de navegação e de identificação</td></tr>
+      <tr><td><strong>Formulários de cadastro (Lead Ads)</strong></td><td>Nome, e-mail, WhatsApp, respostas qualificadoras</td><td>Coleta, armazenamento e integração com CRM</td></tr>
+      <tr><td><strong>Atendimento e disparos no WhatsApp</strong></td><td>Telefone, conversas, áudios, comprovantes</td><td>Coleta, armazenamento, comunicação</td></tr>
+      <tr><td><strong>Relatórios e dashboards</strong></td><td>Leads nominais, vendas, origem do lead</td><td>Reprodução, avaliação, difusão interna</td></tr>
+      <tr><td><strong>Pesquisas, quizzes e sorteios</strong></td><td>Respostas, preferências, às vezes saúde ou renda</td><td>Coleta e formação de perfil</td></tr>
+      <tr><td><strong>IA generativa para copy e análise</strong></td><td>Bases e conversas coladas em ferramentas</td><td>Transmissão a terceiro, muitas vezes no exterior</td></tr>
+    </tbody>
+  </table>
+  <h2>Os cinco riscos concretos</h2>
+  <div class="grid2">
+    <div class="card"><span class="chip l"><b class="b-alto">Alto</b> Conta suspensa</span><h3 style="margin:2.5mm 0 1.5mm">Bloqueio na plataforma</h3><p style="margin:0;font-size:9pt">Meta, Google e TikTok exigem que o anunciante tenha base legal para os dados enviados. Bases compradas, listas frias e denúncias de usuários levam a restrições de BM, contas de anúncio e números de WhatsApp.</p></div>
+    <div class="card"><span class="chip l"><b class="b-alto">Alto</b> Perda de cliente</span><h3 style="margin:2.5mm 0 1.5mm">Due diligence reprovada</h3><p style="margin:0;font-size:9pt">Clientes médios e grandes já enviam questionários de privacidade e exigem DPA. Agência que não responde perde a concorrência — ou o contrato na renovação.</p></div>
+    <div class="card"><span class="chip l"><b class="b-medio">Médio</b> ANPD</span><h3 style="margin:2.5mm 0 1.5mm">Sanção administrativa</h3><p style="margin:0;font-size:9pt">Advertência, multa de até 2% do faturamento (limitada a R$ 50 milhões por infração), publicização, bloqueio ou eliminação dos dados e até suspensão da atividade de tratamento.</p></div>
+    <div class="card"><span class="chip l"><b class="b-medio">Médio</b> Judiciário</span><h3 style="margin:2.5mm 0 1.5mm">Ação indenizatória</h3><p style="margin:0;font-size:9pt">Titulares, Procons, Ministério Público e Defensoria acionam empresas por compartilhamento indevido e vazamentos. O operador responde solidariamente quando descumpre a lei ou as instruções do controlador.</p></div>
+  </div>
+  <div class="card"><span class="chip l"><b class="b-alto">Alto</b> Reputação</span><h3 style="margin:2.5mm 0 1.5mm">O print que viraliza</h3><p style="margin:0;font-size:9pt">Um lead que recebe mensagem de uma marca que nunca procurou, um cliente cujo dado de saúde apareceu num anúncio, um ex-funcionário que vaza uma planilha de leads: incidentes de privacidade viram conteúdo de rede social em horas e mancham a agência e o cliente ao mesmo tempo.</p></div>
+  <h2>O mito do “só operador”</h2>
+  <p>Muitas agências se defendem dizendo que “o dado é do cliente, a responsabilidade é dele”. Em parte é verdade: quando a agência apenas executa o que o cliente determina, ela é <strong>operadora</strong>. Mas o art. 42, § 1º, I, da LGPD é claro: o operador responde <strong>solidariamente</strong> pelos danos quando descumpre as obrigações da lei ou quando não segue as instruções lícitas do controlador — e, nesse caso, é equiparado ao controlador.</p>
+  <p>Além disso, toda vez que a agência usa dados do cliente para um objetivo próprio — montar um case com prints de leads, treinar um modelo interno, reaproveitar um público para outro cliente, prospectar — ela deixa de ser operadora e passa a ser <strong>controladora</strong> daquela operação, sem contrato e sem base legal. É aí que mora a maior parte do risco.</p>
+  <div class="box agencia"><span class="lbl">Na agência</span><p>Um gestor sai de uma agência de varejo e leva “para portfólio” a planilha de leads de um cliente de clínica estética. Na nova agência, sobe a lista como público semelhante para outro cliente do mesmo segmento. Em uma tacada: compartilhamento sem base legal, desvio de finalidade, possível dado sensível (estética pode envolver saúde) e violação de confidencialidade. As duas agências ficam expostas.</p></div>
+  <h2>O que muda quando a agência se adequa</h2>
+  <div class="grid3">
+    <div class="stat"><div class="v mint">Contrato</div><div class="t">DPA assinado com cada cliente define papéis, instruções e responsabilidades — e limita a exposição solidária.</div></div>
+    <div class="stat"><div class="v mint">Processo</div><div class="t">Onboarding, subida de público, acesso e offboarding passam a seguir um roteiro documentado.</div></div>
+    <div class="stat"><div class="v mint">Venda</div><div class="t">Privacidade vira argumento comercial: a agência responde due diligence e entra em contas maiores.</div></div>
+  </div>
+  <div class="box dica"><span class="lbl">Boa prática</span><p>Comece pelo inventário: liste todos os clientes ativos e, para cada um, quais ferramentas a agência acessa, quais bases recebe e onde elas ficam. Esse mapa é a base do Registro das Operações de Tratamento (art. 37) e do checklist do Capítulo 15.</p></div>
+</section>
+
+<!-- ================= CAP 2 ================= -->
+<section data-label="Cap. 02 · Conceitos">
+  <div class="chap-head" id="c2">
+    <span class="num">Capítulo 02 · Arts. 1º a 5º e 12</span><span class="big">02</span>
+    <h1>Conceitos essenciais traduzidos para a operação</h1>
+    <p>Quem entende os conceitos do art. 5º resolve metade das dúvidas da agência sozinho. Aqui estão os que aparecem toda semana na mesa do gestor.</p>
+  </div>
+  <h2>A quem a lei se aplica</h2>
+  <div class="box lei"><span class="lbl">LGPD · Art. 3º</span><p>Esta Lei aplica-se a qualquer operação de tratamento realizada por pessoa natural ou por pessoa jurídica de direito público ou privado, independentemente do meio, do país de sua sede ou do país onde estejam localizados os dados, desde que: I - a operação de tratamento seja realizada no território nacional; II - a atividade de tratamento tenha por objetivo a oferta ou o fornecimento de bens ou serviços ou o tratamento de dados de indivíduos localizados no território nacional; ou III - os dados pessoais objeto do tratamento tenham sido coletados no território nacional.</p><p class="com"><b>Comentário</b>Não importa que o servidor do Meta esteja nos EUA ou que a ferramenta de automação seja europeia: se o público é brasileiro, a LGPD se aplica. Agência brasileira que roda campanha para cliente no exterior com público no Brasil também está sujeita.</p></div>
+  <p>O art. 4º exclui algumas situações — uso pessoal sem fins econômicos, finalidades exclusivamente jornalísticas, artísticas ou acadêmicas, segurança pública. <strong>Nenhuma delas cobre publicidade.</strong> Marketing é sempre atividade econômica.</p>
+  <h2>Dado pessoal</h2>
+  <div class="box lei"><span class="lbl">LGPD · Art. 5º, I</span><p>Dado pessoal: informação relacionada a pessoa natural identificada ou identificável.</p><p class="com"><b>Comentário</b>“Identificável” é a palavra-chave. Não precisa ter nome: e-mail, telefone, CPF, IP, ID de cookie, ID de anúncio do celular (MAID), fbclid/gclid associados a uma pessoa e até a combinação “mulher, 34 anos, bairro X, comprou o produto Y em tal data” podem identificar alguém.</p></div>
+  <div class="box lei"><span class="lbl">LGPD · Art. 12, § 2º</span><p>Poderão ser igualmente considerados como dados pessoais, para os fins desta Lei, aqueles utilizados para formação do perfil comportamental de determinada pessoa natural, se identificada.</p><p class="com"><b>Comentário</b>Este é o artigo da publicidade segmentada. Interesses, eventos de navegação, histórico de compras e engajamento usados para montar público e direcionar anúncio são dados pessoais quando ligados a alguém identificado — e o pixel e a CAPI existem justamente para fazer essa ligação.</p></div>
+  <h2>Dado pessoal sensível</h2>
+  <div class="box lei"><span class="lbl">LGPD · Art. 5º, II</span><p>Dado pessoal sensível: dado pessoal sobre origem racial ou étnica, convicção religiosa, opinião política, filiação a sindicato ou a organização de caráter religioso, filosófico ou político, dado referente à saúde ou à vida sexual, dado genético ou biométrico, quando vinculado a uma pessoa natural.</p><p class="com"><b>Comentário</b>Para a agência, os nichos de risco são claros: clínicas, odontologia, estética, psicologia, academias com avaliação física, farmácias, planos de saúde, igrejas, candidatos e partidos, sindicatos, aplicativos de relacionamento LGBTQIA+. Um formulário que pergunta “qual seu problema de pele?” ou uma lista de “pacientes de implante” já é dado sensível.</p></div>
+  <div class="box alerta"><span class="lbl">Atenção</span><p>Dado sensível também pode ser <strong>inferido</strong>. Um público de “visitou a página de tratamento para depressão” ou “comprou teste de gravidez” revela informação de saúde. Segmentar e subir eventos desse tipo exige base legal do art. 11 — e o legítimo interesse <strong>não</strong> está entre elas.</p></div>
+  <h2>Anonimizado × pseudonimizado: o mito do hash</h2>
+  <div class="box lei"><span class="lbl">LGPD · Art. 5º, III, e art. 13, § 4º</span><p>Dado anonimizado: dado relativo a titular que não possa ser identificado, considerando a utilização de meios técnicos razoáveis e disponíveis na ocasião de seu tratamento. […] Pseudonimização é o tratamento por meio do qual um dado perde a possibilidade de associação, direta ou indireta, a um indivíduo, senão pelo uso de informação adicional mantida separadamente pelo controlador em ambiente controlado e seguro.</p><p class="com"><b>Comentário</b>O SHA-256 que o Meta e o Google aplicam a e-mails e telefones antes do envio é <strong>pseudonimização</strong>, não anonimização. Tanto é que a plataforma consegue cruzar o hash com a base dela e encontrar a pessoa — esse é o objetivo. Logo, a lista com hash continua sendo dado pessoal e continua precisando de base legal.</p></div>
+  <table class="tbl">
+    <thead><tr><th>Situação</th><th>Classificação</th><th>Precisa de base legal?</th></tr></thead>
+    <tbody>
+      <tr><td>Lista de e-mails em texto puro</td><td>Dado pessoal</td><td class="c"><span class="pr b-sim">Sim</span></td></tr>
+      <tr><td>Lista de e-mails com hash SHA-256 para Custom Audiences</td><td>Dado pessoal pseudonimizado</td><td class="c"><span class="pr b-sim">Sim</span></td></tr>
+      <tr><td>Relatório “1.240 leads, CPL R$ 18,40, 32% de conversão”</td><td>Dado agregado/anonimizado</td><td class="c"><span class="pr b-nao">Não</span></td></tr>
+      <tr><td>Relatório com nome e telefone de cada lead</td><td>Dado pessoal</td><td class="c"><span class="pr b-sim">Sim</span></td></tr>
+      <tr><td>Público semelhante (lookalike) já criado na plataforma</td><td>Agregado na visão da agência</td><td>A semente sim; o público gerado é gerido pela plataforma</td></tr>
+      <tr><td>Planilha “anonimizada” sem nome, mas com telefone</td><td>Dado pessoal (telefone identifica)</td><td class="c"><span class="pr b-sim">Sim</span></td></tr>
+    </tbody>
+  </table>
+  <h2>Os demais conceitos que a agência precisa dominar</h2>
+  <table class="tbl">
+    <thead><tr><th style="width:30%">Conceito (art. 5º)</th><th>Em linguagem de agência</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Titular</strong> (V)</td><td>A pessoa a quem o dado se refere: o lead, o cliente final, o seguidor, o paciente. Nunca o anunciante.</td></tr>
+      <tr><td><strong>Controlador</strong> (VI)</td><td>Quem decide para que e como o dado é usado. Em regra, o cliente anunciante.</td></tr>
+      <tr><td><strong>Operador</strong> (VII)</td><td>Quem trata o dado em nome do controlador. Em regra, a agência.</td></tr>
+      <tr><td><strong>Encarregado (DPO)</strong> (VIII)</td><td>O canal de comunicação com titulares e com a ANPD. Pode ser pessoa ou empresa contratada.</td></tr>
+      <tr><td><strong>Tratamento</strong> (X)</td><td>Qualquer operação: coletar, receber, acessar, copiar, enviar, armazenar, analisar, apagar. Abrir a planilha já é tratamento.</td></tr>
+      <tr><td><strong>Consentimento</strong> (XII)</td><td>Manifestação livre, informada e inequívoca para finalidade determinada. Caixa pré-marcada não vale.</td></tr>
+      <tr><td><strong>Uso compartilhado</strong> (XVI)</td><td>Passar dados de um agente para outro — por exemplo, do cliente para a agência ou da agência para a plataforma.</td></tr>
+      <tr><td><strong>Transferência internacional</strong> (XV)</td><td>Enviar dados para país estrangeiro. Toda subida para Meta, Google e TikTok envolve transferência.</td></tr>
+      <tr><td><strong>Relatório de impacto (RIPD)</strong> (XVII)</td><td>Documento que descreve operações de risco e as medidas de mitigação. Recomendado para perfilamento em larga escala e dados sensíveis.</td></tr>
+      <tr><td><strong>Eliminação</strong> (XIV)</td><td>Excluir de verdade, inclusive cópias, downloads e backups sob controle da agência.</td></tr>
+    </tbody>
+  </table>
+  <div class="box dica"><span class="lbl">Boa prática</span><p>Use esta regra rápida no treinamento do time: <strong>se dá para chegar em uma pessoa, é dado pessoal</strong>. Se o dado revela saúde, religião, política, sexualidade, etnia, biometria ou sindicato, é sensível. Na dúvida, trate como pessoal e mínimo.</p></div>
+</section>
+
+<!-- ================= CAP 3 ================= -->
+<section data-label="Cap. 03 · Princípios">
+  <div class="chap-head" id="c3">
+    <span class="num">Capítulo 03 · Art. 6º</span><span class="big">03</span>
+    <h1>Os 10 princípios na rotina da agência</h1>
+    <p>Os princípios são a régua da ANPD e do juiz. Mesmo quando não há regra específica, a pergunta será: a agência respeitou finalidade, necessidade, transparência e segurança?</p>
+  </div>
+  <div class="box lei"><span class="lbl">LGPD · Art. 6º, caput</span><p>As atividades de tratamento de dados pessoais deverão observar a boa-fé e os seguintes princípios: […]</p><p class="com"><b>Comentário</b>Boa-fé vem antes de tudo. Truques como “aceito receber novidades” escondido nos termos, formulário que coleta mais do que diz ou público montado com dado que o titular nunca imaginou que seria usado violam a boa-fé, independentemente de qualquer outra regra.</p></div>
+  <table class="tbl">
+    <thead><tr><th style="width:22%">Princípio</th><th style="width:36%">O que a lei diz (resumo)</th><th>Como aparece na agência</th></tr></thead>
+    <tbody>
+      <tr><td><span class="id">I</span> <strong>Finalidade</strong></td><td>Propósitos legítimos, específicos, explícitos e informados ao titular, sem tratamento posterior incompatível.</td><td>Lead que pediu orçamento de ar-condicionado não pode virar público de crédito consignado do “cliente parceiro”.</td></tr>
+      <tr><td><span class="id">II</span> <strong>Adequação</strong></td><td>Compatibilidade do tratamento com as finalidades informadas.</td><td>Se o aviso do formulário fala em “contato comercial”, não use o dado para treinar IA ou montar case.</td></tr>
+      <tr><td><span class="id">III</span> <strong>Necessidade</strong></td><td>Limitação ao mínimo necessário: dados pertinentes, proporcionais e não excessivos.</td><td>Formulário de lead com CPF, data de nascimento e renda “para qualificar” sem uso real. Peça só o que o comercial usa.</td></tr>
+      <tr><td><span class="id">IV</span> <strong>Livre acesso</strong></td><td>Consulta facilitada e gratuita sobre forma, duração e integralidade dos dados.</td><td>A LP do cliente precisa ter aviso de privacidade e canal de contato funcionando.</td></tr>
+      <tr><td><span class="id">V</span> <strong>Qualidade dos dados</strong></td><td>Exatidão, clareza, relevância e atualização.</td><td>Lista desatualizada gera mensagens para quem já pediu para sair e para números reciclados de outras pessoas.</td></tr>
+      <tr><td><span class="id">VI</span> <strong>Transparência</strong></td><td>Informações claras, precisas e acessíveis sobre o tratamento e os agentes.</td><td>Declarar no aviso que dados são usados para anúncios personalizados e compartilhados com plataformas de publicidade.</td></tr>
+      <tr><td><span class="id">VII</span> <strong>Segurança</strong></td><td>Medidas técnicas e administrativas contra acessos não autorizados e incidentes.</td><td>2FA no BM, acessos nominais, planilhas com permissão restrita, nada de senha no grupo do WhatsApp.</td></tr>
+      <tr><td><span class="id">VIII</span> <strong>Prevenção</strong></td><td>Medidas para prevenir danos.</td><td>Checklist antes de subir público; revisão de formulários; vigilância contínua das páginas.</td></tr>
+      <tr><td><span class="id">IX</span> <strong>Não discriminação</strong></td><td>Vedação de tratamento para fins discriminatórios ilícitos ou abusivos.</td><td>Excluir de oferta de emprego ou imóvel pessoas por idade, gênero ou bairro. Atenção também às categorias especiais das plataformas.</td></tr>
+      <tr><td><span class="id">X</span> <strong>Responsabilização e prestação de contas</strong></td><td>Demonstrar a adoção de medidas eficazes e capazes de comprovar o cumprimento.</td><td>Ter RAT, DPA, logs de acesso, evidências de consentimento e registro de treinamentos. Sem prova, a presunção joga contra.</td></tr>
+    </tbody>
+  </table>
+  <h2>Os três princípios que mais derrubam agências</h2>
+  <h3>1. Finalidade — o desvio silencioso</h3>
+  <p>O desvio de finalidade raramente é deliberado. Ele acontece quando o dado está “à mão”: a base do cliente A ajuda no público do cliente B; o lead de um webinar vira lista de disparo de outro produto; a planilha de compradores serve para pesquisa de satisfação de um parceiro. Em todos os casos, o titular forneceu o dado para uma coisa e ele foi usado para outra.</p>
+  <div class="box agencia"><span class="lbl">Na agência</span><p>Regra operacional: <strong>cada base tem dono, finalidade e prazo</strong>. Ao receber uma lista, registre de qual cliente ela é, para que será usada (por exemplo, “público de exclusão de compradores na campanha de aquisição”), e quando deve ser apagada. Nunca misture bases de clientes diferentes, nem para teste.</p></div>
+  <h3>2. Necessidade — o formulário gordo</h3>
+  <p>Formulários longos “para qualificar melhor” costumam coletar dados que ninguém usa. Cada campo extra aumenta o risco em caso de vazamento e enfraquece a justificativa da coleta. Para tráfego, ainda há um efeito colateral: formulários menores convertem mais.</p>
+  <div class="box dica"><span class="lbl">Boa prática</span><p>Faça o “teste do uso”: para cada campo do formulário, pergunte ao comercial do cliente o que ele faz com aquela informação. Se a resposta for “nada” ou “talvez um dia”, o campo sai.</p></div>
+  <h3>3. Responsabilização — o ônus da prova</h3>
+  <p>Na fiscalização, a ANPD não pergunta se a agência “acha” que está adequada; pede evidências. No processo judicial, o juiz pode inverter o ônus da prova a favor do titular (art. 42, § 2º). A agência que não guarda contrato, registro e logs não consegue provar nem que seguiu as instruções do cliente.</p>
+  <div class="box alerta"><span class="lbl">Atenção</span><p>“O cliente pediu por WhatsApp” não é instrução documentada. Formalize instruções relevantes — subir base, disparar mensagens, criar público com dados sensíveis — por e-mail ou na plataforma de gestão, e guarde.</p></div>
+</section>
+
+<!-- ================= CAP 4 ================= -->
+<section data-label="Cap. 04 · Bases legais">
+  <div class="chap-head" id="c4">
+    <span class="num">Capítulo 04 · Arts. 7º a 16</span><span class="big">04</span>
+    <h1>Bases legais: o “porquê” de cada dado</h1>
+    <p>Nenhum dado pessoal pode ser tratado sem uma das hipóteses do art. 7º — ou do art. 11, se for sensível. Escolher a base certa é decisão do controlador, mas a agência precisa saber qual é para operar com segurança.</p>
+  </div>
+  <div class="box lei"><span class="lbl">LGPD · Art. 7º</span><p>O tratamento de dados pessoais somente poderá ser realizado nas seguintes hipóteses: I - mediante o fornecimento de consentimento pelo titular; II - para o cumprimento de obrigação legal ou regulatória pelo controlador; […] V - quando necessário para a execução de contrato ou de procedimentos preliminares relacionados a contrato do qual seja parte o titular, a pedido do titular dos dados; VI - para o exercício regular de direitos em processo judicial, administrativo ou arbitral; […] IX - quando necessário para atender aos interesses legítimos do controlador ou de terceiro, exceto no caso de prevalecerem direitos e liberdades fundamentais do titular que exijam a proteção dos dados pessoais; ou X - para a proteção do crédito […].</p><p class="com"><b>Comentário</b>São dez hipóteses (as demais tratam de administração pública, pesquisa, proteção da vida e tutela da saúde). Não há hierarquia entre elas: consentimento não é “a melhor” base. Para marketing, as que importam são consentimento, execução de contrato e legítimo interesse.</p></div>
+  <h2>As três bases do marketing</h2>
+  <div class="grid3">
+    <div class="card"><span class="chip l">Art. 7º, I</span><h3 style="margin:2.5mm 0 1.5mm">Consentimento</h3><p style="font-size:8.8pt;margin:0">Livre, informado, inequívoco, para finalidade determinada, revogável a qualquer tempo de forma gratuita e facilitada. Ônus da prova do controlador. Use quando o tratamento não seria esperado pelo titular: newsletter de quem não é cliente, envio de dados de navegação para anúncios, dados sensíveis.</p></div>
+    <div class="card"><span class="chip l">Art. 7º, V</span><h3 style="margin:2.5mm 0 1.5mm">Execução de contrato</h3><p style="font-size:8.8pt;margin:0">Para o que é necessário cumprir o contrato ou procedimentos preliminares a pedido do titular: responder ao orçamento solicitado, entregar o pedido, enviar boleto e rastreio. Não cobre marketing de novos produtos.</p></div>
+    <div class="card"><span class="chip l">Art. 7º, IX</span><h3 style="margin:2.5mm 0 1.5mm">Legítimo interesse</h3><p style="font-size:8.8pt;margin:0">Para finalidades legítimas a partir de situações concretas, com dados estritamente necessários, transparência e teste de balanceamento documentado. Cobre, por exemplo, ofertas a clientes atuais e exclusão de compradores de campanhas. Nunca serve para dados sensíveis.</p></div>
+  </div>
+  <h2>Consentimento que vale (art. 8º)</h2>
+  <div class="box lei"><span class="lbl">LGPD · Art. 8º, §§ 2º, 4º e 5º</span><p>Cabe ao controlador o ônus da prova de que o consentimento foi obtido em conformidade com o disposto nesta Lei. […] O consentimento deverá referir-se a finalidades determinadas, e as autorizações genéricas para o tratamento de dados pessoais serão nulas. […] O consentimento pode ser revogado a qualquer momento mediante manifestação expressa do titular, por procedimento gratuito e facilitado […].</p><p class="com"><b>Comentário</b>Três consequências práticas: (1) é preciso guardar a prova — data, hora, texto exibido, origem; (2) “concordo com tudo” não vale, cada finalidade precisa estar clara; (3) sair tem que ser tão fácil quanto entrar — link de descadastro no e-mail, “SAIR” no WhatsApp, botão de rejeitar no banner.</p></div>
+  <table class="tbl">
+    <thead><tr><th>Consentimento inválido</th><th>Consentimento válido</th></tr></thead>
+    <tbody>
+      <tr><td>Caixa “Aceito receber ofertas” pré-marcada</td><td>Caixa desmarcada, marcada ativamente pelo titular</td></tr>
+      <tr><td>“Ao enviar, você concorda com nossos termos” (que incluem marketing de parceiros)</td><td>Opção separada e específica para marketing, e outra para parceiros</td></tr>
+      <tr><td>Banner de cookies só com “Aceitar” ou com “Rejeitar” escondido</td><td>“Aceitar” e “Rejeitar” com o mesmo destaque, mais “Personalizar”</td></tr>
+      <tr><td>Consentimento condicionado ao serviço sem necessidade (“para baixar o e-book, aceite receber SMS de parceiros”)</td><td>Material entregue independentemente da opção por comunicações extras</td></tr>
+      <tr><td>Nenhum registro de quando e como foi dado</td><td>Log com data, hora, IP, versão do texto e origem do formulário</td></tr>
+    </tbody>
+  </table>
+  <h2>Legítimo interesse sem achismo (art. 10)</h2>
+  <div class="box lei"><span class="lbl">LGPD · Art. 10</span><p>O legítimo interesse do controlador somente poderá fundamentar tratamento de dados pessoais para finalidades legítimas, consideradas a partir de situações concretas, que incluem, mas não se limitam a: I - apoio e promoção de atividades do controlador; e II - proteção, em relação ao titular, do exercício regular de seus direitos ou prestação de serviços que o beneficiem […]. § 1º Quando o tratamento for baseado no legítimo interesse do controlador, somente os dados pessoais estritamente necessários para a finalidade pretendida poderão ser tratados. § 2º O controlador deverá adotar medidas para garantir a transparência do tratamento de dados baseado em seu legítimo interesse.</p><p class="com"><b>Comentário</b>“Apoio e promoção de atividades do controlador” é marketing. Mas o legítimo interesse exige o teste de balanceamento — o LIA, recomendado pelo Guia Orientativo da ANPD de 2024 — e o registro da operação (art. 37). O modelo J deste livro traz um LIA pronto para remarketing.</p></div>
+  <p>O teste segue três etapas: <strong>(1) finalidade legítima</strong> — o interesse é lícito, concreto e atual?; <strong>(2) necessidade</strong> — os dados são os mínimos e não há meio menos invasivo?; <strong>(3) balanceamento e salvaguardas</strong> — o titular razoavelmente esperaria esse uso, considerando a relação com a empresa? Há opt-out simples? Há crianças ou pessoas vulneráveis envolvidas?</p>
+  <div class="box agencia"><span class="lbl">Na agência</span><p><strong>Tende a passar no teste:</strong> anúncio para clientes atuais sobre produto relacionado ao que já compraram; lista de compradores usada como público de exclusão; remarketing de quem visitou o site, com aviso transparente e banner de cookies funcionando.<br><strong>Tende a falhar:</strong> anúncio com base em lista comprada; segmentação por dados de saúde; disparo em massa no WhatsApp para quem nunca teve relação com a marca; uso de base de um cliente para outro.</p></div>
+  <h2>Dados sensíveis (art. 11)</h2>
+  <div class="box lei"><span class="lbl">LGPD · Art. 11, I, e § 4º</span><p>O tratamento de dados pessoais sensíveis somente poderá ocorrer nas seguintes hipóteses: I - quando o titular ou seu responsável legal consentir, de forma específica e destacada, para finalidades específicas; […] § 4º É vedada a comunicação ou o uso compartilhado entre controladores de dados pessoais sensíveis referentes à saúde com objetivo de obter vantagem econômica, exceto nas hipóteses relativas a prestação de serviços de saúde, de assistência farmacêutica e de assistência à saúde […].</p><p class="com"><b>Comentário</b>Para marketing com dado sensível, na prática só resta o consentimento específico e destacado. O art. 11 não tem legítimo interesse. Subir lista de pacientes de uma clínica para Custom Audiences sem esse consentimento é tratamento irregular — e as próprias plataformas restringem o uso de dados de saúde em eventos e públicos.</p></div>
+  <h2>Crianças e adolescentes (art. 14)</h2>
+  <div class="box lei"><span class="lbl">LGPD · Art. 14, caput e § 1º</span><p>O tratamento de dados pessoais de crianças e de adolescentes deverá ser realizado em seu melhor interesse, nos termos deste artigo e da legislação pertinente. § 1º O tratamento de dados pessoais de crianças deverá ser realizado com o consentimento específico e em destaque dado por pelo menos um dos pais ou pelo responsável legal.</p><p class="com"><b>Comentário</b>A ANPD (Enunciado CD/ANPD nº 1/2023) admitiu outras bases legais além do consentimento, sempre no melhor interesse da criança. Para publicidade, o cenário é mais restritivo: o CDC já veda publicidade abusiva que se aproveite da deficiência de julgamento da criança, e o Estatuto Digital da Criança e do Adolescente (Lei nº 15.211/2025) reforçou limites ao perfilamento para fins publicitários. Escolas, cursos infantis, brinquedos e games: trate a segmentação de menores como zona proibida e direcione a comunicação aos responsáveis.</p></div>
+  <h2>Mapa rápido: base legal por operação</h2>
+  <table class="tbl">
+    <thead><tr><th>Operação</th><th>Base mais comum</th><th>Cuidados</th></tr></thead>
+    <tbody>
+      <tr><td>Responder lead que pediu orçamento</td><td>Execução de contrato (procedimentos preliminares)</td><td>Só sobre o que foi pedido, no canal informado</td></tr>
+      <tr><td>Newsletter e ofertas para quem não é cliente</td><td>Consentimento</td><td>Opt-in ativo, descadastro em um clique</td></tr>
+      <tr><td>Ofertas relacionadas para clientes atuais</td><td>Legítimo interesse</td><td>LIA, transparência, opt-out em toda mensagem</td></tr>
+      <tr><td>Público de exclusão (não mostrar anúncio a quem já comprou)</td><td>Legítimo interesse</td><td>Aviso de privacidade mencionando plataformas</td></tr>
+      <tr><td>Custom Audiences / Customer Match de clientes</td><td>Legítimo interesse ou consentimento</td><td>Consentimento se não houver relação prévia ou se houver dado sensível</td></tr>
+      <tr><td>Pixel e cookies de publicidade</td><td>Consentimento (Guia de Cookies da ANPD)</td><td>Disparar só após aceite; registrar a escolha</td></tr>
+      <tr><td>CAPI com e-mail e telefone de compradores</td><td>Legítimo interesse ou consentimento, conforme LIA</td><td>Respeitar o sinal de consentimento do banner</td></tr>
+      <tr><td>Guardar nota fiscal e dados da venda</td><td>Obrigação legal</td><td>Não reaproveitar para marketing sem outra base</td></tr>
+      <tr><td>Dados de saúde, religião ou política em campanhas</td><td>Consentimento específico e destacado (art. 11)</td><td>Evitar ao máximo; RIPD recomendado</td></tr>
+    </tbody>
+  </table>
+  <h2>Fim do tratamento (arts. 15 e 16)</h2>
+  <p>O tratamento termina quando a finalidade é alcançada, quando os dados deixam de ser necessários, quando acaba o período de tratamento, quando o titular revoga o consentimento ou por determinação da ANPD. A partir daí, os dados devem ser <strong>eliminados</strong>, salvo as exceções do art. 16 — como cumprimento de obrigação legal ou uso exclusivo do controlador, desde que anonimizados.</p>
+  <div class="box alerta"><span class="lbl">Atenção</span><p>Para a agência, o momento crítico é o <strong>fim do contrato com o cliente</strong>. Bases, exportações, públicos, dashboards e acessos precisam ser devolvidos ou apagados, com termo de encerramento assinado (modelo I). Agência que mantém base de ex-cliente “por garantia” está tratando dados sem base legal.</p></div>
+</section>

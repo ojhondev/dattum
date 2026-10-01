@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { AuthShell } from "@/components/marketing/AuthShell";
 import { linkAssinar } from "@/lib/contato";
+import { BotaoGoogle, mensagemErroGoogle } from "@/components/marketing/BotaoGoogle";
 
 function CadastroForm() {
   const router = useRouter();
@@ -13,7 +14,7 @@ function CadastroForm() {
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
-  const [erro, setErro] = useState("");
+  const [erro, setErro] = useState(() => mensagemErroGoogle(params.get("erro")) ?? "");
   const [enviando, setEnviando] = useState(false);
 
   const submit = async (e: FormEvent) => {
@@ -60,6 +61,17 @@ function CadastroForm() {
             className="field-input mt-1.5 font-mono uppercase"
           />
         </label>
+        <div className="pt-1">
+          <BotaoGoogle codigo={codigo} desabilitado={codigo.trim().length < 6} rotulo="Ativar com Google" />
+          <p className="mt-2 text-caption text-faint">
+            {codigo.trim().length < 6 ? "Digite o código acima para ativar com o Google." : "Usa o nome da agência informado no seu código e o e-mail da conta Google."}
+          </p>
+        </div>
+        <div className="flex items-center gap-3 font-mono text-caption uppercase text-faint">
+          <span className="h-px flex-1 bg-line" />
+          ou crie uma senha
+          <span className="h-px flex-1 bg-line" />
+        </div>
         <label className="block">
           <span className="text-body-sm font-medium text-body">Nome da agência</span>
           <input type="text" value={nome} onChange={(e) => setNome(e.target.value)} required className="field-input mt-1.5" />

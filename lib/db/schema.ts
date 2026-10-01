@@ -13,7 +13,8 @@ export const agencias = pgTable("agencias", {
   id: uuid("id").primaryKey().defaultRandom(),
   nome: text("nome").notNull(),
   email: text("email").notNull().unique(),
-  senhaHash: text("senha_hash").notNull(),
+  senhaHash: text("senha_hash").notNull(), // no login só com Google, guarda um hash aleatório (senha desconhecida)
+  googleSub: text("google_sub").unique(), // id da conta Google vinculada
   cnpj: text("cnpj"),
   plano: text("plano").notNull().default("growth"), // start | growth | scale
   clientesContratados: integer("clientes_contratados"), // nulo = sem limite (ex.: demo)
