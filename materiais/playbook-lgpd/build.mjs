@@ -8,8 +8,13 @@ import puppeteer from "puppeteer-core";
 const dir = dirname(fileURLToPath(import.meta.url));
 const assets = pathToFileURL(join(dir, "..", "..", "public")).href;
 const partes = join(dir, "src", "partes");
-const conteudo = readdirSync(partes).filter((f) => f.endsWith(".html")).sort()
-  .map((f) => readFileSync(join(partes, f), "utf8")).join("\n");
+// Partes .html entram como estão; partes .mjs exportam (default) o HTML gerado a partir de dados.
+const blocos = [];
+for (const f of readdirSync(partes).sort()) {
+  if (f.endsWith(".html")) blocos.push(readFileSync(join(partes, f), "utf8"));
+  else if (f.endsWith(".mjs")) blocos.push((await import(pathToFileURL(join(partes, f)).href)).default);
+}
+const conteudo = blocos.join("\n");
 
 const html = readFileSync(join(dir, "src", "shell.html"), "utf8")
   .replace("<!--CONTENT-->", conteudo)

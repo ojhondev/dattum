@@ -144,7 +144,7 @@ table.tbl{width:100%;border-collapse:separate;border-spacing:0;margin:0 0 4mm;fo
 .doc .dt{font-family:var(--slab);font-size:12pt;color:var(--ink);text-align:center;margin-bottom:3.5mm}
 .doc .cl{font-family:var(--mono);font-size:7pt;letter-spacing:.06em;text-transform:uppercase;color:var(--brand-ink);margin:3.5mm 0 1.2mm}
 .doc p{margin-bottom:1.8mm}
-.doc .ph{background:var(--caution-tint);color:#6d5200;border-radius:1mm;padding:0 1mm;font-family:var(--mono);font-size:7.4pt}
+.ph{background:var(--caution-tint);color:#6d5200;border-radius:1mm;padding:0 1mm;font-family:var(--mono);font-size:7.4pt}
 .doc .sig{display:grid;grid-template-columns:1fr 1fr;gap:10mm;margin:8mm 0 3mm}
 .doc .sig div{border-top:1px solid var(--ink);padding-top:1.5mm;font-size:7.8pt;color:var(--muted);text-align:center}
 .doc-cont{border-top-left-radius:0;border-top-right-radius:0;border-top:1px dashed var(--line-strong)}
@@ -152,13 +152,13 @@ table.tbl{width:100%;border-collapse:separate;border-spacing:0;margin:0 0 4mm;fo
 /* Sumário */
 .toc{margin:0;padding:0;list-style:none}
 .toc li{display:flex;align-items:baseline;gap:2mm;padding:1.55mm 0;border-bottom:1px solid var(--line);margin:0}
-.toc li .n{font-family:var(--mono);font-size:7pt;color:var(--brand-ink);width:12mm;flex:none}
+.toc li .n{font-family:var(--mono);font-size:7pt;color:var(--brand-ink);width:15mm;flex:none;white-space:nowrap}
 .toc li .t{flex:1;color:var(--ink)}
 .toc li .p{font-family:var(--mono);font-size:8pt;color:var(--ink)}
-.toc li.part{border-bottom:0;padding:5mm 0 1.5mm}
-.toc li.part .t{font-family:var(--slab);font-size:13pt}
-.toc li.part .n{color:var(--faint)}
-.toc li.part .p{background:var(--forest);color:var(--brand);border-radius:999px;padding:.5mm 2.5mm}
+.toc li.tp{border-bottom:0;padding:5mm 0 1.5mm}
+.toc li.tp .t{font-family:var(--slab);font-size:13pt}
+.toc li.tp .n{color:var(--faint)}
+.toc li.tp .p{background:var(--forest);color:var(--brand);border-radius:999px;padding:.5mm 2.5mm}
 .toc li.sub .t{color:var(--muted);font-size:8.8pt;padding-left:4mm}
 
 /* ---------- Capa ---------- */
@@ -190,7 +190,7 @@ table.tbl{width:100%;border-collapse:separate;border-spacing:0;margin:0 0 4mm;fo
 .back li{background:rgba(255,255,255,.45);border-radius:999px;padding:1.6mm 4mm;font-family:var(--mono);font-size:7pt;letter-spacing:.06em;text-transform:uppercase}
 .back .foot-b{position:absolute;left:0;right:0;bottom:0;height:72mm;background:var(--forest);color:#c9d6d0}
 .back .foot-b .au{position:absolute;left:20mm;top:16mm;display:flex;gap:5mm;align-items:center;width:110mm}
-.back .foot-b img.ph{width:22mm;height:22mm;border-radius:999px;object-fit:cover;border:1mm solid var(--brand)}
+.back .foot-b img.fot{width:22mm;height:22mm;border-radius:999px;object-fit:cover;border:1mm solid var(--brand)}
 .back .foot-b .au p{font-size:8.6pt;color:#c9d6d0;margin:0}
 .back .foot-b .au b{display:block;font-family:var(--slab);font-weight:400;font-size:13pt;color:#fff;margin-bottom:1mm}
 .back .foot-b .lg{position:absolute;right:20mm;top:18mm;height:10mm}
