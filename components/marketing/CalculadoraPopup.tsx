@@ -172,7 +172,7 @@ export function CalculadoraPopup() {
         <div className="mt-6 grid grid-cols-3 divide-x divide-line border-y border-line">
           <Resultado label="Multa máxima" valor={brl(multa)} nota="2% do faturamento anual (art. 52)" />
           <Resultado label="7 dias de BM parada" valor={brl(bmParada)} nota="mídia dos clientes parada" />
-          <Resultado label="Dattis Growth" valor={`${brl(dattisMes)}/mês`} nota={`${clientes} ${clientes === 1 ? "cliente" : "clientes"} × R$ ${PRECO_GROWTH}`} />
+          <Resultado label="Dattis Growth" valor={`R$ ${PRECO_GROWTH}/cliente`} nota={`R$ ${PRECO_GROWTH}/cliente/mês`} />
         </div>
 
         <p className="mt-5 font-display text-[17px] leading-snug text-ink sm:text-[19px]">
