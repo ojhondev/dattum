@@ -222,6 +222,7 @@
 .diag-q { max-width: 600px; }
 .diag-intro-sub { margin-bottom: 24px; }
 .diag-cta { background: var(--color-rail); border-radius: 40px; padding: 40px; }
+.diag-cta h3 { color: #fff; }
 .diag-cta-btn { font-family: var(--font-mono); text-transform: uppercase; font-weight: 500; letter-spacing: .02em; font-size: .85rem; }
 .diag-cta-btn:not(.ghost) { background: var(--color-brand); border-color: var(--color-brand); color: var(--color-on-brand); }
 .diag-field input { border-radius: 12px; }
