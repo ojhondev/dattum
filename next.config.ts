@@ -2,6 +2,14 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   serverExternalPackages: ["puppeteer-core", "@sparticuz/chromium-min"],
+  // Fontes e logo lidos em tempo de execução pelas imagens de compartilhamento (lib/og.tsx).
+  outputFileTracingIncludes: {
+    "/blog/**": ["./assets/fonts/**", "./public/brand/logo-fundo-dark.png"],
+    "/opengraph-image": ["./assets/fonts/**", "./public/brand/logo-fundo-dark.png"],
+  },
+  images: {
+    remotePatterns: [{ protocol: "https", hostname: "*.public.blob.vercel-storage.com" }],
+  },
   // A própria Dattis passa na vigilância que ela roda nos clientes.
   async headers() {
     return [

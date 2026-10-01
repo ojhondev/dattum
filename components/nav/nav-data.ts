@@ -11,6 +11,7 @@ import {
   Trophy,
   CircleHelp,
   MessageCircle,
+  Newspaper,
   type LucideIcon,
 } from "lucide-react";
 import { WHATSAPP_EXIBICAO, linkContato } from "@/lib/contato";
@@ -46,6 +47,7 @@ export const NAV_GROUPS: NavGroup[] = [
   {
     label: "Sobre",
     items: [
+      { href: "/blog", label: "Blog", desc: "LGPD e tráfego pago, sem juridiquês.", icon: Newspaper },
       { href: "/#diferencial", label: "Diferencial competitivo", desc: "Privacidade como argumento de venda da agência.", icon: Trophy },
       { href: "/#faq", label: "Perguntas frequentes", desc: "RAT, DPA, selo, BM suspensa e preços.", icon: CircleHelp },
       { href: linkContato("Olá! Vim pelo site da Dattis e quero falar com a equipe."), label: "WhatsApp", desc: WHATSAPP_EXIBICAO, icon: MessageCircle },

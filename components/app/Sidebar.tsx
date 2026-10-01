@@ -16,6 +16,8 @@ import {
   Building2,
   Inbox,
   KeyRound,
+  Newspaper,
+  SearchCheck,
   PanelLeftClose,
   PanelLeftOpen,
   Menu,
@@ -62,6 +64,13 @@ const GRUPOS_ADMIN: Grupo[] = [
     items: [
       { href: "/admin/vigilancia", label: "Vigilância", icon: Radar },
       { href: "/admin/agencias", label: "Agências", icon: Building2 },
+    ],
+  },
+  {
+    title: "Conteúdo",
+    items: [
+      { href: "/admin/blog", label: "Blog", icon: Newspaper },
+      { href: "/admin/seo", label: "SEO", icon: SearchCheck },
     ],
   },
   {

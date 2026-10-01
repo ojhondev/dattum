@@ -18,7 +18,8 @@ const SPRINT = [
 ];
 
 export const metadata: Metadata = {
-  title: "Planos",
+  title: "Planos e preços",
+  alternates: { canonical: "/planos" },
   description: "Planos da Dattis de R$ 47 a R$ 297 por cliente da agência, por mês. Uma assinatura custa muito menos que uma multa da LGPD.",
 };
 

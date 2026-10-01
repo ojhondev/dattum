@@ -191,6 +191,37 @@
   }
   .pixel-corners-sm { --px: 2px; }
 
+  /* ---------- Texto dos artigos do blog (Markdown renderizado) ---------- */
+  .artigo { font-size: 19px; line-height: 1.78; color: var(--color-body); }
+  .artigo > * + * { margin-top: 1.15em; }
+  .artigo h2 { font-family: var(--font-display); font-size: clamp(1.6rem, 2.6vw, 2.1rem); line-height: 1.18; color: var(--color-ink); margin-top: 2.1em; scroll-margin-top: 100px; }
+  .artigo h3 { font-family: var(--font-display); font-size: 1.35rem; line-height: 1.25; color: var(--color-ink); margin-top: 1.8em; scroll-margin-top: 100px; }
+  .artigo h4 { font-weight: 600; color: var(--color-ink); margin-top: 1.6em; }
+  .artigo a { color: var(--color-brand-ink); text-decoration: underline; text-decoration-color: var(--color-brand-strong); text-decoration-thickness: 2px; text-underline-offset: 3px; }
+  .artigo a:hover { background: var(--color-brand-tint); }
+  .artigo strong { color: var(--color-ink); font-weight: 600; }
+  .artigo ul, .artigo ol { padding-left: 1.3em; }
+  .artigo ul { list-style: none; }
+  .artigo ul > li { position: relative; }
+  .artigo ul > li::before { content: ""; position: absolute; left: -1.05em; top: 0.72em; width: 8px; height: 8px; background: var(--color-brand-strong); }
+  .artigo ol { list-style: decimal; }
+  .artigo ol > li::marker { font-family: var(--font-mono); color: var(--color-brand-ink); }
+  .artigo li + li { margin-top: 0.45em; }
+  .artigo blockquote { background: var(--color-brand-tint); color: var(--color-ink); padding: 22px 26px; border-radius: 20px; font-family: var(--font-display); font-size: 1.2em; line-height: 1.5; }
+  .artigo figure img { width: 100%; border-radius: 20px; }
+  .artigo figcaption { margin-top: 10px; font-size: 14px; color: var(--color-muted); text-align: center; }
+  .artigo code { font-family: var(--font-mono); font-size: 0.85em; background: var(--color-surface-2); border: 1px solid var(--color-line); border-radius: 6px; padding: 1px 6px; }
+  .artigo pre { background: var(--color-rail); color: #e4f9ee; border-radius: 16px; padding: 18px 20px; overflow-x: auto; font-size: 15px; }
+  .artigo pre code { background: none; border: 0; padding: 0; color: inherit; }
+  .artigo hr { border: 0; height: 8px; background: repeating-linear-gradient(90deg, var(--color-brand-strong) 0 8px, transparent 8px 16px); margin: 2.4em 0; }
+  .artigo .tabela { overflow-x: auto; border: 1px solid var(--color-line); border-radius: 16px; }
+  .artigo table { width: 100%; border-collapse: collapse; font-size: 16px; line-height: 1.5; }
+  .artigo th { background: var(--color-surface-2); text-align: left; font-family: var(--font-mono); font-size: 12px; font-weight: 400; text-transform: uppercase; letter-spacing: 0.04em; color: var(--color-muted); }
+  .artigo th, .artigo td { padding: 12px 16px; border-bottom: 1px solid var(--color-line); vertical-align: top; }
+  .artigo tr:last-child td { border-bottom: 0; }
+  @media (min-width: 1024px) { .artigo figure { margin-left: -90px; margin-right: -90px; } }
+  @media (max-width: 640px) { .artigo { font-size: 17.5px; } }
+
   /* Elementos fixos que saem da frente durante a leitura em tela cheia (O problema). */
   .sai-no-foco { transition: opacity 200ms ease, transform 200ms ease; }
 
@@ -505,3 +536,6 @@ table.painel-table a:hover { text-decoration: underline; }
 
 /* Fora das camadas de propósito: precisa vencer utilitários como opacity-100. */
 [data-foco] .sai-no-foco { opacity: 0 !important; transform: translateY(12px) !important; pointer-events: none !important; }
+
+/* Botões flutuantes: no tema escuro o verde-floresta some no fundo, então invertem pra menta. */
+:root[data-theme="dark"] .flutuante-escuro { background: var(--color-brand); color: var(--color-on-brand); }

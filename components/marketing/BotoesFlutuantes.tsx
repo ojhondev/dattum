@@ -40,8 +40,8 @@ export function BotoesFlutuantes() {
           <span className="absolute bottom-0.5 right-0.5 h-3 w-3 rounded-full border-2 border-white bg-[#25d366]" />
         </span>
         <span className="relative -ml-1.5 flex items-center">
-          <span aria-hidden="true" className="pixel-corners pixel-corners-sm h-1.5 w-1.5 bg-rail" />
-          <span className="pixel-corners pixel-corners-sm bg-rail px-2 py-1 font-mono text-[9.5px] uppercase leading-none tracking-[0.06em] text-brand sm:px-2.5 sm:py-1.5 sm:text-[10.5px]">
+          <span aria-hidden="true" className="flutuante-escuro pixel-corners pixel-corners-sm h-1.5 w-1.5 bg-rail" />
+          <span className="flutuante-escuro pixel-corners pixel-corners-sm bg-rail px-2 py-1 font-mono text-[9.5px] uppercase leading-none tracking-[0.06em] text-brand sm:px-2.5 sm:py-1.5 sm:text-[10.5px]">
             Fale com Especialista
           </span>
         </span>
@@ -54,7 +54,7 @@ export function BotoesFlutuantes() {
         tabIndex={rolou ? 0 : -1}
         className={
           base +
-          " right-3.5 flex h-12 w-12 items-center justify-center rounded-full bg-rail text-brand shadow-[0_6px_20px_rgba(0,40,32,0.28)] transition-all duration-300 hover:-translate-y-0.5 sm:right-6 sm:h-[52px] sm:w-[52px] " +
+          " flutuante-escuro right-3.5 flex h-12 w-12 items-center justify-center rounded-full bg-rail text-brand shadow-[0_6px_20px_rgba(0,40,32,0.28)] transition-all duration-300 hover:-translate-y-0.5 sm:right-6 sm:h-[52px] sm:w-[52px] " +
           (rolou ? "opacity-100" : "pointer-events-none translate-y-3 opacity-0")
         }
       >

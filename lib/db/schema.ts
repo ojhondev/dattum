@@ -178,3 +178,49 @@ export const varreduraResultados = pgTable("varredura_resultados", {
   achados: jsonb("achados").$type<Achado[]>().notNull(),
   verificadoEm: timestamp("verificado_em").notNull().defaultNow(),
 });
+
+// ---------- Blog (CMS no /admin) ----------
+
+export const autores = pgTable("autores", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  nome: text("nome").notNull(),
+  slug: text("slug").notNull().unique(),
+  cargo: text("cargo"),
+  bio: text("bio"),
+  fotoUrl: text("foto_url"),
+  criadoEm: timestamp("criado_em").notNull().defaultNow(),
+});
+
+export type PerguntaFaq = { pergunta: string; resposta: string };
+
+export const posts = pgTable("posts", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  slug: text("slug").notNull().unique(),
+  titulo: text("titulo").notNull(),
+  resumo: text("resumo").notNull().default(""), // subtítulo na página e fallback da meta description
+  conteudo: text("conteudo").notNull().default(""), // Markdown
+  capaUrl: text("capa_url"),
+  capaAlt: text("capa_alt"),
+  categoria: text("categoria").notNull().default("LGPD"),
+  tags: jsonb("tags").$type<string[]>().notNull().default([]),
+  autorId: uuid("autor_id").references(() => autores.id, { onDelete: "set null" }),
+  status: text("status").notNull().default("rascunho"), // rascunho | publicado (publicadoEm no futuro = agendado)
+  publicadoEm: timestamp("publicado_em"),
+  // SEO
+  seoTitulo: text("seo_titulo"),
+  seoDescricao: text("seo_descricao"),
+  palavraChave: text("palavra_chave"),
+  canonical: text("canonical"),
+  ogImagem: text("og_imagem"),
+  noindex: boolean("noindex").notNull().default(false),
+  faq: jsonb("faq").$type<PerguntaFaq[]>().notNull().default([]),
+  criadoEm: timestamp("criado_em").notNull().defaultNow(),
+  atualizadoEm: timestamp("atualizado_em").notNull().defaultNow(),
+});
+
+// Configurações globais editáveis no admin (SEO, verificação do Google/Bing etc.).
+export const configuracoes = pgTable("configuracoes", {
+  chave: text("chave").primaryKey(),
+  valor: text("valor").notNull(),
+  atualizadoEm: timestamp("atualizado_em").notNull().defaultNow(),
+});

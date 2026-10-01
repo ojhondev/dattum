@@ -4,6 +4,8 @@ import "./globals.css";
 import { cn } from "@/lib/utils";
 import { THEME_COOKIE } from "@/lib/theme";
 import { BotoesFlutuantes } from "@/components/marketing/BotoesFlutuantes";
+import { lerConfiguracoes } from "@/lib/blog";
+import { SITE_URL, SITE_NOME, SITE_DESCRICAO } from "@/lib/site";
 
 const slab = Montagu_Slab({
   subsets: ["latin"],
@@ -23,14 +25,34 @@ const mono = Geist_Mono({
   variable: "--nf-mono",
 });
 
-export const metadata: Metadata = {
-  title: {
-    default: "Dattis — Compliance LGPD para agências de tráfego pago",
-    template: "%s · Dattis",
-  },
-  description:
-    "A Dattis gera, para cada cliente que sua agência atende, o RAT, o DPA e o registro de subprocessadores — sem precisar contratar um advogado por documento.",
-};
+// Metadados globais. Verificação do Google/Bing e descrição padrão vêm do admin (/admin/seo).
+export async function generateMetadata(): Promise<Metadata> {
+  const cfg = await lerConfiguracoes();
+  const descricao = cfg.site_descricao || SITE_DESCRICAO;
+  return {
+    metadataBase: new URL(SITE_URL),
+    title: {
+      default: "Dattis — Compliance LGPD para agências de tráfego pago",
+      template: "%s · Dattis",
+    },
+    description: descricao,
+    applicationName: SITE_NOME,
+    alternates: { types: { "application/rss+xml": [{ url: "/blog/rss.xml", title: "Blog Dattis" }] } },
+    openGraph: {
+      type: "website",
+      locale: "pt_BR",
+      siteName: SITE_NOME,
+      title: "Dattis — Compliance LGPD para agências de tráfego pago",
+      description: descricao,
+    },
+    twitter: { card: "summary_large_image" },
+    robots: { index: true, follow: true, googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1 } },
+    verification: {
+      google: cfg.google_verificacao || undefined,
+      other: cfg.bing_verificacao ? { "msvalidate.01": cfg.bing_verificacao } : undefined,
+    },
+  };
+}
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (

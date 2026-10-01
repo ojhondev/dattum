@@ -1,4 +1,8 @@
+import type { Metadata } from "next";
 import Link from "next/link";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { lerConfiguracoes } from "@/lib/blog";
+import { schemaOrganizacao, schemaSite, schemaFaq } from "@/lib/schema-org";
 import { ArrowRight, CircleCheck, Inbox, MessageSquareWarning, GraduationCap, Siren, Landmark } from "lucide-react";
 import { SiteHeader } from "@/components/marketing/SiteHeader";
 import { SiteFooter } from "@/components/marketing/SiteFooter";
@@ -133,9 +137,24 @@ function ModuleText({ name, body, cta, href, dark = false }: { name: string; bod
 
 const CARD = "block-card flex flex-col justify-between gap-12 px-8 pt-12 sm:px-14 sm:pt-16 lg:col-span-6";
 
-export default function LandingPage() {
+export const metadata: Metadata = {
+  title: { absolute: "Dattis — LGPD para agências de tráfego pago" },
+  description:
+    "Sua agência de tráfego está em conformidade com a LGPD? Registro de tratamento, contrato com o cliente, certificado de privacidade, vigilância diária e dossiê para BM suspensa. A partir de R$ 47 por cliente.",
+  alternates: { canonical: "/" },
+};
+
+export default async function LandingPage() {
+  const cfg = await lerConfiguracoes();
   return (
     <div className="relative">
+      <JsonLd
+        dados={[
+          schemaOrganizacao([cfg.instagram, cfg.linkedin, cfg.youtube].filter((r): r is string => !!r)),
+          schemaSite(),
+          schemaFaq(FAQ_ITEMS.map((f) => ({ pergunta: f.q, resposta: f.a }))),
+        ]}
+      />
       <div className="announce">
         <p className="px-5 py-2.5 text-center text-[13px]">
           Sofreu uma denúncia ou multa?{" "}

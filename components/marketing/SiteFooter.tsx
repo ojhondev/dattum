@@ -27,6 +27,7 @@ const COLUMNS: { title: string; links: { label: string; href: string }[] }[] = [
     title: "Sobre",
     links: [
       { label: "Planos", href: "/planos" },
+      { label: "Blog", href: "/blog" },
       { label: "Diferencial competitivo", href: "/#diferencial" },
       { label: "O papel do DPO", href: "/#dpo" },
       { label: "Perguntas frequentes", href: "/#faq" },
