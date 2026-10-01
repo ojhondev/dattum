@@ -17,7 +17,7 @@ export function RatVisual() {
     <div aria-hidden="true" className="relative">
       <div className={SCREEN}>
         <p className="font-mono text-[11px] uppercase tracking-[0.05em] text-[#59645f]">RAT · Loja Aurora</p>
-        <p className="font-display mt-2 text-[20px] leading-tight">Conversion API (CAPI) e Custom Audiences</p>
+        <p className="font-display mt-2 text-[20px] leading-tight">Envio de vendas e leads pro Meta (API de Conversões)</p>
         <dl className="mt-5 divide-y divide-[#e3e3e1] text-[13px]">
           {rows.map(([k, v]) => (
             <div key={k} className="grid grid-cols-[120px_1fr] gap-3 py-2.5">

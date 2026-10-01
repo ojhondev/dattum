@@ -82,6 +82,20 @@ export function CalculadoraPopup() {
     const abrir = () => setAberto(true);
     window.addEventListener(EVENTO, abrir);
 
+    // Links pra "#calculadora" (menu Ferramentas) abrem o popup sem sair da página.
+    const aoClicar = (e: MouseEvent) => {
+      const a = (e.target as HTMLElement | null)?.closest?.("a");
+      if (a && a.getAttribute("href")?.endsWith("#calculadora")) {
+        e.preventDefault();
+        abrir();
+      }
+    };
+    document.addEventListener("click", aoClicar, true);
+    if (window.location.hash === "#calculadora") {
+      abrir();
+      history.replaceState(null, "", window.location.pathname + window.location.search);
+    }
+
     let vistaRecente = false;
     try {
       const t = Number(localStorage.getItem(CHAVE) ?? 0);
@@ -93,6 +107,7 @@ export function CalculadoraPopup() {
 
     return () => {
       window.removeEventListener(EVENTO, abrir);
+      document.removeEventListener("click", aoClicar, true);
       if (timer) clearTimeout(timer);
     };
   }, []);

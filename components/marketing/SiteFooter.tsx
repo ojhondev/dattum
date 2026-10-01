@@ -19,7 +19,7 @@ const COLUMNS: { title: string; links: { label: string; href: string }[] }[] = [
   {
     title: "Ferramentas",
     links: [
-      { label: "Diagnóstico Expresso", href: "/diagnostico" },
+      { label: "Auditoria da sua agência", href: "/diagnostico" },
       { label: "Auditoria de site", href: "/auditoria" },
     ],
   },
@@ -86,7 +86,7 @@ export function SiteFooter() {
               Ver planos
             </Link>
             <Link href="/diagnostico" className="btn border-white/25 text-white hover:border-white/60">
-              Fazer diagnóstico
+              Auditar minha agência
             </Link>
           </div>
         </div>

@@ -7,23 +7,6 @@ import { PLANOS, type PlanoId } from "@/lib/planos";
 
 const nomePlano = (id: string) => PLANOS.find((p) => p.id === id)?.nome ?? id;
 
-export function SairAdmin() {
-  const router = useRouter();
-  return (
-    <button
-      type="button"
-      onClick={async () => {
-        await fetch("/api/admin/sair", { method: "POST" });
-        router.push("/admin/entrar");
-        router.refresh();
-      }}
-      className="btn btn-ghost"
-    >
-      Sair
-    </button>
-  );
-}
-
 export function NovoCodigo() {
   const router = useRouter();
   const [clienteNome, setClienteNome] = useState("");

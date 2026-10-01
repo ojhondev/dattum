@@ -1,4 +1,6 @@
-export type FlowKey = "capi" | "ads" | "whatsapp" | "crm";
+import type { FlowKey } from "@/lib/fluxos";
+
+export type { FlowKey };
 
 export type FlowTemplate = {
   nomeAtividade: string;
@@ -7,50 +9,65 @@ export type FlowTemplate = {
   baseLegal: string;
   titulares: string;
   prazoRetencao: string;
-  subprocessadorChave: string | null; // chave em subprocessadores_catalogo
+  subprocessadorChaves: string[]; // chaves em subprocessadores_catalogo
 };
 
+// Uma atividade de RAT por fluxo marcado na ativação da conta. Nome em linguagem de gestor; termo técnico entre parênteses.
 export const FLOW_TEMPLATES: Record<FlowKey, FlowTemplate> = {
+  publicos: {
+    nomeAtividade: "Envio de lista de clientes pra criar público nos anúncios (Público personalizado / Customer Match)",
+    categoriasDado: "Nome, e-mail e telefone de clientes e leads, enviados criptografados (hash) às plataformas de anúncio",
+    finalidade: "Criar públicos de remarketing, públicos semelhantes e listas de exclusão nas campanhas do cliente",
+    baseLegal: "Consentimento do titular ou legítimo interesse do controlador, com teste de balanceamento (art. 7º, I e IX, LGPD)",
+    titulares: "Clientes e leads da base do cliente final",
+    prazoRetencao: "Enquanto o público estiver em uso nas campanhas, removido em até 30 dias após o fim do contrato",
+    subprocessadorChaves: ["meta-ads", "google-ads"],
+  },
   capi: {
-    nomeAtividade: "Conversion API (CAPI) e Custom Audiences",
+    nomeAtividade: "Envio de vendas e leads do site/CRM pras plataformas (API de Conversões do Meta / Conversões otimizadas do Google)",
     categoriasDado:
-      "Dado de contato hasheado (e-mail, telefone), identificador de dispositivo, evento de conversão (compra, cadastro, checkout)",
-    finalidade:
-      "Otimizar e mensurar campanhas de tráfego pago via Meta Ads em nome do cliente",
-    baseLegal:
-      "Legítimo interesse do controlador (cliente) e execução do contrato entre agência e cliente (art. 7º, IX e V, LGPD)",
-    titulares: "Leads e clientes do cliente final atendido pela agência",
+      "E-mail e telefone criptografados (hash), identificador de navegador, evento de conversão (compra, cadastro, checkout) e valor",
+    finalidade: "Mensurar o resultado das campanhas e otimizar a entrega dos anúncios do cliente",
+    baseLegal: "Legítimo interesse do controlador (cliente) e execução do contrato entre agência e cliente (art. 7º, IX e V, LGPD)",
+    titulares: "Compradores e leads do cliente final",
     prazoRetencao: "Enquanto durar a campanha ativa, mais 6 meses, ou conforme instrução do cliente",
-    subprocessadorChave: "meta-ads",
+    subprocessadorChaves: ["meta-ads", "google-ads"],
   },
   ads: {
-    nomeAtividade: "Veiculação e mensuração de anúncios (Google/TikTok Ads)",
-    categoriasDado:
-      "Identificador de dispositivo/cookie, dado de audiência e conversão vinculado à campanha",
-    finalidade: "Veicular, segmentar e mensurar campanhas de mídia paga em nome do cliente",
-    baseLegal: "Legítimo interesse do controlador e execução do contrato (art. 7º, IX e V, LGPD)",
-    titulares: "Visitantes do site e leads impactados pelas campanhas do cliente",
-    prazoRetencao: "Enquanto durar a campanha ativa, mais 6 meses",
-    subprocessadorChave: "google-ads",
+    nomeAtividade: "Pixel e tags de anúncio no site do cliente (Pixel do Meta, tag do Google, Pixel do TikTok)",
+    categoriasDado: "Cookies e identificadores de navegador, páginas visitadas, eventos de conversão",
+    finalidade: "Medir visitas e conversões e criar públicos de remarketing de quem visitou o site",
+    baseLegal: "Consentimento do visitante via banner de cookies (art. 7º, I, e art. 8º, LGPD)",
+    titulares: "Visitantes do site e das landing pages do cliente",
+    prazoRetencao: "Conforme a política de cookies do site, no máximo 13 meses",
+    subprocessadorChaves: ["meta-ads", "google-ads"],
+  },
+  formularios: {
+    nomeAtividade: "Captação de lead por formulário (Formulário instantâneo do Meta, formulário do Google, landing page)",
+    categoriasDado: "Nome, e-mail, telefone, cidade e respostas de qualificação informadas pelo lead",
+    finalidade: "Gerar e entregar leads qualificados ao time comercial do cliente",
+    baseLegal: "Consentimento do titular no envio do formulário, com aviso de finalidade e link da política (art. 7º, I, e art. 9º, LGPD)",
+    titulares: "Pessoas que preenchem os formulários das campanhas do cliente",
+    prazoRetencao: "Até 12 meses sem interação, ou até o titular pedir exclusão",
+    subprocessadorChaves: ["meta-ads"],
   },
   whatsapp: {
-    nomeAtividade: "Atendimento e qualificação de lead via WhatsApp",
+    nomeAtividade: "Atendimento e qualificação de lead pelo WhatsApp (anúncio de clique pro WhatsApp e atendimento)",
     categoriasDado: "Nome, telefone, conteúdo da conversa, histórico de interesse comercial",
     finalidade: "Atender, qualificar e dar andamento comercial a leads gerados pelas campanhas",
-    baseLegal:
-      "Execução de contrato/procedimento preliminar a pedido do titular (art. 7º, V, LGPD)",
-    titulares: "Leads que iniciam contato via WhatsApp com o cliente",
+    baseLegal: "Procedimento preliminar de contrato a pedido do titular (art. 7º, V, LGPD)",
+    titulares: "Leads que iniciam contato pelo WhatsApp com o cliente",
     prazoRetencao: "Duração do relacionamento comercial, mais 12 meses",
-    subprocessadorChave: "whatsapp-business",
+    subprocessadorChaves: ["whatsapp-business"],
   },
   crm: {
-    nomeAtividade: "Armazenamento e automação de lead em CRM",
+    nomeAtividade: "Armazenamento de lead em CRM, planilha ou automação",
     categoriasDado: "Nome, e-mail, telefone, origem do lead, histórico de funil",
     finalidade: "Organizar, nutrir e acompanhar o funil comercial dos leads do cliente",
     baseLegal: "Execução de contrato entre agência e cliente (art. 7º, V, LGPD)",
     titulares: "Leads e clientes do cliente final atendido pela agência",
     prazoRetencao: "Duração do relacionamento comercial, mais 12 meses",
-    subprocessadorChave: "rd-station",
+    subprocessadorChaves: [], // CRM é informado pela agência na ativação (padrão: RD Station)
   },
 };
 

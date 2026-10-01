@@ -168,7 +168,7 @@ export default function LandingPage() {
                 Ver planos
               </Link>
               <Link href="/diagnostico" className="btn btn-primary btn-lg">
-                Fazer diagnóstico
+                Auditar minha agência
               </Link>
             </div>
           </div>
@@ -472,10 +472,10 @@ export default function LandingPage() {
             <h2 className="font-display text-[clamp(1.6rem,3vw,2.2rem)] leading-tight">Descubra quanto sua agência está exposta.</h2>
             <div className="mt-12 flex flex-wrap items-center gap-1">
               <Link href="/diagnostico" className="tag">
-                Diagnóstico
+                Auditoria da sua agência
               </Link>
               <span className="tag tag-white">19 perguntas, resultado na hora</span>
-              <Link href="/diagnostico" aria-label="Fazer diagnóstico" className="arrow-circle">
+              <Link href="/diagnostico" aria-label="Fazer a auditoria da sua agência" className="arrow-circle">
                 <ArrowRight size={18} strokeWidth={1.6} />
               </Link>
             </div>

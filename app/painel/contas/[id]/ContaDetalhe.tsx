@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { FLUXO_POR_CHAVE, type FlowKey } from "@/lib/fluxos";
+import { SiteDaConta, VigilanciaDaConta, type ResultadoVigilancia } from "./VigilanciaConta";
 
 type Atividade = {
   id: string;
@@ -39,6 +41,8 @@ type Conta = {
   cnpj: string | null;
   contatoNome: string | null;
   contatoEmail: string | null;
+  site: string | null;
+  fluxos: FlowKey[];
 };
 
 const CAMPOS: { chave: keyof Atividade; label: string; full?: boolean }[] = [
@@ -110,14 +114,16 @@ export default function ContaDetalhe({
   atividadesIniciais,
   subprocessadores,
   dpaInicial,
+  vigilancia,
 }: {
   conta: Conta;
   atividadesIniciais: Atividade[];
   subprocessadores: Subprocessador[];
   dpaInicial: Dpa | null;
+  vigilancia: ResultadoVigilancia;
 }) {
   const router = useRouter();
-  const [aba, setAba] = useState<"rat" | "dpa" | "sub">("rat");
+  const [aba, setAba] = useState<"rat" | "dpa" | "sub" | "vig">("rat");
   const [dpa, setDpa] = useState(dpaInicial);
   const [assNome, setAssNome] = useState("");
   const [assCargo, setAssCargo] = useState("");
@@ -164,6 +170,9 @@ export default function ContaDetalhe({
         {conta.cnpj ? `CNPJ ${conta.cnpj} · ` : ""}
         {conta.contatoNome ? `Responsável: ${conta.contatoNome}` : "Sem responsável informado"}
       </p>
+      <div className="mb-8 -mt-2">
+        <SiteDaConta contaId={conta.id} siteInicial={conta.site} />
+      </div>
 
       <div className="painel-tabs">
         <button className={`painel-tab ${aba === "rat" ? "active" : ""}`} onClick={() => setAba("rat")} type="button">
@@ -175,14 +184,38 @@ export default function ContaDetalhe({
         <button className={`painel-tab ${aba === "sub" ? "active" : ""}`} onClick={() => setAba("sub")} type="button">
           Quem mais mexe nesse dado
         </button>
+        <button className={`painel-tab ${aba === "vig" ? "active" : ""}`} onClick={() => setAba("vig")} type="button">
+          Vigilância
+        </button>
       </div>
+
+      {aba === "vig" && <VigilanciaDaConta contaId={conta.id} resultado={vigilancia} temSite={!!conta.site} />}
 
       {aba === "rat" && (
         <div>
           <p className="painel-lede" style={{ marginBottom: 20 }}>
-            Registro de Atividades de Tratamento (RAT) desta conta — gerado a partir dos fluxos
-            marcados na ativação, editável a qualquer momento.
+            Registro de Atividades de Tratamento (RAT) desta conta — gerado a partir do que a agência faz com o dado do
+            cliente, editável a qualquer momento.
           </p>
+          {conta.fluxos.length > 0 && (
+            <div className="mb-8 grid gap-3 md:grid-cols-2">
+              {conta.fluxos.map((k) => {
+                const f = FLUXO_POR_CHAVE[k];
+                return (
+                  <div key={k} className="rounded-[20px] border border-line bg-surface p-5">
+                    <div className="flex items-start justify-between gap-3">
+                      <p className="font-display text-[18px] leading-snug text-ink">{f.titulo}</p>
+                      <span className="shrink-0 font-mono text-[11px] uppercase tracking-[0.04em] text-faint">LGPD {f.artigo}</span>
+                    </div>
+                    <p className="mt-2 text-body-sm leading-relaxed text-muted">{f.comoChamam}</p>
+                    <p className="mt-2 text-body-sm leading-relaxed text-warn">
+                      <b className="font-semibold">Por que importa:</b> {f.risco}
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
+          )}
           {atividadesIniciais.length === 0 ? (
             <div className="painel-table-wrap">
               <div className="painel-empty">Nenhuma atividade registrada — nenhum fluxo padrão foi marcado na ativação.</div>

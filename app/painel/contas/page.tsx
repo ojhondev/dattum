@@ -4,6 +4,9 @@ import { ArrowRight } from "lucide-react";
 import { getSessao } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { agencias, contasCliente, dpas } from "@/lib/db/schema";
+import { fluxosDaConta } from "@/lib/fluxos";
+import { ultimosResultados } from "@/lib/vigilancia";
+import { NotaVigilancia } from "@/components/app/VigilanciaChips";
 
 const TH = "border-b border-line px-5 py-3.5 text-left font-mono text-[12px] font-normal uppercase tracking-[0.04em] text-muted";
 const TD = "border-b border-line px-5 py-4";
@@ -17,7 +20,11 @@ export default async function ContasPage() {
     orderBy: (t, { desc }) => desc(t.createdAt),
   });
 
-  const todosDpas = await db.query.dpas.findMany({ where: eq(dpas.agenciaId, sessao.agenciaId) });
+  const [todosDpas, resultados] = await Promise.all([
+    db.query.dpas.findMany({ where: eq(dpas.agenciaId, sessao.agenciaId) }),
+    ultimosResultados(sessao.agenciaId),
+  ]);
+  const notaPorConta = new Map(resultados.map((r) => [r.contaClienteId, r.nota]));
   const agencia = await db.query.agencias.findFirst({ where: eq(agencias.id, sessao.agenciaId) });
   const limite = agencia?.clientesContratados ?? null;
   const noLimite = limite != null && contas.length >= limite;
@@ -53,33 +60,33 @@ export default async function ContasPage() {
         {contas.length === 0 ? (
           <div className="p-12 text-center text-body-sm text-muted">Nenhuma conta ativada ainda.</div>
         ) : (
-          <table className="w-full min-w-[560px] border-collapse text-body-sm">
+          <table className="w-full min-w-[760px] border-collapse text-body-sm">
             <thead>
               <tr className="bg-surface-2">
                 <th className={TH}>Cliente</th>
-                <th className={TH}>Fluxos ativos</th>
-                <th className={TH}>Contrato (DPA)</th>
+                <th className={TH}>O que a agência faz com o dado</th>
+                <th className={TH}>Contrato</th>
+                <th className={TH}>Vigilância</th>
               </tr>
             </thead>
             <tbody>
               {contas.map((conta) => {
                 const dpa = dpaPorConta.get(conta.id);
-                const flows = [conta.flowCapi && "CAPI", conta.flowAds && "Ads", conta.flowWhatsapp && "WhatsApp", conta.flowCrm && "CRM"].filter(
-                  (f): f is string => Boolean(f),
-                );
+                const flows = fluxosDaConta(conta);
                 return (
                   <tr key={conta.id} className="transition-colors last:[&>td]:border-b-0 hover:bg-surface-2">
                     <td className={TD}>
                       <Link href={`/painel/contas/${conta.id}`} className="font-display text-[18px] text-ink hover:underline">
                         {conta.nome}
                       </Link>
+                      {conta.site && <span className="mt-0.5 block truncate text-[13px] text-muted">{conta.site.replace(/^https?:\/\//, "")}</span>}
                     </td>
                     <td className={TD}>
                       {flows.length > 0 ? (
                         <span className="flex flex-wrap gap-1.5">
                           {flows.map((f) => (
-                            <span key={f} className="pill pill-neutral">
-                              {f}
+                            <span key={f.key} title={f.titulo} className="pill pill-neutral">
+                              {f.curto}
                             </span>
                           ))}
                         </span>
@@ -89,6 +96,9 @@ export default async function ContasPage() {
                     </td>
                     <td className={TD}>
                       {dpa?.status === "assinado" ? <span className="pill pill-ok">Assinado</span> : <span className="pill pill-warn">Pendente</span>}
+                    </td>
+                    <td className={TD}>
+                      <NotaVigilancia nota={notaPorConta.get(conta.id)} />
                     </td>
                   </tr>
                 );

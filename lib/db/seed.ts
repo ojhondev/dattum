@@ -15,7 +15,7 @@ const CATALOGO = [
     categoria: "Publicidade",
     pais: "Estados Unidos",
     finalidadePadrao:
-      "Veiculação de anúncios, Custom Audiences e Conversions API (CAPI) com dado de conversão hasheado.",
+      "Veiculação de anúncios no Facebook e Instagram, públicos criados com lista de clientes, formulários de cadastro e envio de vendas pela API de Conversões (dado criptografado).",
   },
   {
     chave: "google-ads",
@@ -23,21 +23,21 @@ const CATALOGO = [
     categoria: "Publicidade",
     pais: "Estados Unidos",
     finalidadePadrao:
-      "Veiculação de anúncios, Enhanced Conversions e mensuração de audiência do site.",
+      "Veiculação de anúncios, tag do Google no site, públicos com lista de clientes (Customer Match) e conversões otimizadas.",
   },
   {
     chave: "tiktok-ads",
     nome: "TikTok Ads",
     categoria: "Publicidade",
     pais: "Singapura",
-    finalidadePadrao: "Veiculação de anúncios e eventos de conversão via TikTok Events API.",
+    finalidadePadrao: "Veiculação de anúncios, Pixel do TikTok e envio de conversões pelo servidor (Events API).",
   },
   {
     chave: "whatsapp-business",
     nome: "WhatsApp Business API",
     categoria: "Atendimento",
     pais: "Estados Unidos",
-    finalidadePadrao: "Atendimento e qualificação de lead recebido por campanha.",
+    finalidadePadrao: "Conversas com leads que chegam pelos anúncios de clique pro WhatsApp e pelo atendimento.",
   },
   {
     chave: "rd-station",
@@ -60,7 +60,10 @@ async function main() {
     await db
       .insert(schema.subprocessadoresCatalogo)
       .values(item)
-      .onConflictDoNothing({ target: schema.subprocessadoresCatalogo.chave });
+      .onConflictDoUpdate({
+        target: schema.subprocessadoresCatalogo.chave,
+        set: { nome: item.nome, categoria: item.categoria, pais: item.pais, finalidadePadrao: item.finalidadePadrao },
+      });
   }
   console.log(`Catálogo semeado: ${CATALOGO.length} subprocessadores.`);
 }

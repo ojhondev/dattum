@@ -25,7 +25,7 @@ export default function AdminEntrarPage() {
       setEnviando(false);
       return;
     }
-    router.push("/admin/codigos");
+    router.push("/admin");
     router.refresh();
   };
 

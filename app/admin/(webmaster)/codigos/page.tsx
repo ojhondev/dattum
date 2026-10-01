@@ -1,17 +1,12 @@
-import { redirect } from "next/navigation";
 import { desc, inArray } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { agencias, codigosAtivacao } from "@/lib/db/schema";
-import { isAdmin } from "@/lib/admin";
 import { origemAtual } from "@/lib/certificados";
-import { Logo } from "@/components/brand/Logo";
-import { NovoCodigo, CodigoLinha, SairAdmin } from "./CodigosClient";
+import { NovoCodigo, CodigoLinha } from "./CodigosClient";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminCodigosPage() {
-  if (!(await isAdmin())) redirect("/admin/entrar");
-
   const [codigos, origem] = await Promise.all([
     db.query.codigosAtivacao.findMany({ orderBy: desc(codigosAtivacao.criadoEm) }),
     origemAtual(),
@@ -24,16 +19,8 @@ export default async function AdminCodigosPage() {
   const usados = codigos.filter((c) => c.usadoEm).length;
 
   return (
-    <div className="w-full px-5 pb-20 sm:px-10 lg:px-14">
-      <header className="flex h-[76px] items-center justify-between">
-        <div className="flex items-center gap-4">
-          <Logo height={26} />
-          <span className="t-eyebrow hidden sm:inline">Área Dattis</span>
-        </div>
-        <SairAdmin />
-      </header>
-
-      <div className="max-w-6xl pt-6">
+    <div>
+      <div className="max-w-6xl">
         <p className="t-eyebrow">Códigos de ativação</p>
         <h1 className="t-display mt-3">Um código por cliente, de uso único</h1>
         <p className="mt-4 max-w-2xl text-body leading-relaxed text-body">

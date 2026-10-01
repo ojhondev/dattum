@@ -5,6 +5,7 @@ import {
   UserRoundCheck,
   Gauge,
   ScanSearch,
+  Calculator,
   Tags,
   Scale,
   Trophy,
@@ -30,8 +31,9 @@ export const NAV_GROUPS: NavGroup[] = [
   {
     label: "Ferramentas",
     items: [
-      { href: "/diagnostico", label: "Diagnóstico Expresso", desc: "Descubra quanto sua agência está exposta.", icon: Gauge },
+      { href: "/diagnostico", label: "Auditoria da sua agência", desc: "19 perguntas: descubra quanto sua agência está exposta.", icon: Gauge },
       { href: "/auditoria", label: "Auditoria de site", desc: "Pixel, formulário e política de privacidade.", icon: ScanSearch },
+      { href: "/#calculadora", label: "Calculadora de risco", desc: "Multa x custo: quanto sua agência arrisca sem LGPD.", icon: Calculator },
     ],
   },
   {

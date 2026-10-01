@@ -12,6 +12,10 @@ import {
   Network,
   BadgeCheck,
   FolderOpen,
+  Radar,
+  Building2,
+  Inbox,
+  KeyRound,
   PanelLeftClose,
   PanelLeftOpen,
   Menu,
@@ -24,7 +28,9 @@ import logoDark from "../../public/brand/logo-fundo-dark.png";
 
 type Item = { href: string; label: string; icon: LucideIcon; exact?: boolean };
 
-const GROUPS: { title: string; items: Item[] }[] = [
+type Grupo = { title: string; items: Item[] };
+
+const GRUPOS_PAINEL: Grupo[] = [
   {
     title: "Visão geral",
     items: [{ href: "/painel", label: "Painel", icon: LayoutDashboard, exact: true }],
@@ -39,11 +45,35 @@ const GROUPS: { title: string; items: Item[] }[] = [
   {
     title: "Proteção",
     items: [
+      { href: "/painel/vigilancia", label: "Vigilância", icon: Radar },
       { href: "/painel/certificados", label: "Certificados e selo", icon: BadgeCheck },
       { href: "/painel/dossie", label: "Dossiê para BM", icon: FolderOpen },
     ],
   },
 ];
+
+const GRUPOS_ADMIN: Grupo[] = [
+  {
+    title: "WebMaster",
+    items: [{ href: "/admin", label: "Visão geral", icon: LayoutDashboard, exact: true }],
+  },
+  {
+    title: "Operação",
+    items: [
+      { href: "/admin/vigilancia", label: "Vigilância", icon: Radar },
+      { href: "/admin/agencias", label: "Agências", icon: Building2 },
+    ],
+  },
+  {
+    title: "Comercial",
+    items: [
+      { href: "/admin/leads", label: "Leads da auditoria", icon: Inbox },
+      { href: "/admin/codigos", label: "Códigos de ativação", icon: KeyRound },
+    ],
+  },
+];
+
+const GRUPOS = { painel: GRUPOS_PAINEL, admin: GRUPOS_ADMIN };
 
 function RailMark({ withWordmark = false }: { withWordmark?: boolean }) {
   if (withWordmark) {
@@ -58,13 +88,13 @@ function RailMark({ withWordmark = false }: { withWordmark?: boolean }) {
   );
 }
 
-function NavItems({ collapsed, onNavigate }: { collapsed: boolean; onNavigate?: () => void }) {
+function NavItems({ grupos, collapsed, onNavigate }: { grupos: Grupo[]; collapsed: boolean; onNavigate?: () => void }) {
   const pathname = usePathname();
   const isActive = (href: string, exact = false) => (exact ? pathname === href : pathname === href || pathname.startsWith(href + "/"));
 
   return (
     <nav className="flex flex-1 flex-col gap-1 px-3 text-[15px]">
-      {GROUPS.map((g, gi) => (
+      {grupos.map((g, gi) => (
         <div key={g.title} className={gi > 0 ? "mt-4" : ""}>
           {collapsed ? (
             gi > 0 && <div className="mx-2 my-2 h-px bg-white/10" />
@@ -97,7 +127,16 @@ function NavItems({ collapsed, onNavigate }: { collapsed: boolean; onNavigate?: 
   );
 }
 
-export function Sidebar({ agenciaNome, sairSlot }: { agenciaNome: string; sairSlot: React.ReactNode }) {
+export function Sidebar({
+  agenciaNome,
+  sairSlot,
+  variante = "painel",
+}: {
+  agenciaNome: string;
+  sairSlot: React.ReactNode;
+  variante?: keyof typeof GRUPOS;
+}) {
+  const grupos = GRUPOS[variante];
   const [collapsed, setCollapsed] = useLocalStorageBoolean("dattis:sidebar", false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -122,7 +161,7 @@ export function Sidebar({ agenciaNome, sairSlot }: { agenciaNome: string; sairSl
           <RailMark withWordmark={!collapsed} />
         </div>
         <div className="flex flex-1 flex-col overflow-y-auto">
-          <NavItems collapsed={collapsed} />
+          <NavItems grupos={grupos} collapsed={collapsed} />
         </div>
         <div className={"mx-3 mt-2 border-t border-white/10 pt-3 " + (collapsed ? "text-center" : "")}>
           {!collapsed && <p className="font-display truncate px-3.5 pb-1 text-[16px] text-white/85">{agenciaNome}</p>}
@@ -154,7 +193,7 @@ export function Sidebar({ agenciaNome, sairSlot }: { agenciaNome: string; sairSl
               </button>
             </div>
             <div className="flex flex-1 flex-col">
-              <NavItems collapsed={false} onNavigate={() => setMobileOpen(false)} />
+              <NavItems grupos={grupos} collapsed={false} onNavigate={() => setMobileOpen(false)} />
             </div>
             <div className="mx-3 mt-2 border-t border-white/10 pt-3">{sairSlot}</div>
           </div>

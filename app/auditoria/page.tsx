@@ -284,7 +284,7 @@ export default function Auditoria() {
                   Ver planos →
                 </a>
                 <a className="audit-cta-btn ghost" href="/diagnostico">
-                  Fazer o Diagnóstico Expresso →
+                  Fazer a Auditoria da sua agência →
                 </a>
               </div>
             </div>

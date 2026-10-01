@@ -41,7 +41,7 @@ export function DesktopNav() {
   const grupo = NAV_GROUPS.find((g) => g.label === aberto);
 
   return (
-    <nav className="hidden lg:block" onMouseLeave={agendarFechar} aria-label="Principal">
+    <nav className="hidden xl:block" onMouseLeave={agendarFechar} aria-label="Principal">
       <ul className="flex items-center gap-2">
         {NAV_GROUPS.map((g) => (
           <li key={g.label}>

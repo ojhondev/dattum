@@ -2,8 +2,9 @@
 
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
+import { FLUXOS, type FlowKey } from "@/lib/fluxos";
 
-type Flows = { capi: boolean; ads: boolean; whatsapp: boolean; crm: boolean };
+type Flows = Record<FlowKey, boolean>;
 
 export default function NovaContaPage() {
   const router = useRouter();
@@ -12,7 +13,8 @@ export default function NovaContaPage() {
   const [contatoNome, setContatoNome] = useState("");
   const [contatoEmail, setContatoEmail] = useState("");
   const [crmNome, setCrmNome] = useState("");
-  const [flows, setFlows] = useState<Flows>({ capi: false, ads: false, whatsapp: false, crm: false });
+  const [site, setSite] = useState("");
+  const [flows, setFlows] = useState<Flows>({ publicos: false, capi: false, ads: false, formularios: false, whatsapp: false, crm: false });
   const [enviando, setEnviando] = useState(false);
   const [erro, setErro] = useState("");
 
@@ -30,7 +32,7 @@ export default function NovaContaPage() {
       const res = await fetch("/api/contas", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ nome, cnpj, contatoNome, contatoEmail, crmNome, flows }),
+        body: JSON.stringify({ nome, cnpj, contatoNome, contatoEmail, crmNome, site, flows }),
       });
       const data = await res.json();
       if (!data.ok) {
@@ -75,37 +77,27 @@ export default function NovaContaPage() {
         </div>
 
         <div className="painel-field">
-          <label>O que vocês fazem com o dado desse cliente?</label>
-          <span className="hint">Marca tudo que se aplica — isso define o que entra no registro e no contrato.</span>
+          <label htmlFor="site">Site ou loja do cliente</label>
+          <span className="hint">A vigilância diária confere HTTPS, pixel x banner de cookies e política de privacidade nesse endereço.</span>
+          <input id="site" type="text" inputMode="url" value={site} onChange={(e) => setSite(e.target.value)} placeholder="lojaaurora.com.br" />
+        </div>
+
+        <div className="painel-field">
+          <label>O que a agência faz com o dado desse cliente?</label>
+          <span className="hint">Marque tudo que se aplica — cada item vira uma linha no registro e uma cláusula no contrato.</span>
           <div className="painel-checkbox-group">
-            <label className="painel-checkbox">
-              <input type="checkbox" checked={flows.capi} onChange={() => toggle("capi")} />
-              <span>
-                <span className="painel-checkbox-label" style={{ display: "block" }}>Custom Audiences / Conversion API (Meta)</span>
-                <span className="painel-checkbox-sub">Upload de lista de cliente ou envio de evento de conversão hasheado.</span>
-              </span>
-            </label>
-            <label className="painel-checkbox">
-              <input type="checkbox" checked={flows.ads} onChange={() => toggle("ads")} />
-              <span>
-                <span className="painel-checkbox-label" style={{ display: "block" }}>Google Ads / TikTok Ads</span>
-                <span className="painel-checkbox-sub">Veiculação e mensuração de campanha fora do Meta.</span>
-              </span>
-            </label>
-            <label className="painel-checkbox">
-              <input type="checkbox" checked={flows.whatsapp} onChange={() => toggle("whatsapp")} />
-              <span>
-                <span className="painel-checkbox-label" style={{ display: "block" }}>Atendimento via WhatsApp</span>
-                <span className="painel-checkbox-sub">Lead entra em contato ou é abordado por WhatsApp.</span>
-              </span>
-            </label>
-            <label className="painel-checkbox">
-              <input type="checkbox" checked={flows.crm} onChange={() => toggle("crm")} />
-              <span>
-                <span className="painel-checkbox-label" style={{ display: "block" }}>CRM / automação de lead</span>
-                <span className="painel-checkbox-sub">Lead fica armazenado numa ferramenta de CRM ou automação.</span>
-              </span>
-            </label>
+            {FLUXOS.map((f) => (
+              <label key={f.key} className="painel-checkbox">
+                <input type="checkbox" checked={flows[f.key]} onChange={() => toggle(f.key)} />
+                <span className="flex flex-col gap-1">
+                  <span className="painel-checkbox-label">{f.titulo}</span>
+                  <span className="painel-checkbox-sub">{f.comoChamam}</span>
+                  <span className="text-[12.5px] leading-snug text-warn">
+                    <b className="font-semibold">Por que importa:</b> {f.risco}
+                  </span>
+                </span>
+              </label>
+            ))}
           </div>
         </div>
 

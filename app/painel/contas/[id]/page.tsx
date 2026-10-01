@@ -2,7 +2,8 @@ import { notFound } from "next/navigation";
 import { eq, and } from "drizzle-orm";
 import { getSessao } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { contasCliente, atividadesTratamento, contaSubprocessadores, subprocessadoresCatalogo, dpas } from "@/lib/db/schema";
+import { contasCliente, atividadesTratamento, contaSubprocessadores, subprocessadoresCatalogo, dpas, varreduraResultados } from "@/lib/db/schema";
+import { fluxosDaConta } from "@/lib/fluxos";
 import ContaDetalhe from "./ContaDetalhe";
 
 export default async function ContaDetalhePage({ params }: { params: Promise<{ id: string }> }) {
@@ -15,7 +16,7 @@ export default async function ContaDetalhePage({ params }: { params: Promise<{ i
   });
   if (!conta) notFound();
 
-  const [atividades, subsRaw, dpa] = await Promise.all([
+  const [atividades, subsRaw, dpa, vig] = await Promise.all([
     db.query.atividadesTratamento.findMany({
       where: eq(atividadesTratamento.contaClienteId, id),
       orderBy: (t, { asc }) => asc(t.createdAt),
@@ -34,6 +35,10 @@ export default async function ContaDetalhePage({ params }: { params: Promise<{ i
       .leftJoin(subprocessadoresCatalogo, eq(contaSubprocessadores.subprocessadorCatalogoId, subprocessadoresCatalogo.id))
       .where(eq(contaSubprocessadores.contaClienteId, id)),
     db.query.dpas.findFirst({ where: eq(dpas.contaClienteId, id) }),
+    db.query.varreduraResultados.findFirst({
+      where: eq(varreduraResultados.contaClienteId, id),
+      orderBy: (t, { desc }) => desc(t.verificadoEm),
+    }),
   ]);
 
   const subprocessadores = subsRaw.map((s) => ({
@@ -53,7 +58,10 @@ export default async function ContaDetalhePage({ params }: { params: Promise<{ i
         cnpj: conta.cnpj,
         contatoNome: conta.contatoNome,
         contatoEmail: conta.contatoEmail,
+        site: conta.site,
+        fluxos: fluxosDaConta(conta).map((f) => f.key),
       }}
+      vigilancia={vig ? { nota: vig.nota, verificadoEm: vig.verificadoEm.toISOString(), alvo: vig.alvo, achados: vig.achados } : null}
       atividadesIniciais={atividades.map((a) => ({
         id: a.id,
         nomeAtividade: a.nomeAtividade,

@@ -18,3 +18,18 @@ export const linkAssinar = (plano?: string) =>
       ? `Olá! Quero assinar o plano ${plano} da Dattis pra minha agência. Podemos marcar uma conversa?`
       : "Olá! Quero proteger minha agência com a Dattis. Podemos marcar uma conversa?",
   );
+
+/** wa.me para um número de terceiro (lead, agência). Aceita com ou sem DDI; sem DDI assume Brasil. */
+export function linkWhatsappPara(numero: string | null | undefined, mensagem = "") {
+  const d = (numero ?? "").replace(/\D/g, "");
+  if (d.length < 10) return null;
+  const comDdi = d.length <= 11 ? `55${d}` : d;
+  return `https://wa.me/${comDdi}${mensagem ? `?text=${encodeURIComponent(mensagem)}` : ""}`;
+}
+
+export function formatarTelefone(numero: string | null | undefined) {
+  const d = (numero ?? "").replace(/\D/g, "").replace(/^55(?=\d{10,11}$)/, "");
+  if (d.length === 11) return `(${d.slice(0, 2)}) ${d.slice(2, 7)}-${d.slice(7)}`;
+  if (d.length === 10) return `(${d.slice(0, 2)}) ${d.slice(2, 6)}-${d.slice(6)}`;
+  return numero ?? "";
+}

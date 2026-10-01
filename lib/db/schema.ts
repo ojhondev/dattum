@@ -5,7 +5,9 @@ import {
   boolean,
   timestamp,
   integer,
+  jsonb,
 } from "drizzle-orm/pg-core";
+import type { Achado } from "@/lib/vigilancia-tipos";
 
 export const agencias = pgTable("agencias", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -27,6 +29,9 @@ export const contasCliente = pgTable("contas_cliente", {
   cnpj: text("cnpj"),
   contatoNome: text("contato_nome"),
   contatoEmail: text("contato_email"),
+  site: text("site"), // usado pela vigilância diária
+  flowPublicos: boolean("flow_publicos").notNull().default(false),
+  flowFormularios: boolean("flow_formularios").notNull().default(false),
   flowCapi: boolean("flow_capi").notNull().default(false),
   flowAds: boolean("flow_ads").notNull().default(false),
   flowWhatsapp: boolean("flow_whatsapp").notNull().default(false),
@@ -123,4 +128,53 @@ export const codigosAtivacao = pgTable("codigos_ativacao", {
   usadoEm: timestamp("usado_em"),
   agenciaId: uuid("agencia_id").references(() => agencias.id, { onDelete: "set null" }),
   revogado: boolean("revogado").notNull().default(false),
+});
+
+// Lead captado na "Auditoria da sua agência" (diagnóstico público). Guardado pra marketing/comercial.
+export const leadsAuditoria = pgTable("leads_auditoria", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  nome: text("nome").notNull(),
+  agencia: text("agencia").notNull(),
+  whatsapp: text("whatsapp").notNull(),
+  utm: jsonb("utm").$type<Record<string, string>>(),
+  respostas: jsonb("respostas").$type<Record<string, string>>(),
+  score: integer("score"),
+  nivel: text("nivel"),
+  sinalComercial: text("sinal_comercial"),
+  concluidoEm: timestamp("concluido_em"),
+  enviadoEspecialistaEm: timestamp("enviado_especialista_em"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+// Vigilância: uma varredura (diária via cron, manual pelo admin ou pedida pela agência) e o resultado por alvo.
+export const varreduras = pgTable("varreduras", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  origem: text("origem").notNull(), // cron | manual | agencia
+  status: text("status").notNull().default("rodando"), // rodando | concluida | falhou
+  alvos: integer("alvos").notNull().default(0),
+  criticos: integer("criticos").notNull().default(0),
+  altos: integer("altos").notNull().default(0),
+  medios: integer("medios").notNull().default(0),
+  erro: text("erro"),
+  iniciadaEm: timestamp("iniciada_em").notNull().defaultNow(),
+  finalizadaEm: timestamp("finalizada_em"),
+});
+
+export const varreduraResultados = pgTable("varredura_resultados", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  varreduraId: uuid("varredura_id")
+    .notNull()
+    .references(() => varreduras.id, { onDelete: "cascade" }),
+  agenciaId: uuid("agencia_id")
+    .notNull()
+    .references(() => agencias.id, { onDelete: "cascade" }),
+  contaClienteId: uuid("conta_cliente_id").references(() => contasCliente.id, { onDelete: "cascade" }), // nulo = site da própria agência
+  titular: text("titular").notNull(),
+  alvo: text("alvo"), // URL verificada (nulo quando só a documentação foi checada)
+  nota: integer("nota").notNull(),
+  criticos: integer("criticos").notNull().default(0),
+  altos: integer("altos").notNull().default(0),
+  medios: integer("medios").notNull().default(0),
+  achados: jsonb("achados").$type<Achado[]>().notNull(),
+  verificadoEm: timestamp("verificado_em").notNull().defaultNow(),
 });
