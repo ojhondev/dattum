@@ -67,7 +67,7 @@ export default async function CertificadosPage() {
         <EmitirCertificado contas={contas.map((c) => ({ id: c.id, nome: c.nome }))} />
       </details>
 
-      <section className="mt-14">
+      <section data-tour="cert-emitidos" className="mt-14">
         <h2 className="t-heading-lg">Emitidos</h2>
         {comStatus.length === 0 ? (
           <div className="block-card mt-6 p-12 text-center text-body">

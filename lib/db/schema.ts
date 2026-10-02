@@ -29,6 +29,7 @@ export const agencias = pgTable("agencias", {
   slug: text("slug").unique(), // endereço da política pública: /p/{slug}/privacidade
   emailPrivacidade: text("email_privacidade"), // canal do titular publicado na política
   politicaPublicadaEm: timestamp("politica_publicada_em"), // nulo = política pública desligada
+  toursVistos: jsonb("tours_vistos").$type<string[]>().notNull().default([]), // tours guiados já concluídos ou pulados
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 

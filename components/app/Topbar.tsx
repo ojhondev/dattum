@@ -4,7 +4,7 @@ import { useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { CircleHelp, Search } from "lucide-react";
 import { ThemeToggle } from "@/components/nav/ThemeToggle";
-import { linkContato } from "@/lib/contato";
+import { useTour } from "@/components/app/Tour";
 
 const TITULOS: [string, string, string][] = [
   ["/painel/contas", "Contas de cliente", "Cada cliente com registro, contrato e ferramentas em dia."],
@@ -24,6 +24,7 @@ export function Topbar({ agenciaNome }: { agenciaNome: string }) {
   const [busca, setBusca] = useState("");
   const [, titulo, subtitulo] = TITULOS.find(([p]) => pathname === p || pathname.startsWith(p + "/")) ?? TITULOS[TITULOS.length - 1];
   const inicial = agenciaNome.trim()[0]?.toUpperCase() ?? "D";
+  const { abrirAjuda } = useTour();
 
   return (
     <header className="no-print sticky top-0 z-20 flex h-[76px] items-center gap-4 border-b border-line bg-canvas/90 pl-16 pr-4 backdrop-blur sm:pr-10 lg:px-10">
@@ -53,15 +54,16 @@ export function Topbar({ agenciaNome }: { agenciaNome: string }) {
         <kbd className="rounded-md border border-line px-1.5 font-mono text-[10px] text-faint">↵</kbd>
       </form>
       <ThemeToggle className="grid h-10 w-10 place-items-center rounded-xl border border-line bg-surface text-muted transition-colors hover:text-ink" />
-      <a
-        href={linkContato("Olá! Preciso de ajuda com a plataforma da Dattis.")}
-        target="_blank"
-        rel="noopener"
+      <button
+        type="button"
+        onClick={abrirAjuda}
+        data-tour="ajuda"
         aria-label="Ajuda"
-        className="hidden h-10 w-10 place-items-center rounded-xl border border-line bg-surface text-muted transition-colors hover:text-ink sm:grid"
+        className="flex h-10 shrink-0 items-center gap-2 rounded-xl border border-line bg-surface px-2.5 text-[14px] text-muted transition-colors hover:text-ink sm:px-3"
       >
         <CircleHelp size={17} />
-      </a>
+        <span className="hidden sm:inline">Ajuda</span>
+      </button>
       <span title={agenciaNome} className="pixel-corners pixel-corners-sm grid h-10 w-10 shrink-0 place-items-center bg-rail font-display text-[17px] text-brand">
         {inicial}
       </span>

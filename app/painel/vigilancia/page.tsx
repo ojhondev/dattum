@@ -39,7 +39,7 @@ export default async function VigilanciaPage() {
         sem banner, um SSL vencendo, um contrato sem assinatura — o alerta aparece aqui antes de virar denúncia.
       </p>
 
-      <div className="mt-8 flex flex-wrap gap-2">
+      <div data-tour="vig-checagens" className="mt-8 flex flex-wrap gap-2">
         {CHECAGENS.map((c) => (
           <span key={c} className="tag tag-white border border-line">
             {c}

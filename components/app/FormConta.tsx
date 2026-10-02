@@ -82,7 +82,7 @@ export function FormConta({ inicial, contaId, contratoAssinado = false }: { inic
         <label htmlFor="cnpj">CNPJ (opcional)</label>
         <input type="text" placeholder="00.000.000/0001-00" {...campo("cnpj")} />
       </div>
-      <div className="painel-field">
+      <div className="painel-field" data-tour="conta-responsavel">
         <label htmlFor="contatoNome">Responsável do lado do cliente</label>
         <span className="hint">É quem recebe o link para assinar o contrato.</span>
         <input type="text" autoComplete="off" {...campo("contatoNome")} />
@@ -96,13 +96,13 @@ export function FormConta({ inicial, contaId, contratoAssinado = false }: { inic
         <input type="email" {...campo("contatoEmail")} />
       </div>
 
-      <div className="painel-field">
+      <div className="painel-field" data-tour="conta-site">
         <label htmlFor="site">Site ou loja do cliente</label>
         <span className="hint">A vigilância diária confere HTTPS, pixel x banner de cookies e política de privacidade nesse endereço.</span>
         <input type="text" inputMode="url" placeholder="lojaaurora.com.br" {...campo("site")} />
       </div>
 
-      <div className="painel-field">
+      <div className="painel-field" data-tour="conta-operacoes">
         <label>O que a agência faz com o dado desse cliente?</label>
         <span className="hint">Marque tudo que se aplica: cada item vira uma linha no registro e uma cláusula no contrato.</span>
         <div className="painel-checkbox-group">

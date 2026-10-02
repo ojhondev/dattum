@@ -70,7 +70,7 @@ export function GeradorDocumentos({ contas, contaInicial, tipoInicial }: { conta
   return (
     <div className="grid gap-5 xl:grid-cols-[360px_minmax(0,1fr)]">
       <div className="flex flex-col gap-4">
-        <section className="rounded-[20px] border border-line bg-surface p-5">
+        <section data-tour="doc-conta" className="rounded-[20px] border border-line bg-surface p-5">
           <label htmlFor="doc-conta" className="block font-mono text-[11px] uppercase tracking-[0.05em] text-muted">
             Cliente
           </label>
@@ -86,7 +86,7 @@ export function GeradorDocumentos({ contas, contaInicial, tipoInicial }: { conta
           </p>
         </section>
 
-        <section className="rounded-[20px] border border-line bg-surface p-2">
+        <section data-tour="doc-tipos" className="rounded-[20px] border border-line bg-surface p-2">
           <p className="px-3 pb-1 pt-3 font-mono text-[11px] uppercase tracking-[0.05em] text-muted">Documento</p>
           <ul className="flex flex-col">
             {TIPOS_DOCUMENTO.map((t) => {
@@ -131,7 +131,7 @@ export function GeradorDocumentos({ contas, contaInicial, tipoInicial }: { conta
       </div>
 
       <section className="min-w-0 rounded-[20px] border border-line bg-surface">
-        <div className="flex flex-wrap items-center gap-3 border-b border-line px-5 py-4">
+        <div data-tour="doc-acoes" className="flex flex-wrap items-center gap-3 border-b border-line px-5 py-4">
           <div className="min-w-0 flex-1">
             <p className="text-[16px] font-medium text-ink">{doc.titulo}</p>
             <p className="text-[12.5px] text-muted">Onde usar: {doc.ondeUsar}</p>

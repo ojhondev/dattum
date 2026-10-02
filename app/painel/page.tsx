@@ -20,6 +20,8 @@ import { TIPOS_DOCUMENTO } from "@/lib/documentos";
 import { NotaVigilancia, SeveridadeChip } from "@/components/app/VigilanciaChips";
 import { GraficoVigilancia } from "@/components/app/graficos/GraficoVigilancia";
 import { Rosca } from "@/components/app/graficos/Rosca";
+import { PrimeirosPassos } from "@/components/app/PrimeirosPassos";
+import { primeirosPassos } from "@/lib/primeiros-passos";
 
 export const dynamic = "force-dynamic";
 
@@ -53,7 +55,7 @@ export default async function PainelDashboard({ searchParams }: { searchParams: 
   const sp = await searchParams;
   const periodo = PERIODOS.includes(Number(sp.periodo)) ? Number(sp.periodo) : 30;
   const filtroAtividade = FILTROS_ATIVIDADE.find((f) => f.id === sp.atividade) ?? FILTROS_ATIVIDADE[1];
-  const d = await dadosDoPainel(sessao.agenciaId, { dias: periodo });
+  const [d, passos] = await Promise.all([dadosDoPainel(sessao.agenciaId, { dias: periodo }), primeirosPassos(sessao.agenciaId)]);
 
   const pct = d.total ? Math.round((d.emDia / d.total) * 100) : 0;
   const faixa = d.notaMedia != null ? faixaDaNota(d.notaMedia) : null;
@@ -72,9 +74,10 @@ export default async function PainelDashboard({ searchParams }: { searchParams: 
 
   return (
     <div className="mx-auto max-w-[1500px]">
+      <PrimeirosPassos passos={passos} />
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-12">
         {/* Índice de conformidade (cartão verde de destaque) */}
-        <section className="pixel-corners relative overflow-hidden bg-brand p-6 text-on-brand lg:col-span-6 xl:col-span-4">
+        <section data-tour="indice" className="pixel-corners relative overflow-hidden bg-brand p-6 text-on-brand lg:col-span-6 xl:col-span-4">
           <div aria-hidden="true" className="absolute -right-10 -top-16 h-56 w-56 rounded-full border-[28px] border-white/25" />
           <div aria-hidden="true" className="absolute -bottom-20 right-16 h-40 w-40 rounded-full border-[20px] border-white/20" />
           <p className="relative font-mono text-[12px] uppercase tracking-[0.05em]">Índice de conformidade</p>
@@ -326,7 +329,7 @@ export default async function PainelDashboard({ searchParams }: { searchParams: 
         </section>
 
         {/* Pendências */}
-        <section className={CARD + " p-5 lg:order-9 lg:col-span-6 xl:order-none"}>
+        <section data-tour="resolver" className={CARD + " p-5 lg:order-9 lg:col-span-6 xl:order-none"}>
           <div className="flex items-center justify-between gap-3">
             <h2 className="text-[16px] font-medium text-ink">O que resolver primeiro</h2>
             <span className="pill pill-neutral">{d.pendencias.length}</span>

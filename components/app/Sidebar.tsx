@@ -141,6 +141,7 @@ function NavItems({ grupos, collapsed, onNavigate }: { grupos: Grupo[]; collapse
                 href={it.href}
                 onClick={onNavigate}
                 title={it.label}
+                data-tour={`nav:${it.href}`}
                 aria-current={active ? "page" : undefined}
                 className={
                   "relative flex items-center gap-3 rounded-xl px-3 py-2.5 transition-colors " +

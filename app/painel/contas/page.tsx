@@ -48,7 +48,7 @@ export default async function ContasPage({ searchParams }: { searchParams: Promi
             Todos os {limite} clientes do seu plano já estão ativos. Fale com a Dattis pra incluir mais.
           </span>
         ) : (
-          <Link href="/painel/contas/novo" className="btn btn-primary btn-lg">
+          <Link href="/painel/contas/novo" data-tour="contas-nova" className="btn btn-primary btn-lg">
             Ativar conta nova <ArrowRight size={16} />
           </Link>
         )}
@@ -59,7 +59,7 @@ export default async function ContasPage({ searchParams }: { searchParams: Promi
         )}
       </div>
 
-      <div className="card-flush mt-10 overflow-x-auto">
+      <div data-tour="contas-tabela" className="card-flush mt-10 overflow-x-auto">
         {contas.length === 0 ? (
           <div className="p-12 text-center text-body-sm text-muted">{termo ? `Nenhum cliente encontrado para “${q}”.` : "Nenhuma conta ativada ainda."}</div>
         ) : (

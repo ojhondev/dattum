@@ -8,6 +8,7 @@ import { Sidebar } from "@/components/app/Sidebar";
 import { Topbar } from "@/components/app/Topbar";
 import SairButton from "./SairButton";
 import { AvisoTermos } from "./AvisoTermos";
+import { TourProvider } from "@/components/app/Tour";
 import { VERSAO_LEGAL } from "@/lib/legal";
 import { EMAIL_DEMO } from "@/lib/admin-dados";
 import { linkContato } from "@/lib/contato";
@@ -24,6 +25,7 @@ export default async function PainelLayout({ children }: { children: React.React
   const plano = PLANOS.find((p) => p.id === agencia.plano);
 
   return (
+    <TourProvider vistosIniciais={agencia.toursVistos ?? []} salvarNoServidor={agencia.email !== EMAIL_DEMO}>
     <div className="flex min-h-svh bg-canvas">
       <Sidebar
         agenciaNome={agencia.nome}
@@ -58,5 +60,6 @@ export default async function PainelLayout({ children }: { children: React.React
         </main>
       </div>
     </div>
+    </TourProvider>
   );
 }

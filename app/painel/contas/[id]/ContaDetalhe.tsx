@@ -146,13 +146,13 @@ export default function ContaDetalhe({
         {conta.cnpj ? `CNPJ ${conta.cnpj} · ` : ""}
         {conta.contatoNome ? `Responsável: ${conta.contatoNome}` : "Sem responsável informado"}
         {" · "}
-        <a href={`/painel/contas/${conta.id}/editar`} className="underline underline-offset-2 hover:text-ink">
+        <a href={`/painel/contas/${conta.id}/editar`} data-tour="conta-editar" className="underline underline-offset-2 hover:text-ink">
           Editar dados e operações
         </a>
       </p>
       <div className="mb-8 -mt-2">
         <SiteDaConta contaId={conta.id} siteInicial={conta.site} />
-        <div className="mt-4 flex flex-wrap gap-2">
+        <div className="mt-4 flex flex-wrap gap-2" data-tour="conta-atalhos">
           <a href={`/painel/documentos?conta=${conta.id}&tipo=clausula-contrato`} className="btn btn-ghost">
             Gerar cláusula de LGPD
           </a>
@@ -180,11 +180,11 @@ export default function ContaDetalhe({
         </div>
       </div>
 
-      <div className="painel-tabs">
+      <div className="painel-tabs" data-tour="conta-abas">
         <button className={`painel-tab ${aba === "rat" ? "active" : ""}`} onClick={() => setAba("rat")} type="button">
           O que fazemos com o dado
         </button>
-        <button className={`painel-tab ${aba === "dpa" ? "active" : ""}`} onClick={() => setAba("dpa")} type="button">
+        <button className={`painel-tab ${aba === "dpa" ? "active" : ""}`} onClick={() => setAba("dpa")} type="button" data-tour="aba-contrato">
           Contrato com o cliente
         </button>
         <button className={`painel-tab ${aba === "sub" ? "active" : ""}`} onClick={() => setAba("sub")} type="button">

@@ -33,7 +33,7 @@ export default async function ConfiguracoesPage() {
             Esta é a conta de demonstração, compartilhada com outros visitantes. Os dados aparecem aqui, mas não podem ser alterados.
           </div>
         )}
-        <section className={CARD}>
+        <section className={CARD} data-tour="cfg-dados">
           <h2 className="font-display text-[22px] text-ink">Dados da agência</h2>
           <p className="mt-1 text-[14px] leading-relaxed text-muted">
             Nome, CNPJ, endereço e responsável entram na qualificação dos contratos e documentos gerados para os seus clientes.

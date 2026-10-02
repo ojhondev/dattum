@@ -64,7 +64,7 @@ export function PoliticaPublicaCard({
   };
 
   return (
-    <div className="rounded-[20px] border border-line bg-surface p-5">
+    <div data-tour="conta-politica" className="rounded-[20px] border border-line bg-surface p-5">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <p className="flex items-center gap-2 font-mono text-[12px] uppercase tracking-[0.04em] text-muted">
           <Globe size={15} /> Política de privacidade pública
