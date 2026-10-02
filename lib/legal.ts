@@ -232,7 +232,7 @@ ${process.env.NEXT_PUBLIC_GTM_ID ? "Os cookies essenciais funcionam sempre. Cook
 | dattis_g_* | Cookies essenciais | Proteger o login com Google contra fraudes | 10 minutos |
 | dattis_admin | Cookie essencial | Acesso da equipe Dattis ao painel interno | 12 horas |
 | dattis_consent | Cookie essencial | Guardar a sua escolha no aviso de cookies | 12 meses |
-${process.env.NEXT_PUBLIC_GTM_ID ? "| _ga, _ga_* | Estatística (Google Analytics) | Medir visitas e uso do site, só com o seu consentimento | Até 2 anos |\n" : ""}| Preferências | Armazenamento local do navegador | Lembrar o tema claro ou escuro e o andamento das ferramentas gratuitas | Até você limpar o navegador |
+${process.env.NEXT_PUBLIC_GTM_ID ? "| `_ga`, `_ga_*` | Estatística (Google Analytics) | Medir visitas e uso do site, só com o seu consentimento | Até 2 anos |\n" : ""}| Preferências | Armazenamento local do navegador | Lembrar o tema claro ou escuro e o andamento das ferramentas gratuitas | Até você limpar o navegador |
 
 ## Com quem compartilhamos
 
