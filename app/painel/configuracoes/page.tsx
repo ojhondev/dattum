@@ -3,7 +3,7 @@ import { count, eq } from "drizzle-orm";
 import { ehDono, getSessao } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { agencias, contasCliente, usuarios } from "@/lib/db/schema";
-import { PLANOS, TAXA_AGENCIA } from "@/lib/planos";
+import { PLANOS } from "@/lib/planos";
 import { DOCUMENTOS_LEGAIS, VERSAO_LEGAL } from "@/lib/legal";
 import { EMAIL_DEMO } from "@/lib/admin-dados";
 import { linkContato } from "@/lib/contato";
@@ -154,11 +154,7 @@ export default async function ConfiguracoesPage() {
         <section className={CARD}>
           <p className={ROTULO}>Plano</p>
           <p className="mt-2 font-display text-[26px] text-ink">{plano?.nome ?? agencia.plano}</p>
-          {plano && (
-            <p className="text-[14px] text-muted">
-              R$ {plano.preco}/cliente/mês + R$ {TAXA_AGENCIA}/mês da agência
-            </p>
-          )}
+          {plano && <p className="text-[14px] text-muted">R$ {plano.preco}/cliente/mês</p>}
           <p className="mt-4 text-[15px] text-body">
             <b className="font-semibold text-ink tabular-nums">{Number(n)}</b>
             {agencia.clientesContratados != null ? ` de ${agencia.clientesContratados}` : ""} cliente(s) ativo(s)

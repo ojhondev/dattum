@@ -5,7 +5,7 @@ import { SiteFooter } from "@/components/marketing/SiteFooter";
 import { PixelEdge } from "@/components/marketing/PixelEdge";
 import { ArrowLink } from "@/components/marketing/MetaChips";
 import { Faq } from "@/components/marketing/Faq";
-import { INCLUSO_TAXA, PLANOS, RECURSOS, TAXA_AGENCIA, destaquesDoPlano, mensalidade, type Plano } from "@/lib/planos";
+import { PLANOS, RECURSOS, destaquesDoPlano, type Plano } from "@/lib/planos";
 import { linkAssinar } from "@/lib/contato";
 import { LeiBar } from "@/components/marketing/LeiBar";
 import { CalculadoraPopup } from "@/components/marketing/CalculadoraPopup";
@@ -20,19 +20,15 @@ const SPRINT = [
 export const metadata: Metadata = {
   title: "Planos e preços",
   alternates: { canonical: "/planos" },
-  description: "Planos da Dattis de R$ 47 a R$ 297 por cliente da agência, por mês, mais R$ 197/mês da agência. Uma assinatura custa muito menos que uma multa da LGPD.",
+  description: "Planos da Dattis de R$ 47 a R$ 297 por cliente da agência, por mês. Uma assinatura custa muito menos que uma multa da LGPD.",
 };
 
 const PILARES = Array.from(new Set(RECURSOS.map((r) => r.pilar)));
 
 const FAQ_PLANOS = [
   {
-    q: "Como funciona a cobrança?",
-    a: `A agência paga uma taxa fixa de R$ ${TAXA_AGENCIA}/mês, igual em qualquer plano, que cobre a conformidade da própria agência e o uso da plataforma. Além dela, paga o valor do plano para cada cliente que atende e documenta na Dattis.`,
-  },
-  {
-    q: "Dá para repassar o custo para o cliente?",
-    a: `Sim, e é o que recomendamos. Ofereça “Compliance LGPD” como um serviço da agência, cobrando do cliente acima do valor do plano. Uma agência com 10 clientes no Growth, por exemplo, paga R$ ${TAXA_AGENCIA} + 10 × R$ 97 = R$ ${mensalidade(97, 10).toLocaleString("pt-BR")} por mês. Cobrando R$ 150 de cada cliente pelo serviço, a Dattis se paga e ainda sobra margem para a agência.`,
+    q: "Como funciona a cobrança por cliente?",
+    a: "Você paga o valor do plano para cada cliente que sua agência atende e documenta na Dattis. Uma agência com 10 clientes no Growth, por exemplo, paga 10 × R$ 97 por mês — e pode repassar esse custo na mensalidade do próprio cliente.",
   },
   {
     q: "Qual plano faz sentido pra minha agência?",
@@ -80,7 +76,6 @@ function PlanoCard({ p }: { p: Plano }) {
         <span className={"font-display text-[64px] leading-[0.85] " + (dark ? "text-brand" : "text-ink")}>{p.preco}</span>
         <span className={"pb-1 text-[14px] " + (dark ? "text-white/70" : "text-muted")}>/cliente/mês</span>
       </div>
-      <p className={"mt-2 text-[13px] " + (dark ? "text-white/70" : "text-muted")}>+ R$ {TAXA_AGENCIA}/mês da agência, em qualquer plano</p>
 
       <ul className="mt-9 flex flex-1 flex-col gap-3">
         {itens.map((it) => (
@@ -116,12 +111,11 @@ export default function PlanosPage() {
           <h1 className="t-hero mx-auto mt-5 max-w-[16ch]">Uma assinatura custa muito menos que uma multa.</h1>
           <p className="mx-auto mt-6 max-w-2xl text-[18px] leading-relaxed text-body">
             Cada plano cobre os pilares da Dattis — documentação, proteção, relacionamento com o cliente e governança — e é
-            cobrado por cliente que sua agência atende, mais uma taxa fixa da agência.
+            cobrado por cliente que sua agência atende.
           </p>
           <div className="mt-9 flex flex-wrap items-center justify-center gap-1">
             <span className="tag">De R$ 47 a R$ 297</span>
             <span className="tag tag-white">por cliente/mês</span>
-            <span className="tag tag-white">+ R$ {TAXA_AGENCIA}/mês da agência</span>
           </div>
         </section>
 
@@ -134,28 +128,6 @@ export default function PlanosPage() {
               {PLANOS.map((p) => (
                 <PlanoCard key={p.id} p={p} />
               ))}
-            </div>
-            <div className="mt-5 grid gap-6 rounded-[40px] bg-surface px-8 py-10 sm:px-10 lg:grid-cols-[1fr_1.3fr] lg:items-center">
-              <div>
-                <p className="t-label text-ink">Taxa da agência</p>
-                <p className="mt-3 flex items-end gap-2">
-                  <span className="font-display text-[20px] leading-none text-ink">R$</span>
-                  <span className="font-display text-[56px] leading-[0.85] text-ink">{TAXA_AGENCIA}</span>
-                  <span className="pb-1 text-[14px] text-muted">/mês, em qualquer plano</span>
-                </p>
-                <p className="mt-4 text-[15px] leading-relaxed text-body">
-                  A agência também é atendida pela Dattis. A taxa fixa cobre a conformidade dela e o uso da plataforma. O valor por cliente você
-                  pode repassar como serviço de Compliance LGPD.
-                </p>
-              </div>
-              <ul className="flex flex-col gap-3">
-                {INCLUSO_TAXA.map((it) => (
-                  <li key={it} className="flex items-start gap-2.5 text-[15px] leading-snug text-body">
-                    <CircleCheck size={19} strokeWidth={1.5} className="mt-px shrink-0 text-brand-ink" />
-                    {it}
-                  </li>
-                ))}
-              </ul>
             </div>
             <p className="mx-auto mt-10 max-w-2xl text-center text-[15px] leading-relaxed text-rail/85">
               Uma multa simples da LGPD pode chegar a 2% do faturamento, limitada a R$ 50 milhões por infração. Com três

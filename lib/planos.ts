@@ -1,19 +1,5 @@
 export type PlanoId = "start" | "growth" | "scale";
 
-/** Taxa mensal fixa da agência, igual em todos os planos (a agência é a "cliente zero" da Dattis). */
-export const TAXA_AGENCIA = 197;
-
-/** O que a taxa da agência cobre: a conformidade da própria agência e o uso da plataforma. */
-export const INCLUSO_TAXA = [
-  "Documentação da própria agência: política de privacidade, aviso de cookies e selo do site da agência",
-  "Login para cada pessoa da equipe, com registro de atividades",
-  "Painel, tour guiado, ajuda e exportação de todos os dados",
-  "Suporte da Dattis",
-];
-
-/** Mensalidade total: taxa fixa da agência + valor por cliente. */
-export const mensalidade = (precoPorCliente: number, clientes: number) => TAXA_AGENCIA + precoPorCliente * clientes;
-
 export type Plano = {
   id: PlanoId;
   nome: string;

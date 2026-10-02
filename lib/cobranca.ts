@@ -1,7 +1,7 @@
 import { and, count, eq, inArray, ne } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { agencias, cobrancas, contasCliente } from "@/lib/db/schema";
-import { PLANOS, mensalidade } from "@/lib/planos";
+import { PLANOS } from "@/lib/planos";
 import { EMAIL_DEMO } from "@/lib/admin-dados";
 
 // Mensalidades das agências. A Dattis cobra por link de pagamento (fora da plataforma);
@@ -25,10 +25,10 @@ export function situacaoCobranca(c: Pick<Cobranca, "status" | "vencimento">, ago
   return dias > 0 ? { situacao: "atrasada", diasAtraso: dias } : { situacao: "a_vencer", diasAtraso: 0 };
 }
 
-/** Valor do mês: taxa fixa da agência + preço do plano × clientes contratados (ou ativos, se não houver limite). */
+/** Valor do mês: preço do plano × clientes contratados (ou ativos, se o plano não tiver limite). */
 export function valorMensal(plano: string, contratados: number | null, ativos: number) {
   const preco = PLANOS.find((p) => p.id === plano)?.preco ?? 0;
-  return mensalidade(preco, contratados ?? ativos);
+  return preco * (contratados ?? ativos);
 }
 
 /**

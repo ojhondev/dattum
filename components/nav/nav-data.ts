@@ -52,7 +52,7 @@ export const NAV_GROUPS: NavGroup[] = [
   {
     label: "Planos",
     items: [
-      { href: "/planos", label: "Planos e preços", desc: "De R$ 47 a R$ 297 por cliente/mês + R$ 197 da agência.", icon: Tags },
+      { href: "/planos", label: "Planos e preços", desc: "De R$ 47 a R$ 297 por cliente/mês.", icon: Tags },
       { href: "/#multa", label: "Multa x assinatura", desc: "Quanto custa estar sem prova quando a fiscalização chega.", icon: Scale },
     ],
   },
