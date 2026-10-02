@@ -1,0 +1,162 @@
+<!-- CAP 11 -->
+<section class="pb">
+  <div class="opener"><div class="lbl">CAPÍTULO 11 · VIGILÂNCIA</div><h1>Vigilância: como ler, priorizar e agir</h1><p>Todo dia às 6h a plataforma visita o site de cada conta e confere a documentação. Às 9h o time transforma o que ela achou em ação.</p><div class="n">11</div></div>
+  <h2>Como a nota é calculada</h2>
+  <p>Cada conta começa com 100 pontos. Cada achado aberto desconta de acordo com a severidade. A nota nunca fica abaixo de zero. No plano Start, a vigilância confere apenas a documentação; nos planos Growth e Scale, confere sites e documentação.</p>
+  <div class="grid g4">
+    <div class="card"><span class="tag r">Crítico</span><div class="big" style="margin-top:2mm">−30</div><p class="small">Exposição imediata: o visitante, a plataforma de anúncio ou a ANPD já veem o problema.</p></div>
+    <div class="card"><span class="tag o">Alto</span><div class="big" style="margin-top:2mm">−15</div><p class="small">Vira crítico em dias, ou quebra a prova documental.</p></div>
+    <div class="card"><span class="tag y">Médio</span><div class="big" style="margin-top:2mm">−5</div><p class="small">Higiene. Não derruba ninguém sozinho, mas soma.</p></div>
+    <div class="card"><span class="tag g">OK</span><div class="big" style="margin-top:2mm">0</div><p class="small">Verificado e em ordem. Também aparece, para mostrar o que está certo.</p></div>
+  </div>
+  <div class="tw"><table>
+    <thead><tr><th>Faixa</th><th>Nota</th><th>Leitura para a agência</th><th>Prazo de ação da Dattis</th></tr></thead>
+    <tbody>
+      <tr><td><span class="tag g">Protegido</span></td><td class="k">85 a 100</td><td>Documentação e site em ordem</td><td>Rotina; aparece no boletim</td></tr>
+      <tr><td><span class="tag y">Atenção</span></td><td class="k">65 a 84</td><td>Pendências de higiene ou documentação</td><td>Lembrete na semana</td></tr>
+      <tr><td><span class="tag o">Exposto</span></td><td class="k">40 a 64</td><td>Risco real de reclamação ou bloqueio</td><td>Contato em até 2 dias úteis</td></tr>
+      <tr><td><span class="tag r">Crítico</span></td><td class="k">0 a 39</td><td>Exposição imediata</td><td>Contato no mesmo dia útil</td></tr>
+    </tbody></table></div>
+  <h2>Catálogo de achados e o que fazer</h2>
+  <div class="tw"><table>
+    <thead><tr><th>Achado</th><th>Sev.</th><th>Como resolver (o que dizer à agência)</th></tr></thead>
+    <tbody>
+      <tr><td class="k">Site sem HTTPS</td><td><span class="tag r">Crít.</span></td><td>Ativar o SSL na hospedagem (gratuito na maioria) e redirecionar tudo para https://</td></tr>
+      <tr><td class="k">SSL vencido ou não confiável</td><td><span class="tag r">Crít.</span></td><td>Renovar ou reemitir na hospedagem. O navegador já mostra “site inseguro” e o anúncio perde conversão</td></tr>
+      <tr><td class="k">Pixel sem banner de consentimento</td><td><span class="tag r">Crít.</span></td><td>Instalar aviso de cookies que bloqueie o pixel até o aceite; no Growth+, o aviso de cookies Dattis</td></tr>
+      <tr><td class="k">Formulário captando dado sem política</td><td><span class="tag r">Crít.</span></td><td>Publicar a política e linkar no rodapé e ao lado de cada formulário</td></tr>
+      <tr><td class="k">Sem link para a política (sem formulário)</td><td><span class="tag o">Alto</span></td><td>Linkar a política no rodapé (no Growth+ a política já está hospedada pela Dattis)</td></tr>
+      <tr><td class="k">SSL vence em até 14 dias</td><td><span class="tag o">Alto</span></td><td>Confirmar a renovação automática com a hospedagem</td></tr>
+      <tr><td class="k">Site não respondeu ou com erro</td><td><span class="tag o">Alto</span></td><td>Conferir domínio e hospedagem. Se o site está no ar, ver “falsos positivos” abaixo</td></tr>
+      <tr><td class="k">Contrato com o cliente não assinado</td><td><span class="tag o">Alto</span></td><td>Reenviar o link ao responsável do cliente com a mensagem-modelo</td></tr>
+      <tr><td class="k">Nenhuma atividade registrada (RAT vazio)</td><td><span class="tag o">Alto</span></td><td>Abrir a conta e marcar os fluxos que a agência executa</td></tr>
+      <tr><td class="k">Certificado de privacidade inválido</td><td><span class="tag o">Alto</span></td><td>Selo mostra “inválido” a quem verifica. Ver o que falta (DPA, RAT, ferramentas) ou se a agência está suspensa</td></tr>
+      <tr><td class="k">SSL vence em 15 a 30 dias</td><td><span class="tag y">Médio</span></td><td>Confirmar a renovação; voltar a olhar na semana</td></tr>
+      <tr><td class="k">http:// não redireciona para https://</td><td><span class="tag y">Médio</span></td><td>Configurar o redirecionamento na hospedagem ou CDN</td></tr>
+      <tr><td class="k">Recursos carregados sem HTTPS</td><td><span class="tag y">Médio</span></td><td>Trocar scripts e imagens http:// por https://</td></tr>
+      <tr><td class="k">Cabeçalhos de segurança ausentes</td><td><span class="tag y">Médio</span></td><td>Adicionar na hospedagem ou CDN; o Cloudflare resolve em poucos cliques</td></tr>
+      <tr><td class="k">Selo Dattis não está no site</td><td><span class="tag y">Médio</span></td><td>Colar o código do selo no rodapé. É o entregável mais visível; não deixe passar</td></tr>
+      <tr><td class="k">Nenhuma ferramenta mapeada</td><td><span class="tag y">Médio</span></td><td>Vincular Meta, Google, CRM e automações na conta</td></tr>
+      <tr><td class="k">Certificado vence em até 30 dias</td><td><span class="tag y">Médio</span></td><td>Garantir que os requisitos continuam cumpridos para a renovação</td></tr>
+      <tr><td class="k">Site não cadastrado ou endereço inválido</td><td><span class="tag y">Médio</span></td><td>Corrigir o site no cadastro da conta; sem ele a vigilância fica cega</td></tr>
+    </tbody></table></div>
+  <h2>A triagem das 9h, passo a passo</h2>
+  <ol class="steps-list">
+    <li>Abra WebMaster › Vigilância e ordene por severidade. Olhe só o que é <b>novo</b> desde ontem.</li>
+    <li>Para cada crítico: confirme abrindo o site (um minuto). Se confirmado, mensagem M09 à agência no mesmo dia.</li>
+    <li>Para cada alto: agrupe por agência. Uma mensagem por agência com a lista, nunca dez mensagens soltas.</li>
+    <li>Médios entram no boletim mensal, salvo “selo ausente” há mais de 14 dias, que vira lembrete.</li>
+    <li>Plano Scale: o DPO recebe a lista da agência dele e conduz o contato.</li>
+    <li>Registre no funil ou na ficha da agência: achado, data do contato, data de resolução.</li>
+  </ol>
+  <div class="box na"><div class="t">Falsos positivos</div><p>“Endereço não verificável” costuma ser firewall ou proteção anti-robô (Cloudflare, Wordfence) bloqueando a nossa visita. Abra o site no navegador: se estiver no ar, oriente a agência a liberar a verificação ou aceite o achado como conhecido. Site fora do ar de verdade é problema de mídia antes de ser de privacidade: avise na hora, porque a agência está pagando clique para uma página que não abre.</p></div>
+  <div class="box bp"><div class="t">Boa prática</div><p>A vigilância é a melhor desculpa para falar com a agência sem pedir nada. “Pegamos que o SSL do site da Clínica X vence em 9 dias” é o tipo de mensagem que faz a agência perceber que alguém está cuidando dela.</p></div>
+</section>
+
+<!-- CAP 12 -->
+<section class="pb">
+  <div class="opener"><div class="lbl">CAPÍTULO 12 · RESPOSTA</div><h1>Titulares, incidentes e BM suspensa</h1><p>Os três tipos de urgência que chegam até a Dattis. Cada um tem relógio próprio, e o primeiro passo é sempre o mesmo: registrar a hora em que chegou.</p><div class="n">12</div></div>
+  <h2>Pedidos de titulares</h2>
+  <p>O titular faz o pedido pelo formulário da política pública hospedada pela Dattis. O pedido aparece no painel da agência (Titulares) e no WebMaster. A LGPD garante, entre outros, confirmação da existência de tratamento, acesso, correção, eliminação, portabilidade e informação sobre compartilhamento (art. 18). A confirmação e o acesso em formato simplificado devem ser imediatos; a declaração completa, em até <b>15 dias</b> do pedido (art. 19).</p>
+  <div class="tw"><table>
+    <thead><tr><th>Passo</th><th>O que fazer</th><th>Prazo-alvo</th></tr></thead>
+    <tbody>
+      <tr><td class="k">1 · Registrar</td><td>Conferir que o pedido entrou com data, canal e tipo de direito</td><td>Mesmo dia</td></tr>
+      <tr><td class="k">2 · Identificar o controlador</td><td>Política da agência: a agência é controladora e responde. Política de um cliente: o cliente é o controlador; a agência, como operadora, encaminha a ele</td><td>Até 1 dia útil</td></tr>
+      <tr><td class="k">3 · Confirmar identidade</td><td>Pedir só o mínimo para ter certeza de que é a pessoa (e-mail ou telefone cadastrado). Nunca pedir documento completo por WhatsApp</td><td>Até 2 dias úteis</td></tr>
+      <tr><td class="k">4 · Responder ao titular</td><td>Resposta simples e imediata; completa em até 15 dias. No Scale, o DPO da Dattis responde</td><td>Até 10 dias (folga de 5)</td></tr>
+      <tr><td class="k">5 · Executar</td><td>Eliminação: CRM, planilhas, listas de público, automações e lista de supressão</td><td>Junto com a resposta</td></tr>
+      <tr><td class="k">6 · Fechar</td><td>Marcar respondido no painel com a data. É a prova</td><td>No envio</td></tr>
+    </tbody></table></div>
+  <div class="box at"><div class="t">Atenção</div><p>Pedido de titular nunca fica sem resposta, mesmo quando parece trote ou ataque. Na dúvida sobre a legitimidade ou sobre o que responder, escale para o parceiro jurídico antes do 10º dia.</p></div>
+  <h2>Incidente de segurança na agência</h2>
+  <p>Vazamento de planilha, BM invadida, ex-funcionário com base, e-mail com lista enviado para o destinatário errado. A agência, como operadora, deve avisar o cliente (controlador) logo. O controlador comunica a ANPD e os titulares em até <b>3 dias úteis</b> quando o incidente pode causar risco ou dano relevante (Res. CD/ANPD nº 15/2024). O registro do incidente é guardado por no mínimo 5 anos.</p>
+  <div class="grid g4">
+    <div class="card"><span class="chip r"><b>0 h</b>Agora</span><h4>Conter</h4><p>Trocar senhas, revogar acessos, tirar link do ar, pedir remoção. Anotar a hora em que soube.</p></div>
+    <div class="card"><span class="chip o"><b>4 h</b>Mesmo dia</span><h4>Entender</h4><p>Que dados, de quem, quantas pessoas, há dado sensível? Desde quando?</p></div>
+    <div class="card"><span class="chip o"><b>24 h</b>Dia 1</span><h4>Avisar o cliente</h4><p>A agência comunica o controlador por escrito, com o que já sabe. Texto-base no Modelo G do livro.</p></div>
+    <div class="card"><span class="chip d"><b>3 d.u.</b>Prazo</span><h4>ANPD e titulares</h4><p>Se houver risco relevante, o controlador comunica. Parceiro jurídico envolvido.</p></div>
+  </div>
+  <div class="box at"><div class="t">Atenção: sempre escalar</div><p>Incidente com dado sensível, com mais de mil titulares, com imprensa ou com notificação de autoridade vai para a direção e para o parceiro jurídico <b>no mesmo dia</b>. O time Dattis orienta e organiza a documentação; não redige a comunicação à ANPD por conta própria.</p></div>
+  <h2>BM suspensa: o procedimento do Dossiê</h2>
+  <p>É a urgência mais comum e a que mais fideliza. A agência perde a conta de anúncio do cliente e precisa contestar rápido, com documentação organizada.</p>
+  <ol class="steps-list">
+    <li><b>Acolher em até 1 hora útil.</b> Perguntar: qual cliente, qual ativo (BM, conta de anúncio, perfil, número de WhatsApp), qual motivo o Meta informou e se já houve contestação.</li>
+    <li><b>Conferir a conta na Dattis.</b> RAT com os fluxos certos, DPA assinado pelas duas partes, ferramentas mapeadas. Se faltar algo, completar com a agência antes de gerar.</li>
+    <li><b>Gerar o Dossiê</b> em Painel › Dossiê (Growth+): dados da empresa, contrato de operação, registro de atividades, ferramentas, certificado verificável e texto-base da contestação.</li>
+    <li><b>Ajustar o texto-base</b> ao motivo informado pelo Meta. Sem exagero, sem promessa, sem atacar a plataforma.</li>
+    <li><b>A agência envia</b> a contestação pelo canal oficial do Meta, anexando o Dossiê. A Dattis não acessa a BM.</li>
+    <li><b>Acompanhar</b> em 48 horas e em 7 dias. Registrar o resultado, que alimenta casos e conteúdo.</li>
+  </ol>
+  <div class="box na"><div class="t">Na Dattis</div><p>Se a agência é Start e a BM cai, ela não tem o Dossiê. É o momento mais honesto para o upgrade: mostre o que o Growth entrega e ofereça a migração imediata da conta afetada. Ajude mesmo assim com orientação, mas não gere o Dossiê fora do plano.</p></div>
+</section>
+
+<!-- CAP 13 -->
+<section class="pb">
+  <div class="opener"><div class="lbl">CAPÍTULO 13 · FINANCEIRO</div><h1>Cobrança, mudança de plano e encerramento</h1><p>A mensalidade é o preço por cliente multiplicado pelos clientes contratados. A plataforma gera a cobrança; o time cuida da régua, das mudanças e da saída.</p><div class="n">13</div></div>
+  <h2>Como a mensalidade nasce</h2>
+  <p>A rotina diária cria uma mensalidade por agência ativa em cada mês, com vencimento no dia escolhido (entre 1 e 28). O valor é o preço do plano vezes os clientes contratados. A agência de demonstração e as suspensas ficam de fora. A cobrança é feita por link de pagamento, fora da plataforma; o WebMaster é o controle do que venceu, do que foi pago e de quem avisar.</p>
+  <h2>A régua de cobrança</h2>
+  <div class="tw"><table>
+    <thead><tr><th>Quando</th><th>Ação</th><th>Canal</th><th>Quem</th></tr></thead>
+    <tbody>
+      <tr><td class="k">D−3</td><td>Link de pagamento do mês com lembrete gentil (M11)</td><td>WhatsApp</td><td>Operações</td></tr>
+      <tr><td class="k">D0</td><td>Vencimento. Baixa automática do que o gateway confirmou</td><td>—</td><td>Operações</td></tr>
+      <tr><td class="k">D+1</td><td>Aviso de atraso, neutro, com o link de novo. O painel da agência passa a mostrar o aviso de mensalidade em aberto</td><td>WhatsApp</td><td>Operações</td></tr>
+      <tr><td class="k">D+5</td><td>Ligação do CS: há algum problema? Oferecer nova data, uma única vez</td><td>Telefone</td><td>CS</td></tr>
+      <tr><td class="k">D+7</td><td>Aviso formal: suspensão em 10 dias, conforme os Termos de Uso (M12)</td><td>WhatsApp e e-mail</td><td>Operações</td></tr>
+      <tr><td class="k">D+17</td><td>Suspensão em WebMaster › Agências, com aprovação da direção</td><td>—</td><td>Operações</td></tr>
+    </tbody></table></div>
+  <div class="box at"><div class="t">Atenção: o que a suspensão faz</div><p>Agência suspensa tem o painel bloqueado e <b>os certificados passam a aparecer como inválidos</b> para quem verificar o selo, inclusive nos sites dos clientes dela. É uma alavanca forte, por isso exige aprovação e o aviso formal antes. Pagamento confirmado = reativação no mesmo dia útil.</p></div>
+  <h2>Mudanças no contrato</h2>
+  <div class="tw"><table>
+    <thead><tr><th>Pedido</th><th>Como fazer</th><th>Efeito na cobrança</th></tr></thead>
+    <tbody>
+      <tr><td class="k">Mais clientes</td><td>WebMaster › Agências › clientes contratados. Confirmar por escrito o novo número</td><td>A partir da mensalidade seguinte</td></tr>
+      <tr><td class="k">Upgrade de plano</td><td>Mudar o plano no WebMaster no mesmo dia; os recursos liberam na hora</td><td>Novo valor a partir da mensalidade seguinte</td></tr>
+      <tr><td class="k">Downgrade de plano</td><td>Explicar o que se perde (selo, Dossiê, DAT, vigilância de sites) e registrar o aceite</td><td>No próximo ciclo, respeitando o contrato</td></tr>
+      <tr><td class="k">Menos clientes</td><td>A agência arquiva ou remove as contas que saíram; ajustar o número contratado</td><td>No próximo ciclo; respeitar o mínimo da proposta</td></tr>
+      <tr><td class="k">Troca do dia de vencimento</td><td>Ajustar na agência; registrar o pedido</td><td>Próxima competência</td></tr>
+    </tbody></table></div>
+  <h2>Encerramento</h2>
+  <ol class="steps-list">
+    <li><b>Receber o pedido por escrito</b> e responder em até 1 dia útil. O aviso é de 30 dias; antes de 12 meses, vale o que a proposta aceita prevê.</li>
+    <li><b>Conversa de retenção</b> com o CS (roteiro no Cap. 22, objeção “quero cancelar”). Ouvir o motivo antes de oferecer qualquer coisa.</li>
+    <li><b>Se mantiver o cancelamento:</b> orientar a exportação completa (.zip) em Configurações. Os documentos são da agência.</li>
+    <li><b>Avisar sobre o selo:</b> com o fim da assinatura os certificados deixam de valer; a agência deve tirar os selos dos sites.</li>
+    <li><b>Encerrar no WebMaster</b> na data combinada e cancelar as cobranças futuras.</li>
+    <li><b>Relatório de encerramento</b> (E18): o que foi entregue no período, o que fica pendente e como a agência pode seguir.</li>
+    <li><b>Registrar o motivo</b> no funil. Motivos de saída são revisados todo trimestre.</li>
+  </ol>
+  <div class="box bp"><div class="t">Boa prática</div><p>Saída bem feita volta. Uma agência que sai com tudo exportado, sem multa surpresa e com um relatório honesto é a que recomenda a Dattis e retorna quando o primeiro cliente grande pedir DPA.</p></div>
+</section>
+
+<!-- CAP 14 -->
+<section class="pb">
+  <div class="opener"><div class="lbl">CAPÍTULO 14 · SUPORTE</div><h1>Suporte, prazos de resposta e escalonamento</h1><p>O nível de suporte é parte do plano. Os prazos abaixo são metas internas: devemos cumpri-los sempre e, quando possível, superá-los.</p><div class="n">14</div></div>
+  <h2>Prazos por plano</h2>
+  <div class="tw"><table>
+    <thead><tr><th>Plano</th><th>Canal</th><th>Primeira resposta</th><th>Urgência (BM, incidente, titular)</th><th>Extra</th></tr></thead>
+    <tbody>
+      <tr><td class="k">Start</td><td>E-mail</td><td>Até 2 dias úteis</td><td>Mesmo dia útil, com orientação</td><td>Base de ajuda e tour</td></tr>
+      <tr><td class="k">Growth</td><td>Prioritário (WhatsApp e e-mail)</td><td>Até 4 horas úteis</td><td>Até 1 hora útil</td><td>Ajuda no Dossiê e no DAT</td></tr>
+      <tr><td class="k">Scale</td><td>Gestor dedicado</td><td>Até 1 hora útil</td><td>Imediato em horário útil</td><td>DPO nos alertas e reunião trimestral</td></tr>
+    </tbody></table></div>
+  <p class="small muted">Horário útil: segunda a sexta, das 9h às 18h (Brasília). Fora dele, urgências de agências Growth e Scale são vistas na abertura do dia seguinte, salvo combinado diferente.</p>
+  <h2>Níveis de atendimento</h2>
+  <div class="grid g3">
+    <div class="card"><span class="chip g"><b>N1</b>CS</span><h4>Uso e orientação</h4><p>Como cadastrar, como assinar, onde está o selo, como ler a vigilância. Resolve 80% dos chamados.</p></div>
+    <div class="card"><span class="chip o"><b>N2</b>Operações</span><h4>Plataforma e conta</h4><p>Erro de sistema, login, código, plano, cobrança, link de senha, ajuste de limite.</p></div>
+    <div class="card"><span class="chip r"><b>N3</b>Direção e jurídico</span><h4>Exceções e casos legais</h4><p>Incidente grave, ANPD, processo, exceção comercial, reclamação pública.</p></div>
+  </div>
+  <h2>Como abrir um chamado de erro (N2)</h2>
+  <div class="ckw"><div class="hd"><span class="h">Um chamado bem aberto tem</span><span class="m">Sem isso, volta</span></div><ul class="ck">
+    <li>Agência, usuário e tela (endereço da página)</li>
+    <li>O que a pessoa tentou fazer e o que aconteceu</li>
+    <li>Print sem dados pessoais visíveis de leads ou titulares</li>
+    <li>Data e hora aproximadas, para cruzar com WebMaster › Sistema</li>
+    <li>Impacto: está travando a agência? Tem prazo correndo?</li></ul></div>
+  <h2>Pedidos de recurso</h2>
+  <p>Toda sugestão vira registro, com a agência, o pedido e o problema por trás do pedido (“quero exportar em Word” costuma ser “meu cliente quer editar o contrato”). Responda sempre: “anotei e vou levar para o produto”, sem prometer data. Revisão das sugestões: quarta-feira, na rotina semanal.</p>
+  <div class="box na"><div class="t">Na Dattis: recuperação de senha</div><p>Enquanto o e-mail transacional não está ativo, a recuperação de senha sai pelo botão “Link de senha” em WebMaster › Agências e é enviada pelo WhatsApp comercial, só para o número cadastrado do responsável. Nunca envie link de senha para um número diferente sem confirmar a identidade.</p></div>
+</section>

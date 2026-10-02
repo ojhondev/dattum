@@ -46,3 +46,6 @@ next-env.d.ts
 
 .vercel
 .env*
+
+# manual de operações: HTML intermediário gerado pelo build
+/docs/manual-operacoes/manual.html
