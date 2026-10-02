@@ -87,7 +87,7 @@ export default async function PainelDashboard({ searchParams }: { searchParams: 
             {d.total ? `${d.emDia} de ${d.total} clientes com contrato, registro e sem alerta crítico.` : "Ative o primeiro cliente para começar a medir."}
           </p>
           <div className="relative mt-6 flex flex-wrap gap-2">
-            <Link href="/painel/contas/novo" className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2.5 font-mono text-[12px] uppercase tracking-[0.04em] text-ink transition-transform hover:-translate-y-0.5">
+            <Link href="/painel/contas/novo" className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2.5 font-mono text-[12px] uppercase tracking-[0.04em] text-[#0b1714] transition-transform hover:-translate-y-0.5">
               <Plus size={15} /> Ativar conta
             </Link>
             <Link href="/painel/documentos" className="inline-flex items-center gap-2 rounded-full bg-rail px-4 py-2.5 font-mono text-[12px] uppercase tracking-[0.04em] text-white transition-transform hover:-translate-y-0.5">

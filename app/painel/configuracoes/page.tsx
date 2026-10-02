@@ -112,6 +112,17 @@ export default async function ConfiguracoesPage() {
         </section>
 
         <section className={CARD}>
+          <p className={ROTULO}>Seus dados</p>
+          <p className="mt-2 text-[15px] leading-relaxed text-body">
+            Baixe tudo num arquivo .zip: registro de atividades, ferramentas, contratos de todas as versões com as assinaturas e evidências,
+            documentos, certificados e consentimentos de cookies. Os dados são seus, inclusive se um dia sair da Dattis.
+          </p>
+          <a href="/api/agencia/exportar" className="painel-btn ghost mt-4">
+            Exportar todos os dados (.zip)
+          </a>
+        </section>
+
+        <section className={CARD}>
           <p className={ROTULO}>Documentos legais da Dattis</p>
           <p className="mt-2 text-[15px] leading-relaxed text-body">
             {agencia.termosAceitosEm

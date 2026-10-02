@@ -3,6 +3,7 @@ import { executarVarredura } from "@/lib/vigilancia";
 import { automatizarTodas } from "@/lib/automacao";
 import { sql } from "drizzle-orm";
 import { db } from "@/lib/db";
+import { resetarDemo } from "@/lib/demo";
 
 export const runtime = "nodejs";
 export const maxDuration = 300;
@@ -13,8 +14,10 @@ export async function GET(req: Request) {
   if (!segredo || req.headers.get("authorization") !== `Bearer ${segredo}`) {
     return NextResponse.json({ ok: false, error: "Não autorizado." }, { status: 401 });
   }
+  // A demo é pública: zera o que os visitantes fizeram antes de emitir certificados e varrer.
+  const demo = await resetarDemo().catch((e) => ({ resetada: false, erro: String(e) }));
   const certificados = await automatizarTodas();
   await db.execute(sql`delete from limites where inicio < now() - interval '1 day'`).catch(() => null);
   const v = await executarVarredura({ origem: "cron" });
-  return NextResponse.json({ ok: true, varredura: v, certificados });
+  return NextResponse.json({ ok: true, demo, varredura: v, certificados });
 }
