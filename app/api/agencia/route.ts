@@ -2,7 +2,8 @@ import { NextResponse } from "next/server";
 import { and, eq, ne } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { agencias } from "@/lib/db/schema";
-import { getSessao, verificarSenha } from "@/lib/auth";
+import { ehDono, getSessao, verificarSenha } from "@/lib/auth";
+import { registrar } from "@/lib/registro";
 import { EMAIL_DEMO } from "@/lib/admin-dados";
 import { atualizarRascunhosDaAgencia } from "@/lib/dpa";
 
@@ -14,6 +15,7 @@ const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 export async function PATCH(req: Request) {
   const sessao = await getSessao();
   if (!sessao) return NextResponse.json({ ok: false, error: "Não autenticado." }, { status: 401 });
+  if (!ehDono(sessao)) return NextResponse.json({ ok: false, error: "Só o dono da conta pode fazer isso." }, { status: 403 });
   const agencia = await db.query.agencias.findFirst({ where: eq(agencias.id, sessao.agenciaId) });
   if (!agencia) return NextResponse.json({ ok: false, error: "Agência não encontrada." }, { status: 404 });
   if (agencia.email === EMAIL_DEMO) {
@@ -56,5 +58,6 @@ export async function PATCH(req: Request) {
   // Nome e CNPJ entram na qualificação dos contratos ainda não assinados.
   if (atual.nome !== agencia.nome || atual.cnpj !== agencia.cnpj) await atualizarRascunhosDaAgencia(agencia.id);
 
+  await registrar(sessao, "Atualizou os dados da agência", email !== agencia.email ? "Inclui troca do e-mail de acesso" : null);
   return NextResponse.json({ ok: true });
 }

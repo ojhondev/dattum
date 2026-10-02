@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import { contasCliente } from "@/lib/db/schema";
 import { getSessao } from "@/lib/auth";
 import { CHAVES_FLUXO, editarConta, normalizarSite, type EdicaoConta } from "@/lib/contas";
+import { registrar } from "@/lib/registro";
 
 export const runtime = "nodejs";
 
@@ -22,6 +23,7 @@ export async function DELETE(_req: Request, { params }: { params: Promise<{ id: 
     return NextResponse.json({ ok: false, error: "Conta não encontrada." }, { status: 404 });
   }
 
+  await registrar(sessao, "Excluiu um cliente", deletado[0].nome);
   return NextResponse.json({ ok: true });
 }
 
@@ -69,5 +71,6 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
   const r = await editarConta(id, sessao.agenciaId, e);
   if (!r) return NextResponse.json({ ok: false, error: "Conta não encontrada." }, { status: 404 });
 
+  await registrar(sessao, "Editou um cliente", `${r.conta.nome}${r.contrato === "nova_versao" ? " · nova versão do contrato" : ""}`);
   return NextResponse.json({ ok: true, site: r.conta.site, contrato: r.contrato });
 }

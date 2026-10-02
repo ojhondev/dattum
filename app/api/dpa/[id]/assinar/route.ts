@@ -5,6 +5,8 @@ import { dpas } from "@/lib/db/schema";
 import { getSessao } from "@/lib/auth";
 import { automatizarCertificados } from "@/lib/automacao";
 import { filtroVigente, ipDe, registrarAssinatura, userAgentDe, situacaoDpa } from "@/lib/dpa";
+import { registrar } from "@/lib/registro";
+import { contasCliente } from "@/lib/db/schema";
 
 export const runtime = "nodejs";
 
@@ -28,6 +30,8 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
   const dpa = await registrarAssinatura(atual, "agencia", { nome, cargo, ip: ipDe(req), userAgent: userAgentDe(req) });
   if (!dpa) return NextResponse.json({ ok: false, error: "A agência já assinou este contrato." }, { status: 409 });
 
+  const conta = await db.query.contasCliente.findFirst({ where: eq(contasCliente.id, dpa.contaClienteId), columns: { nome: true } });
+  await registrar(sessao, "Assinou o contrato de dados pela agência", `${conta?.nome ?? ""} · versão ${dpa.versao} · como ${nome}`);
   // Contrato completo costuma destravar o certificado: emite na hora, sem a agência pedir.
   const auto = situacaoDpa(dpa) === "assinado" ? await automatizarCertificados(sessao.agenciaId).catch(() => ({ emitidos: 0 })) : { emitidos: 0 };
   return NextResponse.json({ ok: true, dpa, certificadosEmitidos: auto.emitidos });

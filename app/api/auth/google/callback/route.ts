@@ -2,7 +2,9 @@ import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { eq } from "drizzle-orm";
 import { db } from "@/lib/db";
-import { agencias } from "@/lib/db/schema";
+import { agencias, usuarios } from "@/lib/db/schema";
+import { and } from "drizzle-orm";
+import { registrar } from "@/lib/registro";
 import { criarSessao } from "@/lib/auth";
 import { ativarAgencia } from "@/lib/ativacao";
 import {
@@ -46,6 +48,18 @@ export async function GET(req: Request) {
     return falhar("google_falhou");
   }
   if (!perfil.emailVerificado) return falhar("google_email");
+
+  // Pessoa da equipe: Google já vinculado ou mesmo e-mail do convite aceito
+  const membro =
+    (await db.query.usuarios.findFirst({ where: and(eq(usuarios.googleSub, perfil.sub), eq(usuarios.ativo, true)) })) ??
+    (await db.query.usuarios.findFirst({ where: and(eq(usuarios.email, perfil.email), eq(usuarios.ativo, true)) }));
+  if (membro && membro.senhaHash) {
+    await db.update(usuarios).set({ googleSub: membro.googleSub ?? perfil.sub, ultimoAcesso: new Date() }).where(eq(usuarios.id, membro.id));
+    await criarSessao(membro.agenciaId, membro.id);
+    await registrar({ agenciaId: membro.agenciaId, usuarioId: membro.id }, "Entrou na plataforma", "Com Google");
+    limpar();
+    return NextResponse.redirect(new URL(proximo, url.origin));
+  }
 
   // 1) Conta já vinculada a este Google  2) conta com o mesmo e-mail (vincula)  3) código de ativação (cria)
   let agencia = await db.query.agencias.findFirst({ where: eq(agencias.googleSub, perfil.sub) });

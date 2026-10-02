@@ -298,3 +298,35 @@ export const consentimentos = pgTable("consentimentos", {
   ipHash: text("ip_hash"), // SHA-256 do IP com segredo: prova sem guardar o IP
   criadoEm: timestamp("criado_em").notNull().defaultNow(),
 });
+
+// Pessoas da equipe da agência com login próprio. O dono continua sendo o login da própria agência.
+export const usuarios = pgTable("usuarios", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  agenciaId: uuid("agencia_id")
+    .notNull()
+    .references(() => agencias.id, { onDelete: "cascade" }),
+  nome: text("nome").notNull(),
+  email: text("email").notNull().unique(),
+  senhaHash: text("senha_hash"), // nulo até aceitar o convite
+  googleSub: text("google_sub").unique(),
+  papel: text("papel").notNull().default("membro"),
+  ativo: boolean("ativo").notNull().default(true),
+  conviteHash: text("convite_hash").unique(), // SHA-256 do token do link de convite
+  conviteExpira: timestamp("convite_expira"),
+  ultimoAcesso: timestamp("ultimo_acesso"),
+  criadoEm: timestamp("criado_em").notNull().defaultNow(),
+});
+
+// Registro de quem fez o quê na conta da agência (prestação de contas da LGPD, art. 37).
+export const registros = pgTable("registros", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  agenciaId: uuid("agencia_id")
+    .notNull()
+    .references(() => agencias.id, { onDelete: "cascade" }),
+  usuarioId: uuid("usuario_id").references(() => usuarios.id, { onDelete: "set null" }),
+  autorNome: text("autor_nome").notNull(),
+  autorEmail: text("autor_email"),
+  acao: text("acao").notNull(),
+  detalhe: text("detalhe"),
+  criadoEm: timestamp("criado_em").notNull().defaultNow(),
+});

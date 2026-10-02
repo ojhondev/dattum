@@ -2,7 +2,8 @@ import { NextResponse } from "next/server";
 import { eq } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { agencias } from "@/lib/db/schema";
-import { getSessao, hashSenha, verificarSenha } from "@/lib/auth";
+import { ehDono, getSessao, hashSenha, verificarSenha } from "@/lib/auth";
+import { registrar } from "@/lib/registro";
 import { EMAIL_DEMO } from "@/lib/admin-dados";
 
 export const runtime = "nodejs";
@@ -11,6 +12,7 @@ export const runtime = "nodejs";
 export async function POST(req: Request) {
   const sessao = await getSessao();
   if (!sessao) return NextResponse.json({ ok: false, error: "Não autenticado." }, { status: 401 });
+  if (!ehDono(sessao)) return NextResponse.json({ ok: false, error: "Só o dono da conta pode fazer isso." }, { status: 403 });
   const agencia = await db.query.agencias.findFirst({ where: eq(agencias.id, sessao.agenciaId) });
   if (!agencia) return NextResponse.json({ ok: false, error: "Agência não encontrada." }, { status: 404 });
   if (agencia.email === EMAIL_DEMO) {
@@ -29,5 +31,6 @@ export async function POST(req: Request) {
   }
 
   await db.update(agencias).set({ senhaHash: await hashSenha(nova), senhaDefinida: true }).where(eq(agencias.id, agencia.id));
+  await registrar(sessao, agencia.senhaDefinida ? "Trocou a senha da agência" : "Criou a senha da agência");
   return NextResponse.json({ ok: true });
 }

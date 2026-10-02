@@ -91,7 +91,7 @@ export function FormDadosAgencia({ inicial, pedeSenhaParaEmail, bloqueado }: { i
   );
 }
 
-export function FormSenha({ temSenha, bloqueado }: { temSenha: boolean; bloqueado: boolean }) {
+export function FormSenha({ temSenha, bloqueado, endpoint = "/api/agencia/senha" }: { temSenha: boolean; bloqueado: boolean; endpoint?: string }) {
   const router = useRouter();
   const [atual, setAtual] = useState("");
   const [nova, setNova] = useState("");
@@ -105,7 +105,7 @@ export function FormSenha({ temSenha, bloqueado }: { temSenha: boolean; bloquead
     if (nova !== confirma) return setEstado({ tipo: "erro", texto: "As duas senhas não são iguais." });
     setSalvando(true);
     setEstado(null);
-    const r = await fetch("/api/agencia/senha", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ atual, nova }) })
+    const r = await fetch(endpoint, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ atual, nova }) })
       .then((x) => x.json())
       .catch(() => ({ ok: false, error: "Sem conexão. Tente de novo." }));
     setSalvando(false);

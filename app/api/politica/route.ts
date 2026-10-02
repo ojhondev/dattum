@@ -7,6 +7,7 @@ import { contaDaAgencia } from "@/lib/contas";
 import { slugDisponivel } from "@/lib/politica-publica";
 import { urlAbsoluta } from "@/lib/site";
 import { EMAIL_DEMO } from "@/lib/admin-dados";
+import { registrar } from "@/lib/registro";
 
 export const runtime = "nodejs";
 
@@ -21,10 +22,10 @@ async function alvo(req: Request) {
   const url = new URL(req.url);
   const body = req.method === "POST" ? await req.json().catch(() => null) : null;
   const contaId = (body?.contaId as string | undefined) ?? url.searchParams.get("contaId");
-  if (!contaId) return { agencia, conta: null, body };
+  if (!contaId) return { agencia, conta: null, body, sessao };
   const conta = await contaDaAgencia(contaId, agencia.id);
   if (!conta) return { erro: NextResponse.json({ ok: false, error: "Conta não encontrada." }, { status: 404 }) };
-  return { agencia, conta, body };
+  return { agencia, conta, body, sessao };
 }
 
 /** Publica (ou atualiza o canal de) a política pública da agência ou de uma conta de cliente. */
@@ -46,6 +47,7 @@ export async function POST(req: Request) {
       .update(contasCliente)
       .set({ slug, emailPrivacidade: email || null, politicaPublicadaEm: r.conta.politicaPublicadaEm ?? new Date() })
       .where(eq(contasCliente.id, r.conta.id));
+    if (!r.conta.politicaPublicadaEm) await registrar(r.sessao, "Publicou a política de privacidade", r.conta.nome);
     return NextResponse.json({ ok: true, url: urlAbsoluta(`/p/${slug}/privacidade`) });
   }
   const slug = r.agencia.slug ?? (await slugDisponivel(r.agencia.nome));

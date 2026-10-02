@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import { agencias, contasCliente } from "@/lib/db/schema";
 import { getSessao } from "@/lib/auth";
 import { ativarConta, normalizarSite, CHAVES_FLUXO } from "@/lib/contas";
+import { registrar } from "@/lib/registro";
 
 export const runtime = "nodejs";
 
@@ -66,5 +67,6 @@ export async function POST(req: Request) {
     flows,
   });
 
+  await registrar(sessao, "Ativou um cliente", conta.nome);
   return NextResponse.json({ ok: true, conta, dpaId: dpa.id });
 }

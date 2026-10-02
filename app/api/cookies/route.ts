@@ -5,6 +5,7 @@ import { agencias, contasCliente, type ConfigCookies } from "@/lib/db/schema";
 import { getSessao } from "@/lib/auth";
 import { contaDaAgencia } from "@/lib/contas";
 import { novoToken } from "@/lib/dpa";
+import { registrar } from "@/lib/registro";
 
 export const runtime = "nodejs";
 
@@ -33,7 +34,9 @@ export async function POST(req: Request) {
     config.politicaUrl = u || undefined;
   }
 
+  const jaTinha = !!(conta ? conta.cookiesToken : agencia.cookiesToken);
   const token = (conta ? conta.cookiesToken : agencia.cookiesToken) ?? novoToken();
+  await registrar(sessao, jaTinha ? "Ajustou o aviso de cookies" : "Ativou o aviso de cookies", conta?.nome ?? "Site da agência");
   if (conta) await db.update(contasCliente).set({ cookiesToken: token, cookiesConfig: config }).where(eq(contasCliente.id, conta.id));
   else await db.update(agencias).set({ cookiesToken: token, cookiesConfig: config }).where(eq(agencias.id, agencia.id));
   return NextResponse.json({ ok: true, token });

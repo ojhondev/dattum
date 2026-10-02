@@ -5,6 +5,7 @@ import { dpas } from "@/lib/db/schema";
 import { getSessao } from "@/lib/auth";
 import { filtroVigente, novoToken } from "@/lib/dpa";
 import { urlAbsoluta } from "@/lib/site";
+import { registrar } from "@/lib/registro";
 
 export const runtime = "nodejs";
 
@@ -25,6 +26,7 @@ export async function POST(_req: Request, { params }: { params: Promise<{ id: st
   if (!token) {
     token = novoToken();
     await db.update(dpas).set({ tokenAssinatura: token }).where(eq(dpas.id, dpa.id));
+    await registrar(sessao, "Gerou o link de assinatura do contrato", `Versão ${dpa.versao}`);
   }
   return NextResponse.json({ ok: true, url: urlAbsoluta(`/assinar/${token}`) });
 }
