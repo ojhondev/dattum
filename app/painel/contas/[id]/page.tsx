@@ -6,6 +6,7 @@ import { agencias, contasCliente, atividadesTratamento, contaSubprocessadores, s
 import { fluxosDaConta } from "@/lib/fluxos";
 import { dpaVigente, situacaoDpa, versoesAnteriores } from "@/lib/dpa";
 import ContaDetalhe from "./ContaDetalhe";
+import { urlAbsoluta } from "@/lib/site";
 
 const iso = (d: Date | null) => (d ? d.toISOString() : null);
 
@@ -59,6 +60,7 @@ export default async function ContaDetalhePage({ params, searchParams }: { param
   return (
     <ContaDetalhe
       temDat={agencia?.plano !== "start"}
+      politica={{ url: conta.politicaPublicadaEm && conta.slug ? urlAbsoluta(`/p/${conta.slug}/privacidade`) : null, email: conta.emailPrivacidade ?? "" }}
       abaInicial={aba === "dpa" || aba === "sub" || aba === "vig" ? aba : "rat"}
       conta={{
         id: conta.id,

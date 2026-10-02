@@ -8,6 +8,8 @@ import { DOCUMENTOS_LEGAIS, VERSAO_LEGAL } from "@/lib/legal";
 import { EMAIL_DEMO } from "@/lib/admin-dados";
 import { linkContato } from "@/lib/contato";
 import { FormDadosAgencia, FormSenha } from "./ConfiguracoesClient";
+import { PoliticaPublicaCard } from "@/components/app/PoliticaPublicaCard";
+import { urlAbsoluta } from "@/lib/site";
 
 const CARD = "rounded-[20px] border border-line bg-surface p-5 sm:p-6";
 const ROTULO = "font-mono text-[12px] uppercase tracking-[0.04em] text-muted";
@@ -60,6 +62,14 @@ export default async function ConfiguracoesPage() {
           </p>
           <FormSenha temSenha={agencia.senhaDefinida} bloqueado={demo} />
         </section>
+
+        <PoliticaPublicaCard
+          titular={agencia.nome}
+          url={agencia.politicaPublicadaEm && agencia.slug ? urlAbsoluta(`/p/${agencia.slug}/privacidade`) : null}
+          emailInicial={agencia.emailPrivacidade ?? ""}
+          emailSugerido={agencia.email}
+          bloqueadoPlano={agencia.plano === "start"}
+        />
       </div>
 
       <aside className="flex flex-col gap-6">

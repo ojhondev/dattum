@@ -26,6 +26,9 @@ export const agencias = pgTable("agencias", {
   termosVersao: text("termos_versao"), // versão dos Termos/Privacidade/DPA da Dattis aceita no cadastro
   termosAceitosEm: timestamp("termos_aceitos_em"),
   suspensa: boolean("suspensa").notNull().default(false), // bloqueio pelo admin (ex.: inadimplência)
+  slug: text("slug").unique(), // endereço da política pública: /p/{slug}/privacidade
+  emailPrivacidade: text("email_privacidade"), // canal do titular publicado na política
+  politicaPublicadaEm: timestamp("politica_publicada_em"), // nulo = política pública desligada
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
@@ -48,6 +51,9 @@ export const contasCliente = pgTable("contas_cliente", {
   crmNome: text("crm_nome"),
   contatoWhatsapp: text("contato_whatsapp"),
   tokenPublico: text("token_publico").unique(), // link do DAT que a agência manda pro cliente
+  slug: text("slug").unique(), // endereço da política pública: /p/{slug}/privacidade
+  emailPrivacidade: text("email_privacidade"), // canal do titular publicado na política
+  politicaPublicadaEm: timestamp("politica_publicada_em"), // nulo = política pública desligada
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 

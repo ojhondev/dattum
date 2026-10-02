@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { FLUXO_POR_CHAVE, type FlowKey } from "@/lib/fluxos";
 import { SiteDaConta, VigilanciaDaConta, type ResultadoVigilancia } from "./VigilanciaConta";
 import { ContratoConta, type ContratoDados, type VersaoContrato } from "./ContratoConta";
+import { PoliticaPublicaCard } from "@/components/app/PoliticaPublicaCard";
 
 type Atividade = {
   id: string;
@@ -112,6 +113,7 @@ export default function ContaDetalhe({
   vigilancia,
   abaInicial,
   temDat,
+  politica,
 }: {
   conta: Conta;
   atividadesIniciais: Atividade[];
@@ -122,6 +124,7 @@ export default function ContaDetalhe({
   vigilancia: ResultadoVigilancia;
   abaInicial: Aba;
   temDat: boolean;
+  politica: { url: string | null; email: string };
 }) {
   const router = useRouter();
   const [aba, setAba] = useState<Aba>(abaInicial);
@@ -164,7 +167,16 @@ export default function ContaDetalhe({
               Resumo para o cliente (DAT)
             </a>
           )}
-
+        </div>
+        <div className="mt-5 max-w-3xl">
+          <PoliticaPublicaCard
+            contaId={conta.id}
+            titular={conta.nome}
+            url={politica.url}
+            emailInicial={politica.email}
+            emailSugerido={conta.contatoEmail ?? ""}
+            bloqueadoPlano={!temDat}
+          />
         </div>
       </div>
 
