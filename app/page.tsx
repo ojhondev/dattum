@@ -24,6 +24,7 @@ import { ScrollRevealText } from "@/components/marketing/ScrollRevealText";
 import { LeiBar } from "@/components/marketing/LeiBar";
 import { CalculadoraPopup, BotaoCalculadora } from "@/components/marketing/CalculadoraPopup";
 import { Faq } from "@/components/marketing/Faq";
+import { Funcionalidades } from "@/components/marketing/Funcionalidades";
 import { linkContato } from "@/lib/contato";
 
 const RISCOS = [
@@ -366,6 +367,9 @@ export default async function LandingPage() {
         </section>
 
         <PixelEdge flip bg="var(--color-canvas)" fill="var(--color-brand)" />
+
+        {/* FUNCIONALIDADES (prints reais da plataforma) */}
+        <Funcionalidades />
 
         {/* DIFERENCIAL COMPETITIVO */}
         <section id="diferencial" className="on-light bg-gradient-to-br from-canvas to-brand-tint-2">

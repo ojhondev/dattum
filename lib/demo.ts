@@ -2,6 +2,7 @@ import { and, eq, isNull } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { agencias, certificados, consentimentos, contasCliente, pedidosTitular, varreduraResultados } from "@/lib/db/schema";
 import { novoProtocolo, PRAZO_DIAS } from "@/lib/titulares";
+import { novoToken } from "@/lib/dpa";
 import { ativarConta } from "@/lib/contas";
 import { automatizarCertificados } from "@/lib/automacao";
 import { hashSenha } from "@/lib/auth";
@@ -43,6 +44,28 @@ const CONTAS_DEMO: { nome: string; cnpj: string; slug: string; site?: string; fl
   },
 ];
 
+/** Escolhas de exemplo no aviso de cookies (últimos 30 dias), para a demo mostrar números reais de uso. */
+async function semearConsentimentos(agenciaId: string, contaId: string, token: string, site: string) {
+  const paginas = ["/", "/produtos", "/promocao", "/blog/como-escolher", "/contato"];
+  const linhas = Array.from({ length: 46 }, (_, i) => {
+    const r = (i * 37) % 100;
+    const acao = r < 62 ? "aceitar" : r < 86 ? "recusar" : "personalizar";
+    const estat = acao === "aceitar" || (acao === "personalizar" && i % 2 === 0);
+    return {
+      token,
+      agenciaId,
+      contaClienteId: contaId,
+      visitante: novoToken().slice(0, 24),
+      acao,
+      categorias: { estatisticas: estat, marketing: acao === "aceitar" },
+      versao: "demo",
+      url: site.replace(/\/$/, "") + paginas[i % paginas.length],
+      criadoEm: new Date(Date.now() - ((i * 15.7) % 30) * 86_400_000 - (i % 7) * 3_600_000),
+    };
+  });
+  await db.insert(consentimentos).values(linhas);
+}
+
 async function semearContas(agenciaId: string) {
   for (const def of CONTAS_DEMO) {
     const { conta } = await ativarConta({
@@ -61,7 +84,12 @@ async function semearContas(agenciaId: string) {
     });
     // Política pública da conta assinada já no ar, para o visitante ver o recurso funcionando.
     if (def.assinado) {
-      await db.update(contasCliente).set({ slug: def.slug, politicaPublicadaEm: new Date() }).where(eq(contasCliente.id, conta.id));
+      const token = novoToken();
+      await db
+        .update(contasCliente)
+        .set({ slug: def.slug, politicaPublicadaEm: new Date(), cookiesToken: token, cookiesConfig: { flutuante: true } })
+        .where(eq(contasCliente.id, conta.id));
+      await semearConsentimentos(agenciaId, conta.id, token, def.site ?? "https://lojaaurora.com.br");
       await db.insert(pedidosTitular).values({
         agenciaId,
         contaClienteId: conta.id,

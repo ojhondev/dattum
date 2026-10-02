@@ -12,6 +12,8 @@ import {
   CircleHelp,
   MessageCircle,
   Newspaper,
+  Cookie,
+  Radar,
   type LucideIcon,
 } from "lucide-react";
 import { WHATSAPP_EXIBICAO, linkContato } from "@/lib/contato";
@@ -27,6 +29,16 @@ export const NAV_GROUPS: NavGroup[] = [
       { href: "/#modulos", label: "Certificado e selo", desc: "Prova verificável por QR Code no rodapé do site.", icon: BadgeCheck },
       { href: "/#bm-suspensa", label: "Dossiê para BM", desc: "Contestação organizada quando a BM é suspensa.", icon: FolderOpen },
       { href: "/#dpo", label: "DPO", desc: "A Dattis como encarregado de dados da agência.", icon: UserRoundCheck },
+    ],
+  },
+  {
+    label: "Funcionalidades",
+    items: [
+      { href: "/#func-cookies", label: "Aviso de cookies", desc: "Banner que segura o pixel até o aceite, com prova.", icon: Cookie },
+      { href: "/#func-gtm", label: "Google Tag Manager", desc: "Modo de consentimento v2 e instalação guiada.", icon: Tags },
+      { href: "/#func-selo", label: "Selo verificável", desc: "No rodapé da agência e de cada cliente.", icon: BadgeCheck },
+      { href: "/#func-vigilancia", label: "Monitoramento diário", desc: "Vigilância automática dos sites às 6h.", icon: Radar },
+      { href: "/#funcionalidades", label: "Ver todas", desc: "Política pronta, canal do titular, DAT e mais.", icon: LayoutGrid },
     ],
   },
   {
