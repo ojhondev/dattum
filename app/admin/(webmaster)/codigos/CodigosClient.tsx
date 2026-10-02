@@ -3,7 +3,7 @@
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { Copy, Check, MessageCircle } from "lucide-react";
-import { PLANOS, type PlanoId } from "@/lib/planos";
+import { PLANOS, TAXA_AGENCIA, mensalidade, type PlanoId } from "@/lib/planos";
 
 const nomePlano = (id: string) => PLANOS.find((p) => p.id === id)?.nome ?? id;
 
@@ -37,7 +37,7 @@ export function NovoCodigo() {
     setEnviando(false);
   };
 
-  const total = (PLANOS.find((p) => p.id === plano)?.preco ?? 0) * clientes;
+  const total = mensalidade(PLANOS.find((p) => p.id === plano)?.preco ?? 0, clientes);
 
   return (
     <form onSubmit={submit} className="block-card mt-10 grid gap-5 px-7 py-9 sm:px-10 md:grid-cols-2 xl:grid-cols-[1.3fr_1.1fr_1fr_120px_auto] xl:items-end">
@@ -82,7 +82,7 @@ export function NovoCodigo() {
         {enviando ? "Gerando..." : "Gerar código"}
       </button>
       <p className="text-[14px] text-muted md:col-span-2 xl:col-span-5">
-        Mensalidade desta agência: <span className="font-display text-[17px] text-ink">R$ {total}</span> ({clientes} clientes ×{" "}
+        Mensalidade desta agência: <span className="font-display text-[17px] text-ink">R$ {total}</span> (R$ {TAXA_AGENCIA} da agência + {clientes} cliente(s) ×{" "}
         {nomePlano(plano)})
       </p>
       {erro && <p className="rounded-xl bg-danger-tint px-4 py-3 text-body-sm text-danger md:col-span-2 xl:col-span-5">{erro}</p>}

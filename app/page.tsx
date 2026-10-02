@@ -115,7 +115,7 @@ const FAQ_ITEMS = [
   },
   {
     q: "Quanto custa?",
-    a: "De R$ 47 a R$ 297 por cliente da agência, por mês. O Growth, de R$ 97, é o plano que cobre o essencial: contrato com assinatura eletrônica, certificado e selo, Dossiê para BM e vigilância diária dos sites.",
+    a: "De R$ 47 a R$ 297 por cliente da agência, por mês, mais uma taxa fixa de R$ 197/mês da agência, igual em qualquer plano. O Growth, de R$ 97, é o plano que cobre o essencial: contrato com assinatura eletrônica, certificado e selo, Dossiê para BM e vigilância diária dos sites.",
   },
   {
     q: "Isso substitui um advogado?",
@@ -451,7 +451,7 @@ export default async function LandingPage() {
               <div className="flex flex-col rounded-[40px] bg-rail px-8 py-12 text-white sm:px-12">
                 <p className="t-label text-white">Com a Dattis</p>
                 <p className="font-display mt-6 text-[clamp(2.4rem,5vw,4rem)] leading-none text-brand">Um plano completo por R$ 97</p>
-                <p className="mt-3 text-[15px] text-white/80">por cliente da sua agência, por mês</p>
+                <p className="mt-3 text-[15px] text-white/80">por cliente da sua agência, por mês, + R$ 197/mês da agência</p>
                 <ul className="mt-8 flex flex-1 flex-col gap-2.5">
                   {["Documentação de cada cliente pronta", "Prova verificável no site", "Dossiê pronto se a BM cair", "DPO no plano Scale"].map((s) => (
                     <li key={s} className="flex items-start gap-2.5 text-[15px] text-white/90">

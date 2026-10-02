@@ -2,8 +2,8 @@ import type { DadosEmpresa } from "@/lib/empresa";
 
 // Versão dos documentos legais da própria Dattis. Mudou o texto de forma relevante? Suba a versão:
 // o aceite gravado no cadastro (agencias.termos_versao) mostra qual versão cada agência aceitou.
-export const VERSAO_LEGAL = "2026.10";
-export const VIGENCIA_LEGAL = "1º de outubro de 2026";
+export const VERSAO_LEGAL = "2026.10.2";
+export const VIGENCIA_LEGAL = "2 de outubro de 2026";
 
 export type DocumentoLegal = "termos" | "privacidade" | "contrato-de-dados";
 
@@ -99,7 +99,7 @@ O número de contas de cliente ativas fica limitado ao contratado. Para incluir 
 
 ## Planos, preço e pagamento
 
-O preço é cobrado por cliente da Agência, por mês, conforme o plano e a proposta comercial aceita. A cobrança é feita por link de pagamento enviado pela Dattis. A Dattis não recebe nem armazena dados de cartão.
+O preço é composto por uma taxa mensal fixa da Agência, igual em todos os planos, e por um valor mensal para cada cliente da Agência documentado na plataforma, conforme o plano e a proposta comercial aceita. A cobrança é feita por link de pagamento enviado pela Dattis. A Dattis não recebe nem armazena dados de cartão.
 
 Os valores podem ser reajustados uma vez a cada 12 meses pelo IPCA (ou pelo índice que o substituir), com aviso prévio de 30 dias.
 

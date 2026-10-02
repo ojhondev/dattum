@@ -1,7 +1,7 @@
 import { and, count, desc, eq, isNull } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { agencias, contasCliente, dpas, certificados, codigosAtivacao } from "@/lib/db/schema";
-import { PLANOS } from "@/lib/planos";
+import { PLANOS, mensalidade } from "@/lib/planos";
 import { ultimosResultados } from "@/lib/vigilancia";
 
 export const EMAIL_DEMO = "demo@dattis.com.br";
@@ -45,8 +45,8 @@ export async function carregarAgencias() {
       criticos: res.reduce((s, r) => s + r.criticos, 0),
       altos: res.reduce((s, r) => s + r.altos, 0),
       contato: codigos.find((c) => c.ag === a.id && c.contato)?.contato ?? null,
-      // Receita: preço do plano × clientes contratados (ou ativos, se o plano não tiver limite). Demo não conta.
-      mrr: demo ? 0 : preco * (a.clientesContratados ?? contas),
+      // Receita: taxa da agência + preço do plano × clientes contratados (ou ativos). Demo não conta.
+      mrr: demo ? 0 : mensalidade(preco, a.clientesContratados ?? contas),
     };
   });
 }
