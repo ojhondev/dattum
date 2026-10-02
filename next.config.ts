@@ -6,6 +6,7 @@ const nextConfig: NextConfig = {
   outputFileTracingIncludes: {
     "/blog/**": ["./assets/fonts/**", "./public/brand/logo-fundo-dark.png"],
     "/opengraph-image": ["./assets/fonts/**", "./public/brand/logo-fundo-dark.png"],
+    "/selo/**": ["./assets/fonts/**", "./public/brand/logo-fundo-dark.png", "./public/brand/logo-fundo-claro.png"],
   },
   images: {
     remotePatterns: [{ protocol: "https", hostname: "*.public.blob.vercel-storage.com" }],

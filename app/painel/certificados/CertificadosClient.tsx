@@ -81,8 +81,9 @@ type CertView = {
 export function CertificadoCard({ cert, origem }: { cert: CertView; origem: string }) {
   const router = useRouter();
   const [copiado, setCopiado] = useState(false);
+  const [tema, setTema] = useState<"claro" | "escuro">("claro");
   const verificar = `${origem}/verificar/${cert.codigo}`;
-  const embed = `<a href="${verificar}" target="_blank" rel="noopener"><img src="${origem}/selo/${cert.codigo}" alt="Selo de privacidade Dattis — clique para verificar" width="232" height="64"></a>`;
+  const embed = `<a href="${verificar}" target="_blank" rel="noopener"><img src="${origem}/selo/${cert.codigo}?tema=${tema}" alt="Site verificado pela Dattis: privacidade e segurança de dados conforme a LGPD. Clique para conferir." width="380" height="67" style="max-width:100%;height:auto"></a>`;
 
   const copiar = async () => {
     try {
@@ -121,7 +122,28 @@ export function CertificadoCard({ cert, origem }: { cert: CertView; origem: stri
           {cert.dominio ? ` · ${cert.dominio}` : ""} · válido até {cert.validoAte}
         </p>
 
-        <p className="t-eyebrow mt-6">Código pro rodapé do site</p>
+        <div className="mt-6 flex flex-wrap items-center gap-3">
+          <p className="t-eyebrow">Selo para o rodapé do site</p>
+          <div className="flex rounded-full border border-line p-0.5" role="radiogroup" aria-label="Versão do selo">
+            {(["claro", "escuro"] as const).map((t) => (
+              <button
+                key={t}
+                type="button"
+                role="radio"
+                aria-checked={tema === t}
+                onClick={() => setTema(t)}
+                className={"rounded-full px-3 py-1 text-[13px] " + (tema === t ? "bg-rail text-white" : "text-body hover:text-ink")}
+              >
+                {t === "claro" ? "Fundo claro" : "Fundo escuro"}
+              </button>
+            ))}
+          </div>
+        </div>
+        <div className="mt-3 rounded-2xl bg-[#f4f4f2] p-4">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={`/selo/${cert.codigo}?tema=${tema}`} alt={`Selo ${cert.codigo}`} width={380} height={67} className="h-auto max-w-full" />
+        </div>
+        <p className="mt-4 text-[13px] font-medium text-body">Código para colar no rodapé (o selo mostra sempre a situação do dia):</p>
         <div className="mt-2 flex items-stretch gap-2">
           <code className="thin-scroll block min-w-0 flex-1 overflow-x-auto whitespace-nowrap rounded-xl bg-surface-2 px-4 py-3 font-mono text-[12px] text-body">
             {embed}
@@ -135,6 +157,9 @@ export function CertificadoCard({ cert, origem }: { cert: CertView; origem: stri
           <a href={`/verificar/${cert.codigo}`} target="_blank" rel="noopener" className="btn btn-ghost">
             Ver verificação <ExternalLink size={14} />
           </a>
+          <a href={`/selo/${cert.codigo}/png?tema=${tema}`} download className="btn btn-dark">
+            Baixar PNG do selo
+          </a>
           <a href={`/qr/${cert.codigo}`} download={`qrcode-${cert.codigo}.svg`} className="btn btn-ghost">
             Baixar QR Code
           </a>
@@ -147,8 +172,6 @@ export function CertificadoCard({ cert, origem }: { cert: CertView; origem: stri
       </div>
 
       <div className="flex flex-wrap items-center gap-5 lg:flex-col lg:items-end">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={`/selo/${cert.codigo}`} alt={`Selo ${cert.codigo}`} width={232} height={64} />
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={`/qr/${cert.codigo}`} alt={`QR Code ${cert.codigo}`} width={110} height={110} className="rounded-lg border border-line" />
       </div>
