@@ -219,46 +219,8 @@ export default async function LandingPage() {
           </div>
         </section>
 
-        {/* BM SUSPENSA */}
-        <section
-          id="bm-suspensa"
-          className="relative border-t border-white/10 bg-rail bg-cover bg-center text-white"
-          style={{ backgroundImage: "linear-gradient(180deg, rgba(0,40,32,0.6), rgba(0,40,32,0.95)), url(/marketing/solucao-glow.png)" }}
-        >
-          <div className="grid w-full items-center gap-16 px-5 pb-28 pt-14 sm:px-10 lg:grid-cols-[1.15fr_1fr] lg:px-14">
-            <div>
-              <p className="flex items-center gap-2 font-mono text-[15px] uppercase tracking-[0.03em] text-orange">
-                <span className="h-2.5 w-2.5 animate-pulse rounded-full bg-orange" /> Urgente · BM suspensa
-              </p>
-              <h2 className="mt-6 font-display text-[clamp(2rem,4.4vw,3.5rem)] leading-[1.1] text-white">
-                BM suspensa é campanha parada, cliente perdido e dinheiro indo embora todo dia.
-              </h2>
-              <p className="mt-6 max-w-xl text-[18px] leading-relaxed text-white/85">
-                Quando o Meta restringe uma Business Manager, a contestação pede que você prove que a empresa é legítima e
-                trata dados do jeito certo. Ter documentos de conformidade verificáveis auxilia no processo de recuperação das
-                contas — e economiza milhares de reais em mídia parada e cliente cancelado.
-              </p>
-              <div className="mt-8 rounded-[20px] border border-white/15 bg-white/[0.06] p-6">
-                <p className="t-label !text-[18px] text-brand">Dossiê para BM</p>
-                <p className="mt-2 text-[16px] leading-relaxed text-white/85">
-                  A Dattis reúne, de forma organizada, todos os dados necessários pra contestar a suspensão: dados da empresa,
-                  contrato, registro de atividades, ferramentas, certificado e o texto-base da contestação. Em um clique.
-                </p>
-              </div>
-              <div className="mt-10 flex items-center gap-2">
-                <Link href="/planos" className="tag">
-                  Proteger minhas contas
-                </Link>
-                <Link href="/planos" aria-label="Ver planos" className="arrow-circle">
-                  <ArrowRight size={18} strokeWidth={1.6} />
-                </Link>
-              </div>
-            </div>
-            <div className="pb-8">
-              <BmAlertVisual />
-            </div>
-          </div>
-        </section>
+        {/* FUNCIONALIDADES (prints reais da plataforma) */}
+        <Funcionalidades />
 
         <PixelEdge bg="var(--color-rail)" fill="var(--color-brand)" />
 
@@ -368,8 +330,46 @@ export default async function LandingPage() {
 
         <PixelEdge flip bg="var(--color-rail)" fill="var(--color-brand)" />
 
-        {/* FUNCIONALIDADES (prints reais da plataforma) */}
-        <Funcionalidades />
+        {/* BM SUSPENSA */}
+        <section
+          id="bm-suspensa"
+          className="relative bg-rail bg-cover bg-center text-white"
+          style={{ backgroundImage: "linear-gradient(180deg, rgba(0,40,32,0.6), rgba(0,40,32,0.95)), url(/marketing/solucao-glow.png)" }}
+        >
+          <div className="grid w-full items-center gap-16 px-5 pb-28 pt-14 sm:px-10 lg:grid-cols-[1.15fr_1fr] lg:px-14">
+            <div>
+              <p className="flex items-center gap-2 font-mono text-[15px] uppercase tracking-[0.03em] text-orange">
+                <span className="h-2.5 w-2.5 animate-pulse rounded-full bg-orange" /> Urgente · BM suspensa
+              </p>
+              <h2 className="mt-6 font-display text-[clamp(2rem,4.4vw,3.5rem)] leading-[1.1] text-white">
+                BM suspensa é campanha parada, cliente perdido e dinheiro indo embora todo dia.
+              </h2>
+              <p className="mt-6 max-w-xl text-[18px] leading-relaxed text-white/85">
+                Quando o Meta restringe uma Business Manager, a contestação pede que você prove que a empresa é legítima e
+                trata dados do jeito certo. Ter documentos de conformidade verificáveis auxilia no processo de recuperação das
+                contas — e economiza milhares de reais em mídia parada e cliente cancelado.
+              </p>
+              <div className="mt-8 rounded-[20px] border border-white/15 bg-white/[0.06] p-6">
+                <p className="t-label !text-[18px] text-brand">Dossiê para BM</p>
+                <p className="mt-2 text-[16px] leading-relaxed text-white/85">
+                  A Dattis reúne, de forma organizada, todos os dados necessários pra contestar a suspensão: dados da empresa,
+                  contrato, registro de atividades, ferramentas, certificado e o texto-base da contestação. Em um clique.
+                </p>
+              </div>
+              <div className="mt-10 flex items-center gap-2">
+                <Link href="/planos" className="tag">
+                  Proteger minhas contas
+                </Link>
+                <Link href="/planos" aria-label="Ver planos" className="arrow-circle">
+                  <ArrowRight size={18} strokeWidth={1.6} />
+                </Link>
+              </div>
+            </div>
+            <div className="pb-8">
+              <BmAlertVisual />
+            </div>
+          </div>
+        </section>
 
         <PixelEdge bg="var(--color-rail)" fill="var(--color-canvas)" />
 

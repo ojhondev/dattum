@@ -214,7 +214,7 @@ const EXTRAS = [
 
 export function Funcionalidades() {
   return (
-    <section id="funcionalidades" className="fs-secao relative overflow-hidden bg-rail text-white">
+    <section id="funcionalidades" className="fs-secao relative overflow-hidden border-t border-white/10 bg-rail text-white">
       {/* Âncoras do menu (/#func-cookies…): o carrossel abre o slide certo */}
       {SLIDES.map((s) => (
         <span key={s.id} id={`func-${s.id}`} className="absolute top-0 scroll-mt-24" aria-hidden="true" />
