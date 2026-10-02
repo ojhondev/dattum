@@ -1,6 +1,7 @@
 import { and, eq, isNull } from "drizzle-orm";
 import { db } from "@/lib/db";
-import { agencias, certificados, consentimentos, contasCliente, varreduraResultados } from "@/lib/db/schema";
+import { agencias, certificados, consentimentos, contasCliente, pedidosTitular, varreduraResultados } from "@/lib/db/schema";
+import { novoProtocolo, PRAZO_DIAS } from "@/lib/titulares";
 import { ativarConta } from "@/lib/contas";
 import { automatizarCertificados } from "@/lib/automacao";
 import { hashSenha } from "@/lib/auth";
@@ -59,7 +60,19 @@ async function semearContas(agenciaId: string) {
         : undefined,
     });
     // Política pública da conta assinada já no ar, para o visitante ver o recurso funcionando.
-    if (def.assinado) await db.update(contasCliente).set({ slug: def.slug, politicaPublicadaEm: new Date() }).where(eq(contasCliente.id, conta.id));
+    if (def.assinado) {
+      await db.update(contasCliente).set({ slug: def.slug, politicaPublicadaEm: new Date() }).where(eq(contasCliente.id, conta.id));
+      await db.insert(pedidosTitular).values({
+        agenciaId,
+        contaClienteId: conta.id,
+        protocolo: novoProtocolo(),
+        nome: "Carla Mendes (exemplo)",
+        email: "carla.exemplo@email.com",
+        tipo: "exclusao",
+        mensagem: "Recebi anúncios da Loja Aurora no Instagram e não lembro de ter cadastrado meu e-mail. Quero que apaguem meus dados.",
+        prazo: new Date(Date.now() + (PRAZO_DIAS - 4) * 86_400_000),
+      });
+    }
   }
 }
 
@@ -85,6 +98,7 @@ export async function resetarDemo() {
   await db.delete(certificados).where(and(eq(certificados.agenciaId, agencia.id), isNull(certificados.contaClienteId)));
   await db.delete(varreduraResultados).where(eq(varreduraResultados.agenciaId, agencia.id));
   await db.delete(consentimentos).where(eq(consentimentos.agenciaId, agencia.id));
+  await db.delete(pedidosTitular).where(eq(pedidosTitular.agenciaId, agencia.id));
   await db
     .update(agencias)
     .set({

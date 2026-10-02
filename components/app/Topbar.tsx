@@ -13,6 +13,7 @@ const TITULOS: [string, string, string][] = [
   ["/painel/vigilancia", "Vigilância", "Varredura diária de segurança nos sites e na documentação."],
   ["/painel/certificados", "Certificados e selo", "Prova de privacidade verificável por QR Code."],
   ["/painel/dossie", "Dossiê para BM", "Contestação de BM suspensa pronta em um clique."],
+  ["/painel/titulares", "Pedidos de titulares", "Pedidos das pessoas sobre os próprios dados, com prazo de 15 dias."],
   ["/painel/cookies", "Cookies", "Aviso de cookies, consentimento e Gerenciador de Tags dos sites."],
   ["/painel/configuracoes", "Configurações", "Dados da agência, acesso e documentos legais."],
   ["/painel", "Painel", "Monitore a privacidade e a conformidade da sua carteira em tempo real."],

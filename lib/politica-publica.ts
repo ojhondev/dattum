@@ -186,7 +186,7 @@ Depois desses prazos, os dados são excluídos ou anonimizados, a não ser que a
 
 ${DIREITOS}
 
-Para fazer qualquer pedido, fale com a gente ${canalTitular}. Respondemos em até 15 dias. Você também pode reclamar à [Autoridade Nacional de Proteção de Dados (ANPD)](https://www.gov.br/anpd/pt-br).`);
+Para fazer qualquer pedido, use o formulário [Exercer meus direitos](#exercer-meus-direitos), no fim desta página, ou fale com a gente ${canalTitular}. Respondemos em até 15 dias. Você também pode reclamar à [Autoridade Nacional de Proteção de Dados (ANPD)](https://www.gov.br/anpd/pt-br).`);
 
   md.push(`## Segurança
 
@@ -261,7 +261,7 @@ Algumas ferramentas guardam dados fora do Brasil. A transferência segue o art. 
 
 ${DIREITOS}
 
-Para fazer qualquer pedido, fale com a gente ${canalTitular}. Respondemos em até 15 dias. Você também pode reclamar à [Autoridade Nacional de Proteção de Dados (ANPD)](https://www.gov.br/anpd/pt-br).`);
+Para fazer qualquer pedido, use o formulário [Exercer meus direitos](#exercer-meus-direitos), no fim desta página, ou fale com a gente ${canalTitular}. Respondemos em até 15 dias. Você também pode reclamar à [Autoridade Nacional de Proteção de Dados (ANPD)](https://www.gov.br/anpd/pt-br).`);
 
   md.push(`## Segurança
 

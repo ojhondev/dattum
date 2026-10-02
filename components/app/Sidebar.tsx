@@ -28,6 +28,8 @@ import {
   type LucideIcon,
   Settings,
   Cookie,
+  Wallet,
+  Activity,
 } from "lucide-react";
 import iconeMenta from "../../public/brand/icone-sidebar-menta.png";
 import iconeBranco from "../../public/brand/icone-sidebar-branco.png";
@@ -52,6 +54,7 @@ const GRUPOS_PAINEL: Grupo[] = [
     items: [
       { href: "/painel/vigilancia", label: "Vigilância", icon: Radar },
       { href: "/painel/cookies", label: "Cookies", icon: Cookie },
+      { href: "/painel/titulares", label: "Pedidos de titulares", icon: Inbox },
       { href: "/painel/certificados", label: "Certificados e selo", icon: BadgeCheck },
       { href: "/painel/dossie", label: "Dossiê para BM", icon: FolderOpen },
     ],
@@ -85,7 +88,10 @@ const GRUPOS_ADMIN: Grupo[] = [
     title: "Comercial",
     items: [
       { href: "/admin/leads", label: "Leads da auditoria", icon: Inbox },
+      { href: "/admin/titulares", label: "Pedidos de titulares", icon: ShieldCheck },
       { href: "/admin/codigos", label: "Códigos de ativação", icon: KeyRound },
+      { href: "/admin/cobranca", label: "Cobrança", icon: Wallet },
+      { href: "/admin/sistema", label: "Sistema", icon: Activity },
     ],
   },
 ];

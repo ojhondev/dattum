@@ -4,6 +4,7 @@ import { automatizarTodas } from "@/lib/automacao";
 import { sql } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { resetarDemo } from "@/lib/demo";
+import { gerarCobrancasDoMes } from "@/lib/cobranca";
 
 export const runtime = "nodejs";
 export const maxDuration = 300;
@@ -16,8 +17,9 @@ export async function GET(req: Request) {
   }
   // A demo é pública: zera o que os visitantes fizeram antes de emitir certificados e varrer.
   const demo = await resetarDemo().catch((e) => ({ resetada: false, erro: String(e) }));
+  const cobrancas = await gerarCobrancasDoMes().catch((e) => ({ criadas: 0, erro: String(e) }));
   const certificados = await automatizarTodas();
   await db.execute(sql`delete from limites where inicio < now() - interval '1 day'`).catch(() => null);
   const v = await executarVarredura({ origem: "cron" });
-  return NextResponse.json({ ok: true, demo, varredura: v, certificados });
+  return NextResponse.json({ ok: true, demo, cobrancas, varredura: v, certificados });
 }

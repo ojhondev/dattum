@@ -12,6 +12,7 @@ import { TourProvider } from "@/components/app/Tour";
 import { VERSAO_LEGAL } from "@/lib/legal";
 import { EMAIL_DEMO } from "@/lib/admin-dados";
 import { linkContato } from "@/lib/contato";
+import { brlCheio, cobrancaAtrasada, nomeCompetencia } from "@/lib/cobranca";
 
 export default async function PainelLayout({ children }: { children: React.ReactNode }) {
   const sessao = await getSessao();
@@ -22,6 +23,7 @@ export default async function PainelLayout({ children }: { children: React.React
     db.select({ n: count() }).from(contasCliente).where(eq(contasCliente.agenciaId, sessao.agenciaId)),
   ]);
   if (!agencia) redirect("/entrar");
+  const atrasada = !sessao.usuarioId && !agencia.suspensa ? await cobrancaAtrasada(agencia.id) : null;
   const pessoa = sessao.usuarioId ? await db.query.usuarios.findFirst({ where: eq(usuarios.id, sessao.usuarioId), columns: { nome: true } }) : null;
   const plano = PLANOS.find((p) => p.id === agencia.plano);
 
@@ -37,6 +39,22 @@ export default async function PainelLayout({ children }: { children: React.React
       <div className="min-w-0 flex-1">
         <Topbar agenciaNome={agencia.nome} />
         <main className="px-4 pb-16 pt-6 sm:px-10 lg:pt-8">
+          {atrasada && (
+            <div className="mb-6 flex flex-col gap-3 rounded-[20px] border border-warn bg-warn-tint px-5 py-4 sm:flex-row sm:items-center">
+              <p className="flex-1 text-[14.5px] leading-relaxed text-ink">
+                A mensalidade de <b>{nomeCompetencia(atrasada.competencia)}</b> ({brlCheio(atrasada.valor)}) venceu em{" "}
+                {atrasada.vencimento.toLocaleDateString("pt-BR")}. Regularize para evitar a suspensão do acesso e dos certificados.
+              </p>
+              <a
+                href={agencia.linkPagamento ?? linkContato(`Olá! Quero regularizar a mensalidade de ${nomeCompetencia(atrasada.competencia)} da ${agencia.nome}.`)}
+                target="_blank"
+                rel="noopener"
+                className="painel-btn shrink-0 self-start sm:self-auto"
+              >
+                {agencia.linkPagamento ? "Pagar agora" : "Falar com a Dattis"}
+              </a>
+            </div>
+          )}
           {agencia.termosVersao !== VERSAO_LEGAL && agencia.email !== EMAIL_DEMO && (
             <AvisoTermos versao={VERSAO_LEGAL} atualizacao={!!agencia.termosVersao} />
           )}

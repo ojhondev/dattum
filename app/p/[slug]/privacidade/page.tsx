@@ -5,6 +5,7 @@ import { ShieldCheck } from "lucide-react";
 import { politicaPorSlug } from "@/lib/politica-publica";
 import { renderMarkdown } from "@/lib/markdown";
 import { SITE_URL } from "@/lib/site";
+import { FormTitular } from "./FormTitular";
 
 export const dynamic = "force-dynamic";
 
@@ -19,7 +20,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 }
 
 export default async function PoliticaPublicaPage({ params }: { params: Promise<{ slug: string }> }) {
-  const p = await politicaPorSlug((await params).slug);
+  const { slug } = await params;
+  const p = await politicaPorSlug(slug);
   if (!p) notFound();
   const { html, sumario } = renderMarkdown(p.markdown, { siteHost: new URL(SITE_URL).host });
   const secoes = sumario.filter((s) => s.nivel === 2);
@@ -60,7 +62,12 @@ export default async function PoliticaPublicaPage({ params }: { params: Promise<
             </ol>
           </nav>
         </aside>
-        <div className="artigo artigo-legal" dangerouslySetInnerHTML={{ __html: html }} />
+        <div>
+          <div className="artigo artigo-legal" dangerouslySetInnerHTML={{ __html: html }} />
+          <div className="mt-12">
+            <FormTitular slug={slug} titular={p.titular} />
+          </div>
+        </div>
       </main>
 
       <footer className="border-t border-line px-5 py-6 sm:px-10 lg:px-14">

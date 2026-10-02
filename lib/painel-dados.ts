@@ -10,6 +10,7 @@ import {
   subprocessadoresCatalogo,
   certificados,
   varreduraResultados,
+  pedidosTitular,
 } from "@/lib/db/schema";
 import { fluxosDaConta, FLUXOS } from "@/lib/fluxos";
 import { ultimosResultados } from "@/lib/vigilancia";
@@ -22,7 +23,7 @@ const diaBrt = (d: Date) => new Date(d.getTime() - 3 * 3600_000).toISOString().s
 
 export type PontoSerie = { dia: string; rotulo: string; aprovadas: number; alertas: number };
 export type Evento = { quando: Date; tipo: "conta" | "contrato" | "certificado" | "vigilancia"; titulo: string; conta: string; contaId: string | null; status: "ok" | "pendente" | "alerta"; detalhe: string };
-export type Pendencia = { severidade: Severidade; conta: string; contaId: string; texto: string };
+export type Pendencia = { severidade: Severidade; conta: string; contaId: string; texto: string; href?: string };
 
 /** Tudo que o painel da agência mostra, calculado num lugar só. */
 export async function dadosDoPainel(agenciaId: string, opts: { dias: number }) {
@@ -143,6 +144,20 @@ export async function dadosDoPainel(agenciaId: string, opts: { dias: number }) {
     if (!s.assinado) pendencias.push({ ...base, severidade: "alto", texto: "Contrato aguardando assinatura da agência e do cliente" });
     if (s.rat === 0) pendencias.push({ ...base, severidade: "alto", texto: "Registro de tratamento vazio" });
     if (!s.conta.site) pendencias.push({ ...base, severidade: "medio", texto: "Site não cadastrado" });
+  }
+  const pedidosAbertos = await db.query.pedidosTitular.findMany({
+    where: and(eq(pedidosTitular.agenciaId, agenciaId), inArray(pedidosTitular.status, ["aberto", "em_andamento"])),
+    columns: { prazo: true, protocolo: true, contaClienteId: true },
+  });
+  for (const p of pedidosAbertos) {
+    const dias = Math.ceil((p.prazo.getTime() - agora) / DIA);
+    pendencias.push({
+      severidade: dias <= 3 ? "critico" : "alto",
+      conta: nomePor.get(p.contaClienteId ?? "") ?? "Site da agência",
+      contaId: p.contaClienteId ?? "",
+      texto: dias < 0 ? `Pedido de titular atrasado (${p.protocolo})` : `Pedido de titular: responder em ${dias} dia(s)`,
+      href: "/painel/titulares",
+    });
   }
   const ordem: Severidade[] = ["critico", "alto", "medio", "ok"];
   pendencias.sort((a, b) => ordem.indexOf(a.severidade) - ordem.indexOf(b.severidade));

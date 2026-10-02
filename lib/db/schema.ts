@@ -6,6 +6,7 @@ import {
   timestamp,
   integer,
   jsonb,
+  unique,
 } from "drizzle-orm/pg-core";
 import type { Achado } from "@/lib/vigilancia-tipos";
 
@@ -35,6 +36,8 @@ export const agencias = pgTable("agencias", {
   cookiesToken: text("cookies_token").unique(), // aviso de cookies: /c/{token}.js
   cookiesConfig: jsonb("cookies_config").$type<ConfigCookies>(),
   toursVistos: jsonb("tours_vistos").$type<string[]>().notNull().default([]), // tours guiados já concluídos ou pulados
+  diaVencimento: integer("dia_vencimento").notNull().default(10), // dia do mês da mensalidade
+  linkPagamento: text("link_pagamento"), // link de pagamento recorrente enviado pela Dattis
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
@@ -329,4 +332,59 @@ export const registros = pgTable("registros", {
   acao: text("acao").notNull(),
   detalhe: text("detalhe"),
   criadoEm: timestamp("criado_em").notNull().defaultNow(),
+});
+
+// Pedidos de titulares (art. 18 da LGPD) feitos pelo formulário das políticas públicas.
+export const pedidosTitular = pgTable("pedidos_titular", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  agenciaId: uuid("agencia_id")
+    .notNull()
+    .references(() => agencias.id, { onDelete: "cascade" }),
+  contaClienteId: uuid("conta_cliente_id").references(() => contasCliente.id, { onDelete: "cascade" }), // nulo = política da própria agência
+  protocolo: text("protocolo").notNull().unique(),
+  nome: text("nome").notNull(),
+  email: text("email").notNull(),
+  tipo: text("tipo").notNull(),
+  mensagem: text("mensagem"),
+  status: text("status").notNull().default("aberto"), // aberto | em_andamento | respondido | recusado
+  resposta: text("resposta"), // anotação interna do que foi respondido/feito
+  prazo: timestamp("prazo").notNull(), // 15 dias (art. 19, II)
+  ipHash: text("ip_hash"),
+  criadoEm: timestamp("criado_em").notNull().defaultNow(),
+  atualizadoEm: timestamp("atualizado_em").notNull().defaultNow(),
+  respondidoEm: timestamp("respondido_em"),
+});
+
+// Mensalidades das agências (controle do admin: vencimento, pago/em aberto, aviso e suspensão).
+export const cobrancas = pgTable(
+  "cobrancas",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    agenciaId: uuid("agencia_id")
+      .notNull()
+      .references(() => agencias.id, { onDelete: "cascade" }),
+    competencia: text("competencia").notNull(), // AAAA-MM
+    valor: integer("valor").notNull(), // em reais
+    vencimento: timestamp("vencimento").notNull(),
+    status: text("status").notNull().default("aberta"), // aberta | paga | cancelada (atrasada = aberta e vencida)
+    pagaEm: timestamp("paga_em"),
+    observacao: text("observacao"),
+    criadoEm: timestamp("criado_em").notNull().defaultNow(),
+  },
+  (t) => [unique("cobrancas_agencia_competencia").on(t.agenciaId, t.competencia)],
+);
+
+// Erros do site e da plataforma (servidor e navegador), agrupados por assinatura. Ver lib/erros.ts.
+export const erros = pgTable("erros", {
+  assinatura: text("assinatura").primaryKey(), // hash de tipo + mensagem + rota
+  tipo: text("tipo").notNull(), // servidor | navegador
+  mensagem: text("mensagem").notNull(),
+  rota: text("rota"),
+  metodo: text("metodo"),
+  digest: text("digest"),
+  pilha: text("pilha"),
+  ocorrencias: integer("ocorrencias").notNull().default(1),
+  primeiraVez: timestamp("primeira_vez").notNull().defaultNow(),
+  ultimaVez: timestamp("ultima_vez").notNull().defaultNow(),
+  resolvido: boolean("resolvido").notNull().default(false),
 });

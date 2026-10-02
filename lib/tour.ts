@@ -50,6 +50,12 @@ export const TOURS: Tour[] = [
         lado: "right",
       },
       {
+        alvo: nav("/painel/titulares"),
+        titulo: "Pedidos de titulares",
+        texto: "Quando alguém pede para ver ou apagar os próprios dados pelo formulário da política de privacidade, o pedido chega aqui, com o prazo legal de 15 dias.",
+        lado: "right",
+      },
+      {
         alvo: nav("/painel/certificados"),
         titulo: "6. Certificado e selo",
         texto: "Quando a documentação de um cliente fica completa, o certificado sai <b>sozinho</b>. Você cola o selo no rodapé do site e qualquer pessoa confere pelo QR Code.",
@@ -236,6 +242,18 @@ export const TOURS: Tour[] = [
         titulo: "O que é verificado",
         texto: "Estas são as checagens de cada site. Corrigiu algo e quer ver o resultado na hora? Abra o cliente, vá na aba <b>Vigilância</b> e clique para verificar agora.",
         lado: "bottom",
+      },
+    ],
+  },
+  {
+    id: "titulares",
+    nome: "Pedidos de titulares",
+    rota: (p) => p === "/painel/titulares",
+    passos: [
+      {
+        titulo: "Quando alguém pede os próprios dados",
+        texto:
+          "Pela LGPD, qualquer pessoa pode pedir para ver, corrigir ou apagar os dados dela. As políticas públicas da Dattis têm um formulário para isso, e os pedidos chegam aqui com protocolo. O prazo é de <b>15 dias</b>: o Painel avisa quando estiver perto de vencer.",
       },
     ],
   },
