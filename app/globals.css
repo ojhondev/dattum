@@ -652,3 +652,28 @@ table.painel-table a:hover { text-decoration: underline; }
 .fx-num::after { content: counter(an-n); }
 .fx-card[data-feito] :is(.fx-anel, .fx-num) { --an-p: var(--alvo); --an-n: var(--alvo); }
 .an-carrega { transform-origin: left center; animation: an-barra 1000ms cubic-bezier(.2, .7, .2, 1) var(--d, 0ms) both; }
+
+/* ---------- Funcionalidades: carrossel em destaque (seção escura) ---------- */
+.fs-secao {
+  background-image:
+    radial-gradient(ellipse 45% 35% at 90% 40%, rgba(108, 238, 173, 0.12), transparent 70%),
+    radial-gradient(ellipse 35% 20% at 0% 70%, rgba(108, 238, 173, 0.07), transparent 70%);
+}
+.fs-palco {
+  background-color: rgba(255, 255, 255, 0.03);
+  background-image: radial-gradient(rgba(255, 255, 255, 0.09) 1px, transparent 1.2px);
+  background-size: 16px 16px;
+}
+@keyframes fs-progresso { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+.fs-progresso { transform-origin: left center; animation: fs-progresso var(--dur, 7000ms) linear both; }
+.fs-pista { transition: transform 900ms cubic-bezier(.65, 0, .35, 1); }
+.fs-entra { opacity: 0; transform: translateY(18px); transition: opacity 600ms ease var(--d, 0ms), transform 800ms cubic-bezier(.2, .7, .2, 1) var(--d, 0ms); }
+[data-ativo] .fs-entra { opacity: 1; transform: none; transition-delay: calc(var(--d, 0ms) + 250ms); }
+.fs-pista[data-seco], .fs-pista[data-seco] .fs-entra { transition: none !important; }
+.fs-controle {
+  display: grid; place-items: center; width: 44px; height: 44px; border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.2); color: #fff; transition: border-color 160ms ease, background 160ms ease;
+}
+.fs-controle:hover { border-color: rgba(255, 255, 255, 0.55); }
+.fs-controle-forte { background: var(--color-brand); border-color: var(--color-brand); color: var(--color-rail); }
+.fs-controle-forte:hover { background: #8ff3c1; }

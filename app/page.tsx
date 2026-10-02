@@ -366,10 +366,12 @@ export default async function LandingPage() {
           </div>
         </section>
 
-        <PixelEdge flip bg="var(--color-canvas)" fill="var(--color-brand)" />
+        <PixelEdge flip bg="var(--color-rail)" fill="var(--color-brand)" />
 
         {/* FUNCIONALIDADES (prints reais da plataforma) */}
         <Funcionalidades />
+
+        <PixelEdge bg="var(--color-rail)" fill="var(--color-canvas)" />
 
         {/* DIFERENCIAL COMPETITIVO */}
         <section id="diferencial" className="on-light bg-gradient-to-br from-canvas to-brand-tint-2">

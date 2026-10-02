@@ -1,7 +1,8 @@
 import Image, { type StaticImageData } from "next/image";
 import Link from "next/link";
-import { ArrowRight, Check } from "lucide-react";
-import { Cena } from "@/components/marketing/Cena";
+import { ArrowRight, Check, FileSignature, Fingerprint, Radar, Send, Smartphone } from "lucide-react";
+import { MetaChips } from "@/components/marketing/MetaChips";
+import { CarrosselFuncionalidades, type Slide } from "@/components/marketing/CarrosselFuncionalidades";
 import bannerCookies from "../../public/marketing/app/banner-cookies.webp";
 import cookiesNumeros from "../../public/marketing/app/cookies-numeros.webp";
 import cookiesGtm from "../../public/marketing/app/cookies-gtm.webp";
@@ -16,39 +17,53 @@ import certificados from "../../public/marketing/app/certificados.webp";
 
 // Prints REAIS da plataforma (conta demo). Para atualizar: npx tsx scripts/capturar-telas.mts
 
-/** Moldura de navegador em volta de um print do app. */
-function Tela({ src, alt, endereco, prioridade = false }: { src: StaticImageData; alt: string; endereco: string; prioridade?: boolean }) {
+const d = (ms: number) => ({ "--d": `${ms}ms` }) as React.CSSProperties;
+
+/** Palco do slide: mesma proporção em todos, para a pista não pular de altura. */
+function Palco({ children }: { children: React.ReactNode }) {
+  return <div className="fs-palco relative aspect-[16/11] w-full overflow-hidden rounded-[28px] border border-white/10">{children}</div>;
+}
+
+/** Moldura de navegador em volta de um print, recortada no topo. */
+function Janela({
+  src,
+  alt,
+  endereco,
+  className = "",
+  corte = "aspect-[16/10]",
+  atraso = 0,
+}: {
+  src: StaticImageData;
+  alt: string;
+  endereco: string;
+  className?: string;
+  corte?: string;
+  atraso?: number;
+}) {
   return (
-    <figure className="overflow-hidden rounded-[18px] border border-line bg-surface shadow-[0_30px_60px_-30px_rgba(0,40,32,0.35)]">
-      <div className="flex items-center gap-2 border-b border-line bg-surface-2 px-4 py-2.5" aria-hidden="true">
-        <span className="h-2.5 w-2.5 rounded-full bg-[#e0e5e2]" />
-        <span className="h-2.5 w-2.5 rounded-full bg-[#e0e5e2]" />
-        <span className="h-2.5 w-2.5 rounded-full bg-[#e0e5e2]" />
-        <span className="ml-3 truncate rounded-md bg-surface px-3 py-0.5 font-mono text-[11px] text-muted">{endereco}</span>
+    <figure className={"fs-entra absolute overflow-hidden rounded-[14px] bg-white shadow-[0_30px_60px_-20px_rgba(0,0,0,0.65)] " + className} style={d(atraso)}>
+      <div className="flex items-center gap-1.5 border-b border-[#e3e3e1] bg-[#f9f9f7] px-3 py-2" aria-hidden="true">
+        <span className="h-2 w-2 rounded-full bg-[#e0e5e2]" />
+        <span className="h-2 w-2 rounded-full bg-[#e0e5e2]" />
+        <span className="h-2 w-2 rounded-full bg-[#e0e5e2]" />
+        <span className="ml-2 truncate rounded-md bg-white px-2.5 py-0.5 font-mono text-[10px] text-[#59645f]">{endereco}</span>
       </div>
-      <Image src={src} alt={alt} sizes="(min-width: 1024px) 55vw, 100vw" className="h-auto w-full" priority={prioridade} placeholder="blur" />
+      <div className={"relative " + corte}>
+        <Image src={src} alt={alt} fill sizes="(min-width: 1024px) 50vw, 90vw" className="object-cover object-top" placeholder="blur" />
+      </div>
     </figure>
   );
 }
 
-function Celular({ src, alt }: { src: StaticImageData; alt: string }) {
+function Chips({ className, atraso, items }: { className: string; atraso: number; items: Parameters<typeof MetaChips>[0]["items"] }) {
   return (
-    <figure className="mx-auto w-[min(300px,80%)] rounded-[44px] border-[10px] border-rail bg-rail shadow-[0_30px_60px_-25px_rgba(0,40,32,0.45)]">
-      <Image src={src} alt={alt} sizes="300px" className="h-auto w-full rounded-[34px]" placeholder="blur" />
-    </figure>
+    <div className={"fs-entra absolute hidden sm:block " + className} style={d(atraso)} aria-hidden="true">
+      <MetaChips items={items} />
+    </div>
   );
 }
 
-type Recurso = {
-  id: string;
-  rotulo: string;
-  titulo: string;
-  texto: string;
-  pontos: string[];
-  visual: React.ReactNode;
-};
-
-const RECURSOS: Recurso[] = [
+const SLIDES: Slide[] = [
   {
     id: "cookies",
     rotulo: "Aviso de cookies",
@@ -57,10 +72,12 @@ const RECURSOS: Recurso[] = [
       "Uma linha de código no site do cliente e pronto: o aviso pede o consentimento, só deixa o Pixel do Meta e as tags do Google rodarem depois do “Aceitar” e guarda a prova de cada escolha.",
     pontos: ["Aceitar, recusar ou personalizar, como a LGPD pede", "Prova de consentimento com data, página e versão", "Números de aceite por site, direto no painel"],
     visual: (
-      <div className="flex flex-col gap-4">
-        <Tela src={bannerCookies} alt="Aviso de cookies da Dattis no rodapé de um site, com Aceitar todos, Recusar e Personalizar" endereco="site-do-cliente.com.br" />
-        <Tela src={cookiesNumeros} alt="Módulo Cookies no painel da Dattis com as escolhas dos visitantes nos últimos 30 dias" endereco="dattis · Cookies" />
-      </div>
+      <Palco>
+        <Janela src={cookiesNumeros} alt="Módulo Cookies no painel da Dattis com as escolhas dos visitantes nos últimos 30 dias" endereco="dattis · Cookies" className="left-[5%] top-[6%] w-[80%]" atraso={150} />
+        <figure className="fs-entra absolute bottom-[6%] right-[4%] w-[72%] overflow-hidden rounded-[12px] shadow-[0_30px_60px_-15px_rgba(0,0,0,0.7)]" style={d(450)}>
+          <Image src={bannerCookies} alt="Aviso de cookies da Dattis no rodapé de um site, com Aceitar todos, Recusar e Personalizar" sizes="(min-width: 1024px) 40vw, 70vw" placeholder="blur" />
+        </figure>
+      </Palco>
     ),
   },
   {
@@ -70,7 +87,24 @@ const RECURSOS: Recurso[] = [
     texto:
       "O aviso já liga o Modo de consentimento v2 que o Google exige. Para quem usa o Gerenciador de Tags, WordPress, Shopify ou outro construtor, a Dattis mostra o passo a passo e confere a instalação sozinha.",
     pontos: ["Tags do Google respeitam a escolha automaticamente", "Passo a passo por plataforma, em português", "“Verificar instalação” aponta o que falta ajustar"],
-    visual: <Tela src={cookiesGtm} alt="Passo a passo de instalação do aviso de cookies com o Google Tag Manager" endereco="dattis · Cookies · instalação" />,
+    visual: (
+      <Palco>
+        <Janela src={cookiesGtm} alt="Passo a passo de instalação do aviso de cookies com o Google Tag Manager" endereco="dattis · Cookies · instalação" className="left-[5%] top-[6%] w-[54%]" corte="aspect-[16/15]" atraso={150} />
+        <div className="fs-entra absolute right-[5%] top-[16%] w-[42%] rounded-[16px] bg-white p-4 text-[#0a120f] shadow-[0_30px_60px_-20px_rgba(0,0,0,0.65)]" style={d(450)} aria-hidden="true">
+          <p className="font-mono text-[10px] uppercase tracking-[0.06em] text-[#59645f]">Modo de consentimento v2</p>
+          <p className="mt-1 text-[12.5px] font-medium">Depois do “Aceitar todos”</p>
+          <ul className="mt-3 space-y-1.5 font-mono text-[10.5px]">
+            {["ad_storage", "ad_user_data", "ad_personalization", "analytics_storage"].map((k) => (
+              <li key={k} className="flex items-center justify-between gap-2 rounded-lg bg-[#f4f4f2] px-2 py-1.5">
+                <span className="truncate">{k}</span>
+                <span className="shrink-0 rounded-full bg-[#cff5e1] px-2 py-0.5 text-[#05563a]">granted</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <Chips className="bottom-[8%] right-[5%]" atraso={700} items={[{ icon: Check, label: "Instalação verificada", status: "sim" }]} />
+      </Palco>
+    ),
   },
   {
     id: "selo",
@@ -80,13 +114,23 @@ const RECURSOS: Recurso[] = [
       "Quando a documentação fica completa, o certificado sai sozinho. O selo mostra a situação do dia e, ao clicar, abre a página de verificação com o nome da agência. Versão clara, escura e PNG para materiais.",
     pontos: ["Emitido e renovado automaticamente", "Fica inválido sozinho se algo deixar de estar em dia", "QR Code para propostas e apresentações"],
     visual: (
-      <div className="flex flex-col gap-4">
-        <div className="grid gap-3 rounded-[18px] bg-surface-2 p-5">
-          <Image src={seloClaro} alt="Selo Dattis versão clara: este site passa por verificações diárias de privacidade e segurança de dados, conforme a LGPD" sizes="(min-width: 1024px) 40vw, 90vw" className="h-auto w-full max-w-[520px]" />
-          <Image src={seloEscuro} alt="Selo Dattis versão escura" sizes="(min-width: 1024px) 40vw, 90vw" className="h-auto w-full max-w-[520px]" />
-        </div>
-        <Tela src={certificados} alt="Certificado emitido no painel, com código do selo e QR Code" endereco="dattis · Certificados e selo" />
-      </div>
+      <Palco>
+        <Image
+          src={seloClaro}
+          alt="Selo Dattis versão clara: este site passa por verificações diárias de privacidade e segurança de dados, conforme a LGPD"
+          sizes="(min-width: 1024px) 34vw, 60vw"
+          className="fs-entra absolute left-[7%] top-[9%] w-[60%] rounded-[10px] shadow-[0_20px_40px_-15px_rgba(0,0,0,0.6)]"
+          style={d(150)}
+        />
+        <Image
+          src={seloEscuro}
+          alt="Selo Dattis versão escura"
+          sizes="(min-width: 1024px) 34vw, 60vw"
+          className="fs-entra absolute left-[20%] top-[27%] w-[60%] rounded-[10px] shadow-[0_20px_40px_-15px_rgba(0,0,0,0.6)] ring-1 ring-white/10"
+          style={d(300)}
+        />
+        <Janela src={certificados} alt="Certificado emitido no painel, com código do selo e QR Code" endereco="dattis · Certificados e selo" className="bottom-[7%] right-[5%] w-[66%]" corte="aspect-[2184/836]" atraso={500} />
+      </Palco>
     ),
   },
   {
@@ -96,7 +140,12 @@ const RECURSOS: Recurso[] = [
     texto:
       "A Dattis visita o site de cada cliente e confere cadeado de segurança, pixel disparando sem consentimento, formulário sem política e contrato vencido. O problema aparece no painel antes de virar denúncia ou BM suspensa.",
     pontos: ["Nota de 0 a 100 por cliente", "Alertas por gravidade, com o que corrigir", "Certificado e selo acompanham o resultado"],
-    visual: <Tela src={vigilancia} alt="Tela de Vigilância da Dattis com a nota de cada cliente e os alertas" endereco="dattis · Vigilância" />,
+    visual: (
+      <Palco>
+        <Janela src={vigilancia} alt="Tela de Vigilância da Dattis com a nota de cada cliente e os alertas" endereco="dattis · Vigilância" className="left-[5%] top-[6%] w-[90%]" atraso={150} />
+        <Chips className="bottom-[6%] left-[4%]" atraso={500} items={[{ icon: Radar, label: "Verificado hoje às 06:00", status: "sim" }]} />
+      </Palco>
+    ),
   },
   {
     id: "assinatura",
@@ -105,7 +154,24 @@ const RECURSOS: Recurso[] = [
     texto:
       "A agência assina no painel e manda um link pelo WhatsApp. O cliente lê, assina e baixa o PDF. Ficam registrados nome, e-mail, data, IP, navegador e o resumo criptográfico do texto.",
     pontos: ["Assinatura das duas partes, como a LGPD pede", "Nova versão automática quando a operação muda", "Histórico de versões e PDF com evidências"],
-    visual: <Celular src={assinaturaCelular} alt="Página de assinatura do contrato de dados no celular do cliente" />,
+    visual: (
+      <Palco>
+        <figure className="fs-entra absolute left-[8%] top-[6%] overflow-hidden rounded-t-[30px] border-[7px] border-b-0 border-[#0d3a2f] bg-[#0d3a2f] sm:left-[12%]" style={d(150)}>
+          <Image src={assinaturaCelular} alt="Página de assinatura do contrato de dados no celular do cliente" sizes="260px" className="h-auto w-[clamp(150px,24vw,270px)] rounded-t-[23px]" placeholder="blur" />
+        </figure>
+        <div className="absolute right-[5%] top-[22%] hidden flex-col items-start gap-2.5 sm:flex" aria-hidden="true">
+          {[
+            { icon: FileSignature, label: "Assinado pelas duas partes", status: "sim" as const },
+            { icon: Smartphone, label: "Sem criar conta", status: "sim" as const },
+            { icon: Fingerprint, label: "Resumo SHA-256 do texto" },
+          ].map((c, i) => (
+            <div key={c.label} className="fs-entra" style={d(450 + i * 150)}>
+              <MetaChips items={[c]} />
+            </div>
+          ))}
+        </div>
+      </Palco>
+    ),
   },
   {
     id: "titular",
@@ -115,10 +181,10 @@ const RECURSOS: Recurso[] = [
       "A Dattis publica a política de privacidade de cada cliente, sempre atualizada, para colar no site e no formulário de anúncio do Meta e do Google. Quem quiser ver ou apagar os próprios dados pede por ali, com protocolo e prazo de 15 dias.",
     pontos: ["Escrita a partir do que a agência faz de verdade", "Link pronto para o Formulário instantâneo do Meta", "Pedidos com protocolo e aviso de prazo no painel"],
     visual: (
-      <div className="flex flex-col gap-4">
-        <Tela src={politica} alt="Política de privacidade pública de um cliente, hospedada pela Dattis" endereco="dattis · política de privacidade da Loja Aurora" />
-        <Tela src={titulares} alt="Tela de pedidos de titulares no painel, com protocolo e prazo" endereco="dattis · Pedidos de titulares" />
-      </div>
+      <Palco>
+        <Janela src={politica} alt="Política de privacidade pública de um cliente, hospedada pela Dattis" endereco="dattis · política da Loja Aurora" className="left-[5%] top-[6%] w-[72%]" atraso={150} />
+        <Janela src={titulares} alt="Tela de pedidos de titulares no painel, com protocolo e prazo" endereco="dattis · Pedidos de titulares" className="bottom-[6%] right-[4%] w-[58%]" atraso={450} />
+      </Palco>
     ),
   },
   {
@@ -128,7 +194,12 @@ const RECURSOS: Recurso[] = [
     texto:
       "O DAT mostra registro, contrato, ferramentas, site e certificado numa folha só, com link sempre atualizado ou PDF. É a entrega recorrente que prova o valor da agência e ajuda a renovar o contrato.",
     pontos: ["Link público sempre com os dados do dia", "PDF para anexar no relatório mensal", "Próximos passos em linguagem simples"],
-    visual: <Tela src={dat} alt="Resumo de conformidade (DAT) de um cliente" endereco="dattis · Resumo para o cliente" />,
+    visual: (
+      <Palco>
+        <Janela src={dat} alt="Resumo de conformidade (DAT) de um cliente" endereco="dattis · Resumo para o cliente" className="left-[5%] top-[6%] w-[90%]" atraso={150} />
+        <Chips className="bottom-[6%] right-[4%]" atraso={500} items={[{ icon: Send, label: "Enviado pro cliente", status: "sim" }]} />
+      </Palco>
+    ),
   },
 ];
 
@@ -143,57 +214,41 @@ const EXTRAS = [
 
 export function Funcionalidades() {
   return (
-    <section id="funcionalidades" className="bg-canvas">
-      <div className="w-full px-5 py-20 sm:px-10 lg:px-14 lg:py-28">
-        <p className="t-eyebrow">Funcionalidades</p>
-        <h2 className="t-display mt-4 max-w-4xl">Além da papelada: a Dattis trabalha todo dia pela sua agência</h2>
-        <p className="mt-6 max-w-2xl text-[18px] leading-relaxed text-body">
-          Telas reais da plataforma. Nada de mockup: é isso que sua agência e seus clientes usam no dia a dia.
-        </p>
-        <nav aria-label="Funcionalidades" className="mt-8 flex flex-wrap gap-1.5">
-          {RECURSOS.map((r) => (
-            <a key={r.id} href={`#func-${r.id}`} className="tag tag-white border border-line hover:border-line-strong">
-              {r.rotulo}
-            </a>
-          ))}
-        </nav>
-
-        <div className="mt-16 flex flex-col gap-24 lg:gap-32">
-          {RECURSOS.map((r, i) => (
-            <article id={`func-${r.id}`} key={r.id} className="grid scroll-mt-28 items-center gap-10 lg:grid-cols-12 lg:gap-14">
-              <div className={"lg:col-span-5 " + (i % 2 ? "lg:order-2" : "")}>
-                <p className="font-mono text-[12px] uppercase tracking-[0.06em] text-brand-ink">{r.rotulo}</p>
-                <h3 className="mt-3 font-display text-[clamp(1.7rem,3vw,2.5rem)] leading-[1.12] text-ink">{r.titulo}</h3>
-                <p className="mt-5 text-[17px] leading-relaxed text-body">{r.texto}</p>
-                <ul className="mt-6 flex flex-col gap-2.5">
-                  {r.pontos.map((p) => (
-                    <li key={p} className="flex items-start gap-3 text-[15.5px] text-ink">
-                      <span className="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-brand-strong text-rail">
-                        <Check size={13} strokeWidth={2.5} />
-                      </span>
-                      {p}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              <Cena className={"min-w-0 lg:col-span-7 " + (i % 2 ? "lg:order-1" : "")}>
-                <div className="an-sobe">{r.visual}</div>
-              </Cena>
-            </article>
-          ))}
+    <section id="funcionalidades" className="fs-secao relative overflow-hidden bg-rail text-white">
+      {/* Âncoras do menu (/#func-cookies…): o carrossel abre o slide certo */}
+      {SLIDES.map((s) => (
+        <span key={s.id} id={`func-${s.id}`} className="absolute top-0 scroll-mt-24" aria-hidden="true" />
+      ))}
+      <div className="relative w-full px-5 pb-20 pt-16 sm:px-10 lg:px-14 lg:pb-24 lg:pt-20">
+        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.8fr)] lg:items-end">
+          <div>
+            <p className="font-mono text-[13px] uppercase tracking-[0.06em] text-brand">Funcionalidades</p>
+            <h2 className="mt-4 max-w-4xl font-display text-[clamp(2.2rem,5vw,3.6rem)] leading-[1.06] text-white">
+              Além da papelada: a Dattis trabalha todo dia pela sua agência
+            </h2>
+          </div>
+          <p className="max-w-xl text-[18px] leading-relaxed text-white/75 lg:justify-self-end">
+            Telas reais da plataforma, sem mockup. É isso que sua agência e seus clientes usam no dia a dia.
+          </p>
         </div>
 
-        <div className="mt-28 rounded-[32px] bg-rail px-6 py-12 text-white sm:px-12">
-          <p className="font-mono text-[12px] uppercase tracking-[0.06em] text-brand">E ainda</p>
-          <ul className="mt-6 grid gap-x-10 gap-y-4 sm:grid-cols-2 lg:grid-cols-3">
-            {EXTRAS.map((e) => (
-              <li key={e} className="flex items-start gap-3 text-[16px] leading-snug text-white/90">
-                <Check size={18} className="mt-0.5 shrink-0 text-brand" />
-                {e}
-              </li>
-            ))}
-          </ul>
-          <div className="mt-10 flex flex-wrap gap-3">
+        <div className="mt-12">
+          <CarrosselFuncionalidades slides={SLIDES} />
+        </div>
+
+        <div className="mt-20 rounded-[32px] border border-white/10 bg-white/[0.04] px-6 py-10 sm:px-10">
+          <div className="grid gap-8 lg:grid-cols-[220px_minmax(0,1fr)]">
+            <p className="font-mono text-[13px] uppercase tracking-[0.06em] text-brand">E ainda</p>
+            <ul className="grid gap-x-10 gap-y-4 sm:grid-cols-2 xl:grid-cols-3">
+              {EXTRAS.map((e) => (
+                <li key={e} className="flex items-start gap-3 text-[15.5px] leading-snug text-white/90">
+                  <Check size={18} className="mt-0.5 shrink-0 text-brand" />
+                  {e}
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="mt-10 flex flex-wrap gap-3 lg:pl-[252px]">
             <Link href="/api/auth/demo" prefetch={false} className="btn btn-primary">
               Testar a plataforma sem senha <ArrowRight size={16} />
             </Link>
