@@ -18,12 +18,18 @@ export type ConfigScript = {
   ignorar: string[]; // caminhos onde o aviso não aparece (ex.: área logada)
   api: string;
   marcaUrl: string;
+  logoUrl: string;
+  selo: { texto: string; url: string | null }; // conformidade: só diz "verificada" com certificado válido
 };
 
 export const versaoDoTexto = (c: Pick<ConfigScript, "texto" | "politicaUrl">) =>
   createHash("sha256").update(`${c.texto}|${c.politicaUrl ?? ""}|categorias:v1`).digest("hex").slice(0, 10);
 
-export function configParaScript(token: string, cfg: ConfigCookies | null, base: { api: string; marcaUrl: string; politicaPadrao: string | null; ignorar?: string[] }): ConfigScript {
+export function configParaScript(
+  token: string,
+  cfg: ConfigCookies | null,
+  base: { api: string; marcaUrl: string; logoUrl: string; selo: ConfigScript["selo"]; politicaPadrao: string | null; ignorar?: string[] },
+): ConfigScript {
   return {
     token,
     texto: cfg?.texto?.trim() || TEXTO_PADRAO,
@@ -33,6 +39,8 @@ export function configParaScript(token: string, cfg: ConfigCookies | null, base:
     ignorar: base.ignorar ?? [],
     api: base.api,
     marcaUrl: base.marcaUrl,
+    logoUrl: base.logoUrl,
+    selo: base.selo,
   };
 }
 
@@ -131,7 +139,10 @@ const RUNTIME = String.raw`
     '.b{position:fixed;left:16px;right:16px;bottom:16px;z-index:2147483646;max-width:980px;margin:0 auto;background:#fff;color:#1c2422;border:1px solid #dfe5e2;border-radius:20px;box-shadow:0 18px 50px -12px rgba(0,0,0,.35);padding:20px 22px;animation:e .3s ease-out}' +
     '@keyframes e{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}' +
     '@media (prefers-reduced-motion:reduce){.b{animation:none}}' +
-    '.h{display:flex;align-items:center;gap:8px;font-size:15px;font-weight:700;margin:0 0 6px}' +
+    '.h{display:flex;align-items:center;flex-wrap:wrap;gap:10px;font-size:16px;font-weight:700;margin:0 0 8px;color:#0b1714}' +
+    '.lg{display:block;height:22px;width:auto}.sep{width:1px;height:18px;background:#dfe5e2}' +
+    '.s{display:inline-flex;align-items:center;gap:6px;margin-top:10px;padding:6px 10px;border-radius:999px;background:#e8f8f0;color:#05563a;font-size:12.5px;font-weight:600;text-decoration:none;line-height:1.2}' +
+    'a.s:hover{background:#d6f3e5}.s svg{flex:none}' +
     '.t{font-size:14px;line-height:1.55;margin:0}.t a{color:inherit;text-decoration:underline;text-underline-offset:2px}' +
     '.r{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:14px}' +
     '.btn{appearance:none;border-radius:999px;padding:10px 18px;font-size:14px;font-weight:600;cursor:pointer;border:1px solid transparent;line-height:1}' +
@@ -161,6 +172,15 @@ const RUNTIME = String.raw`
   function el(html) { var t = d.createElement('div'); t.innerHTML = html; return t.firstChild; }
   function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
 
+  var ESCUDO = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>';
+  function selo() {
+    if (!C.selo) return '';
+    var dentro = ESCUDO + '<span>' + esc(C.selo.texto) + (C.selo.url && C.selo.url.indexOf('/verificar/') > -1 ? ' · verificar' : '') + '</span>';
+    return C.selo.url
+      ? '<a class="s" href="' + esc(C.selo.url) + '" target="_blank" rel="noopener">' + dentro + '</a>'
+      : '<span class="s">' + dentro + '</span>';
+  }
+
   function fechar() {
     var b = raiz && raiz.querySelector('.b'); if (b) b.remove();
     painelAberto = false;
@@ -185,8 +205,8 @@ const RUNTIME = String.raw`
       : '<button class="btn a" data-a="aceitar">Aceitar todos</button><button class="btn g" data-a="recusar">Recusar</button><button class="l" data-a="personalizar">Personalizar</button>';
     var b = el(
       '<div class="b" role="dialog" aria-modal="false" aria-label="Aviso de cookies">' +
-        '<p class="h">' + ICONE + ' Sua privacidade</p>' +
-        '<p class="t">' + esc(C.texto) + politica + '</p>' + opcoes +
+        '<p class="h"><img class="lg" src="' + esc(C.logoUrl) + '" alt="Dattis" width="64" height="22"><span class="sep" aria-hidden="true"></span><span>Sua privacidade importa</span></p>' +
+        '<p class="t">' + esc(C.texto) + politica + '</p>' + selo() + opcoes +
         '<div class="r">' + botoes +
         '<a class="m" href="' + esc(C.marcaUrl) + '" target="_blank" rel="noopener" title="Aviso de cookies e conformidade LGPD pela Dattis">Protegido por Dattis</a></div>' +
       '</div>'

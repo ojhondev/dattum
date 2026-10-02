@@ -1,6 +1,7 @@
-import { eq } from "drizzle-orm";
+import { and, desc, eq, isNull } from "drizzle-orm";
 import { db } from "@/lib/db";
-import { agencias, contasCliente, type ConfigCookies } from "@/lib/db/schema";
+import { agencias, certificados, contasCliente, type ConfigCookies } from "@/lib/db/schema";
+import { statusCertificado } from "@/lib/certificados";
 import { SITE_URL } from "@/lib/site";
 
 // Quem é o dono de um token de aviso de cookies: a própria Dattis, uma agência ou uma conta de cliente.
@@ -17,11 +18,33 @@ export type DonoCookies = {
   config: ConfigCookies | null;
   politicaPadrao: string | null;
   ignorar: string[];
+  selo: { texto: string; url: string | null };
 };
+
+const SELO_BASE = { texto: "Consentimento coletado conforme a LGPD", url: null };
+
+/** Só afirma conformidade verificada quando o certificado da Dattis está válido e em dia. */
+async function seloDe(agenciaId: string, contaId: string | null) {
+  const cert = await db.query.certificados.findFirst({
+    where: and(eq(certificados.agenciaId, agenciaId), eq(certificados.revogado, false), contaId ? eq(certificados.contaClienteId, contaId) : isNull(certificados.contaClienteId)),
+    orderBy: desc(certificados.validoAte),
+  });
+  if (!cert) return SELO_BASE;
+  const st = await statusCertificado(cert).catch(() => null);
+  return st?.emDia ? { texto: "Site com conformidade LGPD verificada", url: `${SITE_URL}/verificar/${cert.codigo}` } : SELO_BASE;
+}
 
 export async function donoDoToken(token: string): Promise<DonoCookies | null> {
   if (token === TOKEN_DATTIS) {
-    return { tipo: "dattis", agenciaId: null, contaId: null, config: { flutuante: false }, politicaPadrao: `${SITE_URL}/privacidade`, ignorar: IGNORAR_DATTIS };
+    return {
+      tipo: "dattis",
+      agenciaId: null,
+      contaId: null,
+      config: { flutuante: false },
+      politicaPadrao: `${SITE_URL}/privacidade`,
+      ignorar: IGNORAR_DATTIS,
+      selo: { texto: "Site em conformidade com a LGPD", url: `${SITE_URL}/privacidade` },
+    };
   }
   if (token.length < 20) return null;
 
@@ -35,6 +58,7 @@ export async function donoDoToken(token: string): Promise<DonoCookies | null> {
       config: ag.cookiesConfig ?? null,
       politicaPadrao: ag.politicaPublicadaEm && ag.slug ? `${SITE_URL}/p/${ag.slug}/privacidade` : null,
       ignorar: [],
+      selo: await seloDe(ag.id, null),
     };
   }
   const conta = await db.query.contasCliente.findFirst({ where: eq(contasCliente.cookiesToken, token) });
@@ -48,5 +72,6 @@ export async function donoDoToken(token: string): Promise<DonoCookies | null> {
     config: conta.cookiesConfig ?? null,
     politicaPadrao: conta.politicaPublicadaEm && conta.slug ? `${SITE_URL}/p/${conta.slug}/privacidade` : null,
     ignorar: [],
+    selo: await seloDe(conta.agenciaId, conta.id),
   };
 }

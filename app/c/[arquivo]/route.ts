@@ -20,6 +20,8 @@ export async function GET(_req: Request, { params }: { params: Promise<{ arquivo
   const cfg = configParaScript(token, dono.config, {
     api: `${SITE_URL}/api/consentimento`,
     marcaUrl: `${SITE_URL}/?utm_source=aviso-cookies&utm_medium=selo`,
+    logoUrl: `${SITE_URL}/brand/logo-fundo-claro.png`,
+    selo: dono.selo,
     politicaPadrao: dono.politicaPadrao,
     ignorar: dono.ignorar,
   });
