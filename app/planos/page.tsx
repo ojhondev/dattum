@@ -50,10 +50,6 @@ const FAQ_PLANOS = [
     q: "Como eu contrato?",
     a: "Fale com a gente pelo botão do plano: marcamos uma conversa rápida, enviamos o link de pagamento pelo WhatsApp e, confirmado o pagamento, você recebe o código de ativação pra criar o acesso da agência.",
   },
-  {
-    q: "Existe fidelidade?",
-    a: "O contrato mínimo é de 12 meses, com aviso de 30 dias para encerrar. Compliance não é algo que se liga e desliga sem deixar a agência exposta no meio do caminho.",
-  },
 ];
 
 function PlanoCard({ p }: { p: Plano }) {
@@ -129,10 +125,6 @@ export default function PlanosPage() {
                 <PlanoCard key={p.id} p={p} />
               ))}
             </div>
-            <p className="mx-auto mt-10 max-w-2xl text-center text-[15px] leading-relaxed text-rail/85">
-              Uma multa simples da LGPD pode chegar a 2% do faturamento, limitada a R$ 50 milhões por infração. Com três
-              clientes no Growth, sua agência investe R$ 291 por mês.
-            </p>
           </div>
         </section>
 
@@ -140,8 +132,9 @@ export default function PlanosPage() {
         <section className="bg-canvas">
           <div className="w-full px-5 py-24 sm:px-10 lg:px-14">
             <h2 className="t-display">O que cada plano cobre, pilar por pilar</h2>
-            <div className="card-flush mt-10 overflow-x-auto">
-              <table className="w-full min-w-[720px] border-collapse text-left">
+            <ComparativoCelular />
+            <div className="card-flush mt-10 hidden md:block">
+              <table className="w-full border-collapse text-left">
                 <thead>
                   <tr className="bg-surface-2">
                     <th className="w-[40%] border-b border-line px-6 py-4" />
@@ -212,8 +205,8 @@ export default function PlanosPage() {
               <p className="t-eyebrow">Pra começar</p>
               <h2 className="t-display mt-4">Sprint de Higienização: sua agência regularizada em 10 dias úteis.</h2>
               <p className="mt-6 max-w-lg text-[17px] leading-relaxed text-body">
-                Taxa única, cobrada à parte. Se você fechar o plano anual junto, 50% do valor do sprint é abatido da
-                primeira mensalidade.
+                Taxa única, cobrada à parte. Um ponto de partida pra quem quer a carteira toda organizada logo no
+                começo.
               </p>
               <ArrowLink href={linkAssinar()} className="mt-9">
                 Agendar o sprint
@@ -226,25 +219,6 @@ export default function PlanosPage() {
                     {i + 1}
                   </span>
                   <span className="text-[16px]">{s}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </section>
-
-        {/* CONDIÇÕES */}
-        <section className="on-light bg-gradient-to-br from-canvas to-brand-tint-2">
-          <div className="w-full px-5 py-20 sm:px-10 lg:px-14">
-            <h2 className="t-display">Condições</h2>
-            <ul className="mt-10 grid gap-5 md:grid-cols-3">
-              {[
-                { t: "12 meses", d: "Contrato mínimo" },
-                { t: "30 dias", d: "Aviso prévio para encerrar" },
-                { t: "15%", d: "De desconto no plano anual" },
-              ].map((c) => (
-                <li key={c.t} className="rounded-[20px] bg-white px-7 py-8">
-                  <p className="font-display text-[44px] leading-none text-rail">{c.t}</p>
-                  <p className="mt-3 text-[15px] text-body">{c.d}</p>
                 </li>
               ))}
             </ul>
@@ -298,5 +272,35 @@ function PilarRows({ pilar }: { pilar: string }) {
         </tr>
       ))}
     </>
+  );
+}
+
+/** Comparativo no celular: um bloco por pilar, cada item com os três planos lado a lado, sem rolagem lateral. */
+function ComparativoCelular() {
+  return (
+    <div className="mt-8 flex flex-col gap-8 md:hidden">
+      {PILARES.map((pilar) => (
+        <div key={pilar}>
+          <p className="font-mono text-[12px] uppercase tracking-[0.05em] text-muted">{pilar}</p>
+          <ul className="mt-3 flex flex-col gap-2.5">
+            {RECURSOS.filter((r) => r.pilar === pilar).map((r) => (
+              <li key={r.nome} className="rounded-[20px] border border-line bg-surface p-4">
+                <p className="text-[15.5px] font-medium leading-snug text-ink">{r.nome}</p>
+                <div className="mt-3 grid grid-cols-3 gap-1.5">
+                  {PLANOS.map((p) => (
+                    <div key={p.id} className={"rounded-xl px-2.5 py-2 " + (p.destaque ? "bg-brand-tint" : "bg-surface-2")}>
+                      <p className={"font-mono text-[10.5px] uppercase tracking-[0.04em] " + (p.destaque ? "text-brand-ink" : "text-muted")}>{p.nome}</p>
+                      <div className="mt-1 text-[13px] leading-snug [&_span]:text-[13px]">
+                        <Celula v={r.valores[p.id]} />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
   );
 }

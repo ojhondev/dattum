@@ -7,7 +7,7 @@ export const revalidate = 3600;
 
 export const metadata: Metadata = {
   title: "Termos de Uso",
-  description: "Regras da assinatura da Dattis: o que a plataforma entrega, o que não entrega, pagamento, prazo mínimo, certificado e responsabilidades.",
+  description: "Regras da assinatura da Dattis: o que a plataforma entrega, o que não entrega, pagamento, prazo e encerramento, certificado e responsabilidades.",
   alternates: { canonical: "/termos" },
 };
 

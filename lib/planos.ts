@@ -18,9 +18,9 @@ export const PLANOS: Plano[] = [
 export type Recurso = { pilar: string; nome: string; valores: Record<PlanoId, boolean | string> };
 
 export const RECURSOS: Recurso[] = [
-  { pilar: "Documentação", nome: "RAT por conta de cliente", valores: { start: true, growth: true, scale: true } },
-  { pilar: "Documentação", nome: "Contrato de operação (DPA)", valores: { start: "Modelo pronto", growth: "Com assinatura eletrônica", scale: "Com assinatura eletrônica" } },
-  { pilar: "Documentação", nome: "Registro de subprocessadores", valores: { start: true, growth: true, scale: true } },
+  { pilar: "Documentação", nome: "Registro do uso de dados de cada cliente (RAT)", valores: { start: true, growth: true, scale: true } },
+  { pilar: "Documentação", nome: "Contrato de dados com o cliente (DPA)", valores: { start: "Modelo pronto", growth: "Com assinatura eletrônica", scale: "Com assinatura eletrônica" } },
+  { pilar: "Documentação", nome: "Lista das ferramentas que usam os dados", valores: { start: true, growth: true, scale: true } },
   { pilar: "Proteção", nome: "Certificado e selo com QR Code", valores: { start: false, growth: "Agência e clientes", scale: "Agência e clientes" } },
   { pilar: "Proteção", nome: "Dossiê para BM suspensa", valores: { start: false, growth: true, scale: true } },
   { pilar: "Proteção", nome: "Vigilância diária de segurança", valores: { start: "Só documentação", growth: "Sites e documentação", scale: "Sites e documentação, com o DPO nos alertas" } },

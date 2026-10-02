@@ -1,5 +1,6 @@
 import {
   LayoutGrid,
+  Info,
   BadgeCheck,
   FolderOpen,
   UserRoundCheck,
@@ -59,6 +60,7 @@ export const NAV_GROUPS: NavGroup[] = [
   {
     label: "Sobre",
     items: [
+      { href: "/o-que-e-a-dattis", label: "O que é a Dattis", desc: "O que é, por que existe e para quem é.", icon: Info },
       { href: "/blog", label: "Blog", desc: "LGPD e tráfego pago, sem juridiquês.", icon: Newspaper },
       { href: "/#diferencial", label: "Diferencial competitivo", desc: "Privacidade como argumento de venda da agência.", icon: Trophy },
       { href: "/#faq", label: "Perguntas frequentes", desc: "RAT, DPA, selo, BM suspensa e preços.", icon: CircleHelp },

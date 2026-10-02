@@ -42,7 +42,11 @@ const RISCOS = [
   },
 ];
 
-const CHECKLIST = ["RAT por conta de cliente", "Contrato com assinatura eletrônica", "Subprocessadores mapeados", "Certificado e selo verificáveis", "Dossiê para BM suspensa"];
+const PASSOS = [
+  { t: "Você cadastra o cliente", d: "Nome, site e o que a agência faz por ele: Meta Ads, Google, WhatsApp, CRM. Leva poucos minutos." },
+  { t: "A Dattis monta a papelada", d: "O registro do que é feito com os dados, o contrato com o cliente e a lista de ferramentas. O cliente assina pelo celular." },
+  { t: "Você fica protegido todo dia", d: "Todo dia às 6h a Dattis confere os sites, avisa quando algo sai do lugar e mantém o selo e o certificado em dia." },
+];
 
 const LEI = [
   { art: "Art. 37", t: "Registro das operações de tratamento" },
@@ -123,12 +127,14 @@ const FAQ_ITEMS = [
   },
 ];
 
-function ModuleText({ name, body, cta, href, dark = false }: { name: string; body: string; cta: string; href: string; dark?: boolean }) {
+function ModuleText({ tecnico, titulo, body, cta, href, dark = false }: { tecnico: string; titulo: string; body: string; cta: string; href: string; dark?: boolean }) {
   return (
     <div>
-      <p className={"font-display text-[20px] " + (dark ? "text-white" : "text-ink")}>Dattis</p>
-      <p className={"t-label mt-1 " + (dark ? "text-white" : "text-ink")}>{name}</p>
-      <p className={"mt-6 max-w-md text-[18px] leading-relaxed " + (dark ? "text-white/85" : "text-body")}>{body}</p>
+      <span className={"inline-flex rounded-full px-3 py-1.5 font-mono text-[12px] uppercase tracking-[0.04em] " + (dark ? "bg-brand text-rail" : "bg-rail text-brand")}>
+        {tecnico}
+      </span>
+      <h3 className={"mt-5 max-w-lg font-display text-[clamp(1.6rem,2.6vw,2.2rem)] leading-[1.12] " + (dark ? "text-white" : "text-ink")}>{titulo}</h3>
+      <p className={"mt-5 max-w-md text-[17px] leading-relaxed " + (dark ? "text-white/85" : "text-body")}>{body}</p>
       <ArrowLink href={href} className={"mt-8 " + (dark ? "!text-white" : "")}>
         {cta}
       </ArrowLink>
@@ -219,31 +225,39 @@ export default async function LandingPage() {
           </div>
         </section>
 
-        {/* FUNCIONALIDADES (prints reais da plataforma) */}
-        <Funcionalidades />
-
-        <PixelEdge bg="var(--color-rail)" fill="var(--color-brand)" />
+        <PixelEdge bg="var(--color-forest)" fill="var(--color-brand)" />
 
         {/* MÓDULOS */}
         <section id="modulos" className="on-light bg-brand">
           <div className="w-full px-4 pb-24 pt-10 sm:px-6 lg:px-8">
-            <div className="mx-auto max-w-3xl text-center">
-              <h2 className="t-display text-rail">Tudo o que a LGPD pede da sua agência, explicado e organizado</h2>
-              <ul className="mx-auto mt-10 flex w-fit flex-col gap-4 text-left">
-                {CHECKLIST.map((c) => (
-                  <li key={c} className="flex items-center gap-3 font-mono text-[15px] uppercase tracking-[0.02em] text-rail">
-                    <CircleCheck size={22} strokeWidth={1.4} />
-                    {c}
-                  </li>
-                ))}
-              </ul>
+            <div className="mx-auto max-w-4xl text-center">
+              <p className="t-eyebrow !text-rail">A solução</p>
+              <h2 className="t-display mt-4 text-rail">A Dattis organiza tudo o que a LGPD pede da sua agência</h2>
+              <p className="mx-auto mt-6 max-w-2xl text-[19px] leading-relaxed text-rail/85">
+                Sem juridiquês e sem planilha. Você cadastra o cliente e a Dattis monta os documentos, colhe as assinaturas e
+                confere os sites todo dia. Quando alguém perguntar se está tudo certo, seja o cliente, o Meta ou a ANPD, a prova
+                já está pronta.
+              </p>
             </div>
 
-            <div className="mt-16 grid gap-5 lg:grid-cols-12">
+            <ol className="mx-auto mt-12 grid max-w-6xl gap-4 md:grid-cols-3">
+              {PASSOS.map((p, i) => (
+                <li key={p.t} className="rounded-[28px] bg-white/75 p-6 sm:p-7">
+                  <span className="grid h-10 w-10 place-items-center rounded-full bg-rail font-mono text-[15px] text-brand">{i + 1}</span>
+                  <p className="mt-5 font-display text-[23px] leading-tight text-rail">{p.t}</p>
+                  <p className="mt-2 text-[15.5px] leading-relaxed text-rail/80">{p.d}</p>
+                </li>
+              ))}
+            </ol>
+
+            <p className="mt-20 text-center font-mono text-[14px] uppercase tracking-[0.05em] text-rail">O que a sua agência recebe</p>
+
+            <div className="mt-8 grid gap-5 lg:grid-cols-12">
               <div className={CARD}>
                 <ModuleText
-                  name="RAT"
-                  body="É a lista de tudo o que sua agência faz com os dados dos clientes: quais dados coleta, pra quê usa, onde guarda e por quanto tempo. A LGPD exige que ela exista — a Dattis monta sozinha quando você ativa a conta."
+                  tecnico="RAT · Registro de atividades"
+                  titulo="Um registro do que sua agência faz com os dados de cada cliente"
+                  body="Subir a lista de clientes no Meta, receber lead do formulário, atender no WhatsApp: tudo isso é tratar dados. A lei pede que fique anotado pra quê, onde e por quanto tempo. A Dattis anota sozinha quando você cadastra o cliente."
                   cta="Ver o RAT"
                   href="/planos"
                 />
@@ -252,8 +266,9 @@ export default async function LandingPage() {
 
               <div className={CARD}>
                 <ModuleText
-                  name="DPA"
-                  body="É o contrato que diz quem manda nos dados (seu cliente) e quem só executa (sua agência). Se algo der errado, ele mostra que a agência seguiu as instruções — e evita que você leve a culpa sozinho."
+                  tecnico="DPA · Contrato de dados"
+                  titulo="Um contrato que deixa claro de quem é a responsabilidade"
+                  body="O dono dos dados é o seu cliente; a agência só executa o que ele pede. Se der problema com um lead, o contrato mostra que você seguiu as instruções e não leva a culpa sozinho. O cliente assina pelo celular."
                   cta="Ver o DPA"
                   href="/planos"
                 />
@@ -263,8 +278,9 @@ export default async function LandingPage() {
               <div className="grid items-center gap-12 overflow-hidden rounded-[40px] bg-rail px-8 py-12 sm:px-14 sm:py-16 lg:col-span-12 lg:grid-cols-2">
                 <ModuleText
                   dark
-                  name="Subprocessadores"
-                  body="São as ferramentas de outras empresas que também mexem nos dados: Meta, Google, WhatsApp, RD Station. A lei pede que você saiba quais são e deixe isso registrado. A Dattis faz a lista por cliente e avisa quando entra uma ferramenta nova."
+                  tecnico="Subprocessadores"
+                  titulo="A lista das ferramentas que mexem nos dados dos seus clientes"
+                  body="Meta, Google, WhatsApp, RD Station, Zapier. A lei pede que você saiba quais ferramentas recebem os dados de cada cliente. A Dattis monta essa lista e avisa quando entra uma ferramenta nova sem contrato."
                   cta="Ver o registro"
                   href="/planos"
                 />
@@ -275,8 +291,9 @@ export default async function LandingPage() {
 
               <div className={CARD}>
                 <ModuleText
-                  name="Certificado e selo"
-                  body="Um certificado com QR Code e um selo pro rodapé do site — da sua agência e de cada cliente. Qualquer pessoa clica e confere, na hora, que a documentação de privacidade está em dia."
+                  tecnico="Certificado e selo"
+                  titulo="Um selo no site que prova que está tudo em dia"
+                  body="Vai no rodapé do seu site e do site de cada cliente. Qualquer pessoa clica e confere na hora. Passa confiança pro visitante e pro cliente que está decidindo se fecha com você."
                   cta="Ver o certificado"
                   href="/planos"
                 />
@@ -285,8 +302,9 @@ export default async function LandingPage() {
 
               <div className={CARD}>
                 <ModuleText
-                  name="Dossiê para BM"
-                  body="BM suspensa? A Dattis junta num documento só tudo o que você precisa pra contestar: dados da empresa, contrato, registro de atividades, ferramentas e certificado."
+                  tecnico="Dossiê para BM"
+                  titulo="Os documentos pra contestar uma BM suspensa, num clique"
+                  body="Quando o Meta restringe uma conta, ele quer ver que a empresa é séria e cuida dos dados. A Dattis junta tudo num arquivo só: dados da empresa, contrato, registro e certificado, mais um texto-base pra contestação."
                   cta="Ver o dossiê"
                   href="/#bm-suspensa"
                 />
@@ -295,8 +313,9 @@ export default async function LandingPage() {
 
               <div className={CARD}>
                 <ModuleText
-                  name="Auditoria"
-                  body="Varre os sites e páginas dos seus clientes e mostra o que expõe a agência: pixel rodando antes do aviso de cookies, formulário sem consentimento, política de privacidade faltando."
+                  tecnico="Auditoria"
+                  titulo="Um raio-x dos sites dos seus clientes"
+                  body="Mostra o que expõe a agência sem você precisar entender de código: pixel rodando antes do aviso de cookies, formulário sem consentimento, política de privacidade faltando."
                   cta="Auditar um site"
                   href="/auditoria"
                 />
@@ -305,8 +324,9 @@ export default async function LandingPage() {
 
               <div className={CARD}>
                 <ModuleText
-                  name="DAT"
-                  body="Um resumo com a situação de cada cliente — registro, contrato e ferramentas — pra você mandar sempre que ele perguntar se está tudo certo."
+                  tecnico="DAT · Resumo de conformidade"
+                  titulo="Um relatório simples pra mandar ao cliente"
+                  body="Quando o cliente perguntar se está tudo certo com a LGPD, você manda um link ou um PDF com a situação dele. Vira mais uma entrega da agência e mais um motivo pra ele renovar."
                   cta="Ver o DAT"
                   href="/planos"
                 />
@@ -330,10 +350,13 @@ export default async function LandingPage() {
 
         <PixelEdge flip bg="var(--color-rail)" fill="var(--color-brand)" />
 
+        {/* FUNCIONALIDADES (prints reais da plataforma) */}
+        <Funcionalidades />
+
         {/* BM SUSPENSA */}
         <section
           id="bm-suspensa"
-          className="relative bg-rail bg-cover bg-center text-white"
+          className="relative border-t border-white/10 bg-rail bg-cover bg-center text-white"
           style={{ backgroundImage: "linear-gradient(180deg, rgba(0,40,32,0.6), rgba(0,40,32,0.95)), url(/marketing/solucao-glow.png)" }}
         >
           <div className="grid w-full items-center gap-16 px-5 pb-28 pt-14 sm:px-10 lg:grid-cols-[1.15fr_1fr] lg:px-14">

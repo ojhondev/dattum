@@ -26,6 +26,7 @@ const COLUMNS: { title: string; links: { label: string; href: string }[] }[] = [
   {
     title: "Sobre",
     links: [
+      { label: "O que é a Dattis", href: "/o-que-e-a-dattis" },
       { label: "Planos", href: "/planos" },
       { label: "Blog", href: "/blog" },
       { label: "Diferencial competitivo", href: "/#diferencial" },

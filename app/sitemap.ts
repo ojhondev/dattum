@@ -12,6 +12,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   return [
     { url: `${SITE_URL}/`, changeFrequency: "weekly", priority: 1 },
     { url: `${SITE_URL}/planos`, changeFrequency: "monthly", priority: 0.9 },
+    { url: `${SITE_URL}/o-que-e-a-dattis`, changeFrequency: "monthly", priority: 0.9 },
     { url: `${SITE_URL}/diagnostico`, changeFrequency: "monthly", priority: 0.8 },
     { url: `${SITE_URL}/auditoria`, changeFrequency: "monthly", priority: 0.7 },
     { url: `${SITE_URL}/termos`, changeFrequency: "yearly", priority: 0.3 },

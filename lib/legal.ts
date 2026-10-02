@@ -2,8 +2,8 @@ import type { DadosEmpresa } from "@/lib/empresa";
 
 // Versão dos documentos legais da própria Dattis. Mudou o texto de forma relevante? Suba a versão:
 // o aceite gravado no cadastro (agencias.termos_versao) mostra qual versão cada agência aceitou.
-export const VERSAO_LEGAL = "2026.10";
-export const VIGENCIA_LEGAL = "1º de outubro de 2026";
+export const VERSAO_LEGAL = "2026.10.3";
+export const VIGENCIA_LEGAL = "2 de outubro de 2026";
 
 export type DocumentoLegal = "termos" | "privacidade" | "contrato-de-dados";
 
@@ -107,9 +107,9 @@ Se houver atraso de pagamento, a Dattis avisa a Agência. Se o débito continuar
 
 ## Prazo, renovação e encerramento
 
-O prazo mínimo da assinatura é de 12 meses, contados da ativação. Depois dele, a assinatura se renova automaticamente por prazo indeterminado.
+A assinatura é mensal, começa na ativação e vale por prazo indeterminado. Não há prazo mínimo nem fidelidade.
 
-A Agência pode encerrar a assinatura com aviso de 30 dias. O encerramento antes do fim do prazo mínimo segue as condições da proposta comercial aceita.
+A Agência pode encerrar a assinatura a qualquer momento, sem multa, com aviso de 30 dias.
 
 A Sprint de Higienização, quando contratada, é um serviço de implantação com escopo e prazo definidos na proposta.
 
