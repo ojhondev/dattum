@@ -159,6 +159,12 @@ export const TOURS: Tour[] = [
         lado: "top",
       },
       {
+        alvo: "conta-cookies",
+        titulo: "Aviso de cookies",
+        texto: "Ative e cole uma linha de código no site do cliente: o banner pede o consentimento, segura o pixel até o visitante aceitar e guarda a prova de cada escolha.",
+        lado: "top",
+      },
+      {
         alvo: "conta-atalhos",
         titulo: "Atalhos do cliente",
         texto: "Daqui você gera a cláusula para o contrato comercial, a política, o dossiê para BM e o <b>resumo para o cliente (DAT)</b>, que você manda todo mês para mostrar que está tudo em dia.",

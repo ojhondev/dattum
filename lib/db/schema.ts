@@ -9,6 +9,9 @@ import {
 } from "drizzle-orm/pg-core";
 import type { Achado } from "@/lib/vigilancia-tipos";
 
+/** Configuração do aviso de cookies de um site (agência ou conta de cliente). */
+export type ConfigCookies = { cor?: string; politicaUrl?: string; flutuante?: boolean; texto?: string };
+
 export const agencias = pgTable("agencias", {
   id: uuid("id").primaryKey().defaultRandom(),
   nome: text("nome").notNull(),
@@ -29,6 +32,8 @@ export const agencias = pgTable("agencias", {
   slug: text("slug").unique(), // endereço da política pública: /p/{slug}/privacidade
   emailPrivacidade: text("email_privacidade"), // canal do titular publicado na política
   politicaPublicadaEm: timestamp("politica_publicada_em"), // nulo = política pública desligada
+  cookiesToken: text("cookies_token").unique(), // aviso de cookies: /c/{token}.js
+  cookiesConfig: jsonb("cookies_config").$type<ConfigCookies>(),
   toursVistos: jsonb("tours_vistos").$type<string[]>().notNull().default([]), // tours guiados já concluídos ou pulados
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
@@ -55,6 +60,8 @@ export const contasCliente = pgTable("contas_cliente", {
   slug: text("slug").unique(), // endereço da política pública: /p/{slug}/privacidade
   emailPrivacidade: text("email_privacidade"), // canal do titular publicado na política
   politicaPublicadaEm: timestamp("politica_publicada_em"), // nulo = política pública desligada
+  cookiesToken: text("cookies_token").unique(), // aviso de cookies: /c/{token}.js
+  cookiesConfig: jsonb("cookies_config").$type<ConfigCookies>(),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
@@ -275,4 +282,19 @@ export const limites = pgTable("limites", {
   chave: text("chave").primaryKey(),
   contagem: integer("contagem").notNull().default(0),
   inicio: timestamp("inicio").notNull().defaultNow(),
+});
+
+// Prova de consentimento do aviso de cookies: cada escolha de visitante, por site.
+export const consentimentos = pgTable("consentimentos", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  token: text("token").notNull(), // "dattis" = site da própria Dattis
+  agenciaId: uuid("agencia_id").references(() => agencias.id, { onDelete: "cascade" }),
+  contaClienteId: uuid("conta_cliente_id").references(() => contasCliente.id, { onDelete: "cascade" }),
+  visitante: text("visitante").notNull(), // id aleatório guardado no navegador do visitante
+  acao: text("acao").notNull(), // aceitar | recusar | personalizar
+  categorias: jsonb("categorias").$type<{ estatisticas: boolean; marketing: boolean }>().notNull(),
+  versao: text("versao").notNull(),
+  url: text("url"),
+  ipHash: text("ip_hash"), // SHA-256 do IP com segredo: prova sem guardar o IP
+  criadoEm: timestamp("criado_em").notNull().defaultNow(),
 });

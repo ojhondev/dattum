@@ -224,14 +224,15 @@ A vigilância acessa apenas páginas públicas dos sites cadastrados, com um rob
 
 ## Cookies e armazenamento no navegador
 
-Usamos apenas o necessário para o site e a plataforma funcionarem. **Não usamos cookies de publicidade nem ferramentas de analytics de terceiros.**
+${process.env.NEXT_PUBLIC_GTM_ID ? "Os cookies essenciais funcionam sempre. Cookies de **estatística** (Google Analytics, pelo Google Tag Manager) e de **marketing** só são ativados se você permitir no aviso de cookies, e você muda essa escolha a qualquer momento no link “Preferências de cookies” do rodapé." : "Usamos apenas o necessário para o site e a plataforma funcionarem. **Não usamos cookies de publicidade nem ferramentas de analytics de terceiros.**"}
 
 | Nome | Tipo | Para quê | Duração |
 | --- | --- | --- | --- |
 | dattis_session | Cookie essencial | Manter a agência logada na plataforma | 30 dias |
 | dattis_g_* | Cookies essenciais | Proteger o login com Google contra fraudes | 10 minutos |
 | dattis_admin | Cookie essencial | Acesso da equipe Dattis ao painel interno | 12 horas |
-| Preferências | Armazenamento local do navegador | Lembrar o tema claro ou escuro e o andamento das ferramentas gratuitas | Até você limpar o navegador |
+| dattis_consent | Cookie essencial | Guardar a sua escolha no aviso de cookies | 12 meses |
+${process.env.NEXT_PUBLIC_GTM_ID ? "| _ga, _ga_* | Estatística (Google Analytics) | Medir visitas e uso do site, só com o seu consentimento | Até 2 anos |\n" : ""}| Preferências | Armazenamento local do navegador | Lembrar o tema claro ou escuro e o andamento das ferramentas gratuitas | Até você limpar o navegador |
 
 ## Com quem compartilhamos
 
@@ -314,12 +315,12 @@ Quanto aos dados da própria equipe da Agência, a Agência é controladora e a 
 
 ## Quais dados e para quê
 
-- **Titulares:** representantes e contatos dos clientes da Agência e as pessoas da equipe da Agência que usam a plataforma.
-- **Dados:** nome, cargo, e-mail e WhatsApp de contato; CNPJ e endereço do site do cliente; dados de assinatura eletrônica (nome, cargo, e-mail, IP, navegador, data e hora) e registros de acesso.
-- **Finalidades:** gerar e manter o registro de atividades, os contratos e os demais documentos de conformidade; colher assinaturas eletrônicas; monitorar os sites cadastrados; emitir certificados; gerar o dossiê e o resumo de conformidade (DAT).
+- **Titulares:** representantes e contatos dos clientes da Agência, as pessoas da equipe da Agência que usam a plataforma e, quando a Agência usa o aviso de cookies, os visitantes dos sites onde ele está instalado.
+- **Dados:** nome, cargo, e-mail e WhatsApp de contato; CNPJ e endereço do site do cliente; dados de assinatura eletrônica (nome, cargo, e-mail, IP, navegador, data e hora); registros de acesso; e, quando a Agência usa o aviso de cookies da Dattis, a escolha de cada visitante do site (identificador aleatório, categorias aceitas, versão do aviso, página e um resumo criptográfico do IP, nunca o IP em si).
+- **Finalidades:** gerar e manter o registro de atividades, os contratos e os demais documentos de conformidade; colher assinaturas eletrônicas; monitorar os sites cadastrados; exibir o aviso de cookies e guardar a prova do consentimento dos visitantes; emitir certificados; gerar o dossiê e o resumo de conformidade (DAT).
 - **Duração:** enquanto durar a assinatura, mais o prazo de saída previsto abaixo.
 
-A plataforma **não recebe** dados dos clientes finais das campanhas, como listas de compradores, leads, conversas e eventos de conversão.
+A plataforma **não recebe** listas de compradores, leads, conversas nem eventos de conversão dos clientes finais. Do visitante dos sites, recebe apenas a escolha feita no aviso de cookies, ligada a um identificador aleatório.
 
 ## Instruções da Agência
 

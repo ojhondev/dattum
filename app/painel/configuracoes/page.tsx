@@ -9,7 +9,9 @@ import { EMAIL_DEMO } from "@/lib/admin-dados";
 import { linkContato } from "@/lib/contato";
 import { FormDadosAgencia, FormSenha } from "./ConfiguracoesClient";
 import { PoliticaPublicaCard } from "@/components/app/PoliticaPublicaCard";
-import { urlAbsoluta } from "@/lib/site";
+import { SITE_URL, urlAbsoluta } from "@/lib/site";
+import { CookiesCard } from "@/components/app/CookiesCard";
+import { estatisticaCookies } from "@/lib/cookies-stats";
 
 const CARD = "rounded-[20px] border border-line bg-surface p-5 sm:p-6";
 const ROTULO = "font-mono text-[12px] uppercase tracking-[0.04em] text-muted";
@@ -68,6 +70,15 @@ export default async function ConfiguracoesPage() {
           url={agencia.politicaPublicadaEm && agencia.slug ? urlAbsoluta(`/p/${agencia.slug}/privacidade`) : null}
           emailInicial={agencia.emailPrivacidade ?? ""}
           emailSugerido={agencia.email}
+          bloqueadoPlano={agencia.plano === "start"}
+        />
+
+        <CookiesCard
+          token={agencia.cookiesToken}
+          config={agencia.cookiesConfig ?? null}
+          politicaPadrao={agencia.politicaPublicadaEm && agencia.slug ? urlAbsoluta(`/p/${agencia.slug}/privacidade`) : null}
+          estatistica={await estatisticaCookies(agencia.cookiesToken)}
+          origem={SITE_URL}
           bloqueadoPlano={agencia.plano === "start"}
         />
       </div>

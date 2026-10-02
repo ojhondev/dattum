@@ -3,6 +3,7 @@ import { Montagu_Slab, Public_Sans, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { THEME_COOKIE } from "@/lib/theme";
+import Script from "next/script";
 import { BotoesFlutuantes } from "@/components/marketing/BotoesFlutuantes";
 import { lerConfiguracoes } from "@/lib/blog";
 import { SITE_URL, SITE_NOME, SITE_DESCRICAO } from "@/lib/site";
@@ -54,6 +55,9 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
+// Google Tag Manager do site da Dattis (opcional). Só carrega tags conforme o consentimento do aviso de cookies.
+const GTM_ID = /^GTM-[A-Z0-9]+$/.test(process.env.NEXT_PUBLIC_GTM_ID ?? "") ? process.env.NEXT_PUBLIC_GTM_ID : null;
+
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="pt-BR" className={cn(slab.variable, sans.variable, mono.variable, "font-ui")} suppressHydrationWarning>
@@ -68,6 +72,13 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body>
         {children}
         <BotoesFlutuantes />
+        {/* Aviso de cookies da Dattis antes de qualquer tag: liga o Modo de consentimento do Google com tudo negado. */}
+        <Script src="/c/dattis.js" strategy="beforeInteractive" />
+        {GTM_ID && (
+          <Script id="gtm" strategy="beforeInteractive">
+            {`(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','${GTM_ID}');`}
+          </Script>
+        )}
       </body>
     </html>
   );

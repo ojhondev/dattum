@@ -103,7 +103,7 @@ const RASTREADORES: { nome: string; re: RegExp }[] = [
 ];
 
 const CONSENTIMENTO =
-  /cookiebot|onetrust|cookielaw\.org|usercentrics|termly|cookieyes|goadopt|adopt\.app|privacytools\.com\.br|lgpd-cookie|cookie-?consent|cookie-?banner|consentmanager|iubenda|complianz|klaro|gtag\(\s*['"]consent['"]\s*,\s*['"]default/i;
+  /\/c\/[A-Za-z0-9_-]+\.js|DattisCookies|cookiebot|onetrust|cookielaw\.org|usercentrics|termly|cookieyes|goadopt|adopt\.app|privacytools\.com\.br|lgpd-cookie|cookie-?consent|cookie-?banner|consentmanager|iubenda|complianz|klaro|gtag\(\s*['"]consent['"]\s*,\s*['"]default/i;
 
 const POLITICA = /href=["'][^"']*(privacidade|privacy|politica-de-dados|lgpd)[^"']*["']|pol[ií]tica\s+de\s+privacidade/i;
 const FORMULARIO = /<input[^>]+type=["']?(email|tel)|<input[^>]+name=["'][^"']*(email|telefone|phone|whatsapp|celular)/i;

@@ -6,6 +6,8 @@ import { FLUXO_POR_CHAVE, type FlowKey } from "@/lib/fluxos";
 import { SiteDaConta, VigilanciaDaConta, type ResultadoVigilancia } from "./VigilanciaConta";
 import { ContratoConta, type ContratoDados, type VersaoContrato } from "./ContratoConta";
 import { PoliticaPublicaCard } from "@/components/app/PoliticaPublicaCard";
+import { CookiesCard } from "@/components/app/CookiesCard";
+import type { EstatisticaCookies } from "@/lib/cookies-stats";
 
 type Atividade = {
   id: string;
@@ -114,6 +116,7 @@ export default function ContaDetalhe({
   abaInicial,
   temDat,
   politica,
+  cookies,
 }: {
   conta: Conta;
   atividadesIniciais: Atividade[];
@@ -125,6 +128,7 @@ export default function ContaDetalhe({
   abaInicial: Aba;
   temDat: boolean;
   politica: { url: string | null; email: string };
+  cookies: { token: string | null; config: { cor?: string; politicaUrl?: string; flutuante?: boolean } | null; estatistica: EstatisticaCookies | null; origem: string };
 }) {
   const router = useRouter();
   const [aba, setAba] = useState<Aba>(abaInicial);
@@ -177,6 +181,17 @@ export default function ContaDetalhe({
             emailSugerido={conta.contatoEmail ?? ""}
             bloqueadoPlano={!temDat}
           />
+          <div className="mt-4">
+            <CookiesCard
+              contaId={conta.id}
+              token={cookies.token}
+              config={cookies.config}
+              politicaPadrao={politica.url}
+              estatistica={cookies.estatistica}
+              origem={cookies.origem}
+              bloqueadoPlano={!temDat}
+            />
+          </div>
         </div>
       </div>
 

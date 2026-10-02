@@ -49,6 +49,7 @@ const COLUMNS: { title: string; links: { label: string; href: string }[] }[] = [
       { label: "Termos de uso", href: "/termos" },
       { label: "Política de privacidade", href: "/privacidade" },
       { label: "Contrato de dados (DPA)", href: "/contrato-de-dados" },
+      { label: "Preferências de cookies", href: "#cookies" },
     ],
   },
 ];
@@ -74,9 +75,15 @@ export function SiteFooter() {
                 <ul className="mt-5 space-y-3">
                   {col.links.map((l) => (
                     <li key={l.label}>
-                      <Link href={l.href} className="text-[15px] text-white/80 transition-colors hover:text-brand">
-                        {l.label}
-                      </Link>
+                      {l.href === "#cookies" ? (
+                        <a href="#cookies" data-dattis-cookies="" className="text-[15px] text-white/80 transition-colors hover:text-brand">
+                          {l.label}
+                        </a>
+                      ) : (
+                        <Link href={l.href} className="text-[15px] text-white/80 transition-colors hover:text-brand">
+                          {l.label}
+                        </Link>
+                      )}
                     </li>
                   ))}
                 </ul>
