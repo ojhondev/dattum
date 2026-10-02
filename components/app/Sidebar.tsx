@@ -26,6 +26,7 @@ import {
   X,
   ShieldCheck,
   type LucideIcon,
+  Settings,
 } from "lucide-react";
 import iconeMenta from "../../public/brand/icone-sidebar-menta.png";
 import iconeBranco from "../../public/brand/icone-sidebar-branco.png";
@@ -52,6 +53,10 @@ const GRUPOS_PAINEL: Grupo[] = [
       { href: "/painel/certificados", label: "Certificados e selo", icon: BadgeCheck },
       { href: "/painel/dossie", label: "Dossiê para BM", icon: FolderOpen },
     ],
+  },
+  {
+    title: "Conta",
+    items: [{ href: "/painel/configuracoes", label: "Configurações", icon: Settings }],
   },
 ];
 

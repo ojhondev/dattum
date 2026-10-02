@@ -111,6 +111,7 @@ export default function ContaDetalhe({
   responsavelPadrao,
   vigilancia,
   abaInicial,
+  temDat,
 }: {
   conta: Conta;
   atividadesIniciais: Atividade[];
@@ -120,6 +121,7 @@ export default function ContaDetalhe({
   responsavelPadrao: { nome: string; cargo: string };
   vigilancia: ResultadoVigilancia;
   abaInicial: Aba;
+  temDat: boolean;
 }) {
   const router = useRouter();
   const [aba, setAba] = useState<Aba>(abaInicial);
@@ -157,6 +159,11 @@ export default function ContaDetalhe({
           <a href={`/painel/dossie/${conta.id}`} className="btn btn-ghost">
             Dossiê para BM
           </a>
+          {temDat && (
+            <a href={`/painel/contas/${conta.id}/dat`} className="btn btn-ghost">
+              Resumo para o cliente (DAT)
+            </a>
+          )}
 
         </div>
       </div>

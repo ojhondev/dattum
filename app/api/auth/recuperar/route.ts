@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import { agencias } from "@/lib/db/schema";
 import { emailConfigurado, emailSimples, enviarEmail } from "@/lib/email";
 import { criarLinkRedefinicao, pedidoRecente } from "@/lib/senha";
+import { limitarIp, respostaLimite } from "@/lib/limite";
 import { EMAIL_DEMO } from "@/lib/admin-dados";
 
 export const runtime = "nodejs";
@@ -13,6 +14,7 @@ export const runtime = "nodejs";
  * (não revela se o e-mail tem conta). Sem e-mail, orienta a pedir o link pelo WhatsApp.
  */
 export async function POST(req: Request) {
+  if (await limitarIp(req, "recuperar", 5, 3600)) return respostaLimite(60);
   const body = await req.json().catch(() => null);
   const email = typeof body?.email === "string" ? body.email.trim().toLowerCase().slice(0, 160) : "";
   if (!email.includes("@")) return NextResponse.json({ ok: false, error: "Informe o e-mail da conta." }, { status: 400 });

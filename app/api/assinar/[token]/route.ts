@@ -3,6 +3,7 @@ import { and, eq } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { dpas } from "@/lib/db/schema";
 import { automatizarCertificados } from "@/lib/automacao";
+import { limitarIp, respostaLimite } from "@/lib/limite";
 import { filtroVigente, ipDe, registrarAssinatura, situacaoDpa, userAgentDe } from "@/lib/dpa";
 
 export const runtime = "nodejs";
@@ -12,6 +13,7 @@ const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 // Assinatura do CLIENTE (controlador), pelo link que a agência enviou. Sem login: o token é a credencial.
 export async function POST(req: Request, { params }: { params: Promise<{ token: string }> }) {
   const { token } = await params;
+  if (await limitarIp(req, "assinar", 20, 3600)) return respostaLimite(60);
   const body = await req.json().catch(() => null);
   const nome = typeof body?.nome === "string" ? body.nome.trim().slice(0, 120) : "";
   const cargo = typeof body?.cargo === "string" ? body.cargo.trim().slice(0, 120) : "";

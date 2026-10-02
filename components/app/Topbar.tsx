@@ -13,6 +13,7 @@ const TITULOS: [string, string, string][] = [
   ["/painel/vigilancia", "Vigilância", "Varredura diária de segurança nos sites e na documentação."],
   ["/painel/certificados", "Certificados e selo", "Prova de privacidade verificável por QR Code."],
   ["/painel/dossie", "Dossiê para BM", "Contestação de BM suspensa pronta em um clique."],
+  ["/painel/configuracoes", "Configurações", "Dados da agência, acesso e documentos legais."],
   ["/painel", "Painel", "Monitore a privacidade e a conformidade da sua carteira em tempo real."],
 ];
 
@@ -25,7 +26,7 @@ export function Topbar({ agenciaNome }: { agenciaNome: string }) {
   const inicial = agenciaNome.trim()[0]?.toUpperCase() ?? "D";
 
   return (
-    <header className="sticky top-0 z-20 flex h-[76px] items-center gap-4 border-b border-line bg-canvas/90 pl-16 pr-4 backdrop-blur sm:pr-10 lg:px-10">
+    <header className="no-print sticky top-0 z-20 flex h-[76px] items-center gap-4 border-b border-line bg-canvas/90 pl-16 pr-4 backdrop-blur sm:pr-10 lg:px-10">
       <div className="min-w-0 flex-1">
         <p className="truncate text-[16px] font-medium text-ink">{titulo}</p>
         <p className="hidden truncate text-[13px] text-muted sm:block">{subtitulo}</p>

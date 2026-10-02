@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { limitarIp, respostaLimite } from "@/lib/limite";
 import { leadsAuditoria } from "@/lib/db/schema";
 
 export const runtime = "nodejs";
@@ -8,6 +9,7 @@ const UTM = ["utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_ter
 
 // Início da "Auditoria da sua agência": guarda responsável, agência e WhatsApp.
 export async function POST(req: Request) {
+  if (await limitarIp(req, "leads", 10, 3600)) return respostaLimite(60);
   const body = await req.json().catch(() => null);
   const nome = typeof body?.nome === "string" ? body.nome.trim().slice(0, 80) : "";
   const agencia = typeof body?.agencia === "string" ? body.agencia.trim().slice(0, 120) : "";

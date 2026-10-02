@@ -262,3 +262,10 @@ export const configuracoes = pgTable("configuracoes", {
   valor: text("valor").notNull(),
   atualizadoEm: timestamp("atualizado_em").notNull().defaultNow(),
 });
+
+// Limite de tentativas (login, códigos, formulários públicos). Ver lib/limite.ts; o cron diário limpa o que venceu.
+export const limites = pgTable("limites", {
+  chave: text("chave").primaryKey(),
+  contagem: integer("contagem").notNull().default(0),
+  inicio: timestamp("inicio").notNull().defaultNow(),
+});

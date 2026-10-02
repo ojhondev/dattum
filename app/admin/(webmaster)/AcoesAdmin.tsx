@@ -107,3 +107,71 @@ export function LinkSenha({ agenciaId, agenciaNome, contato }: { agenciaId: stri
     </span>
   );
 }
+
+/** Plano, clientes contratados e suspensão de uma agência (ex.: inadimplência). */
+export function GerenciarAgencia({
+  agenciaId,
+  agenciaNome,
+  plano,
+  clientes,
+  suspensa,
+}: {
+  agenciaId: string;
+  agenciaNome: string;
+  plano: string;
+  clientes: number | null;
+  suspensa: boolean;
+}) {
+  const router = useRouter();
+  const [aberto, setAberto] = useState(false);
+  const [p, setP] = useState(plano);
+  const [n, setN] = useState(String(clientes ?? 1));
+  const [estado, setEstado] = useState("");
+
+  const enviar = async (corpo: Record<string, unknown>) => {
+    setEstado("salvando");
+    const r = await fetch(`/api/admin/agencias/${agenciaId}`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(corpo) })
+      .then((x) => x.json())
+      .catch(() => ({ ok: false }));
+    setEstado(r.ok ? "" : (r.error ?? "Erro"));
+    if (r.ok) {
+      setAberto(false);
+      router.refresh();
+    }
+  };
+
+  const alternarSuspensao = () => {
+    const texto = suspensa
+      ? `Reativar ${agenciaNome}? O painel volta a funcionar na hora.`
+      : `Suspender ${agenciaNome}? A agência perde o acesso ao painel e os certificados aparecem como suspensos. Os dados ficam preservados.`;
+    if (confirm(texto)) enviar({ acao: suspensa ? "reativar" : "suspender" });
+  };
+
+  if (!aberto) {
+    return (
+      <button type="button" className="btn btn-ghost" onClick={() => setAberto(true)}>
+        Plano e acesso
+      </button>
+    );
+  }
+  return (
+    <span className="flex min-w-[190px] flex-col gap-2 rounded-xl border border-line bg-surface p-3">
+      <select aria-label="Plano" value={p} onChange={(e) => setP(e.target.value)} className="field-input !py-2">
+        <option value="start">Start</option>
+        <option value="growth">Growth</option>
+        <option value="scale">Scale</option>
+      </select>
+      <input aria-label="Clientes contratados" type="number" min={1} max={1000} value={n} onChange={(e) => setN(e.target.value)} className="field-input !py-2" />
+      <button type="button" className="btn btn-primary" disabled={estado === "salvando"} onClick={() => enviar({ acao: "plano", plano: p, clientes: Number(n) })}>
+        Salvar plano
+      </button>
+      <button type="button" className={"btn " + (suspensa ? "btn-primary" : "btn-ghost text-danger")} disabled={estado === "salvando"} onClick={alternarSuspensao}>
+        {suspensa ? "Reativar acesso" : "Suspender acesso"}
+      </button>
+      <button type="button" className="text-[13px] text-muted underline" onClick={() => setAberto(false)}>
+        Fechar
+      </button>
+      {estado && estado !== "salvando" && <span className="text-[12px] text-danger">{estado}</span>}
+    </span>
+  );
+}

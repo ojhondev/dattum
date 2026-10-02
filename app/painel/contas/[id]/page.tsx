@@ -58,6 +58,7 @@ export default async function ContaDetalhePage({ params, searchParams }: { param
 
   return (
     <ContaDetalhe
+      temDat={agencia?.plano !== "start"}
       abaInicial={aba === "dpa" || aba === "sub" || aba === "vig" ? aba : "rat"}
       conta={{
         id: conta.id,

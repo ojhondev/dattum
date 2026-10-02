@@ -1,7 +1,7 @@
 import { and, eq, inArray } from "drizzle-orm";
 import { headers } from "next/headers";
 import { db } from "@/lib/db";
-import { atividadesTratamento, contaSubprocessadores, contasCliente, dpas, certificados } from "@/lib/db/schema";
+import { agencias, atividadesTratamento, contaSubprocessadores, contasCliente, dpas, certificados } from "@/lib/db/schema";
 import { dataAssinaturaCompleta, dpaVigente, filtroVigente, situacaoDpa, ROTULO_SITUACAO } from "@/lib/dpa";
 
 export type Certificado = typeof certificados.$inferSelect;
@@ -87,7 +87,8 @@ export async function requisitosAgencia(agenciaId: string): Promise<Requisito[]>
 
 export async function statusCertificado(cert: Certificado): Promise<StatusCertificado> {
   const requisitos = cert.contaClienteId ? await requisitosConta(cert.contaClienteId) : await requisitosAgencia(cert.agenciaId);
-  const valido = !cert.revogado && cert.validoAte.getTime() > Date.now();
+  const agencia = await db.query.agencias.findFirst({ where: eq(agencias.id, cert.agenciaId), columns: { suspensa: true } });
+  const valido = !cert.revogado && !agencia?.suspensa && cert.validoAte.getTime() > Date.now();
   return { valido, emDia: valido && requisitos.every((r) => r.ok), requisitos };
 }
 

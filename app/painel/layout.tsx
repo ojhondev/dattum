@@ -7,6 +7,10 @@ import { PLANOS } from "@/lib/planos";
 import { Sidebar } from "@/components/app/Sidebar";
 import { Topbar } from "@/components/app/Topbar";
 import SairButton from "./SairButton";
+import { AvisoTermos } from "./AvisoTermos";
+import { VERSAO_LEGAL } from "@/lib/legal";
+import { EMAIL_DEMO } from "@/lib/admin-dados";
+import { linkContato } from "@/lib/contato";
 
 export default async function PainelLayout({ children }: { children: React.ReactNode }) {
   const sessao = await getSessao();
@@ -28,7 +32,30 @@ export default async function PainelLayout({ children }: { children: React.React
       />
       <div className="min-w-0 flex-1">
         <Topbar agenciaNome={agencia.nome} />
-        <main className="px-4 pb-16 pt-6 sm:px-10 lg:pt-8">{children}</main>
+        <main className="px-4 pb-16 pt-6 sm:px-10 lg:pt-8">
+          {agencia.termosVersao !== VERSAO_LEGAL && agencia.email !== EMAIL_DEMO && (
+            <AvisoTermos versao={VERSAO_LEGAL} atualizacao={!!agencia.termosVersao} />
+          )}
+          {agencia.suspensa ? (
+            <div className="mx-auto max-w-xl py-16 text-center">
+              <h1 className="font-display text-[30px] leading-tight text-ink">Acesso suspenso</h1>
+              <p className="mt-4 text-[16px] leading-relaxed text-body">
+                O acesso da {agencia.nome} está suspenso, normalmente por uma pendência de pagamento. Seus dados, contratos e documentos estão
+                preservados e voltam a aparecer assim que a situação for regularizada.
+              </p>
+              <a
+                href={linkContato(`Olá! O acesso da ${agencia.nome} à Dattis está suspenso. Como regularizo?`)}
+                target="_blank"
+                rel="noopener"
+                className="painel-btn mt-7"
+              >
+                Falar com a Dattis
+              </a>
+            </div>
+          ) : (
+            children
+          )}
+        </main>
       </div>
     </div>
   );

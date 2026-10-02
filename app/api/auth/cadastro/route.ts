@@ -3,11 +3,13 @@ import { eq } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { agencias } from "@/lib/db/schema";
 import { criarSessao } from "@/lib/auth";
+import { limitarIp, respostaLimite } from "@/lib/limite";
 import { ativarAgencia, CODIGO_INVALIDO, TERMOS_NAO_ACEITOS } from "@/lib/ativacao";
 
 export const runtime = "nodejs";
 
 export async function POST(req: Request) {
+  if (await limitarIp(req, "cadastro", 10, 3600)) return respostaLimite(60);
   const body = await req.json().catch(() => null);
   const nome = typeof body?.nome === "string" ? body.nome.trim() : "";
   const email = typeof body?.email === "string" ? body.email.trim().toLowerCase() : "";

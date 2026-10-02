@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import chromium from "@sparticuz/chromium-min";
 import puppeteer, { type Browser } from "puppeteer-core";
 import { resolveExecutablePath } from "@/lib/browser";
+import { limitarIp, respostaLimite } from "@/lib/limite";
 import { SITE_URL } from "@/lib/site";
 
 export const runtime = "nodejs";
@@ -71,6 +72,7 @@ const CONSENT_FIX = [
 ];
 
 export async function POST(req: Request) {
+  if (await limitarIp(req, "auditoria", 15, 3600)) return respostaLimite(60);
   let body: { url?: string };
   try {
     body = await req.json();
