@@ -44,14 +44,20 @@ export const TOURS: Tour[] = [
         lado: "right",
       },
       {
+        alvo: nav("/painel/cookies"),
+        titulo: "5. Cookies",
+        texto: "O aviso de cookies dos sites: pede o consentimento do visitante, segura o pixel até ele aceitar e guarda a prova. Instala com uma linha de código.",
+        lado: "right",
+      },
+      {
         alvo: nav("/painel/certificados"),
-        titulo: "5. Certificado e selo",
+        titulo: "6. Certificado e selo",
         texto: "Quando a documentação de um cliente fica completa, o certificado sai <b>sozinho</b>. Você cola o selo no rodapé do site e qualquer pessoa confere pelo QR Code.",
         lado: "right",
       },
       {
         alvo: nav("/painel/dossie"),
-        titulo: "6. Dossiê para BM suspensa",
+        titulo: "7. Dossiê para BM suspensa",
         texto: "Se a conta de anúncio de um cliente for bloqueada, aqui você gera em um clique o dossiê com toda a documentação e um texto pronto para a contestação.",
         lado: "right",
       },
@@ -161,7 +167,7 @@ export const TOURS: Tour[] = [
       {
         alvo: "conta-cookies",
         titulo: "Aviso de cookies",
-        texto: "Ative e cole uma linha de código no site do cliente: o banner pede o consentimento, segura o pixel até o visitante aceitar e guarda a prova de cada escolha.",
+        texto: "Mostra se o aviso de cookies está ativo no site deste cliente. Clique para abrir o módulo Cookies, com a instalação passo a passo e a prova de consentimento.",
         lado: "top",
       },
       {
@@ -230,6 +236,37 @@ export const TOURS: Tour[] = [
         titulo: "O que é verificado",
         texto: "Estas são as checagens de cada site. Corrigiu algo e quer ver o resultado na hora? Abra o cliente, vá na aba <b>Vigilância</b> e clique para verificar agora.",
         lado: "bottom",
+      },
+    ],
+  },
+  {
+    id: "cookies",
+    nome: "Cookies",
+    rota: (p) => p === "/painel/cookies",
+    passos: [
+      {
+        alvo: "cookies-sites",
+        titulo: "Um aviso por site",
+        texto: "Aqui ficam o site da agência e o de cada cliente. Escolha um para ativar o aviso, ver a instalação e a prova de consentimento.",
+        lado: "right",
+      },
+      {
+        alvo: "cookies-instalar",
+        titulo: "Instalação guiada",
+        texto: "Copie a linha da Dattis e siga os passos da plataforma do site: código, Google Tag Manager, WordPress, Shopify ou outras. Inclui como segurar o Pixel do Meta até o aceite.",
+        lado: "top",
+      },
+      {
+        alvo: "cookies-verificar",
+        titulo: "Confira se ficou certo",
+        texto: "Depois de instalar, clique em <b>Verificar instalação</b>: a Dattis abre o site e aponta o que falta ajustar.",
+        lado: "top",
+      },
+      {
+        alvo: "cookies-gtm",
+        titulo: "Sem Google Analytics ainda?",
+        texto: "Este passo a passo cria o Analytics e o Gerenciador de Tags do cliente do zero, já respeitando o consentimento.",
+        lado: "top",
       },
     ],
   },

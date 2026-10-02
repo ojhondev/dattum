@@ -471,3 +471,17 @@ export async function ultimosResultados(agenciaId?: string) {
 export async function ultimaVarredura() {
   return db.query.varreduras.findFirst({ where: isNull(varreduras.erro), orderBy: desc(varreduras.iniciadaEm) });
 }
+
+/** HTML de um site público, com a mesma proteção da vigilância (sem rede interna, até 5 redirecionamentos). */
+export async function baixarHtml(site: string): Promise<{ html: string; url: string } | null> {
+  try {
+    const { res, url } = await buscar(new URL(site));
+    if (!res.ok) {
+      await res.body?.cancel();
+      return null;
+    }
+    return { html: await lerHtml(res), url: url.toString() };
+  } catch {
+    return null;
+  }
+}

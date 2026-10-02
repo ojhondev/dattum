@@ -9,8 +9,8 @@ import { EMAIL_DEMO } from "@/lib/admin-dados";
 import { linkContato } from "@/lib/contato";
 import { FormDadosAgencia, FormSenha } from "./ConfiguracoesClient";
 import { PoliticaPublicaCard } from "@/components/app/PoliticaPublicaCard";
-import { SITE_URL, urlAbsoluta } from "@/lib/site";
-import { CookiesCard } from "@/components/app/CookiesCard";
+import { urlAbsoluta } from "@/lib/site";
+import { CookiesAtalho } from "@/components/app/CookiesAtalho";
 import { estatisticaCookies } from "@/lib/cookies-stats";
 
 const CARD = "rounded-[20px] border border-line bg-surface p-5 sm:p-6";
@@ -73,14 +73,9 @@ export default async function ConfiguracoesPage() {
           bloqueadoPlano={agencia.plano === "start"}
         />
 
-        <CookiesCard
-          token={agencia.cookiesToken}
-          config={agencia.cookiesConfig ?? null}
-          politicaPadrao={agencia.politicaPublicadaEm && agencia.slug ? urlAbsoluta(`/p/${agencia.slug}/privacidade`) : null}
-          estatistica={await estatisticaCookies(agencia.cookiesToken)}
-          origem={SITE_URL}
-          bloqueadoPlano={agencia.plano === "start"}
-        />
+        {agencia.plano !== "start" && (
+          <CookiesAtalho href="/painel/cookies?site=agencia" ativo={!!agencia.cookiesToken} escolhas={(await estatisticaCookies(agencia.cookiesToken))?.total ?? null} />
+        )}
       </div>
 
       <aside className="flex flex-col gap-6">

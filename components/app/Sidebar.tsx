@@ -27,6 +27,7 @@ import {
   ShieldCheck,
   type LucideIcon,
   Settings,
+  Cookie,
 } from "lucide-react";
 import iconeMenta from "../../public/brand/icone-sidebar-menta.png";
 import iconeBranco from "../../public/brand/icone-sidebar-branco.png";
@@ -50,6 +51,7 @@ const GRUPOS_PAINEL: Grupo[] = [
     title: "Proteção",
     items: [
       { href: "/painel/vigilancia", label: "Vigilância", icon: Radar },
+      { href: "/painel/cookies", label: "Cookies", icon: Cookie },
       { href: "/painel/certificados", label: "Certificados e selo", icon: BadgeCheck },
       { href: "/painel/dossie", label: "Dossiê para BM", icon: FolderOpen },
     ],
