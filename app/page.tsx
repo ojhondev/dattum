@@ -176,7 +176,7 @@ export default async function LandingPage() {
         <section className="overflow-hidden pt-14 sm:pt-20">
           <div className="mx-auto max-w-5xl px-5 text-center">
             <p className="t-eyebrow">Baseado na Lei nº 13.709/2018 (LGPD)</p>
-            <h1 className="t-hero mx-auto mt-5 max-w-[16ch]">
+            <h1 className="t-hero t-hero-home mx-auto mt-5 max-w-[16ch]">
               <span className="text-brand-ink">Agência de Tráfego:</span> Descumprir a LGPD gera multas.
             </h1>
             <p className="mx-auto mt-6 max-w-2xl text-[20px] leading-[1.4] text-body">
