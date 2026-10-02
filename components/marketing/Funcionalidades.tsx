@@ -1,6 +1,7 @@
 import Image, { type StaticImageData } from "next/image";
 import Link from "next/link";
 import { ArrowRight, Check } from "lucide-react";
+import { Cena } from "@/components/marketing/Cena";
 import bannerCookies from "../../public/marketing/app/banner-cookies.webp";
 import cookiesNumeros from "../../public/marketing/app/cookies-numeros.webp";
 import cookiesGtm from "../../public/marketing/app/cookies-gtm.webp";
@@ -175,7 +176,9 @@ export function Funcionalidades() {
                   ))}
                 </ul>
               </div>
-              <div className={"min-w-0 lg:col-span-7 " + (i % 2 ? "lg:order-1" : "")}>{r.visual}</div>
+              <Cena className={"min-w-0 lg:col-span-7 " + (i % 2 ? "lg:order-1" : "")}>
+                <div className="an-sobe">{r.visual}</div>
+              </Cena>
             </article>
           ))}
         </div>

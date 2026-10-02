@@ -62,11 +62,11 @@ export function HeroPreview() {
           </div>
 
           <div className="mt-2.5 space-y-2 rounded-2xl bg-[#f4f4f2] p-3">
-            {BARS.map((b) => (
+            {BARS.map((b, i) => (
               <div key={b.l} className="flex items-center gap-2">
                 <span className="w-24 shrink-0 text-[9.5px] text-[#59645f]">{b.l}</span>
                 <span className="h-1.5 flex-1 rounded-full bg-[#e3e3e1]">
-                  <span className="block h-full rounded-full" style={{ width: `${b.v}%`, background: b.c }} />
+                  <span className="an-carrega block h-full rounded-full" style={{ width: `${b.v}%`, background: b.c, "--d": `${400 + i * 160}ms` } as React.CSSProperties} />
                 </span>
               </div>
             ))}

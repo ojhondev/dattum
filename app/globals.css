@@ -580,3 +580,75 @@ table.painel-table a:hover { text-decoration: underline; }
 .dattis-tour .driver-popover-arrow-side-right { border-right-color: var(--color-surface); }
 .dattis-tour .driver-popover-arrow-side-top { border-top-color: var(--color-surface); }
 .dattis-tour .driver-popover-arrow-side-bottom { border-bottom-color: var(--color-surface); }
+
+/* ---------- Ilustrações animadas ----------
+   Repouso (sem JS, print, reduced-motion): estado final, tudo legível.
+   <Cena> marca data-cena="espera" quando a ilustração ainda está abaixo da dobra e
+   troca para "ativa" ao entrar na tela; cada .an-* toca uma vez, com atraso --d. */
+@property --an-p { syntax: "<number>"; inherits: true; initial-value: 0; }
+@property --an-n { syntax: "<integer>"; inherits: true; initial-value: 0; }
+
+@keyframes an-sobe { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+@keyframes an-pop { 0% { opacity: 0; transform: scale(.6); } 70% { opacity: 1; transform: scale(1.06); } 100% { opacity: 1; transform: none; } }
+@keyframes an-barra { from { transform: scaleX(0); } to { transform: none; } }
+@keyframes an-traco { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+@keyframes an-revela { from { clip-path: inset(0 0 100% 0); } to { clip-path: inset(0); } }
+@keyframes an-conta { from { --an-p: 0; --an-n: 0; } }
+@keyframes an-tremor { 0%, 100% { transform: none; } 20% { transform: translateX(-5px) rotate(-1deg); } 40% { transform: translateX(5px) rotate(1deg); } 60% { transform: translateX(-3px); } 80% { transform: translateX(3px); } }
+@keyframes an-pulso { 0% { box-shadow: 0 0 0 0 rgba(69, 209, 144, .55); } 100% { box-shadow: 0 0 0 14px rgba(69, 209, 144, 0); } }
+@keyframes an-brilho { from { transform: translateX(-120%) skewX(-18deg); } to { transform: translateX(260%) skewX(-18deg); } }
+@keyframes an-varre { 0% { transform: translateY(-100%); opacity: 0; } 15%, 85% { opacity: 1; } 100% { transform: translateY(900%); opacity: 0; } }
+
+.an-traco { stroke-dasharray: 1; stroke-dashoffset: 0; }
+.an-barra { transform-origin: left center; }
+.an-anel { --an-p: var(--alvo); background: conic-gradient(var(--an-cor, #f38536) calc(var(--an-p) * 1%), var(--an-trilho, #e3e3e1) 0); }
+.an-num { --an-n: var(--alvo); counter-reset: an-n var(--an-n); }
+.an-num::after { content: counter(an-n); }
+
+[data-cena="espera"] :is(.an-sobe, .an-pop) { opacity: 0; }
+[data-cena="espera"] .an-barra { transform: scaleX(0); }
+[data-cena="espera"] .an-traco { stroke-dashoffset: 1; }
+[data-cena="espera"] .an-revela { clip-path: inset(0 0 100% 0); }
+[data-cena="espera"] :is(.an-anel, .an-num) { --an-p: 0; --an-n: 0; }
+
+[data-cena="ativa"] .an-sobe { animation: an-sobe 560ms cubic-bezier(.2, .7, .2, 1) var(--d, 0ms) both; }
+[data-cena="ativa"] .an-pop { animation: an-pop 480ms cubic-bezier(.2, .7, .2, 1) var(--d, 0ms) both; }
+[data-cena="ativa"] .an-barra { animation: an-barra 900ms cubic-bezier(.2, .7, .2, 1) var(--d, 0ms) both; }
+[data-cena="ativa"] .an-traco { animation: an-traco 1400ms ease-in-out var(--d, 0ms) both; }
+[data-cena="ativa"] .an-revela { animation: an-revela 900ms steps(12, end) var(--d, 0ms) both; }
+[data-cena="ativa"] :is(.an-anel, .an-num) { animation: an-conta 1600ms cubic-bezier(.2, .7, .2, 1) var(--d, 0ms) both; }
+[data-cena="ativa"] .an-tremor { animation: an-tremor 520ms ease-in-out var(--d, 0ms) both; }
+
+/* Ambiente: só depois que a cena tocou (ou em repouso), nunca no reduced-motion. */
+.an-pulso { animation: an-pulso 2.2s ease-out 1.2s infinite; }
+.an-brilho { position: relative; overflow: hidden; }
+.an-brilho::after {
+  content: ""; position: absolute; inset: 0 auto 0 0; width: 40%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .35), transparent);
+  animation: an-brilho 3.6s ease-in-out 1.6s infinite; pointer-events: none;
+}
+.an-varre { animation: an-varre 3.2s ease-in-out 600ms infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .an-pulso, .an-brilho::after, .an-varre { animation: none !important; }
+  .an-varre { opacity: 0; }
+}
+
+/* ---------- Faixa do hero: uma conta ativada, passo a passo ---------- */
+.fx-card { transition: transform 600ms cubic-bezier(.2, .7, .2, 1), box-shadow 600ms ease, border-color 400ms ease; }
+.fx-card[data-ativo] { transform: translateY(-8px); border-color: var(--color-brand-strong); box-shadow: 0 24px 48px -24px rgba(0, 40, 32, .35); }
+.fx-fade { transition: opacity 500ms ease, transform 500ms cubic-bezier(.2, .7, .2, 1); }
+.fx-card:not([data-feito]) .fx-depois { opacity: 0; transform: translateY(6px); }
+.fx-card[data-feito] .fx-antes { opacity: 0; }
+.fx-card:not([data-feito]) .fx-pop { opacity: 0; transform: scale(.7); }
+.fx-pop { transition: opacity 400ms ease var(--d, 0ms), transform 500ms cubic-bezier(.3, 1.5, .5, 1) var(--d, 0ms); }
+.fx-card:not([data-feito]) .fx-traco { stroke-dashoffset: 1; }
+.fx-traco { stroke-dasharray: 1; stroke-dashoffset: 0; transition: stroke-dashoffset 1200ms ease-in-out 150ms; }
+.fx-card:not([data-feito]) .fx-barra { transform: scaleX(.35); }
+.fx-barra { transform-origin: left center; transition: transform 700ms cubic-bezier(.2, .7, .2, 1) var(--d, 0ms); }
+.fx-trilho-fill { transform-origin: left center; transition: transform 1100ms cubic-bezier(.4, 0, .2, 1); }
+.fx-faixa { transition: transform 800ms cubic-bezier(.4, 0, .2, 1); }
+.fx-anel { --an-p: 0; transition: --an-p 1500ms cubic-bezier(.2, .7, .2, 1) 200ms; background: conic-gradient(var(--color-brand-strong) calc(var(--an-p) * 1%), var(--color-line) 0); }
+.fx-num { --an-n: 0; transition: --an-n 1500ms cubic-bezier(.2, .7, .2, 1) 200ms; counter-reset: an-n var(--an-n); }
+.fx-num::after { content: counter(an-n); }
+.fx-card[data-feito] :is(.fx-anel, .fx-num) { --an-p: var(--alvo); --an-n: var(--alvo); }
+.an-carrega { transform-origin: left center; animation: an-barra 1000ms cubic-bezier(.2, .7, .2, 1) var(--d, 0ms) both; }

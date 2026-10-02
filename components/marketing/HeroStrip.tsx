@@ -1,202 +1,271 @@
-import {
-  MessageCircle,
-  Scale,
-  FileSignature,
-  Megaphone,
-  Clock,
-  FileText,
-  ListChecks,
-  ShieldCheck,
-  Database,
-  Network,
-} from "lucide-react";
-import { MetaChips } from "@/components/marketing/MetaChips";
+"use client";
+
+import Image from "next/image";
+import { useEffect, useRef, useState } from "react";
+import { Check } from "lucide-react";
+import marca from "../../public/brand/icone-sidebar-menta.png";
 
 /**
- * Faixa do hero: cartões que ecoam as ferramentas que uma agência opera
- * (WhatsApp, Meta Ads, contrato, CRM, formulário), com os chips de
- * conformidade por cima — o equivalente Dattis das fotos com metadados do
- * proofmode.org. Decorativo.
+ * Faixa do hero: uma conta de cliente ativada na Dattis, passo a passo — ferramentas
+ * mapeadas, RAT, contrato, aviso de cookies, vigilância e selo. Os cartões acendem em
+ * sequência (um trilho em cima mostra o avanço) e a história recomeça. No celular a
+ * faixa desliza para manter o cartão da vez no centro. Decorativo.
+ *
+ * Estado inicial (SSR, sem JS): primeiro passo aceso, o resto aguardando — tudo legível.
+ * Com prefers-reduced-motion vai direto para "tudo feito" e para.
  */
 
-function WhatsAppTile() {
-  return (
-    <div className="flex h-full flex-col gap-2.5 bg-[#0b3a2f] p-4 pt-10">
-      <div className="max-w-[80%] rounded-2xl rounded-tl-sm bg-white/95 px-3 py-2 text-[12px] leading-snug text-[#0a120f]">
-        Oi! Vi o anúncio, ainda tem o tênis no 42?
-      </div>
-      <div className="ml-auto max-w-[80%] rounded-2xl rounded-tr-sm bg-[#6ceead] px-3 py-2 text-[12px] leading-snug text-[#002820]">
-        Tem sim! Te mando o link com o cupom.
-      </div>
-      <div className="max-w-[70%] rounded-2xl rounded-tl-sm bg-white/95 px-3 py-2 text-[12px] leading-snug text-[#0a120f]">
-        Pode mandar, obrigado!
-      </div>
-      <div className="mt-auto h-8 rounded-full bg-white/10" />
-    </div>
-  );
-}
+const N = 6;
+const RITMO = 1900; // ms por passo
+const PAUSA = 2; // passos extras parados com tudo feito antes de recomeçar
 
-function MetaAdsTile() {
-  const bars = [38, 52, 44, 66, 58, 81, 74, 92];
+type Passo = { rotulo: string; legenda: string; corpo: React.ReactNode };
+
+function Ferramentas() {
   return (
-    <div className="flex h-full flex-col bg-white p-4 text-[#0a120f]">
-      <p className="font-mono text-[10px] uppercase tracking-[0.06em] text-[#59645f]">Conversões · CAPI</p>
-      <p className="font-display mt-1 text-[30px] leading-none">1.284</p>
-      <p className="mt-1 text-[11px] text-[#59645f]">eventos nos últimos 7 dias</p>
-      <div className="mt-auto flex h-28 items-end gap-1.5">
-        {bars.map((h, i) => (
-          <span key={i} className="flex-1 rounded-t-md bg-[#45d190]" style={{ height: `${h}%`, opacity: 0.45 + i * 0.07 }} />
+    <div className="flex h-full flex-col">
+      <p className="font-display text-[21px] leading-tight text-ink">Loja Aurora</p>
+      <p className="mt-0.5 font-mono text-[10.5px] text-muted">lojaaurora.com.br</p>
+      <div className="mt-auto flex flex-wrap gap-1.5">
+        {["Meta Ads", "WhatsApp", "Google Ads", "RD Station"].map((t, i) => (
+          <span
+            key={t}
+            className="fx-pop rounded-full border border-line bg-surface-2 px-2.5 py-1 text-[11px] text-ink"
+            style={{ "--d": `${150 + i * 140}ms` } as React.CSSProperties}
+          >
+            {t}
+          </span>
         ))}
       </div>
     </div>
   );
 }
 
-function ContractTile() {
+function Rat() {
+  const linhas = [
+    ["Finalidade", "Campanhas", 70],
+    ["Base legal", "Art. 7º, IX", 55],
+    ["Retenção", "6 meses", 45],
+  ] as const;
   return (
-    <div className="flex h-full flex-col bg-[#fbfbf8] p-5 text-[#0a120f]">
-      <p className="font-mono text-[9.5px] uppercase leading-snug tracking-[0.05em]">Contrato de operação de dados pessoais</p>
-      <div className="mt-4 space-y-2">
-        {[92, 100, 84, 96, 70, 100, 88, 60].map((w, i) => (
-          <span key={i} className="block h-[5px] rounded-full bg-[#e3e3e1]" style={{ width: `${w}%` }} />
+    <dl className="flex h-full flex-col justify-end divide-y divide-line text-[12px]">
+      {linhas.map(([k, v, w], i) => (
+        <div key={k} className="grid grid-cols-[76px_1fr] items-center gap-2 py-2">
+          <dt className="text-muted">{k}</dt>
+          <dd className="grid">
+            <span className="fx-fade fx-antes col-start-1 row-start-1 h-2 self-center rounded-full bg-line" style={{ width: `${w}%` }} />
+            <span
+              className="fx-fade fx-depois col-start-1 row-start-1 text-ink"
+              style={{ transitionDelay: `${200 + i * 220}ms` }}
+            >
+              {v}
+            </span>
+          </dd>
+        </div>
+      ))}
+    </dl>
+  );
+}
+
+function Contrato() {
+  return (
+    <div className="flex h-full flex-col">
+      <div className="space-y-1.5">
+        {[100, 92, 96, 70].map((w, i) => (
+          <span key={i} className="block h-[4px] rounded-full bg-line" style={{ width: `${w}%` }} />
         ))}
       </div>
       <div className="mt-auto">
-        <svg viewBox="0 0 120 34" className="h-9 w-28 text-[#002820]" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round">
-          <path d="M3 24c8-14 14-18 16-12s-6 14-2 12 10-16 14-14-4 12 0 11 8-9 12-9 2 7 6 6 10-8 16-8 6 6 12 5 12-5 20-5" />
+        <svg viewBox="0 0 120 30" className="h-8 w-28 text-ink" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+          <path
+            pathLength={1}
+            className="fx-traco"
+            d="M3 21c7-12 12-16 14-11s-5 12-2 10 9-14 12-12-3 10 0 9 7-8 10-8 2 6 5 5 9-7 14-7 5 5 10 4 11-4 18-4"
+          />
         </svg>
-        <div className="mt-1 h-px bg-[#0a120f]/30" />
-        <p className="mt-2 text-[10px] text-[#59645f]">Assinado eletronicamente</p>
+        <div className="h-px bg-line-strong" />
+        <p className="mt-1.5 grid text-[11px]">
+          <span className="fx-fade fx-antes col-start-1 row-start-1 text-muted">Aguardando assinatura</span>
+          <span className="fx-fade fx-depois col-start-1 row-start-1 text-ink" style={{ transitionDelay: "900ms" }}>
+            Ana Souza · assinado 14:32
+          </span>
+        </p>
       </div>
     </div>
   );
 }
 
-function CrmTile() {
-  const cols = [
-    { t: "Novo lead", n: 3 },
-    { t: "Qualificado", n: 2 },
-    { t: "Venda", n: 1 },
-  ];
+function Cookies() {
   return (
-    <div className="grid h-full grid-cols-3 gap-2 bg-[#cff5e1] p-3 pt-4 text-[#002820]">
-      {cols.map((c) => (
-        <div key={c.t} className="flex flex-col gap-1.5">
-          <p className="font-mono text-[8.5px] uppercase tracking-[0.04em]">{c.t}</p>
-          {Array.from({ length: c.n }).map((_, i) => (
-            <div key={i} className="rounded-lg bg-white p-1.5">
-              <span className="block h-1.5 w-4/5 rounded-full bg-[#002820]/70" />
-              <span className="mt-1 block h-1 w-3/5 rounded-full bg-[#002820]/25" />
-            </div>
-          ))}
+    <div className="flex h-full flex-col">
+      <div className="relative flex-1 overflow-hidden rounded-xl border border-line bg-surface-2">
+        <div className="space-y-1.5 p-2.5">
+          <span className="block h-2 w-1/2 rounded-full bg-line" />
+          <span className="block h-1.5 w-4/5 rounded-full bg-line" />
+          <span className="block h-1.5 w-3/5 rounded-full bg-line" />
         </div>
-      ))}
-    </div>
-  );
-}
-
-function FormTile() {
-  return (
-    <div className="flex h-full flex-col gap-2 bg-[#ee9ef3] p-4 pt-6 text-[#0a120f]">
-      <p className="font-display text-[19px] leading-tight">Garanta seu cupom de 15%</p>
-      {["Nome", "WhatsApp", "E-mail"].map((f) => (
-        <div key={f} className="rounded-lg bg-white/90 px-2.5 py-2 text-[11px] text-[#59645f]">
-          {f}
+        <div className="fx-fade fx-depois absolute inset-x-1.5 bottom-1.5 rounded-lg bg-rail p-2 text-white shadow-lg">
+          <p className="flex items-center gap-1.5 text-[10.5px]">
+            <Image src={marca} alt="" className="h-3 w-auto" />
+            Sua privacidade importa
+          </p>
+          <div className="mt-1.5 flex gap-1">
+            <span className="rounded-full border border-white/25 px-2 py-0.5 text-[9.5px]">Recusar</span>
+            <span className="fx-fade rounded-full bg-white/15 px-2 py-0.5 text-[9.5px] [[data-feito]_&]:bg-brand [[data-feito]_&]:text-rail" style={{ transitionDelay: "1000ms" }}>
+              Aceitar
+            </span>
+          </div>
         </div>
-      ))}
-      <div className="flex items-center gap-1.5 text-[10px]">
-        <span className="h-3 w-3 rounded-[3px] border border-[#0a120f]/50 bg-white/70" />
-        Aceito receber ofertas
       </div>
-      <div className="mt-auto rounded-full bg-[#0a120f] py-2 text-center font-mono text-[10px] uppercase text-white">Quero o cupom</div>
+      <p className="mt-2.5 grid text-[11.5px]">
+        <span className="fx-fade fx-antes col-start-1 row-start-1 flex items-center gap-1.5 text-muted">
+          <span className="h-2 w-2 rounded-full bg-orange" /> Pixel sem consentimento
+        </span>
+        <span className="fx-fade fx-depois col-start-1 row-start-1 flex items-center gap-1.5 text-ink" style={{ transitionDelay: "1300ms" }}>
+          <span className="h-2 w-2 rounded-full bg-brand-strong" /> Pixel só depois do aceite
+        </span>
+      </p>
     </div>
   );
 }
 
-function SubsTile() {
-  const rows = ["Meta Ads", "Google Ads", "WhatsApp Business", "RD Station", "Zapier"];
+function Vigilancia() {
   return (
-    <div className="flex h-full flex-col bg-[#002820] p-4 text-white">
-      <p className="font-mono text-[10px] uppercase tracking-[0.06em] text-white/60">Subprocessadores</p>
-      <ul className="mt-3 space-y-2">
-        {rows.map((r, i) => (
-          <li key={r} className="flex items-center justify-between rounded-full bg-white/[0.07] px-3 py-1.5 text-[11px]">
-            {r}
-            <span className={"h-2 w-2 rounded-full " + (i === 3 ? "bg-[#f38536]" : "bg-[#6ceead]")} />
-          </li>
-        ))}
-      </ul>
+    <div className="flex h-full items-center gap-4">
+      <div className="fx-anel grid h-[76px] w-[76px] shrink-0 place-items-center rounded-full" style={{ "--alvo": 96 } as React.CSSProperties}>
+        <div className="grid h-[62px] w-[62px] place-items-center rounded-full bg-surface">
+          <span className="fx-num font-display text-[24px] leading-none text-ink" style={{ "--alvo": 96 } as React.CSSProperties} />
+        </div>
+      </div>
+      <div className="text-[11.5px] leading-snug">
+        <p className="text-ink">Hoje, 06:00</p>
+        <p className="mt-1 text-muted">Cadeado, pixel, formulários e contrato</p>
+      </div>
     </div>
   );
 }
 
-const TILE = "relative w-[210px] shrink-0 overflow-hidden rounded-[6px] sm:w-[240px]";
+function Selo() {
+  return (
+    <div className="flex h-full flex-col items-center justify-center gap-3">
+      <div className="fx-pop an-brilho flex w-full items-center gap-2.5 rounded-2xl bg-rail px-3 py-3 text-white" style={{ "--d": "200ms" } as React.CSSProperties}>
+        <Image src={marca} alt="" className="h-7 w-auto shrink-0" />
+        <span className="min-w-0">
+          <span className="block font-mono text-[8.5px] tracking-[0.1em] text-brand">DATTIS · LGPD</span>
+          <span className="block font-display text-[14px] leading-tight">Privacidade verificada</span>
+        </span>
+      </div>
+      <p className="font-mono text-[10.5px] text-muted">DTS-7K3F-9QPA</p>
+    </div>
+  );
+}
+
+const PASSOS: Passo[] = [
+  { rotulo: "Conta ativada", legenda: "Ferramentas do cliente mapeadas", corpo: <Ferramentas /> },
+  { rotulo: "RAT", legenda: "Registro gerado sozinho", corpo: <Rat /> },
+  { rotulo: "Contrato", legenda: "Cliente assina pelo celular", corpo: <Contrato /> },
+  { rotulo: "Cookies", legenda: "Banner segura o pixel", corpo: <Cookies /> },
+  { rotulo: "Vigilância", legenda: "Site conferido todo dia", corpo: <Vigilancia /> },
+  { rotulo: "Selo", legenda: "Qualquer pessoa confere", corpo: <Selo /> },
+];
 
 export function HeroStrip() {
+  const [passo, setPasso] = useState(0);
+  const palco = useRef<HTMLDivElement | null>(null);
+  const faixa = useRef<HTMLDivElement | null>(null);
+
+  // Relógio da história: só anda com a faixa visível e a aba aberta.
+  useEffect(() => {
+    const el = palco.current;
+    if (!el) return;
+    if (matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      const t = setTimeout(() => setPasso(N), 0);
+      return () => clearTimeout(t);
+    }
+    let timer: ReturnType<typeof setInterval> | undefined;
+    const parar = () => {
+      clearInterval(timer);
+      timer = undefined;
+    };
+    const andar = () => {
+      if (timer || document.hidden) return;
+      timer = setInterval(() => setPasso((p) => (p >= N + PAUSA - 1 ? -1 : p + 1)), RITMO);
+    };
+    const io = new IntersectionObserver(([e]) => (e.isIntersecting ? andar() : parar()), { threshold: 0.2 });
+    io.observe(el);
+    const aba = () => (document.hidden ? parar() : el.getBoundingClientRect().top < innerHeight && andar());
+    document.addEventListener("visibilitychange", aba);
+    return () => {
+      parar();
+      io.disconnect();
+      document.removeEventListener("visibilitychange", aba);
+    };
+  }, []);
+
+  // Tela estreita: desliza a faixa para o cartão da vez ficar no centro.
+  useEffect(() => {
+    const centralizar = () => {
+      const p = palco.current;
+      const f = faixa.current;
+      if (!p || !f) return;
+      const sobra = f.scrollWidth - p.clientWidth;
+      if (sobra <= 0) {
+        f.style.transform = "";
+        return;
+      }
+      const alvo = f.children[Math.min(Math.max(passo, 0), N - 1) + 1] as HTMLElement | undefined; // [0] é o trilho
+      if (!alvo) return;
+      const x = alvo.offsetLeft + alvo.offsetWidth / 2 - p.clientWidth / 2;
+      f.style.transform = `translateX(${-Math.min(Math.max(x, 0), sobra)}px)`;
+    };
+    centralizar();
+    window.addEventListener("resize", centralizar);
+    return () => window.removeEventListener("resize", centralizar);
+  }, [passo]);
+
+  const progresso = Math.min(Math.max(passo, 0), N - 1) / (N - 1);
+
   return (
-    <div aria-hidden="true" className="pointer-events-none relative flex w-full select-none justify-center overflow-hidden pb-6 pt-10">
-      <div className="flex w-max shrink-0 items-start gap-5 px-5">
-        <div className={TILE + " mt-16 h-[230px]"}>
-          <CrmTile />
-        </div>
-
-        <div className="relative mt-4 shrink-0">
-          <div className={TILE + " h-[300px]"}>
-            <WhatsAppTile />
-          </div>
-          <MetaChips
-            className="absolute -left-8 bottom-4 z-10"
-            items={[
-              { icon: MessageCircle, label: "WhatsApp Business API" },
-              { icon: Scale, label: "Base legal: art. 7º, V" },
-              { icon: FileSignature, label: "DPA assinado", status: "sim" },
-            ]}
+    <div ref={palco} aria-hidden="true" className="pointer-events-none relative w-full select-none overflow-hidden pb-14 pt-14">
+      <div ref={faixa} className="fx-faixa relative mx-auto flex w-max gap-4 px-5">
+        {/* Trilho: liga o centro do primeiro ao do último cartão */}
+        <div className="absolute left-[calc(1.25rem+100px)] right-[calc(1.25rem+100px)] top-[5px] h-[2px] rounded-full bg-line">
+          <div
+            className="fx-trilho-fill h-full rounded-full bg-brand-strong"
+            style={{ transform: `scaleX(${passo < 0 ? 0 : progresso})` }}
           />
         </div>
-
-        <div className={TILE + " mt-12 h-[250px]"}>
-          <ContractTile />
-        </div>
-
-        <div className="relative shrink-0">
-          <MetaChips
-            className="relative z-10 mb-3 -ml-4"
-            items={[
-              { icon: Megaphone, label: "Meta Ads · Conversions API" },
-              { icon: Clock, label: "Retenção: 6 meses" },
-              { icon: FileText, label: "Registrado no RAT", status: "sim" },
-            ]}
-          />
-          <div className={TILE + " h-[250px]"}>
-            <MetaAdsTile />
-          </div>
-        </div>
-
-        <div className="relative mt-8 shrink-0">
-          <div className={TILE + " h-[290px]"}>
-            <FormTile />
-          </div>
-          <MetaChips
-            className="absolute -left-10 bottom-6 z-10"
-            items={[
-              { icon: ListChecks, label: "Formulário de lead" },
-              { icon: ShieldCheck, label: "Consentimento registrado", status: "nao" },
-            ]}
-          />
-        </div>
-
-        <div className="relative mt-20 shrink-0">
-          <div className={TILE + " h-[220px]"}>
-            <SubsTile />
-          </div>
-          <MetaChips
-            className="absolute -left-6 -top-10 z-10"
-            items={[
-              { icon: Database, label: "RD Station" },
-              { icon: Network, label: "Contrato com subprocessador", status: "nao" },
-            ]}
-          />
-        </div>
+        {PASSOS.map((s, i) => {
+          const feito = passo >= i;
+          const ativo = passo === i;
+          return (
+            <div key={s.rotulo} className="relative flex w-[200px] shrink-0 flex-col items-center gap-5">
+              <span
+                className={
+                  "relative z-10 h-3 w-3 rounded-full border-2 transition-colors duration-500 " +
+                  (feito ? "border-brand-strong bg-brand-strong" : "border-line-strong bg-canvas") +
+                  (ativo ? " an-pulso" : "")
+                }
+              />
+              <div
+                data-feito={feito ? "" : undefined}
+                data-ativo={ativo ? "" : undefined}
+                className="fx-card flex h-[244px] w-full flex-col rounded-[20px] border border-line bg-surface p-4"
+              >
+                <div className="flex items-center justify-between">
+                  <p className="font-mono text-[10.5px] uppercase tracking-[0.06em] text-muted">{s.rotulo}</p>
+                  <span className="relative h-5 w-5 rounded-full border border-line">
+                    <span className="fx-pop absolute -inset-px grid place-items-center rounded-full bg-brand-strong text-rail">
+                      <Check size={12} strokeWidth={3} />
+                    </span>
+                  </span>
+                </div>
+                <div className="mt-4 min-h-0 flex-1">{s.corpo}</div>
+                <p className="mt-3 border-t border-line pt-2.5 text-[12px] leading-snug text-body">{s.legenda}</p>
+              </div>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
