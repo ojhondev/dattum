@@ -130,6 +130,19 @@ export default function OQueEADattisPage() {
             { nome: "O que é a Dattis", url: URL },
           ]),
           schemaFaq(FAQ.map((f) => ({ pergunta: f.q, resposta: f.a }))),
+          {
+            "@context": "https://schema.org",
+            "@type": "VideoObject",
+            name: "O que é a Dattis: LGPD para agências de tráfego pago",
+            description:
+              "Em 30 segundos: por que toda agência de tráfego trata dados pessoais e responde junto com o cliente pela LGPD, e como a Dattis organiza registro, contrato, cookies, selo e dossiê para BM suspensa.",
+            thumbnailUrl: `${SITE_URL}/videos/dattis-desktop.jpg`,
+            contentUrl: `${SITE_URL}/videos/dattis-desktop.mp4`,
+            uploadDate: "2026-10-03",
+            duration: "PT30S",
+            inLanguage: "pt-BR",
+            publisher: { "@id": `${SITE_URL}/#organizacao` },
+          },
         ]}
       />
       <SiteHeader />
@@ -164,6 +177,38 @@ export default function OQueEADattisPage() {
                 </div>
               ))}
             </dl>
+          </div>
+        </section>
+
+        {/* VÍDEO: horizontal a partir do tablet, vertical no celular; só baixa quando a pessoa dá play */}
+        <section aria-labelledby="video-titulo" className="px-5 pb-20 sm:px-10 lg:px-14">
+          <div className="mx-auto max-w-5xl">
+            <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1">
+              <h2 id="video-titulo" className="font-display text-[clamp(1.5rem,2.6vw,2rem)] leading-tight text-ink">
+                A Dattis em 30 segundos
+              </h2>
+              <p className="text-[14.5px] text-muted">Por que a agência responde pelos dados e como a Dattis resolve isso.</p>
+            </div>
+            <video
+              controls
+              playsInline
+              preload="none"
+              poster="/videos/dattis-desktop.jpg"
+              className="mt-5 hidden aspect-video w-full rounded-[24px] border border-line bg-surface md:block"
+              aria-label="Vídeo: o que é a Dattis"
+            >
+              <source src="/videos/dattis-desktop.mp4" type="video/mp4" />
+            </video>
+            <video
+              controls
+              playsInline
+              preload="none"
+              poster="/videos/dattis-mobile.jpg"
+              className="mx-auto mt-5 aspect-[9/16] w-full max-w-[400px] rounded-[24px] border border-line bg-surface md:hidden"
+              aria-label="Vídeo: o que é a Dattis"
+            >
+              <source src="/videos/dattis-mobile.mp4" type="video/mp4" />
+            </video>
           </div>
         </section>
 
