@@ -6,6 +6,7 @@ import { contasCliente } from "@/lib/db/schema";
 import { ultimosResultados } from "@/lib/vigilancia";
 import { NotaVigilancia, ContagemSeveridades } from "@/components/app/VigilanciaChips";
 import { ListaAchados } from "@/components/app/ListaAchados";
+import { BarraModulo, BuscaModulo, FiltroModulo } from "@/components/app/Modulo";
 
 export const dynamic = "force-dynamic";
 
@@ -18,9 +19,11 @@ const CHECAGENS = [
   "Selo Dattis no rodapé e validade do certificado",
 ];
 
-export default async function VigilanciaPage() {
+export default async function VigilanciaPage({ searchParams }: { searchParams: Promise<{ q?: string; nivel?: string }> }) {
   const sessao = await getSessao();
   if (!sessao) return null;
+  const { q, nivel } = await searchParams;
+  const termo = (q ?? "").trim().toLowerCase();
 
   const [resultados, contas] = await Promise.all([
     ultimosResultados(sessao.agenciaId),
@@ -28,38 +31,48 @@ export default async function VigilanciaPage() {
   ]);
   const verificadas = new Set(resultados.map((r) => r.contaClienteId));
   const semResultado = contas.filter((c) => !verificadas.has(c.id));
-  const ordenados = [...resultados].sort((a, b) => a.nota - b.nota);
+  const nivelDe = (r: (typeof resultados)[number]) => (r.criticos > 0 ? "critico" : r.nota < 85 ? "atencao" : "protegido");
+  const contagem = { critico: 0, atencao: 0, protegido: 0 };
+  for (const r of resultados) contagem[nivelDe(r)]++;
+  const ordenados = [...resultados]
+    .filter((r) => !termo || [r.titular, r.alvo].some((v) => v?.toLowerCase().includes(termo)))
+    .filter((r) => !nivel || nivelDe(r) === nivel)
+    .sort((a, b) => a.nota - b.nota);
 
   return (
-    <div className="max-w-6xl">
-      <p className="t-eyebrow">Dattis · Vigilância</p>
-      <h1 className="t-display mt-3 max-w-3xl">Varredura de segurança diária nos seus clientes</h1>
-      <p className="mt-4 max-w-2xl text-body leading-relaxed text-body">
-        Todo dia às 6h a Dattis visita o site de cada cliente e confere a documentação dele. Quando algo quebra — um pixel novo
-        sem banner, um SSL vencendo, um contrato sem assinatura — o alerta aparece aqui antes de virar denúncia.
-      </p>
-
-      <div data-tour="vig-checagens" className="mt-8 flex flex-wrap gap-2">
-        {CHECAGENS.map((c) => (
-          <span key={c} className="tag tag-white border border-line">
-            {c}
-          </span>
-        ))}
-      </div>
+    <div className="max-w-[1400px]">
+      <BarraModulo
+        esquerda={
+          <>
+            <BuscaModulo placeholder="Buscar cliente ou site" />
+            <FiltroModulo
+              nome="nivel"
+              opcoes={[
+                { valor: "todos", rotulo: "Todos", n: resultados.length },
+                { valor: "critico", rotulo: "Com alerta crítico", n: contagem.critico },
+                { valor: "atencao", rotulo: "Atenção", n: contagem.atencao },
+                { valor: "protegido", rotulo: "Protegidos", n: contagem.protegido },
+              ]}
+            />
+          </>
+        }
+        direita={<span className="px-2 text-[13px] text-muted">Verificação automática todo dia às 6h</span>}
+      />
 
       {ordenados.length === 0 ? (
-        <div className="block-card mt-10 p-10 text-body text-body">
-          A primeira varredura ainda não rodou para as suas contas. Abra uma conta e clique em <b>Verificar agora</b> na aba
-          Vigilância, ou aguarde a próxima varredura automática.
+        <div className="bloco p-10 text-center text-[14px] text-muted">
+          {resultados.length
+            ? "Nenhum cliente com esse filtro."
+            : "A primeira verificação ainda não rodou. Abra um cliente e clique em Verificar agora, na aba Vigilância, ou aguarde a verificação das 6h."}
         </div>
       ) : (
-        <div className="mt-10 flex flex-col gap-4">
+        <div className="flex flex-col gap-3">
           {ordenados.map((r) => (
-            <details key={r.id} className="group rounded-[24px] border border-line bg-surface open:shadow-[var(--shadow-chip)]" open={r.criticos > 0}>
-              <summary className="flex cursor-pointer list-none flex-wrap items-center gap-x-4 gap-y-2 px-6 py-5">
+            <details key={r.id} className="group bloco open:shadow-[var(--shadow-chip)]" open={r.criticos > 0}>
+              <summary className="flex cursor-pointer list-none flex-wrap items-center gap-x-4 gap-y-2 px-5 py-4">
                 <NotaVigilancia nota={r.nota} compacto />
                 <span className="min-w-[180px] flex-1">
-                  <span className="font-display block text-[19px] text-ink">
+                  <span className="block text-[15.5px] font-medium text-ink">
                     {r.titular}
                     {!r.contaClienteId && <span className="ml-2 align-middle font-mono text-[11px] uppercase tracking-[0.04em] text-muted">site da agência</span>}
                   </span>
@@ -81,6 +94,17 @@ export default async function VigilanciaPage() {
           ))}
         </div>
       )}
+
+      <details data-tour="vig-checagens" className="mt-6 text-[13.5px] text-muted">
+        <summary className="cursor-pointer hover:text-ink">O que a vigilância confere</summary>
+        <ul className="mt-3 flex flex-wrap gap-2">
+          {CHECAGENS.map((c) => (
+            <li key={c} className="rounded-lg border border-line bg-surface px-3 py-1.5 text-body">
+              {c}
+            </li>
+          ))}
+        </ul>
+      </details>
 
       {semResultado.length > 0 && (
         <p className="mt-6 text-body-sm text-muted">

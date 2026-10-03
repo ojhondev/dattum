@@ -10,6 +10,7 @@ import { origemAtual } from "@/lib/certificados";
 import { linkContato } from "@/lib/contato";
 import { RelatorioDat } from "@/components/app/RelatorioDat";
 import { AcoesDat } from "./AcoesDat";
+import { ImprimirAoAbrir } from "@/components/app/ImprimirAoAbrir";
 
 export default async function DatPage({ params }: { params: Promise<{ id: string }> }) {
   const sessao = await getSessao();
@@ -40,6 +41,7 @@ export default async function DatPage({ params }: { params: Promise<{ id: string
 
   return (
     <div>
+      <ImprimirAoAbrir />
       <div className="no-print mb-6 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div>
           <p className="painel-eyebrow">

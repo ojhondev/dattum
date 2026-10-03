@@ -5,9 +5,12 @@ import { usePathname, useRouter } from "next/navigation";
 import { CircleHelp, Search } from "lucide-react";
 import { ThemeToggle } from "@/components/nav/ThemeToggle";
 import { useTour } from "@/components/app/Tour";
+import { BotaoRelatorio } from "@/components/app/BotaoRelatorio";
 
 const TITULOS: [string, string, string][] = [
-  ["/painel/contas", "Contas de cliente", "Cada cliente com registro, contrato e ferramentas em dia."],
+  ["/painel/comecar", "Começar", "Preencha uma vez e a Dattis monta a documentação do cliente."],
+  ["/painel/relatorio", "Relatório", "A situação de conformidade da carteira, pronta para salvar em PDF."],
+  ["/painel/contas", "Clientes", "Cada cliente com registro, contrato e ferramentas em dia."],
   ["/painel/documentos", "Documentos", "Cláusulas, políticas e avisos gerados com os dados de cada cliente."],
   ["/painel/subprocessadores", "Ferramentas", "Quem mais mexe no dado dos seus clientes."],
   ["/painel/vigilancia", "Vigilância", "Varredura diária de segurança nos sites e na documentação."],
@@ -55,6 +58,7 @@ export function Topbar({ agenciaNome }: { agenciaNome: string }) {
         />
         <kbd className="rounded-md border border-line px-1.5 font-mono text-[10px] text-faint">↵</kbd>
       </form>
+      <BotaoRelatorio />
       <ThemeToggle className="grid h-10 w-10 place-items-center rounded-xl border border-line bg-surface text-muted transition-colors hover:text-ink" />
       <button
         type="button"

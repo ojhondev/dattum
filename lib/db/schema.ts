@@ -35,6 +35,7 @@ export const agencias = pgTable("agencias", {
   politicaPublicadaEm: timestamp("politica_publicada_em"), // nulo = política pública desligada
   cookiesToken: text("cookies_token").unique(), // aviso de cookies: /c/{token}.js
   cookiesConfig: jsonb("cookies_config").$type<ConfigCookies>(),
+  onboardingConcluidoEm: timestamp("onboarding_concluido_em"), // fim do preenchimento guiado (/painel/comecar)
   toursVistos: jsonb("tours_vistos").$type<string[]>().notNull().default([]), // tours guiados já concluídos ou pulados
   diaVencimento: integer("dia_vencimento").notNull().default(10), // dia do mês da mensalidade
   linkPagamento: text("link_pagamento"), // link de pagamento recorrente enviado pela Dattis
@@ -89,6 +90,7 @@ export const contaSubprocessadores = pgTable("conta_subprocessadores", {
   nomeCustomizado: text("nome_customizado"),
   finalidade: text("finalidade").notNull(),
   ativo: boolean("ativo").notNull().default(true),
+  origem: text("origem").notNull().default("fluxo"), // fluxo (veio das operações marcadas) | manual (a agência escolheu)
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 

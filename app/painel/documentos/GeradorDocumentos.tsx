@@ -1,5 +1,6 @@
 "use client";
 
+import { BarraModulo } from "@/components/app/Modulo";
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Check, Copy, FileDown, Printer, FileText } from "lucide-react";
@@ -68,24 +69,24 @@ export function GeradorDocumentos({ contas, contaInicial, tipoInicial }: { conta
   }
 
   return (
-    <div className="grid gap-5 xl:grid-cols-[360px_minmax(0,1fr)]">
-      <div className="flex flex-col gap-4">
-        <section data-tour="doc-conta" className="rounded-[20px] border border-line bg-surface p-5">
-          <label htmlFor="doc-conta" className="block font-mono text-[11px] uppercase tracking-[0.05em] text-muted">
-            Cliente
-          </label>
-          <select id="doc-conta" value={conta.id} onChange={(e) => escolher(e.target.value, doc.id)} className="field-input mt-1.5">
+    <>
+    <BarraModulo
+      esquerda={
+        <label data-tour="doc-conta" className="flex min-w-0 items-center gap-2 pl-2">
+          <span className="text-[13px] text-muted">Cliente</span>
+          <select id="doc-conta" value={conta.id} onChange={(e) => escolher(e.target.value, doc.id)} className="h-9 min-w-0 max-w-[280px] rounded-lg border border-line bg-canvas px-2.5 text-[13.5px] text-ink">
             {contas.map((c) => (
               <option key={c.id} value={c.id}>
                 {c.dados.conta.nome}
               </option>
             ))}
           </select>
-          <p className="mt-2 text-[12.5px] leading-snug text-muted">
-            Usa o CNPJ, o site, as operações de tráfego e as ferramentas cadastradas nesta conta.
-          </p>
-        </section>
-
+        </label>
+      }
+      direita={<span className="hidden px-2 text-[13px] text-muted md:inline">O texto usa o CNPJ, o site, as operações e as ferramentas do cliente</span>}
+    />
+    <div className="grid gap-5 xl:grid-cols-[340px_minmax(0,1fr)]">
+      <div className="flex flex-col gap-4">
         <section data-tour="doc-tipos" className="rounded-[20px] border border-line bg-surface p-2">
           <p className="px-3 pb-1 pt-3 font-mono text-[11px] uppercase tracking-[0.05em] text-muted">Documento</p>
           <ul className="flex flex-col">
@@ -175,5 +176,6 @@ export function GeradorDocumentos({ contas, contaInicial, tipoInicial }: { conta
         </p>
       </section>
     </div>
+    </>
   );
 }

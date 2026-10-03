@@ -4,6 +4,7 @@ import { ArrowRight, FolderOpen } from "lucide-react";
 import { getSessao } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { contasCliente } from "@/lib/db/schema";
+import { BarraModulo, BuscaModulo } from "@/components/app/Modulo";
 
 const PASSOS = [
   "Escolha a conta de cliente que teve a Business Manager restringida.",
@@ -11,7 +12,8 @@ const PASSOS = [
   "Anexe os documentos da lista de conferência e use o texto-base na contestação pela Qualidade da Conta do Meta.",
 ];
 
-export default async function DossiePage() {
+export default async function DossiePage({ searchParams }: { searchParams: Promise<{ q?: string }> }) {
+  const { q } = await searchParams;
   const sessao = await getSessao();
   if (!sessao) return null;
 
@@ -20,51 +22,46 @@ export default async function DossiePage() {
     orderBy: (t, { asc }) => asc(t.nome),
   });
 
+  const termo = (q ?? "").trim().toLowerCase();
+  const lista = termo ? contas.filter((c) => c.nome.toLowerCase().includes(termo)) : contas;
+
   return (
     <div className="max-w-6xl">
-      <p className="t-eyebrow">Dattis · Dossiê para BM</p>
-      <h1 className="t-display mt-3 max-w-3xl">BM suspensa? Monte o dossiê de contestação em um clique.</h1>
-      <p className="mt-4 max-w-2xl text-body leading-relaxed text-body">
-        A Dattis reúne, de forma organizada, a documentação de privacidade da conta pra você anexar na contestação da
-        suspensão — em vez de caçar arquivo em pasta, WhatsApp e e-mail com a campanha parada.
-      </p>
+      <BarraModulo
+        esquerda={<BuscaModulo placeholder="Buscar cliente" />}
+        direita={<span className="hidden px-2 text-[13px] text-muted md:inline">Escolha o cliente da BM restringida</span>}
+      />
 
-      <ol className="mt-10 grid gap-4 md:grid-cols-3">
-        {PASSOS.map((p, i) => (
-          <li key={p} className="rounded-[20px] border border-line bg-surface p-6">
-            <span className="grid h-9 w-9 place-items-center rounded-full bg-brand font-mono text-[14px] text-on-brand">{i + 1}</span>
-            <p className="mt-4 text-[15px] leading-relaxed text-body">{p}</p>
-          </li>
-        ))}
-      </ol>
+      {lista.length === 0 ? (
+        <div className="bloco p-12 text-center text-[14px] text-muted">
+          {contas.length ? "Nenhum cliente com esse nome." : "Nenhum cliente cadastrado ainda. Cadastre um cliente para gerar o dossiê dele."}
+        </div>
+      ) : (
+        <ul className="grid gap-2.5 md:grid-cols-2 xl:grid-cols-3">
+          {lista.map((c) => (
+            <li key={c.id}>
+              <Link href={`/painel/dossie/${c.id}`} className="bloco flex items-center gap-3 px-4 py-3.5 transition-colors hover:border-brand-strong">
+                <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-surface-2 text-muted">
+                  <FolderOpen size={17} strokeWidth={1.7} />
+                </span>
+                <span className="min-w-0 flex-1 truncate text-[15px] font-medium text-ink">{c.nome}</span>
+                <ArrowRight size={16} className="shrink-0 text-muted" />
+              </Link>
+            </li>
+          ))}
+        </ul>
+      )}
 
-      <section className="mt-14">
-        <h2 className="t-heading-lg">Escolha a conta</h2>
-        {contas.length === 0 ? (
-          <div className="block-card mt-6 p-12 text-center text-body">
-            Nenhuma conta ativada ainda. Ative uma conta de cliente pra gerar o dossiê dela.
-          </div>
-        ) : (
-          <ul className="mt-6 grid gap-3 md:grid-cols-2">
-            {contas.map((c) => (
-              <li key={c.id}>
-                <Link
-                  href={`/painel/dossie/${c.id}`}
-                  className="flex items-center gap-4 rounded-[20px] border border-line bg-surface px-5 py-4 transition-colors hover:border-brand-strong"
-                >
-                  <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-surface-2">
-                    <FolderOpen size={18} strokeWidth={1.7} />
-                  </span>
-                  <span className="font-display flex-1 text-[19px]">{c.nome}</span>
-                  <span className="arrow-circle h-9 w-9">
-                    <ArrowRight size={16} strokeWidth={1.6} />
-                  </span>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
+      <details className="mt-8 text-[13.5px] text-muted">
+        <summary className="cursor-pointer hover:text-ink">Como funciona o dossiê</summary>
+        <ol className="mt-3 flex max-w-3xl flex-col gap-2 text-body">
+          {PASSOS.map((p, i) => (
+            <li key={p}>
+              {i + 1}. {p}
+            </li>
+          ))}
+        </ol>
+      </details>
     </div>
   );
 }

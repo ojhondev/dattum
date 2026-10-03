@@ -12,7 +12,12 @@ import {
   Users,
   Wand2,
 } from "lucide-react";
-import { getSessao } from "@/lib/auth";
+import { redirect } from "next/navigation";
+import { eq } from "drizzle-orm";
+import { ehDono, getSessao } from "@/lib/auth";
+import { db } from "@/lib/db";
+import { agencias } from "@/lib/db/schema";
+import { EMAIL_DEMO } from "@/lib/admin-dados";
 import { agoraMs } from "@/lib/utils";
 import { dadosDoPainel } from "@/lib/painel-dados";
 import { faixaDaNota } from "@/lib/vigilancia-tipos";
@@ -55,7 +60,13 @@ export default async function PainelDashboard({ searchParams }: { searchParams: 
   const sp = await searchParams;
   const periodo = PERIODOS.includes(Number(sp.periodo)) ? Number(sp.periodo) : 30;
   const filtroAtividade = FILTROS_ATIVIDADE.find((f) => f.id === sp.atividade) ?? FILTROS_ATIVIDADE[1];
-  const [d, passos] = await Promise.all([dadosDoPainel(sessao.agenciaId, { dias: periodo }), primeirosPassos(sessao.agenciaId)]);
+  const [d, passos, agencia] = await Promise.all([
+    dadosDoPainel(sessao.agenciaId, { dias: periodo }),
+    primeirosPassos(sessao.agenciaId),
+    db.query.agencias.findFirst({ where: eq(agencias.id, sessao.agenciaId), columns: { onboardingConcluidoEm: true, email: true } }),
+  ]);
+  // Primeiro acesso, sem cliente: começa pelo preenchimento guiado.
+  if (d.total === 0 && agencia && !agencia.onboardingConcluidoEm && agencia.email !== EMAIL_DEMO && ehDono(sessao)) redirect("/painel/comecar");
 
   const pct = d.total ? Math.round((d.emDia / d.total) * 100) : 0;
   const faixa = d.notaMedia != null ? faixaDaNota(d.notaMedia) : null;
@@ -88,7 +99,7 @@ export default async function PainelDashboard({ searchParams }: { searchParams: 
           </p>
           <div className="relative mt-6 flex flex-wrap gap-2">
             <Link href="/painel/contas/novo" className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2.5 font-mono text-[12px] uppercase tracking-[0.04em] text-[#0b1714] transition-transform hover:-translate-y-0.5">
-              <Plus size={15} /> Ativar conta
+              <Plus size={15} /> Novo cliente
             </Link>
             <Link href="/painel/documentos" className="inline-flex items-center gap-2 rounded-full bg-rail px-4 py-2.5 font-mono text-[12px] uppercase tracking-[0.04em] text-white transition-transform hover:-translate-y-0.5">
               Gerar documento <ArrowUpRight size={15} />

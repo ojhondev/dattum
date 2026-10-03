@@ -44,7 +44,7 @@ const GRUPOS_PAINEL: Grupo[] = [
     title: "Menu principal",
     items: [
       { href: "/painel", label: "Painel", icon: LayoutDashboard, exact: true },
-      { href: "/painel/contas", label: "Contas de cliente", icon: Users },
+      { href: "/painel/contas", label: "Clientes", icon: Users },
       { href: "/painel/documentos", label: "Documentos", icon: FileText },
       { href: "/painel/subprocessadores", label: "Ferramentas", icon: Network },
     ],

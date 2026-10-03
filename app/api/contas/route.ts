@@ -26,6 +26,8 @@ export async function POST(req: Request) {
 
   const body = await req.json().catch(() => null);
   const texto = (v: unknown) => (typeof v === "string" && v.trim() ? v.trim() : null);
+  const lista = (v: unknown, max: number) =>
+    Array.isArray(v) ? v.filter((x): x is string => typeof x === "string" && !!x.trim()).map((x) => x.trim().slice(0, 80)).slice(0, max) : [];
   const nome = texto(body?.nome) ?? "";
   const flows = CHAVES_FLUXO.filter((f) => body?.flows?.[f] === true);
   const site = body?.site ? normalizarSite(body.site) : null;
@@ -65,6 +67,8 @@ export async function POST(req: Request) {
     crmNome: texto(body?.crmNome),
     site,
     flows,
+    ferramentas: lista(body?.ferramentas, 300),
+    ferramentasPersonalizadas: lista(body?.ferramentasPersonalizadas, 30),
   });
 
   await registrar(sessao, "Ativou um cliente", conta.nome);

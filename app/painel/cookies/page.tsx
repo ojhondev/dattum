@@ -9,6 +9,7 @@ import { linkContato } from "@/lib/contato";
 import { agoraMs } from "@/lib/utils";
 import { SITE_URL, urlAbsoluta } from "@/lib/site";
 import { ConfigurarCookies } from "./ConfigurarCookies";
+import { BarraModulo } from "@/components/app/Modulo";
 
 export const dynamic = "force-dynamic";
 
@@ -84,14 +85,16 @@ export default async function CookiesPage({ searchParams }: { searchParams: Prom
 
   return (
     <div className="mx-auto max-w-[1400px]">
-      <p className="t-eyebrow">Dattis · Cookies</p>
-      <h1 className="t-display mt-3 max-w-3xl">Aviso de cookies nos sites dos seus clientes</h1>
-      <p className="mt-4 max-w-3xl text-body leading-relaxed text-body">
-        A LGPD exige o consentimento do visitante antes de pixels de anúncio e ferramentas de medição. O aviso da Dattis pede essa permissão,
-        segura o Pixel do Meta e as tags do Google até o “Aceitar” e guarda a prova de cada escolha. Instala com uma linha de código.
-      </p>
+      <BarraModulo
+        esquerda={
+          <p className="px-2 text-[13.5px] text-muted">
+            Aviso ativo em <b className="font-medium text-ink">{sites.filter((s) => s.token).length}</b> de {sites.length} site(s)
+          </p>
+        }
+        direita={<span className="hidden px-2 text-[13px] text-muted md:inline">Segura o pixel até o visitante aceitar e guarda a prova</span>}
+      />
 
-      <div className="mt-8 grid gap-5 xl:grid-cols-[320px_minmax(0,1fr)]">
+      <div className="grid gap-5 xl:grid-cols-[320px_minmax(0,1fr)]">
         <nav aria-label="Sites" data-tour="cookies-sites" className="flex flex-col gap-2 xl:sticky xl:top-[96px] xl:self-start">
           <p className="font-mono text-[11px] uppercase tracking-[0.05em] text-muted">Sites</p>
           {sites.map((s) => {

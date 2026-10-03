@@ -5,9 +5,13 @@ import { db } from "@/lib/db";
 import { agencias, contasCliente, atividadesTratamento, contaSubprocessadores, subprocessadoresCatalogo, varreduraResultados } from "@/lib/db/schema";
 import { fluxosDaConta } from "@/lib/fluxos";
 import { dpaVigente, situacaoDpa, versoesAnteriores } from "@/lib/dpa";
-import ContaDetalhe from "./ContaDetalhe";
+import ContaDetalhe, { type AbaConta } from "./ContaDetalhe";
+import type { FlowKey } from "@/lib/fluxos";
 import { SITE_URL, urlAbsoluta } from "@/lib/site";
 import { estatisticaCookies } from "@/lib/cookies-stats";
+
+// Aceita também os nomes antigos das abas (links já enviados e redirecionamentos do formulário).
+const ABAS: Record<string, AbaConta> = { registro: "registro", rat: "registro", contrato: "contrato", dpa: "contrato", ferramentas: "ferramentas", sub: "ferramentas", site: "site", vigilancia: "vigilancia", vig: "vigilancia" };
 
 const iso = (d: Date | null) => (d ? d.toISOString() : null);
 
@@ -33,6 +37,8 @@ export default async function ContaDetalhePage({ params, searchParams }: { param
         nomeCustomizado: contaSubprocessadores.nomeCustomizado,
         finalidade: contaSubprocessadores.finalidade,
         ativo: contaSubprocessadores.ativo,
+        origem: contaSubprocessadores.origem,
+        catalogoChave: subprocessadoresCatalogo.chave,
         catalogoNome: subprocessadoresCatalogo.nome,
         catalogoCategoria: subprocessadoresCatalogo.categoria,
         catalogoPais: subprocessadoresCatalogo.pais,
@@ -51,11 +57,12 @@ export default async function ContaDetalhePage({ params, searchParams }: { param
 
   const subprocessadores = subsRaw.map((s) => ({
     id: s.id,
+    chave: s.catalogoChave ?? null,
     nome: s.nomeCustomizado ?? s.catalogoNome ?? "—",
     categoria: s.catalogoCategoria ?? "Ferramenta própria da agência",
     pais: s.catalogoPais ?? "—",
     finalidade: s.finalidade,
-    ativo: s.ativo,
+    origem: s.origem,
   }));
 
   return (
@@ -63,7 +70,7 @@ export default async function ContaDetalhePage({ params, searchParams }: { param
       temDat={agencia?.plano !== "start"}
       cookies={{ token: conta.cookiesToken, config: conta.cookiesConfig ?? null, estatistica: await estatisticaCookies(conta.cookiesToken), origem: SITE_URL }}
       politica={{ url: conta.politicaPublicadaEm && conta.slug ? urlAbsoluta(`/p/${conta.slug}/privacidade`) : null, email: conta.emailPrivacidade ?? "" }}
-      abaInicial={aba === "dpa" || aba === "sub" || aba === "vig" ? aba : "rat"}
+      abaInicial={ABAS[aba ?? ""] ?? "registro"}
       conta={{
         id: conta.id,
         nome: conta.nome,
@@ -83,6 +90,7 @@ export default async function ContaDetalhePage({ params, searchParams }: { param
         baseLegal: a.baseLegal,
         titulares: a.titulares,
         prazoRetencao: a.prazoRetencao,
+        fluxo: (a.fluxo as FlowKey | null) ?? null,
       }))}
       subprocessadores={subprocessadores}
       responsavelPadrao={{ nome: agencia?.responsavelNome ?? "", cargo: agencia?.responsavelCargo ?? "" }}

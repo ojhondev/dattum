@@ -20,9 +20,9 @@ export const TOURS: Tour[] = [
       },
       {
         alvo: nav("/painel/contas"),
-        titulo: "1. Contas de cliente: tudo começa aqui",
+        titulo: "1. Clientes: tudo começa aqui",
         texto:
-          "Cada cliente da agência vira uma conta. Ao cadastrar, você marca o que faz com os dados dele (pixel, lista de clientes, WhatsApp...) e a Dattis gera na hora o <b>registro</b>, o <b>contrato</b> e a <b>lista de ferramentas</b>.",
+          "Cada cliente da agência entra por um passo a passo rápido: você responde o que faz com os dados dele e escolhe as ferramentas, e a Dattis gera na hora o <b>registro</b>, o <b>contrato</b> e a <b>lista de ferramentas</b>.",
         lado: "right",
       },
       {
@@ -34,7 +34,7 @@ export const TOURS: Tour[] = [
       {
         alvo: nav("/painel/subprocessadores"),
         titulo: "3. Ferramentas",
-        texto: "Quem mais mexe nos dados dos seus clientes: Meta, Google, WhatsApp, CRM. A lista se monta sozinha a partir do que você marcou em cada conta.",
+        texto: "Quem mais mexe nos dados dos seus clientes: Meta, Google, WhatsApp, CRM. Você escolhe as de cada cliente num catálogo com centenas de ferramentas; aqui fica o consolidado.",
         lado: "right",
       },
       {
@@ -86,6 +86,12 @@ export const TOURS: Tour[] = [
         lado: "bottom",
       },
       {
+        alvo: "gerar-relatorio",
+        titulo: "Relatório em um clique",
+        texto: "De qualquer tela, gere o relatório da carteira inteira ou de um cliente, pronto para salvar em PDF e mandar.",
+        lado: "bottom",
+      },
+      {
         alvo: "ajuda",
         titulo: "Ficou alguma dúvida? Use a Ajuda",
         texto: "Neste botão você revê qualquer tour, consulta o glossário (o que é RAT, DPA, operador...) e fala com um especialista. Cada tela também tem o seu tour curto.",
@@ -125,23 +131,9 @@ export const TOURS: Tour[] = [
     rota: (p) => p === "/painel/contas/novo",
     passos: [
       {
-        alvo: "conta-responsavel",
-        titulo: "Quem responde pelo cliente",
-        texto: "Informe o responsável do lado do cliente, com WhatsApp e e-mail. É para ele que vai o link de assinatura do contrato.",
-        lado: "right",
-      },
-      {
-        alvo: "conta-site",
-        titulo: "O site do cliente",
-        texto: "Com o site, a vigilância diária passa a conferir segurança e privacidade dele todo dia.",
-        lado: "right",
-      },
-      {
-        alvo: "conta-operacoes",
-        titulo: "A parte mais importante",
+        titulo: "Uma pergunta por vez",
         texto:
-          "Marque tudo o que a agência faz com os dados desse cliente. Não sabe o nome técnico? Cada opção mostra como aparece no Gerenciador de Anúncios. <b>Cada item marcado vira uma linha no registro e uma cláusula no contrato.</b> Dá para mudar depois.",
-        lado: "top",
+          "Responda quem é o cliente, quem responde por ele, o que a agência faz com os dados e quais ferramentas usa. <b>Enter</b> avança. No fim, o registro, o contrato e a lista de ferramentas ficam prontos.",
       },
     ],
   },
@@ -152,34 +144,21 @@ export const TOURS: Tour[] = [
     passos: [
       {
         alvo: "conta-abas",
-        titulo: "Tudo do cliente em quatro abas",
+        titulo: "Tudo do cliente nesta barra",
         texto:
-          "<b>O que fazemos com o dado</b> é o registro (RAT). <b>Contrato com o cliente</b> é o DPA, que precisa de duas assinaturas. <b>Quem mais mexe nesse dado</b> são as ferramentas. <b>Vigilância</b> mostra a verificação do site.",
+          "<b>Registro</b> é o RAT. <b>Contrato</b> é o DPA, que precisa das duas assinaturas: assine pela agência e mande o link ao cliente. <b>Ferramentas</b> abre o catálogo para escolher o que recebe dados dele. <b>Site e privacidade</b> tem a política pública e o aviso de cookies.",
         lado: "bottom",
       },
       {
-        alvo: "aba-contrato",
-        titulo: "Passo mais importante: o contrato",
-        texto:
-          "Abra esta aba, assine pela agência e clique em <b>Gerar link para o cliente assinar</b>. O cliente assina pelo celular, sem criar conta. Com as duas assinaturas, o certificado sai sozinho.",
+        alvo: "conta-relatorio",
+        titulo: "Relatório do cliente",
+        texto: "Gera, em um clique, o resumo da situação do cliente pronto para salvar em PDF e mandar para ele.",
         lado: "bottom",
-      },
-      {
-        alvo: "conta-politica",
-        titulo: "Política de privacidade pronta",
-        texto: "Publique a política de privacidade do cliente e cole o link no rodapé do site e no formulário de anúncio do Meta ou Google. Ela se atualiza sozinha.",
-        lado: "top",
-      },
-      {
-        alvo: "conta-cookies",
-        titulo: "Aviso de cookies",
-        texto: "Mostra se o aviso de cookies está ativo no site deste cliente. Clique para abrir o módulo Cookies, com a instalação passo a passo e a prova de consentimento.",
-        lado: "top",
       },
       {
         alvo: "conta-atalhos",
-        titulo: "Atalhos do cliente",
-        texto: "Daqui você gera a cláusula para o contrato comercial, a política, o dossiê para BM e o <b>resumo para o cliente (DAT)</b>, que você manda todo mês para mostrar que está tudo em dia.",
+        titulo: "Mais ações",
+        texto: "Cláusula de LGPD para o contrato comercial, texto da política, dossiê para BM e o resumo para o cliente (DAT).",
         lado: "bottom",
       },
       {
@@ -223,7 +202,7 @@ export const TOURS: Tour[] = [
       {
         titulo: "Quem mais mexe nos dados",
         texto:
-          "A LGPD chama de <b>subprocessadores</b> as empresas que tocam nos dados em nome da agência: Meta, Google, WhatsApp, CRM. Esta lista se monta sozinha e entra nos contratos. Você não precisa preencher nada aqui.",
+          "A LGPD chama de <b>subprocessadores</b> as empresas que tocam nos dados em nome da agência: Meta, Google, WhatsApp, CRM. Você escolhe as de cada cliente na página dele, aba <b>Ferramentas</b>, e elas entram no contrato. Aqui você vê em quais clientes cada uma está.",
       },
     ],
   },

@@ -41,14 +41,7 @@ export default async function DocumentosPage({ searchParams }: { searchParams: P
 
   return (
     <div className="max-w-[1400px]">
-      <h1 className="t-display max-w-3xl">Documentos prontos para cada cliente</h1>
-      <p className="mt-3 max-w-2xl text-body leading-relaxed text-body">
-        Escolha o cliente e o documento: a Dattis monta o texto com o CNPJ, o site, as operações de tráfego e as ferramentas
-        dele. Preencha as lacunas destacadas e baixe em Word ou PDF.
-      </p>
-      <div className="mt-8">
-        <GeradorDocumentos contas={lista} contaInicial={contaInicial} tipoInicial={tipoInicial} />
-      </div>
+      <GeradorDocumentos contas={lista} contaInicial={contaInicial} tipoInicial={tipoInicial} />
     </div>
   );
 }

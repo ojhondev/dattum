@@ -6,6 +6,7 @@ import { agencias, contasCliente, pedidosTitular } from "@/lib/db/schema";
 import { TIPOS_PEDIDO, diasAtePrazo, rotuloTipo } from "@/lib/titulares";
 import { agoraMs } from "@/lib/utils";
 import { PedidoItem } from "./PedidoItem";
+import { BarraModulo, BuscaModulo, FiltroModulo } from "@/components/app/Modulo";
 
 export const dynamic = "force-dynamic";
 
@@ -15,10 +16,11 @@ const FILTROS = [
   { id: "todos", nome: "Todos", status: ["aberto", "em_andamento", "respondido", "recusado"] },
 ];
 
-export default async function TitularesPage({ searchParams }: { searchParams: Promise<{ filtro?: string }> }) {
+export default async function TitularesPage({ searchParams }: { searchParams: Promise<{ filtro?: string; q?: string }> }) {
   const sessao = await getSessao();
   if (!sessao) return null;
-  const { filtro } = await searchParams;
+  const { filtro, q } = await searchParams;
+  const termo = (q ?? "").trim().toLowerCase();
   const f = FILTROS.find((x) => x.id === filtro) ?? FILTROS[0];
   const [agencia, pedidos, contas] = await Promise.all([
     db.query.agencias.findFirst({ where: eq(agencias.id, sessao.agenciaId), columns: { nome: true, plano: true } }),
@@ -31,28 +33,27 @@ export default async function TitularesPage({ searchParams }: { searchParams: Pr
   ]);
   const nomeConta = new Map(contas.map((c) => [c.id, c.nome]));
   const agora = agoraMs();
+  const visiveis = termo ? pedidos.filter((p) => [p.protocolo, p.nome, p.email].some((v) => v.toLowerCase().includes(termo))) : pedidos;
 
   return (
     <div className="max-w-5xl">
-      <p className="t-eyebrow">Dattis · Pedidos de titulares</p>
-      <h1 className="t-display mt-3 max-w-3xl">Pedidos das pessoas sobre os próprios dados</h1>
-      <p className="mt-4 max-w-3xl text-body leading-relaxed text-body">
-        Quem tem dados nas campanhas dos seus clientes pode pedir para ver, corrigir ou apagar esses dados (art. 18 da LGPD). Os pedidos feitos no
-        formulário das políticas públicas chegam aqui, com protocolo e o prazo legal de 15 dias.
-        {agencia?.plano === "scale" ? " No plano Scale, o DPO da Dattis acompanha estes pedidos com você." : ""}
-      </p>
+      <BarraModulo
+        esquerda={
+          <>
+            <BuscaModulo placeholder="Protocolo, nome ou e-mail" />
+            <FiltroModulo nome="filtro" opcoes={FILTROS.map((x) => ({ valor: x.id, rotulo: x.nome }))} />
+          </>
+        }
+        direita={
+          <span className="px-2 text-[13px] text-muted">
+            Prazo legal de 15 dias{agencia?.plano === "scale" ? " · o DPO da Dattis acompanha" : ""}
+          </span>
+        }
+      />
 
-      <nav className="mt-8 flex flex-wrap gap-1.5" aria-label="Filtrar pedidos">
-        {FILTROS.map((x) => (
-          <Link key={x.id} href={`/painel/titulares?filtro=${x.id}`} className={"tag " + (x.id === f.id ? "" : "tag-white border border-line")}>
-            {x.nome}
-          </Link>
-        ))}
-      </nav>
-
-      {pedidos.length === 0 ? (
-        <div className="mt-6 rounded-[20px] border border-line bg-surface px-6 py-10 text-center">
-          <p className="font-display text-[22px] text-ink">{f.id === "abertos" ? "Nenhum pedido em aberto" : "Nenhum pedido aqui"}</p>
+      {visiveis.length === 0 ? (
+        <div className="bloco px-6 py-10 text-center">
+          <p className="text-[16px] font-medium text-ink">{termo ? "Nenhum pedido com essa busca" : f.id === "abertos" ? "Nenhum pedido em aberto" : "Nenhum pedido aqui"}</p>
           <p className="mx-auto mt-2 max-w-xl text-[14.5px] leading-relaxed text-body">
             Os pedidos chegam pelo formulário “Exercer meus direitos” das políticas de privacidade publicadas pela Dattis. Publique a política de
             cada cliente na página dele e cole o link no site e nos formulários de anúncio.
@@ -62,8 +63,8 @@ export default async function TitularesPage({ searchParams }: { searchParams: Pr
           </Link>
         </div>
       ) : (
-        <ul className="mt-6 flex flex-col gap-3">
-          {pedidos.map((p) => (
+        <ul className="flex flex-col gap-3">
+          {visiveis.map((p) => (
             <PedidoItem
               key={p.id}
               p={{

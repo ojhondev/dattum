@@ -22,13 +22,14 @@ const DEMO = {
   whatsapp: "11999990000",
 };
 
-const CONTAS_DEMO: { nome: string; cnpj: string; slug: string; site?: string; flows: FlowKey[]; assinado: boolean; contato: string; email: string }[] = [
+const CONTAS_DEMO: { nome: string; cnpj: string; slug: string; site?: string; flows: FlowKey[]; ferramentas: string[]; assinado: boolean; contato: string; email: string }[] = [
   {
     nome: "Loja Aurora (demo)",
     cnpj: "12.345.678/0001-90",
     slug: "loja-aurora-demo",
     site: "https://dattum-rho.vercel.app",
     flows: ["publicos", "capi", "ads", "whatsapp"],
+    ferramentas: ["shopify", "google-tag-manager", "klaviyo", "microsoft-clarity", "mercado-pago"],
     assinado: true,
     contato: "Ana Souza",
     email: "ana@lojaaurora.com.br",
@@ -38,6 +39,7 @@ const CONTAS_DEMO: { nome: string; cnpj: string; slug: string; site?: string; fl
     cnpj: "98.765.432/0001-10",
     slug: "studio-nova-demo",
     flows: ["ads", "formularios", "crm"],
+    ferramentas: ["kommo", "typeform", "zapier", "google-workspace-planilhas-drive-gmail"],
     assinado: false,
     contato: "Bruno Melo",
     email: "bruno@studionova.com.br",
@@ -78,6 +80,7 @@ async function semearContas(agenciaId: string) {
       contatoEmail: def.email,
       site: def.site,
       flows: def.flows,
+      ferramentas: def.ferramentas,
       assinatura: def.assinado
         ? { agencia: { nome: DEMO.responsavelNome, cargo: DEMO.responsavelCargo }, cliente: { nome: def.contato, cargo: "Sócia-diretora", email: def.email }, ip: "203.0.113.10" }
         : undefined,
