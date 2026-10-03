@@ -76,6 +76,9 @@ export const subprocessadoresCatalogo = pgTable("subprocessadores_catalogo", {
   categoria: text("categoria").notNull(),
   pais: text("pais").notNull(),
   finalidadePadrao: text("finalidade_padrao").notNull(),
+  // null = catálogo da Dattis; preenchido = ferramenta que a própria agência cadastrou
+  agenciaId: uuid("agencia_id").references(() => agencias.id, { onDelete: "cascade" }),
+  site: text("site"),
 });
 
 export const contaSubprocessadores = pgTable("conta_subprocessadores", {

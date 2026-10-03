@@ -118,20 +118,21 @@ export function BuscaModulo({ placeholder = "Buscar...", nome = "q" }: { placeho
   );
 }
 
-/** Filtro em botões segmentados, na URL (?{nome}=valor). O primeiro item é o "todos" (sem parâmetro). */
-export function FiltroModulo({ nome, opcoes }: { nome: string; opcoes: { valor: string; rotulo: string; n?: number }[] }) {
+/** Filtro em botões segmentados, na URL (?{nome}=valor). O valor padrão (o primeiro, se não informado) fica sem parâmetro. */
+export function FiltroModulo({ nome, opcoes, padrao }: { nome: string; opcoes: { valor: string; rotulo: string; n?: number }[]; padrao?: string }) {
   const { valor, definir } = useParam();
-  const atual = valor(nome) ?? opcoes[0]?.valor;
+  const base = padrao ?? opcoes[0]?.valor;
+  const atual = valor(nome) ?? base;
   return (
     <div role="group" className="flex max-w-full gap-1 overflow-x-auto rounded-lg bg-canvas p-1 [scrollbar-width:none]">
-      {opcoes.map((o, i) => {
+      {opcoes.map((o) => {
         const on = atual === o.valor;
         return (
           <button
             key={o.valor}
             type="button"
             aria-pressed={on}
-            onClick={() => definir(nome, i === 0 ? null : o.valor)}
+            onClick={() => definir(nome, o.valor === base ? null : o.valor)}
             className={
               "flex shrink-0 items-center gap-1.5 rounded-md px-2.5 py-1.5 text-[13px] transition-colors " +
               (on ? "bg-surface text-ink shadow-[0_1px_2px_rgba(0,0,0,0.08)]" : "text-muted hover:text-ink")

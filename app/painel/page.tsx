@@ -27,6 +27,7 @@ import { GraficoVigilancia } from "@/components/app/graficos/GraficoVigilancia";
 import { Rosca } from "@/components/app/graficos/Rosca";
 import { PrimeirosPassos } from "@/components/app/PrimeirosPassos";
 import { primeirosPassos } from "@/lib/primeiros-passos";
+import { BarraModulo, FiltroModulo } from "@/components/app/Modulo";
 
 export const dynamic = "force-dynamic";
 
@@ -85,6 +86,24 @@ export default async function PainelDashboard({ searchParams }: { searchParams: 
 
   return (
     <div className="mx-auto max-w-[1500px]">
+      <BarraModulo
+        esquerda={
+          <>
+            <span className="pl-2 text-[13px] text-muted">Período</span>
+            <FiltroModulo nome="periodo" padrao="30" opcoes={PERIODOS.map((p) => ({ valor: String(p), rotulo: `${p} dias` }))} />
+          </>
+        }
+        direita={
+          <>
+            <Link href="/painel/documentos" className="barra-btn">
+              <FileText size={15} /> Gerar documento
+            </Link>
+            <Link href="/painel/contas/novo" className="barra-btn primario">
+              <Plus size={15} /> Novo cliente
+            </Link>
+          </>
+        }
+      />
       <PrimeirosPassos passos={passos} />
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-12">
         {/* Índice de conformidade (cartão verde de destaque) */}
@@ -97,14 +116,6 @@ export default async function PainelDashboard({ searchParams }: { searchParams: 
           <p className="relative mt-3 max-w-xs text-[14px] leading-snug text-on-brand/80">
             {d.total ? `${d.emDia} de ${d.total} clientes com contrato, registro e sem alerta crítico.` : "Ative o primeiro cliente para começar a medir."}
           </p>
-          <div className="relative mt-6 flex flex-wrap gap-2">
-            <Link href="/painel/contas/novo" className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2.5 font-mono text-[12px] uppercase tracking-[0.04em] text-[#0b1714] transition-transform hover:-translate-y-0.5">
-              <Plus size={15} /> Novo cliente
-            </Link>
-            <Link href="/painel/documentos" className="inline-flex items-center gap-2 rounded-full bg-rail px-4 py-2.5 font-mono text-[12px] uppercase tracking-[0.04em] text-white transition-transform hover:-translate-y-0.5">
-              Gerar documento <ArrowUpRight size={15} />
-            </Link>
-          </div>
         </section>
 
         {/* Visão da carteira */}
@@ -159,13 +170,7 @@ export default async function PainelDashboard({ searchParams }: { searchParams: 
               <p className="mt-1 font-display text-[2rem] leading-none tabular-nums text-ink">{(totalAprovadas + totalAlertas).toLocaleString("pt-BR")}</p>
             </div>
             <div className="flex flex-col items-end gap-3">
-              <div className="flex gap-0.5 rounded-xl bg-canvas p-1">
-                {PERIODOS.map((p) => (
-                  <Filtro key={p} ativo={p === periodo} href={q({ periodo: p })}>
-                    {p} dias
-                  </Filtro>
-                ))}
-              </div>
+              <span className="font-mono text-[11px] uppercase tracking-[0.04em] text-muted">Últimos {periodo} dias</span>
               <div className="flex gap-4 text-[13px] text-body">
                 <span className="flex items-center gap-1.5">
                   <i className="h-2.5 w-2.5 rounded-sm bg-grafico-ok" /> Aprovadas <b className="tabular-nums text-ink">{totalAprovadas}</b>

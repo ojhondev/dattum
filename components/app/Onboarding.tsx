@@ -7,6 +7,7 @@ import { ArrowLeft, ArrowRight, Check, FileBarChart, FileSignature, Globe, Cooki
 import { FLUXOS, type FlowKey } from "@/lib/fluxos";
 import { FLOW_TEMPLATES } from "@/lib/rat-templates";
 import { SeletorFerramentasCorpo, type SelecaoFerramentas } from "@/components/app/SeletorFerramentas";
+import type { FerramentaPropria } from "@/components/app/AdicionarFerramenta";
 
 export type DadosAgenciaOnboarding = {
   nome: string;
@@ -31,7 +32,17 @@ const ferramentasDasOperacoes = (flows: FlowKey[]) => [...new Set(flows.flatMap(
  * com registro (RAT), contrato (DPA) e ferramentas, e mostra os próximos passos.
  * modo "agencia": começa pelos dados da agência (primeiro acesso). modo "cliente": só o cliente novo.
  */
-export function Onboarding({ modo, agencia, podeEditarAgencia }: { modo: "agencia" | "cliente"; agencia: DadosAgenciaOnboarding; podeEditarAgencia: boolean }) {
+export function Onboarding({
+  modo,
+  agencia,
+  podeEditarAgencia,
+  ferramentasProprias = [],
+}: {
+  modo: "agencia" | "cliente";
+  agencia: DadosAgenciaOnboarding;
+  podeEditarAgencia: boolean;
+  ferramentasProprias?: FerramentaPropria[];
+}) {
   const router = useRouter();
   const comAgencia = modo === "agencia" && podeEditarAgencia;
   const ordem: Passo[] = useMemo(
@@ -264,6 +275,7 @@ export function Onboarding({ modo, agencia, podeEditarAgencia }: { modo: "agenci
           >
             <SeletorFerramentasCorpo
               valor={ferr}
+              proprias={ferramentasProprias}
               altura="h-[min(48vh,460px)]"
               onChange={(v) => {
                 setFerrTocadas(true);

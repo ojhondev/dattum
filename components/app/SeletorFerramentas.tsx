@@ -2,8 +2,9 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Check, Plus, Search, X } from "lucide-react";
+import { Check, Search, X } from "lucide-react";
 import { CATALOGO_FERRAMENTAS, CATEGORIAS_FERRAMENTA } from "@/lib/ferramentas";
+import { AdicionarFerramenta, type FerramentaPropria } from "@/components/app/AdicionarFerramenta";
 
 export type SelecaoFerramentas = { chaves: string[]; personalizadas: string[] };
 
@@ -17,40 +18,59 @@ const normal = (s: string) =>
  * Corpo do seletor (controlado): busca, categorias à esquerda e as ferramentas como blocos marcáveis.
  * Cada ferramenta marcada vira um subprocessador do cliente e entra no contrato.
  */
-export function SeletorFerramentasCorpo({ valor, onChange, altura = "h-[min(62vh,560px)]" }: { valor: SelecaoFerramentas; onChange: (v: SelecaoFerramentas) => void; altura?: string }) {
+export function SeletorFerramentasCorpo({
+  valor,
+  onChange,
+  proprias = [],
+  altura = "h-[min(62vh,560px)]",
+}: {
+  valor: SelecaoFerramentas;
+  onChange: (v: SelecaoFerramentas) => void;
+  /** Ferramentas que a agência cadastrou: aparecem junto do catálogo. */
+  proprias?: FerramentaPropria[];
+  altura?: string;
+}) {
   const [busca, setBusca] = useState("");
   const [cat, setCat] = useState<string>("todas");
-  const [outra, setOutra] = useState("");
+  const [minhas, setMinhas] = useState<FerramentaPropria[]>(proprias);
+  const catalogo = useMemo(() => [...minhas, ...CATALOGO_FERRAMENTAS], [minhas]);
   const marcadas = useMemo(() => new Set(valor.chaves), [valor.chaves]);
 
   const porCategoria = useMemo(() => {
     const m = new Map<string, number>();
-    for (const f of CATALOGO_FERRAMENTAS) if (marcadas.has(f.chave)) m.set(f.categoriaId, (m.get(f.categoriaId) ?? 0) + 1);
+    for (const f of catalogo) if (marcadas.has(f.chave)) m.set(f.categoriaId, (m.get(f.categoriaId) ?? 0) + 1);
     return m;
-  }, [marcadas]);
+  }, [marcadas, catalogo]);
 
   const lista = useMemo(() => {
     const q = normal(busca.trim());
-    return CATALOGO_FERRAMENTAS.filter(
+    return catalogo.filter(
       (f) =>
         (q ? normal(`${f.nome} ${f.categoria}`).includes(q) : true) &&
-        (cat === "todas" || q ? true : cat === "marcadas" ? marcadas.has(f.chave) : f.categoriaId === cat),
+        (cat === "todas" || q
+          ? true
+          : cat === "marcadas"
+            ? marcadas.has(f.chave)
+            : cat === "agencia"
+              ? (f as FerramentaPropria).daAgencia
+              : f.categoriaId === cat),
     );
-  }, [busca, cat, marcadas]);
+  }, [busca, cat, marcadas, catalogo]);
 
   const alternar = (chave: string) =>
     onChange({ ...valor, chaves: marcadas.has(chave) ? valor.chaves.filter((k) => k !== chave) : [...valor.chaves, chave] });
-  const adicionarOutra = () => {
-    const n = outra.trim();
-    if (!n || valor.personalizadas.includes(n)) return;
-    onChange({ ...valor, personalizadas: [...valor.personalizadas, n] });
-    setOutra("");
+  const cadastrada = (f: FerramentaPropria) => {
+    setMinhas((m) => [f, ...m]);
+    onChange({ ...valor, chaves: [...valor.chaves, f.chave] });
+    setBusca("");
+    setCat("marcadas");
   };
 
   const total = valor.chaves.length + valor.personalizadas.length;
   const categorias = [
-    { id: "todas", nome: "Todas", n: CATALOGO_FERRAMENTAS.length, marcadas: 0 },
+    { id: "todas", nome: "Todas", n: catalogo.length, marcadas: 0 },
     { id: "marcadas", nome: "Marcadas", n: total, marcadas: 0 },
+    ...(minhas.length ? [{ id: "agencia", nome: "Da agência", n: minhas.length, marcadas: 0 }] : []),
     ...CATEGORIAS_FERRAMENTA.map((c) => ({ id: c.id, nome: c.nome, n: 0, marcadas: porCategoria.get(c.id) ?? 0 })),
   ];
 
@@ -63,7 +83,7 @@ export function SeletorFerramentasCorpo({ valor, onChange, altura = "h-[min(62vh
           id="busca-ferramenta"
           value={busca}
           onChange={(e) => setBusca(e.target.value)}
-          placeholder={`Buscar entre ${CATALOGO_FERRAMENTAS.length} ferramentas (ex.: Kommo, Hotmart, Stape)`}
+          placeholder={`Buscar entre ${catalogo.length} ferramentas (ex.: Kommo, Hotmart, Stape)`}
           className="min-w-0 flex-1 bg-transparent text-[14.5px] text-ink outline-none placeholder:text-faint"
         />
         {busca && (
@@ -92,9 +112,9 @@ export function SeletorFerramentasCorpo({ valor, onChange, altura = "h-[min(62vh
                 }
               >
                 <span className="whitespace-nowrap md:whitespace-normal">{c.nome}</span>
-                {(c.id === "todas" || c.id === "marcadas" ? c.n : c.marcadas) > 0 && (
+                {(c.n || c.marcadas) > 0 && (
                   <span className={"rounded-full px-1.5 font-mono text-[11px] tabular-nums " + (ativa ? "bg-white/15" : c.marcadas ? "bg-brand-tint text-brand-ink" : "text-faint")}>
-                    {c.id === "todas" || c.id === "marcadas" ? c.n : c.marcadas}
+                    {c.n || c.marcadas}
                   </span>
                 )}
               </button>
@@ -146,7 +166,7 @@ export function SeletorFerramentasCorpo({ valor, onChange, altura = "h-[min(62vh
                         <span className="block truncate text-[14px] text-ink">{f.nome}</span>
                         <span className="block truncate text-[11.5px] text-muted">
                           {busca || cat === "todas" || cat === "marcadas" ? `${f.categoria} · ` : ""}
-                          {f.pais}
+                          {(f as FerramentaPropria).daAgencia ? "Cadastrada pela agência" : f.pais}
                         </span>
                       </span>
                     </button>
@@ -158,28 +178,9 @@ export function SeletorFerramentasCorpo({ valor, onChange, altura = "h-[min(62vh
         </div>
       </div>
 
-      <div className="flex flex-col gap-2 border-t border-line pt-4 sm:flex-row sm:items-center">
-        <label htmlFor="outra-ferramenta" className="text-[13.5px] text-muted sm:shrink-0">
-          Não achou?
-        </label>
-        <div className="flex flex-1 gap-2">
-          <input
-            id="outra-ferramenta"
-            value={outra}
-            onChange={(e) => setOutra(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                e.preventDefault();
-                adicionarOutra();
-              }
-            }}
-            placeholder="Nome da ferramenta"
-            className="min-w-0 flex-1 rounded-xl border border-line bg-surface px-3 py-2 text-[14px] text-ink outline-none focus:border-brand-strong"
-          />
-          <button type="button" onClick={adicionarOutra} className="painel-btn ghost shrink-0">
-            <Plus size={15} /> Adicionar
-          </button>
-        </div>
+      <div className="flex flex-col gap-2 border-t border-line pt-4 sm:flex-row sm:items-center sm:justify-between">
+        <p className="text-[13.5px] leading-snug text-muted">Não achou? Cadastre com nome, link e categoria: ela fica disponível para todos os seus clientes.</p>
+        <AdicionarFerramenta classe="barra-btn shrink-0" nomeInicial={busca.trim()} onCriada={cadastrada} />
       </div>
     </div>
   );
@@ -192,7 +193,9 @@ export function ModalFerramentas({
   contratoAssinado,
   aberto,
   onFechar,
+  proprias = [],
 }: {
+  proprias?: FerramentaPropria[];
   contaId: string;
   inicial: SelecaoFerramentas;
   contratoAssinado: boolean;
@@ -259,7 +262,7 @@ export function ModalFerramentas({
             <X size={18} />
           </button>
         </div>
-        <SeletorFerramentasCorpo valor={valor} onChange={setValor} />
+        <SeletorFerramentasCorpo valor={valor} onChange={setValor} proprias={proprias} />
         {erro && <div className="painel-error">{erro}</div>}
         <div className="flex flex-col-reverse gap-2 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-[13.5px] text-muted">

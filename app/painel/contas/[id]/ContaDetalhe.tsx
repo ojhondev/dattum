@@ -10,6 +10,7 @@ import { ContratoConta, type ContratoDados, type VersaoContrato } from "./Contra
 import { PoliticaPublicaCard } from "@/components/app/PoliticaPublicaCard";
 import { CookiesAtalho } from "@/components/app/CookiesAtalho";
 import { ModalFerramentas } from "@/components/app/SeletorFerramentas";
+import type { FerramentaPropria } from "@/components/app/AdicionarFerramenta";
 import { AbasModulo, BarraModulo, CabecalhoDetalhe, ChipSituacao, MenuAcoes } from "@/components/app/Modulo";
 import type { EstatisticaCookies } from "@/lib/cookies-stats";
 import type { SituacaoDpa } from "@/lib/dpa";
@@ -151,7 +152,9 @@ export default function ContaDetalhe({
   temDat,
   politica,
   cookies,
+  ferramentasProprias,
 }: {
+  ferramentasProprias: FerramentaPropria[];
   conta: Conta;
   atividadesIniciais: Atividade[];
   subprocessadores: Subprocessador[];
@@ -376,6 +379,7 @@ export default function ContaDetalhe({
       {seletor && (
         <ModalFerramentas
           contaId={conta.id}
+          proprias={ferramentasProprias}
           aberto
           onFechar={() => setSeletor(false)}
           contratoAssinado={!!contrato && contrato.situacao !== "rascunho"}

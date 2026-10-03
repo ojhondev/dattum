@@ -9,6 +9,7 @@ import ContaDetalhe, { type AbaConta } from "./ContaDetalhe";
 import type { FlowKey } from "@/lib/fluxos";
 import { SITE_URL, urlAbsoluta } from "@/lib/site";
 import { estatisticaCookies } from "@/lib/cookies-stats";
+import { ferramentasDaAgencia } from "@/lib/ferramentas-agencia";
 
 // Aceita também os nomes antigos das abas (links já enviados e redirecionamentos do formulário).
 const ABAS: Record<string, AbaConta> = { registro: "registro", rat: "registro", contrato: "contrato", dpa: "contrato", ferramentas: "ferramentas", sub: "ferramentas", site: "site", vigilancia: "vigilancia", vig: "vigilancia" };
@@ -26,7 +27,7 @@ export default async function ContaDetalhePage({ params, searchParams }: { param
   });
   if (!conta) notFound();
 
-  const [atividades, subsRaw, dpa, versoes, vig, agencia] = await Promise.all([
+  const [atividades, subsRaw, dpa, versoes, vig, agencia, proprias] = await Promise.all([
     db.query.atividadesTratamento.findMany({
       where: eq(atividadesTratamento.contaClienteId, id),
       orderBy: (t, { asc }) => asc(t.createdAt),
@@ -53,6 +54,7 @@ export default async function ContaDetalhePage({ params, searchParams }: { param
       orderBy: (t, { desc }) => desc(t.verificadoEm),
     }),
     db.query.agencias.findFirst({ where: eq(agencias.id, sessao.agenciaId) }),
+    ferramentasDaAgencia(sessao.agenciaId),
   ]);
 
   const subprocessadores = subsRaw.map((s) => ({
@@ -68,6 +70,7 @@ export default async function ContaDetalhePage({ params, searchParams }: { param
   return (
     <ContaDetalhe
       temDat={agencia?.plano !== "start"}
+      ferramentasProprias={proprias}
       cookies={{ token: conta.cookiesToken, config: conta.cookiesConfig ?? null, estatistica: await estatisticaCookies(conta.cookiesToken), origem: SITE_URL }}
       politica={{ url: conta.politicaPublicadaEm && conta.slug ? urlAbsoluta(`/p/${conta.slug}/privacidade`) : null, email: conta.emailPrivacidade ?? "" }}
       abaInicial={ABAS[aba ?? ""] ?? "registro"}

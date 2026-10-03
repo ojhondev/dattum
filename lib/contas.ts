@@ -1,4 +1,4 @@
-import { and, eq, inArray } from "drizzle-orm";
+import { and, eq, inArray, isNull, or } from "drizzle-orm";
 import { db } from "@/lib/db";
 import {
   contasCliente,
@@ -12,6 +12,9 @@ import { FLUXOS, type FlowKey } from "@/lib/fluxos";
 import { atualizarDpaDaConta, hashTexto } from "@/lib/dpa";
 
 export const CHAVES_FLUXO = FLUXOS.map((f) => f.key);
+
+/** Catálogo que a agência pode usar: o da Dattis (agencia_id nulo) mais as ferramentas que ela cadastrou. */
+const visivelPara = (agenciaId: string) => or(isNull(subprocessadoresCatalogo.agenciaId), eq(subprocessadoresCatalogo.agenciaId, agenciaId));
 
 /** Normaliza o site informado pra https://host[/caminho], ou null se não for um endereço válido. */
 export function normalizarSite(input: unknown): string | null {
@@ -98,13 +101,13 @@ export async function ativarConta(params: {
   if (tem("crm") && !crmNome) chaves.push("rd-station");
 
   const catalogo = chaves.length
-    ? await db.query.subprocessadoresCatalogo.findMany({ where: inArray(subprocessadoresCatalogo.chave, chaves) })
+    ? await db.query.subprocessadoresCatalogo.findMany({ where: and(inArray(subprocessadoresCatalogo.chave, chaves), isNull(subprocessadoresCatalogo.agenciaId)) })
     : [];
 
   const doFluxo = new Set(catalogo.map((c) => c.chave));
   const extrasChaves = [...new Set(params.ferramentas ?? [])].filter((k) => !doFluxo.has(k));
   const extras = extrasChaves.length
-    ? await db.query.subprocessadoresCatalogo.findMany({ where: inArray(subprocessadoresCatalogo.chave, extrasChaves) })
+    ? await db.query.subprocessadoresCatalogo.findMany({ where: and(inArray(subprocessadoresCatalogo.chave, extrasChaves), visivelPara(agenciaId)) })
     : [];
   const personalizadas = [...new Set((params.ferramentasPersonalizadas ?? []).map((n) => n.trim()).filter(Boolean))].filter(
     (n) => !(tem("crm") && crmNome === n),
@@ -233,7 +236,7 @@ export async function editarConta(contaId: string, agenciaId: string, e: EdicaoC
     const chaves = [...new Set(flows.flatMap((f) => FLOW_TEMPLATES[f].subprocessadorChaves))];
     if (flows.includes("crm") && !crmNome) chaves.push("rd-station");
     const catalogo = chaves.length
-      ? await db.query.subprocessadoresCatalogo.findMany({ where: inArray(subprocessadoresCatalogo.chave, chaves) })
+      ? await db.query.subprocessadoresCatalogo.findMany({ where: and(inArray(subprocessadoresCatalogo.chave, chaves), isNull(subprocessadoresCatalogo.agenciaId)) })
       : [];
     const existentes = await db.query.contaSubprocessadores.findMany({ where: eq(contaSubprocessadores.contaClienteId, contaId) });
 
@@ -273,7 +276,7 @@ export async function definirFerramentas(contaId: string, agenciaId: string, cha
   const querChaves = [...new Set(chaves)];
   const querNomes = [...new Set(personalizadas.map((n) => n.trim()).filter(Boolean))];
   const [catalogo, existentes] = await Promise.all([
-    querChaves.length ? db.query.subprocessadoresCatalogo.findMany({ where: inArray(subprocessadoresCatalogo.chave, querChaves) }) : [],
+    querChaves.length ? db.query.subprocessadoresCatalogo.findMany({ where: and(inArray(subprocessadoresCatalogo.chave, querChaves), visivelPara(agenciaId)) }) : [],
     db.query.contaSubprocessadores.findMany({ where: eq(contaSubprocessadores.contaClienteId, contaId) }),
   ]);
   const querIds = new Set(catalogo.map((c) => c.id));

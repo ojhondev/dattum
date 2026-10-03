@@ -303,28 +303,17 @@ export const TOURS: Tour[] = [
     rota: (p) => p === "/painel/configuracoes",
     passos: [
       {
+        alvo: "cfg-abas",
+        titulo: "Tudo da conta em abas",
+        texto:
+          "<b>Agência e acesso</b>: dados que vão nos contratos e a senha. <b>Equipe</b>: um login por pessoa. <b>Privacidade e cookies</b>: a política e o aviso de cookies do site da agência. <b>Plano e documentos</b>: plano, termos e exportação. <b>Registro de atividades</b>: quem fez o quê.",
+        lado: "bottom",
+      },
+      {
         alvo: "cfg-dados",
         titulo: "Dados que vão nos contratos",
         texto: "CNPJ, endereço e responsável legal aparecem na qualificação de todos os contratos. Preencha antes de mandar os contratos para assinar.",
         lado: "right",
-      },
-      {
-        alvo: "cfg-equipe",
-        titulo: "Um login para cada pessoa",
-        texto: "Convide quem trabalha com você. Cada pessoa entra com o próprio e-mail e senha, e você desativa o acesso quando alguém sai da agência.",
-        lado: "top",
-      },
-      {
-        alvo: "conta-politica",
-        titulo: "A política da sua agência",
-        texto: "Publique a política de privacidade da própria agência e cole o link no rodapé do seu site.",
-        lado: "top",
-      },
-      {
-        alvo: "cfg-registro",
-        titulo: "Quem fez o quê",
-        texto: "Todo acesso e toda ação importante fica registrada: clientes, contratos, políticas, equipe. É a prestação de contas que a LGPD pede.",
-        lado: "top",
       },
     ],
   },
