@@ -189,7 +189,10 @@ export function HeroStrip() {
     };
     const andar = () => {
       if (timer || document.hidden) return;
-      timer = setInterval(() => setPasso((p) => (p >= N + PAUSA - 1 ? -1 : p + 1)), RITMO);
+      timer = setInterval(() => {
+        if (document.documentElement.classList.contains("video-aberto")) return; // vídeo aberto por cima: a faixa espera
+        setPasso((p) => (p >= N + PAUSA - 1 ? -1 : p + 1));
+      }, RITMO);
     };
     const io = new IntersectionObserver(([e]) => (e.isIntersecting ? andar() : parar()), { threshold: 0.2 });
     io.observe(el);

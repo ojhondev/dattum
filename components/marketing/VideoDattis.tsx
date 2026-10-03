@@ -28,9 +28,12 @@ export function VideoDattis({ className = "btn btn-dark btn-lg" }: { className?:
     const esc = (e: KeyboardEvent) => e.key === "Escape" && fechar();
     document.addEventListener("keydown", esc);
     document.body.style.overflow = "hidden";
+    // Pausa as animações da página atrás do vídeo: o navegador fica livre para decodificar.
+    document.documentElement.classList.add("video-aberto");
     return () => {
       document.removeEventListener("keydown", esc);
       document.body.style.overflow = "";
+      document.documentElement.classList.remove("video-aberto");
     };
   }, [versao]);
 
@@ -46,7 +49,7 @@ export function VideoDattis({ className = "btn btn-dark btn-lg" }: { className?:
       </button>
       {v &&
         createPortal(
-          <div className="fixed inset-0 z-[80] flex items-center justify-center bg-[#020f0c]/85 p-4 backdrop-blur-sm" onClick={fechar}>
+          <div className="fixed inset-0 z-[80] flex items-center justify-center bg-[#020f0c]/92 p-4" onClick={fechar}>
             <div
               role="dialog"
               aria-modal="true"
