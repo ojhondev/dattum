@@ -8,6 +8,7 @@ import { SiteHeader } from "@/components/marketing/SiteHeader";
 import { SiteFooter } from "@/components/marketing/SiteFooter";
 import { PixelEdge } from "@/components/marketing/PixelEdge";
 import { HeroStrip } from "@/components/marketing/HeroStrip";
+import { VideoDattis } from "@/components/marketing/VideoDattis";
 import { ArrowLink, MetaChips } from "@/components/marketing/MetaChips";
 import {
   RatVisual,
@@ -190,9 +191,7 @@ export default async function LandingPage() {
               multas de milhares de reais.
             </p>
             <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
-              <Link href="/planos" className="btn btn-dark btn-lg">
-                Ver planos
-              </Link>
+              <VideoDattis />
               <Link href="/diagnostico" className="btn btn-primary btn-lg">
                 Auditar minha agência
               </Link>
