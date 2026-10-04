@@ -7,6 +7,7 @@ import { donoDoToken } from "@/lib/cookies-sites";
 import { SITE_URL } from "@/lib/site";
 import { Logo } from "@/components/brand/Logo";
 import { InstrucoesInstalacao } from "@/components/cookies/InstrucoesInstalacao";
+import { InstalarPeloGtm } from "@/components/cookies/InstalarPeloGtm";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = { title: "Instalar o aviso de cookies", robots: { index: false, follow: false } };
@@ -37,8 +38,11 @@ export default async function InstalarPage({ params }: { params: Promise<{ token
           consentimento do visitante, segura o Pixel do Meta e as tags do Google até o “Aceitar” (Modo de consentimento v2) e guarda a prova de cada
           escolha, como a LGPD exige. Leva uns 5 minutos.
         </p>
-        <section className="mt-8 rounded-[24px] border border-line bg-surface p-5 sm:p-7">
-          <h2 className="text-[17px] font-medium text-ink">Onde o site foi feito?</h2>
+        <div className="mt-8">
+          <InstalarPeloGtm token={token} origem={SITE_URL} />
+        </div>
+        <section className="mt-6 rounded-[24px] border border-line bg-surface p-5 sm:p-7">
+          <h2 className="text-[17px] font-medium text-ink">Ou cole no código: onde o site foi feito?</h2>
           <p className="mt-1 text-[14px] text-muted">Escolha a plataforma e siga os passos. A linha abaixo é a mesma em todas.</p>
           <div className="mt-4">
             <InstrucoesInstalacao linha={linha} />

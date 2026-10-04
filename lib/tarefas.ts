@@ -145,14 +145,17 @@ export async function tarefasDaAgencia(agenciaId: string): Promise<Tarefa[]> {
         acao: { rotulo: "Cadastrar", href: `${base}?aba=site` },
       });
     } else if (growth) {
-      if (!c.cookiesToken && !vig?.achados.some((a) => a.codigo === "pixel-sem-consentimento" && a.severidade !== "ok")) {
+      const pixelSemAviso = vig?.achados.some((a) => a.codigo === "pixel-sem-consentimento" && a.severidade !== "ok");
+      if (!c.cookiesDetectadoEm && !pixelSemAviso) {
         t.push({
           id: `cookies-${c.id}`,
           urgencia: 3,
           titulo: `Instalar o aviso de cookies no site da ${c.nome}`,
-          detalhe: "Segura o pixel até o visitante aceitar. Você manda o passo a passo para quem cuida do site.",
+          detalhe: c.cookiesToken
+            ? "Ainda não vimos o aviso no site. Instale pelo Gerenciador de Tags ou mande o passo a passo para quem cuida do site."
+            : "Segura o pixel até o visitante aceitar. Ative e instale pelo Gerenciador de Tags, ou mande o passo a passo para quem cuida do site.",
           cliente: c.nome,
-          acao: { rotulo: "Instalar", href: `/painel/cookies?site=${c.id}` },
+          acao: { rotulo: c.cookiesToken ? "Instalar" : "Ativar", href: `/painel/cookies?site=${c.id}` },
         });
       }
       if (!c.politicaPublicadaEm) {

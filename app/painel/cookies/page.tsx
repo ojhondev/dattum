@@ -63,6 +63,7 @@ export default async function CookiesPage({ searchParams }: { searchParams: Prom
       token: agencia.cookiesToken,
       config: agencia.cookiesConfig ?? null,
       politica: agencia.politicaPublicadaEm && agencia.slug ? urlAbsoluta(`/p/${agencia.slug}/privacidade`) : null,
+      detectado: agencia.cookiesDetectadoEm ? { em: agencia.cookiesDetectadoEm.toISOString(), url: agencia.cookiesDetectadoUrl } : null,
     },
     ...contas.map((c) => ({
       id: c.id,
@@ -72,6 +73,7 @@ export default async function CookiesPage({ searchParams }: { searchParams: Prom
       token: c.cookiesToken,
       config: c.cookiesConfig ?? null,
       politica: c.politicaPublicadaEm && c.slug ? urlAbsoluta(`/p/${c.slug}/privacidade`) : null,
+      detectado: c.cookiesDetectadoEm ? { em: c.cookiesDetectadoEm.toISOString(), url: c.cookiesDetectadoUrl } : null,
     })),
   ];
   const { site: sel } = await searchParams;
@@ -137,6 +139,7 @@ export default async function CookiesPage({ searchParams }: { searchParams: Prom
             politicaPadrao={atual.politica}
             estatistica={estatistica}
             origem={SITE_URL}
+            detectado={atual.detectado}
             recentes={recentes.map((r) => ({ quando: r.criadoEm.toISOString(), acao: r.acao, estatisticas: r.categorias.estatisticas, marketing: r.categorias.marketing, url: r.url }))}
           />
 

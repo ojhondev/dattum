@@ -35,6 +35,8 @@ export const agencias = pgTable("agencias", {
   politicaPublicadaEm: timestamp("politica_publicada_em"), // nulo = política pública desligada
   cookiesToken: text("cookies_token").unique(), // aviso de cookies: /c/{token}.js
   cookiesConfig: jsonb("cookies_config").$type<ConfigCookies>(),
+  cookiesDetectadoEm: timestamp("cookies_detectado_em"), // aviso visto funcionando no site (script carregado ou escolha de visitante)
+  cookiesDetectadoUrl: text("cookies_detectado_url"),
   onboardingConcluidoEm: timestamp("onboarding_concluido_em"), // fim do preenchimento guiado (/painel/comecar)
   toursVistos: jsonb("tours_vistos").$type<string[]>().notNull().default([]), // tours guiados já concluídos ou pulados
   diaVencimento: integer("dia_vencimento").notNull().default(10), // dia do mês da mensalidade
@@ -66,6 +68,8 @@ export const contasCliente = pgTable("contas_cliente", {
   politicaPublicadaEm: timestamp("politica_publicada_em"), // nulo = política pública desligada
   cookiesToken: text("cookies_token").unique(), // aviso de cookies: /c/{token}.js
   cookiesConfig: jsonb("cookies_config").$type<ConfigCookies>(),
+  cookiesDetectadoEm: timestamp("cookies_detectado_em"), // aviso visto funcionando no site (script carregado ou escolha de visitante)
+  cookiesDetectadoUrl: text("cookies_detectado_url"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 

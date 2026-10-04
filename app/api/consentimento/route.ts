@@ -1,7 +1,7 @@
 import { createHash } from "node:crypto";
 import { db } from "@/lib/db";
 import { consentimentos } from "@/lib/db/schema";
-import { donoDoToken } from "@/lib/cookies-sites";
+import { donoDoToken, registrarDeteccao } from "@/lib/cookies-sites";
 import { limitarIp } from "@/lib/limite";
 import { ipDe } from "@/lib/dpa";
 
@@ -52,5 +52,6 @@ export async function POST(req: Request) {
       ipHash: createHash("sha256").update(`${segredo}:${ipDe(req)}`).digest("hex"),
     })
     .catch((e) => console.error("[consentimento]", e));
+  await registrarDeteccao(token, typeof b?.url === "string" ? b.url : null);
   return ok();
 }

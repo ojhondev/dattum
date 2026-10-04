@@ -1,4 +1,4 @@
-import { and, desc, eq, isNull } from "drizzle-orm";
+import { and, desc, eq, isNull, lt, or } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { agencias, certificados, contasCliente, type ConfigCookies } from "@/lib/db/schema";
 import { statusCertificado } from "@/lib/certificados";
@@ -74,4 +74,30 @@ export async function donoDoToken(token: string): Promise<DonoCookies | null> {
     ignorar: [],
     selo: await seloDe(conta.agenciaId, conta.id),
   };
+}
+
+const HOSTS_DATTIS = new Set([new URL(SITE_URL).host, "dattis.com.br", "www.dattis.com.br", "dattum-rho.vercel.app", "localhost:3012"]);
+const SEIS_HORAS = 6 * 3_600_000;
+
+/**
+ * Marca que o aviso de cookies foi visto funcionando num site de verdade (o site carregou o script
+ * ou um visitante fez uma escolha). Ignora páginas da própria Dattis (prévias e instruções).
+ * Grava no máximo a cada 6 horas por token, para não escrever a cada visita.
+ */
+export async function registrarDeteccao(token: string, url: string | null | undefined) {
+  if (!url || token === TOKEN_DATTIS || token.length < 20) return;
+  let pagina: URL;
+  try {
+    pagina = new URL(url);
+  } catch {
+    return;
+  }
+  if (!/^https?:$/.test(pagina.protocol) || HOSTS_DATTIS.has(pagina.host)) return;
+  const valor = { cookiesDetectadoEm: new Date(), cookiesDetectadoUrl: `${pagina.origin}${pagina.pathname}`.slice(0, 300) };
+  const antigo = new Date(Date.now() - SEIS_HORAS);
+  const quando = (col: typeof contasCliente.cookiesDetectadoEm | typeof agencias.cookiesDetectadoEm) => or(isNull(col), lt(col, antigo));
+  await Promise.all([
+    db.update(contasCliente).set(valor).where(and(eq(contasCliente.cookiesToken, token), quando(contasCliente.cookiesDetectadoEm))),
+    db.update(agencias).set(valor).where(and(eq(agencias.cookiesToken, token), quando(agencias.cookiesDetectadoEm))),
+  ]).catch((e) => console.error("[cookies-deteccao]", e));
 }

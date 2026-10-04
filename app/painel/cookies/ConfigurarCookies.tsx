@@ -6,6 +6,7 @@ import { Check, CircleAlert, CircleHelp, Loader2, ShieldCheck } from "lucide-rea
 import type { EstatisticaCookies } from "@/lib/cookies-stats";
 import { Codigo, InstrucoesInstalacao } from "@/components/cookies/InstrucoesInstalacao";
 import { EnviarInstrucoes } from "@/components/cookies/EnviarInstrucoes";
+import { InstalarPeloGtm } from "@/components/cookies/InstalarPeloGtm";
 
 type Config = { cor?: string; politicaUrl?: string; flutuante?: boolean };
 type ItemVerificacao = { ok: boolean | null; titulo: string; detalhe: string };
@@ -24,7 +25,10 @@ export function ConfigurarCookies({
   estatistica,
   recentes,
   origem,
+  detectado,
 }: {
+  /** Quando e onde o aviso foi visto funcionando no site (detectado sozinho). */
+  detectado: { em: string; url: string | null } | null;
   contaId?: string;
   nome: string;
   siteInicial: string;
@@ -125,9 +129,31 @@ export function ConfigurarCookies({
         <p className={ROTULO}>Passo 1 · Instalar e segurar os pixels</p>
         <h2 className="mt-1 font-display text-[22px] leading-tight text-ink">Onde o site foi feito?</h2>
         <p className="mt-1 text-[14px] text-muted">Escolha a plataforma e siga os passos. A linha da Dattis é a mesma em todas.</p>
-        <div className="mt-4">
-          <EnviarInstrucoes token={token} nome={nome} origem={origem} />
+        <div
+          className={
+            "mt-4 flex items-start gap-3 rounded-2xl px-4 py-3 text-[14px] leading-relaxed " + (detectado ? "bg-ok-tint text-brand-ink" : "bg-caution-tint text-ink")
+          }
+        >
+          {detectado ? <ShieldCheck size={18} className="mt-0.5 shrink-0" /> : <Loader2 size={18} className="mt-0.5 shrink-0 animate-spin" />}
+          <span>
+            {detectado ? (
+              <>
+                <b className="font-semibold">Instalado e funcionando.</b> Visto em{" "}
+                {detectado.url ? detectado.url.replace(/^https?:\/\//, "") : "um site"} no dia {new Date(detectado.em).toLocaleDateString("pt-BR")}.
+              </>
+            ) : (
+              <>
+                <b className="font-semibold">Aguardando a instalação.</b> Assim que o site carregar o aviso, a Dattis percebe sozinha e marca como instalado aqui.
+              </>
+            )}
+          </span>
         </div>
+        {!detectado && (
+          <div className="mt-4 flex flex-col gap-4">
+            <InstalarPeloGtm token={token} origem={origem} />
+            <EnviarInstrucoes token={token} nome={nome} origem={origem} />
+          </div>
+        )}
         <div className="mt-5">
           <InstrucoesInstalacao linha={linha} />
         </div>

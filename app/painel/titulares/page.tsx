@@ -2,7 +2,8 @@ import Link from "next/link";
 import { and, desc, eq, inArray } from "drizzle-orm";
 import { getSessao } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { agencias, contasCliente, pedidosTitular } from "@/lib/db/schema";
+import { agencias, atividadesTratamento, contaSubprocessadores, contasCliente, pedidosTitular, subprocessadoresCatalogo } from "@/lib/db/schema";
+import type { ContextoPedido } from "@/lib/respostas-titular";
 import { TIPOS_PEDIDO, diasAtePrazo, rotuloTipo } from "@/lib/titulares";
 import { agoraMs } from "@/lib/utils";
 import { PedidoItem } from "./PedidoItem";
@@ -34,6 +35,28 @@ export default async function TitularesPage({ searchParams }: { searchParams: Pr
   const nomeConta = new Map(contas.map((c) => [c.id, c.nome]));
   const agora = agoraMs();
   const visiveis = termo ? pedidos.filter((p) => [p.protocolo, p.nome, p.email].some((v) => v.toLowerCase().includes(termo))) : pedidos;
+
+  // O que a Dattis sabe de cada cliente (registro e ferramentas) para escrever a resposta pronta.
+  const ids = [...new Set(visiveis.map((p) => p.contaClienteId).filter((x): x is string => !!x))];
+  const [ativs, ferrs] = ids.length
+    ? await Promise.all([
+        db
+          .select({ conta: atividadesTratamento.contaClienteId, dados: atividadesTratamento.categoriasDado, finalidade: atividadesTratamento.finalidade, prazo: atividadesTratamento.prazoRetencao })
+          .from(atividadesTratamento)
+          .where(inArray(atividadesTratamento.contaClienteId, ids)),
+        db
+          .select({ conta: contaSubprocessadores.contaClienteId, custom: contaSubprocessadores.nomeCustomizado, nome: subprocessadoresCatalogo.nome, categoria: subprocessadoresCatalogo.categoria, pais: subprocessadoresCatalogo.pais })
+          .from(contaSubprocessadores)
+          .leftJoin(subprocessadoresCatalogo, eq(contaSubprocessadores.subprocessadorCatalogoId, subprocessadoresCatalogo.id))
+          .where(inArray(contaSubprocessadores.contaClienteId, ids)),
+      ])
+    : [[], []];
+  const contexto = (contaId: string | null): ContextoPedido => ({
+    empresa: contaId ? (nomeConta.get(contaId) ?? "") : (agencia?.nome ?? ""),
+    agencia: agencia?.nome ?? "",
+    atividades: ativs.filter((a) => a.conta === contaId).map((a) => ({ dados: a.dados, finalidade: a.finalidade, prazo: a.prazo })),
+    ferramentas: ferrs.filter((x) => x.conta === contaId).map((x) => ({ nome: x.custom ?? x.nome ?? "—", categoria: x.custom ? "Informada pela agência" : (x.categoria ?? ""), pais: x.custom ? null : x.pais })),
+  });
 
   return (
     <div className="max-w-5xl">
@@ -82,6 +105,7 @@ export default async function TitularesPage({ searchParams }: { searchParams: Pr
                 criadoEm: p.criadoEm.toISOString(),
                 diasRestantes: diasAtePrazo(p.prazo, agora),
                 encerrado: p.status === "respondido" || p.status === "recusado",
+                contexto: contexto(p.contaClienteId),
               }}
             />
           ))}
