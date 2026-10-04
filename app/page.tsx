@@ -44,9 +44,9 @@ const RISCOS = [
 ];
 
 const PASSOS = [
-  { t: "Você cadastra o cliente", d: "Nome, site e o que a agência faz por ele: Meta Ads, Google, WhatsApp, CRM. Leva poucos minutos." },
-  { t: "A Dattis monta a papelada", d: "O registro do que é feito com os dados, o contrato com o cliente e a lista de ferramentas. O cliente assina pelo celular." },
-  { t: "Você fica protegido todo dia", d: "Todo dia às 6h a Dattis confere os sites, avisa quando algo sai do lugar e mantém o selo e o certificado em dia." },
+  { t: "Você diz quem são seus clientes", d: "Nome, site e as ferramentas que a agência usa em cada um: Meta Ads, Google, WhatsApp, CRM. Leva poucos minutos." },
+  { t: "O DPO da Dattis cuida de tudo", d: "Registro, contrato com cada cliente, aviso de cookies, pedidos de titulares e vigilância diária dos sites. Quem faz somos nós." },
+  { t: "Você recebe a prova", d: "Relatório para mandar ao cliente, selo de privacidade no site e dossiê pronto se a BM cair. Tudo registrado no seu painel." },
 ];
 
 const LEI = [
@@ -79,17 +79,17 @@ const DIFERENCIAIS = [
   },
   {
     t: "Você retém clientes com um serviço a mais",
-    d: "Mandar o resumo de conformidade (DAT) e o certificado pro cliente vira entrega recorrente — mais um motivo pra ele renovar com você.",
+    d: "Mandar o relatório de conformidade e o certificado pro cliente vira entrega recorrente — mais um motivo pra ele renovar com você. E quem faz o trabalho é o seu DPO na Dattis.",
     tags: ["Retenção", "Valor percebido"],
   },
 ];
 
 const DPO_FUNCOES = [
-  { icon: Inbox, label: "Recebe pedidos e reclamações dos titulares" },
-  { icon: Landmark, label: "Responde às comunicações da ANPD" },
-  { icon: GraduationCap, label: "Orienta a equipe sobre boas práticas" },
-  { icon: Siren, label: "Conduz a resposta a incidentes" },
-  { icon: MessageSquareWarning, label: "É o contato público de privacidade" },
+  { icon: Inbox, label: "Responde os pedidos dos titulares dentro do prazo" },
+  { icon: GraduationCap, label: "Prepara e cobra os contratos de cada cliente" },
+  { icon: MessageSquareWarning, label: "Acompanha a vigilância e pede os ajustes nos sites" },
+  { icon: Landmark, label: "Responde à ANPD e é o contato público (Scale)" },
+  { icon: Siren, label: "Conduz a resposta a incidentes (Scale)" },
 ];
 
 const SANCOES = [
@@ -103,8 +103,20 @@ const SANCOES = [
 
 const FAQ_ITEMS = [
   {
-    q: "Minha agência precisa mesmo de RAT e DPA?",
-    a: "Se você gerencia CRM, WhatsApp, tráfego ou automação em nome de clientes, a LGPD trata sua agência como operadora de dados (art. 5º, VII) — e prevê responsabilidade solidária com o cliente (art. 42). RAT e DPA são os documentos que provam que essa operação está regular.",
+    q: "O que significa a Dattis ser o DPO da minha agência?",
+    a: "Que a gente faz o trabalho de privacidade por você. Nos planos Growth e Scale, o DPO da Dattis opera a LGPD de cada cliente que você atende: mantém o registro em dia, prepara e cobra os contratos, acompanha o aviso de cookies, responde os pedidos de titulares e pede os ajustes nos sites quando a vigilância encontra algo. Tudo fica registrado no seu painel.",
+  },
+  {
+    q: "Minha agência precisa mesmo de um DPO?",
+    a: "Se você gerencia campanhas, CRM, WhatsApp ou automação em nome de clientes, a LGPD trata sua agência como operadora de dados (art. 5º, VII) e prevê responsabilidade solidária com o cliente (art. 42). Alguém precisa cuidar disso de forma contínua: registro, contratos, pedidos de titulares. É esse o papel do DPO.",
+  },
+  {
+    q: "Qual a diferença entre os planos?",
+    a: "No Start (R$ 47 por cliente/mês), a própria agência usa a plataforma e faz tudo. No Growth (R$ 97), a Dattis é o DPO da sua agência e faz o trabalho por você. No Scale (R$ 297), além disso, a Dattis é nomeada encarregada oficial da agência, responde à ANPD, conduz incidentes e você tem um gestor dedicado.",
+  },
+  {
+    q: "A Dattis assina contratos ou mexe nas minhas contas sem eu saber?",
+    a: "Não. Assinar é da agência e do cliente: o DPO prepara o contrato e cobra as assinaturas. Ele só entra na sua conta com a sua autorização, que você liga e desliga quando quiser, e cada ação fica registrada com o nome dele. Login, senha e equipe continuam só com você.",
   },
   {
     q: "A BM do meu cliente foi suspensa. A Dattis ajuda?",
@@ -115,16 +127,8 @@ const FAQ_ITEMS = [
     a: "Que a documentação de privacidade do titular — registro de atividades, contrato de operação e ferramentas — está registrada e em dia na Dattis. A verificação é feita na hora em que alguém clica no selo ou lê o QR Code. Não é selo da ANPD nem certificado ICP-Brasil.",
   },
   {
-    q: "O que é o DAT?",
-    a: "É o documento-resumo que reúne o status do RAT, do DPA e dos subprocessadores de uma conta — a prova de conformidade que sua agência manda pro cliente dela, sempre que ele perguntar.",
-  },
-  {
-    q: "Quanto custa?",
-    a: "De R$ 47 a R$ 297 por cliente da agência, por mês. O Growth, de R$ 97, é o plano que cobre o essencial: contrato com assinatura eletrônica, certificado e selo, Dossiê para BM e vigilância diária dos sites.",
-  },
-  {
     q: "Isso substitui um advogado?",
-    a: "Não. A Dattis automatiza a parte operacional (documentos, mapeamento, auditoria). Contencioso e casos complexos continuam sendo encaminhados a um parceiro jurídico.",
+    a: "Não. A Dattis cuida da operação de privacidade do dia a dia, como DPO. Contencioso e casos complexos continuam sendo encaminhados a um parceiro jurídico.",
   },
 ];
 
@@ -146,9 +150,9 @@ function ModuleText({ tecnico, titulo, body, cta, href, dark = false }: { tecnic
 const CARD = "block-card flex flex-col justify-between gap-12 px-8 pt-12 sm:px-14 sm:pt-16 lg:col-span-6";
 
 export const metadata: Metadata = {
-  title: { absolute: "Dattis — LGPD para agências de tráfego pago" },
+  title: { absolute: "Dattis — o DPO da sua agência de tráfego pago" },
   description:
-    "Sua agência de tráfego está em conformidade com a LGPD? Registro de tratamento, contrato com o cliente, certificado de privacidade, vigilância diária e dossiê para BM suspensa. A partir de R$ 47 por cliente.",
+    "A Dattis é o DPO das agências de tráfego pago: cuidamos da LGPD de cada cliente que você atende, com contratos, registros, cookies, pedidos de titulares e vigilância diária. A partir de R$ 47 por cliente.",
   alternates: { canonical: "/" },
 };
 
@@ -182,18 +186,18 @@ export default async function LandingPage() {
         {/* HERO */}
         <section className="overflow-hidden pt-14 sm:pt-20">
           <div className="mx-auto max-w-5xl px-5 text-center">
-            <p className="t-eyebrow">Baseado na Lei nº 13.709/2018 (LGPD)</p>
-            <h1 className="t-hero t-hero-home mx-auto mt-5 max-w-[16ch]">
-              <span className="text-brand-ink">Agência de Tráfego:</span> Descumprir a LGPD gera multas.
+            <p className="t-eyebrow">DPO para agências de tráfego pago · LGPD</p>
+            <h1 className="t-hero t-hero-home mx-auto mt-5 max-w-[17ch]">
+              <span className="text-brand-ink">Agência de Tráfego:</span> a Dattis é o seu DPO.
             </h1>
             <p className="mx-auto mt-6 max-w-2xl text-[20px] leading-[1.4] text-body">
-              Captação, armazenamento e gestão de dados sem os controles adequados podem expor sua agência a riscos e
-              multas de milhares de reais.
+              Nós cuidamos da LGPD de cada cliente que a sua agência atende. Você continua rodando campanha, sem contratar
+              ninguém e sem correr o risco de multas de até 2% do faturamento.
             </p>
             <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
               <VideoDattis />
-              <Link href="/diagnostico" className="btn btn-primary btn-lg">
-                Auditar minha agência
+              <Link href="/planos" className="btn btn-primary btn-lg">
+                Quero a Dattis como DPO
               </Link>
             </div>
           </div>
@@ -231,11 +235,11 @@ export default async function LandingPage() {
           <div className="w-full px-4 pb-24 pt-10 sm:px-6 lg:px-8">
             <div className="mx-auto max-w-4xl text-center">
               <p className="t-eyebrow !text-rail">A solução</p>
-              <h2 className="t-display mt-4 text-rail">A Dattis organiza tudo o que a LGPD pede da sua agência</h2>
+              <h2 className="t-display mt-4 text-rail">A Dattis é o DPO da sua agência. E faz o trabalho por você.</h2>
               <p className="mx-auto mt-6 max-w-2xl text-[19px] leading-relaxed text-rail/85">
-                Sem juridiquês e sem planilha. Você cadastra o cliente e a Dattis monta os documentos, colhe as assinaturas e
-                confere os sites todo dia. Quando alguém perguntar se está tudo certo, seja o cliente, o Meta ou a ANPD, a prova
-                já está pronta.
+                O DPO é quem cuida da privacidade da empresa. A maioria das agências não tem um, e um DPO contratado não daria
+                conta de dezenas de clientes. A Dattis assume esse papel: nós operamos a LGPD de cada cliente que você atende, e
+                você acompanha tudo num painel, com cada ação registrada.
               </p>
             </div>
 
@@ -249,7 +253,7 @@ export default async function LandingPage() {
               ))}
             </ol>
 
-            <p className="mt-20 text-center font-mono text-[14px] uppercase tracking-[0.05em] text-rail">O que a sua agência recebe</p>
+            <p className="mt-20 text-center font-mono text-[14px] uppercase tracking-[0.05em] text-rail">O que o seu DPO entrega</p>
 
             <div className="mt-8 grid gap-5 lg:grid-cols-12">
               <div className={CARD}>
@@ -323,10 +327,10 @@ export default async function LandingPage() {
 
               <div className={CARD}>
                 <ModuleText
-                  tecnico="DAT · Resumo de conformidade"
+                  tecnico="Relatório para o cliente"
                   titulo="Um relatório simples pra mandar ao cliente"
                   body="Quando o cliente perguntar se está tudo certo com a LGPD, você manda um link ou um PDF com a situação dele. Vira mais uma entrega da agência e mais um motivo pra ele renovar."
-                  cta="Ver o DAT"
+                  cta="Ver o relatório"
                   href="/planos"
                 />
                 <DatVisual />
@@ -374,8 +378,8 @@ export default async function LandingPage() {
               <div className="mt-8 rounded-[20px] border border-white/15 bg-white/[0.06] p-6">
                 <p className="t-label !text-[18px] text-brand">Dossiê para BM</p>
                 <p className="mt-2 text-[16px] leading-relaxed text-white/85">
-                  A Dattis reúne, de forma organizada, todos os dados necessários pra contestar a suspensão: dados da empresa,
-                  contrato, registro de atividades, ferramentas, certificado e o texto-base da contestação. Em um clique.
+                  Como seu DPO, a Dattis já mantém a documentação de cada cliente em dia. Se a BM cair, o dossiê sai em um
+                  clique: dados da empresa, contrato, registro de atividades, ferramentas, certificado e o texto-base da contestação.
                 </p>
               </div>
               <div className="mt-10 flex items-center gap-2">
@@ -428,22 +432,22 @@ export default async function LandingPage() {
           <div className="grid w-full items-center gap-14 px-5 py-24 sm:px-10 lg:grid-cols-[1.1fr_1fr] lg:px-14">
             <div>
               <p className="t-eyebrow">DPO · Encarregado de dados</p>
-              <h2 className="t-display mt-4 max-w-2xl">Quem responde pela privacidade da sua agência?</h2>
+              <h2 className="t-display mt-4 max-w-2xl">Por que sua agência precisa de um DPO. E por que ele pode ser a Dattis.</h2>
               <p className="mt-6 max-w-xl text-[18px] leading-relaxed text-body">
                 O DPO (encarregado de dados) é a pessoa responsável por ser o canal de comunicação entre a empresa, os donos
                 dos dados e a ANPD — é o que prevê o art. 41 da LGPD. Na prática, é quem atende quando alguém pede pra saber o
                 que foi feito com o próprio dado, quem responde à fiscalização e quem orienta a equipe no dia a dia.
               </p>
               <p className="mt-5 max-w-xl text-[18px] leading-relaxed text-body">
-                A maioria das agências não tem ninguém nesse papel. No plano Scale, a Dattis assume a função de DPO da sua
-                agência — sem você contratar ninguém.
+                Contratar um DPO custa caro e não escala: ele teria que acompanhar cada cliente que você atende. Nos planos Growth
+                e Scale, a Dattis é o DPO da sua agência, cobrado por cliente atendido, sem você contratar ninguém.
               </p>
               <ArrowLink href="/planos" className="mt-9">
-                Ver o plano Scale
+                Ver os planos com DPO
               </ArrowLink>
             </div>
             <div className="block-card px-8 py-10 sm:px-12">
-              <p className="t-label">O que o DPO faz</p>
+              <p className="t-label">O que a Dattis faz como seu DPO</p>
               <MetaChips wrap className="mt-6" items={DPO_FUNCOES} />
             </div>
           </div>
@@ -452,7 +456,7 @@ export default async function LandingPage() {
         {/* MULTA x ASSINATURA */}
         <section id="multa" className="bg-canvas pb-24">
           <div className="w-full px-5 sm:px-10 lg:px-14">
-            <h2 className="t-display max-w-3xl">Uma assinatura custa muito menos que uma multa.</h2>
+            <h2 className="t-display max-w-3xl">Um DPO custa muito menos que uma multa.</h2>
             <p className="mt-5 max-w-2xl text-[18px] leading-relaxed text-body">
               Você e seu cliente correm risco toda vez que um lead entra numa campanha. A pergunta não é se a fiscalização
               existe — é quanto custa estar sem prova quando ela chegar.
@@ -474,10 +478,10 @@ export default async function LandingPage() {
               </div>
               <div className="flex flex-col rounded-[40px] bg-rail px-8 py-12 text-white sm:px-12">
                 <p className="t-label text-white">Com a Dattis</p>
-                <p className="font-display mt-6 text-[clamp(2.4rem,5vw,4rem)] leading-none text-brand">Um plano completo por R$ 97</p>
+                <p className="font-display mt-6 text-[clamp(2.4rem,5vw,4rem)] leading-none text-brand">Seu DPO por R$ 97</p>
                 <p className="mt-3 text-[15px] text-white/80">por cliente da sua agência, por mês</p>
                 <ul className="mt-8 flex flex-1 flex-col gap-2.5">
-                  {["Documentação de cada cliente pronta", "Prova verificável no site", "Dossiê pronto se a BM cair", "DPO no plano Scale"].map((s) => (
+                  {["A Dattis como DPO, cuidando de cada cliente", "Contratos e registros prontos e assinados", "Prova verificável no site", "Dossiê pronto se a BM cair"].map((s) => (
                     <li key={s} className="flex items-start gap-2.5 text-[15px] text-white/90">
                       <CircleCheck size={18} strokeWidth={1.6} className="mt-0.5 shrink-0 text-brand" />
                       {s}
@@ -533,7 +537,7 @@ export default async function LandingPage() {
         <section id="demo" className="on-light bg-orange">
           <div className="w-full px-5 py-16 sm:px-10 lg:px-14">
             <h2 className="max-w-3xl font-display text-[clamp(1.6rem,3vw,2.2rem)] leading-tight">
-              Você e seu cliente estão expostos agora. Proteja a operação antes que a fiscalização — ou o Meta — bata na porta.
+              Você e seu cliente estão expostos agora. Tenha um DPO cuidando disso antes que a fiscalização — ou o Meta — bata na porta.
             </h2>
             <Link href="/planos" className="btn btn-leaf mt-12">
               Ver planos

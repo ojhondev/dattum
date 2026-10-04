@@ -33,7 +33,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     metadataBase: new URL(SITE_URL),
     title: {
-      default: "Dattis — Compliance LGPD para agências de tráfego pago",
+      default: "Dattis — o DPO da sua agência de tráfego pago",
       template: "%s · Dattis",
     },
     description: descricao,
@@ -43,7 +43,7 @@ export async function generateMetadata(): Promise<Metadata> {
       type: "website",
       locale: "pt_BR",
       siteName: SITE_NOME,
-      title: "Dattis — Compliance LGPD para agências de tráfego pago",
+      title: "Dattis — o DPO da sua agência de tráfego pago",
       description: descricao,
     },
     twitter: { card: "summary_large_image" },

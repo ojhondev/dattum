@@ -26,10 +26,10 @@ export const NAV_GROUPS: NavGroup[] = [
   {
     label: "Plataforma",
     items: [
-      { href: "/#modulos", label: "Módulos", desc: "RAT, contrato, subprocessadores, auditoria e DAT.", icon: LayoutGrid },
+      { href: "/#dpo", label: "A Dattis como seu DPO", desc: "Nós cuidamos da LGPD de cada cliente por você.", icon: UserRoundCheck },
+      { href: "/#modulos", label: "O que o DPO entrega", desc: "Registro, contrato, ferramentas, auditoria e relatório.", icon: LayoutGrid },
       { href: "/#modulos", label: "Certificado e selo", desc: "Prova verificável por QR Code no rodapé do site.", icon: BadgeCheck },
       { href: "/#bm-suspensa", label: "Dossiê para BM", desc: "Contestação organizada quando a BM é suspensa.", icon: FolderOpen },
-      { href: "/#dpo", label: "DPO", desc: "A Dattis como encarregado de dados da agência.", icon: UserRoundCheck },
     ],
   },
   {
@@ -39,7 +39,7 @@ export const NAV_GROUPS: NavGroup[] = [
       { href: "/#func-gtm", label: "Google Tag Manager", desc: "Modo de consentimento v2 e instalação guiada.", icon: Tags },
       { href: "/#func-selo", label: "Selo verificável", desc: "No rodapé da agência e de cada cliente.", icon: BadgeCheck },
       { href: "/#func-vigilancia", label: "Monitoramento diário", desc: "Vigilância automática dos sites às 6h.", icon: Radar },
-      { href: "/#funcionalidades", label: "Ver todas", desc: "Política pronta, canal do titular, DAT e mais.", icon: LayoutGrid },
+      { href: "/#funcionalidades", label: "Ver todas", desc: "Política pronta, canal do titular, relatório e mais.", icon: LayoutGrid },
     ],
   },
   {
@@ -53,8 +53,8 @@ export const NAV_GROUPS: NavGroup[] = [
   {
     label: "Planos",
     items: [
-      { href: "/planos", label: "Planos e preços", desc: "De R$ 47 a R$ 297 por cliente/mês.", icon: Tags },
-      { href: "/#multa", label: "Multa x assinatura", desc: "Quanto custa estar sem prova quando a fiscalização chega.", icon: Scale },
+      { href: "/planos", label: "Planos e preços", desc: "Start: você faz. Growth e Scale: a Dattis é o seu DPO.", icon: Tags },
+      { href: "/#multa", label: "Multa x DPO", desc: "Quanto custa estar sem DPO quando a fiscalização chega.", icon: Scale },
     ],
   },
   {
@@ -63,7 +63,7 @@ export const NAV_GROUPS: NavGroup[] = [
       { href: "/o-que-e-a-dattis", label: "O que é a Dattis", desc: "O que é, por que existe e para quem é.", icon: Info },
       { href: "/blog", label: "Blog", desc: "LGPD e tráfego pago, sem juridiquês.", icon: Newspaper },
       { href: "/#diferencial", label: "Diferencial competitivo", desc: "Privacidade como argumento de venda da agência.", icon: Trophy },
-      { href: "/#faq", label: "Perguntas frequentes", desc: "RAT, DPA, selo, BM suspensa e preços.", icon: CircleHelp },
+      { href: "/#faq", label: "Perguntas frequentes", desc: "DPO, planos, selo, BM suspensa e preços.", icon: CircleHelp },
       { href: linkContato("Olá! Vim pelo site da Dattis e quero falar com a equipe."), label: "WhatsApp", desc: WHATSAPP_EXIBICAO, icon: MessageCircle },
     ],
   },

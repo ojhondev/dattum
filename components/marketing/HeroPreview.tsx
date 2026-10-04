@@ -28,7 +28,7 @@ export function HeroPreview() {
               <p className="font-mono text-[9px] uppercase tracking-[0.05em] text-[#59645f]">Painel · Loja Aurora</p>
               <p className="font-display text-[16px] leading-tight">Conta em dia</p>
             </div>
-            <span className="rounded-full bg-[#cff5e1] px-2.5 py-1 text-[10px] font-semibold text-[#05563a]">DAT gerado</span>
+            <span className="rounded-full bg-[#cff5e1] px-2.5 py-1 text-[10px] font-semibold text-[#05563a]">Relatório pronto</span>
           </div>
 
           <div className="mt-4 flex items-center justify-between">

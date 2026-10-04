@@ -192,11 +192,11 @@ const SLIDES: Slide[] = [
     rotulo: "Resumo para o cliente",
     titulo: "Um resumo de conformidade para mandar ao cliente todo mês",
     texto:
-      "O DAT mostra registro, contrato, ferramentas, site e certificado numa folha só, com link sempre atualizado ou PDF. É a entrega recorrente que prova o valor da agência e ajuda a renovar o contrato.",
+      "O relatório mostra registro, contrato, ferramentas, site e certificado numa folha só, com link sempre atualizado ou PDF. É a entrega recorrente que prova o valor da agência e ajuda a renovar o contrato.",
     pontos: ["Link público sempre com os dados do dia", "PDF para anexar no relatório mensal", "Próximos passos em linguagem simples"],
     visual: (
       <Palco>
-        <Janela src={dat} alt="Resumo de conformidade (DAT) de um cliente" endereco="dattis · Resumo para o cliente" className="left-[5%] top-[6%] w-[90%]" atraso={150} />
+        <Janela src={dat} alt="Relatório de conformidade de um cliente" endereco="dattis · Resumo para o cliente" className="left-[5%] top-[6%] w-[90%]" atraso={150} />
         <Chips className="bottom-[6%] right-[4%]" atraso={500} items={[{ icon: Send, label: "Enviado pro cliente", status: "sim" }]} />
       </Palco>
     ),
@@ -228,7 +228,7 @@ export function Funcionalidades() {
             </h2>
           </div>
           <p className="max-w-xl text-[18px] leading-relaxed text-white/75 lg:justify-self-end">
-            Telas reais da plataforma, sem mockup. É isso que sua agência e seus clientes usam no dia a dia.
+            Telas reais da plataforma, sem mockup. É aqui que o seu DPO na Dattis trabalha e onde você acompanha cada cliente.
           </p>
         </div>
 

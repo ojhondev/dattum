@@ -15,15 +15,18 @@ import { linkContato } from "@/lib/contato";
 // "LGPD para agência de tráfego" e variações. Texto direto, termos técnicos explicados.
 
 const URL = "/o-que-e-a-dattis";
-const TITULO = "O que é a Dattis: plataforma de LGPD para agências de tráfego pago";
+const TITULO = "O que é a Dattis: o DPO das agências de tráfego pago";
 const DESCRICAO =
-  "A Dattis é a plataforma de LGPD para agências de tráfego pago: RAT, contrato de operador (DPA), aviso de cookies, selo de privacidade e dossiê para BM suspensa.";
+  "A Dattis é o DPO das agências de tráfego pago: cuidamos da LGPD de cada cliente que a agência atende, com contrato, registro, cookies, pedidos de titulares e selo.";
 
 export const metadata: Metadata = {
-  title: { absolute: "O que é a Dattis | LGPD para agências de tráfego pago" },
+  title: { absolute: "O que é a Dattis | O DPO das agências de tráfego pago" },
   description: DESCRICAO,
   keywords: [
     "o que é a Dattis",
+    "DPO para agências",
+    "DPO terceirizado",
+    "encarregado de dados para agência",
     "LGPD para agências",
     "LGPD para agência de tráfego pago",
     "LGPD agência de marketing digital",
@@ -40,9 +43,9 @@ export const metadata: Metadata = {
 };
 
 const FATOS = [
-  { k: "O que é", v: "Plataforma online de adequação à LGPD" },
+  { k: "O que é", v: "O DPO da agência, com plataforma própria" },
   { k: "Para quem", v: "Agências de tráfego pago e marketing digital" },
-  { k: "Quanto custa", v: "De R$ 47 a R$ 297 por cliente da agência, por mês" },
+  { k: "Quanto custa", v: "Com a Dattis como DPO, R$ 97 por cliente/mês" },
   { k: "Base", v: "Lei nº 13.709/2018, a LGPD" },
 ];
 
@@ -85,7 +88,7 @@ const NAO_E = [
 const FAQ = [
   {
     q: "O que é a Dattis?",
-    a: "A Dattis é uma plataforma brasileira de adequação à LGPD feita para agências de tráfego pago e marketing digital. Ela organiza o registro de atividades de tratamento (RAT), o contrato de operador de dados (DPA), a lista de ferramentas que tratam dados, o aviso de cookies, a política de privacidade e o selo de cada cliente da agência, e confere tudo isso todos os dias.",
+    a: "A Dattis é o DPO das agências de tráfego pago e marketing digital. Nós cuidamos da LGPD de cada cliente que a agência atende: registro de atividades de tratamento (RAT), contrato de operador de dados (DPA), lista de ferramentas, aviso de cookies, política de privacidade, pedidos de titulares e selo. A agência acompanha tudo numa plataforma própria, com cada ação registrada.",
   },
   {
     q: "Agência de tráfego pago precisa se adequar à LGPD?",
@@ -101,11 +104,11 @@ const FAQ = [
   },
   {
     q: "Quanto custa a Dattis?",
-    a: "De R$ 47 a R$ 297 por cliente da agência, por mês, sem fidelidade. O plano Growth, de R$ 97, cobre o essencial: contrato com assinatura eletrônica, certificado e selo, dossiê para BM, vigilância diária e resumo de conformidade para o cliente.",
+    a: "Por cliente atendido, por mês, sem fidelidade. No Start (R$ 47), a agência usa a plataforma e faz tudo. No Growth (R$ 97), a Dattis é o DPO da agência e faz o trabalho por ela. No Scale (R$ 297), a Dattis também é nomeada encarregada oficial da agência perante a ANPD.",
   },
   {
-    q: "A Dattis substitui um advogado ou um DPO?",
-    a: "Não substitui advogado: a Dattis automatiza a parte operacional da LGPD e encaminha casos complexos a um parceiro jurídico. Já o papel de encarregado (DPO) pode ser assumido pela Dattis no plano Scale.",
+    q: "A Dattis substitui um advogado?",
+    a: "Não. A Dattis é o DPO da agência e cuida da operação de privacidade do dia a dia. Contencioso e casos complexos são encaminhados a um parceiro jurídico.",
   },
 ];
 
@@ -161,12 +164,12 @@ export default function OQueEADattisPage() {
             <div>
               <p className="t-eyebrow">Sobre a Dattis</p>
               <h1 className="mt-5 max-w-[20ch] font-display text-[clamp(2.4rem,5vw,4.2rem)] leading-[1.05] text-ink">
-                O que é a Dattis: a plataforma de LGPD para agências de tráfego pago
+                O que é a Dattis: o DPO das agências de tráfego pago
               </h1>
               <p className="mt-7 max-w-2xl text-[19px] leading-relaxed text-body">
-                <strong className="font-semibold text-ink">A Dattis é uma plataforma brasileira de adequação à LGPD feita para agências de tráfego pago e marketing digital.</strong>{" "}
-                Ela organiza o registro de atividades de tratamento (RAT), o contrato de operador de dados (DPA), o aviso de cookies,
-                a política de privacidade e o selo de cada cliente da agência, e confere tudo isso todos os dias.
+                <strong className="font-semibold text-ink">A Dattis é o DPO das agências de tráfego pago e marketing digital.</strong> Nós cuidamos
+                da LGPD de cada cliente que a sua agência atende: registro de atividades (RAT), contrato de operador de dados (DPA), aviso
+                de cookies, política de privacidade, pedidos de titulares e selo. Você acompanha tudo numa plataforma própria.
               </p>
             </div>
             <dl className="grid gap-px overflow-hidden rounded-[24px] border border-line bg-line sm:grid-cols-2 lg:grid-cols-1">
@@ -242,8 +245,8 @@ export default function OQueEADattisPage() {
                 e não acompanha o ritmo de campanha.
               </p>
               <p className="text-white">
-                A Dattis nasceu para resolver isso: fazer da LGPD na agência algo tão simples e recorrente quanto a contabilidade.
-                Uma obrigação fixa, organizada num painel só, que protege a agência e ainda vira argumento de venda.
+                A Dattis nasceu para resolver isso: ser o DPO da agência, como um contador é para as contas. A gente faz o trabalho
+                de privacidade de cada cliente, a agência acompanha num painel só, e isso ainda vira argumento de venda.
               </p>
             </div>
           </div>
@@ -276,8 +279,8 @@ export default function OQueEADattisPage() {
         {/* O QUE FAZ */}
         <section className="bg-canvas">
           <div className="w-full px-5 py-20 sm:px-10 lg:px-14">
-            <p className="t-eyebrow">O que a Dattis faz</p>
-            <h2 className="t-display mt-4 max-w-4xl">Tudo o que a LGPD pede da agência, num painel só</h2>
+            <p className="t-eyebrow">O que a Dattis faz como seu DPO</p>
+            <h2 className="t-display mt-4 max-w-4xl">Tudo o que a LGPD pede da agência. Feito por nós, acompanhado por você.</h2>
             <ul className="mt-12 grid gap-x-10 gap-y-8 sm:grid-cols-2 xl:grid-cols-4">
               {ENTREGAS.map((e) => (
                 <li key={e.t} className="border-t border-line-strong pt-5">

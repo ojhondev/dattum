@@ -20,7 +20,7 @@ const SPRINT = [
 export const metadata: Metadata = {
   title: "Planos e preços",
   alternates: { canonical: "/planos" },
-  description: "Planos da Dattis de R$ 47 a R$ 297 por cliente da agência, por mês. Uma assinatura custa muito menos que uma multa da LGPD.",
+  description: "Start: a agência faz. Growth e Scale: a Dattis é o DPO da sua agência e faz por você. De R$ 47 a R$ 297 por cliente atendido, por mês.",
 };
 
 const PILARES = Array.from(new Set(RECURSOS.map((r) => r.pilar)));
@@ -32,7 +32,11 @@ const FAQ_PLANOS = [
   },
   {
     q: "Qual plano faz sentido pra minha agência?",
-    a: "O Growth é o essencial: contrato com assinatura eletrônica, certificado e selo, Dossiê para BM, vigilância diária dos sites e DAT. O Start organiza só a documentação básica. O Scale é pra quem quer a Dattis atuando como DPO (encarregado) da agência.",
+    a: "Se a agência quer resolver a LGPD sem mexer em nada, é o Growth: a Dattis é o seu DPO e faz o trabalho por você. O Start é para quem prefere operar a plataforma sozinho. O Scale é o Growth com a Dattis nomeada encarregada oficial da agência, respondendo à ANPD e conduzindo incidentes, com gestor dedicado.",
+  },
+  {
+    q: "O que a Dattis faz como DPO?",
+    a: "Opera a LGPD de cada cliente que você atende: mantém o registro em dia, prepara e cobra os contratos, acompanha o aviso de cookies, responde os pedidos de titulares e pede os ajustes nos sites quando a vigilância encontra algo. A agência autoriza o acesso, acompanha tudo no painel e pode retirar a autorização quando quiser.",
   },
   {
     q: "O certificado vale pros meus clientes também?",
@@ -104,10 +108,10 @@ export default function PlanosPage() {
         {/* HERO */}
         <section className="px-5 pb-16 pt-14 text-center sm:pt-20">
           <p className="t-eyebrow">Planos</p>
-          <h1 className="t-hero mx-auto mt-5 max-w-[16ch]">Uma assinatura custa muito menos que uma multa.</h1>
+          <h1 className="t-hero mx-auto mt-5 max-w-[18ch]">Você faz, ou a Dattis é o seu DPO e faz por você.</h1>
           <p className="mx-auto mt-6 max-w-2xl text-[18px] leading-relaxed text-body">
-            Cada plano cobre os pilares da Dattis — documentação, proteção, relacionamento com o cliente e governança — e é
-            cobrado por cliente que sua agência atende.
+            No Start, a agência usa a plataforma e faz tudo. No Growth e no Scale, a Dattis é o DPO da sua agência e cuida da
+            LGPD de cada cliente por você. Sempre cobrado por cliente atendido.
           </p>
           <div className="mt-9 flex flex-wrap items-center justify-center gap-1">
             <span className="tag">De R$ 47 a R$ 297</span>
@@ -131,7 +135,7 @@ export default function PlanosPage() {
         {/* COMPARATIVO POR PILAR */}
         <section className="bg-canvas">
           <div className="w-full px-5 py-24 sm:px-10 lg:px-14">
-            <h2 className="t-display">O que cada plano cobre, pilar por pilar</h2>
+            <h2 className="t-display">O que cada plano cobre, e quem faz</h2>
             <ComparativoCelular />
             <div className="card-flush mt-10 hidden md:block">
               <table className="w-full border-collapse text-left">
@@ -168,24 +172,25 @@ export default function PlanosPage() {
         <section className="bg-rail text-white">
           <div className="grid w-full gap-14 px-5 pb-24 pt-14 sm:px-10 lg:grid-cols-2 lg:px-14">
             <div>
-              <p className="font-mono text-[clamp(1.1rem,2vw,1.4rem)] uppercase tracking-[0.02em] text-brand">Plano Scale</p>
+              <p className="font-mono text-[clamp(1.1rem,2vw,1.4rem)] uppercase tracking-[0.02em] text-brand">Growth e Scale</p>
               <h2 className="mt-6 font-display text-[clamp(2rem,4vw,3.2rem)] leading-[1.1] text-white">
                 A Dattis como DPO da sua agência.
               </h2>
               <p className="mt-6 max-w-lg text-[17px] leading-relaxed text-white/80">
-                O encarregado de dados é quem responde pela privacidade da empresa: atende os titulares, fala com a ANPD e
-                orienta a equipe. No Scale, esse papel é nosso — sem você contratar ninguém.
+                O DPO é quem cuida da privacidade da empresa. No Growth, a Dattis assume esse trabalho na sua agência: opera a
+                LGPD de cada cliente por você. No Scale, além disso, somos nomeados encarregados oficiais da agência perante a
+                ANPD. Sem você contratar ninguém.
               </p>
-              <ArrowLink href={linkAssinar("Scale")} className="mt-10 !text-white">
-                Assinar o Scale
+              <ArrowLink href={linkAssinar("Growth")} className="mt-10 !text-white">
+                Quero a Dattis como DPO
               </ArrowLink>
             </div>
             <ul className="flex flex-col gap-3 self-center">
               {[
-                "Recebe e responde pedidos dos donos dos dados",
-                "Responde às comunicações da ANPD",
-                "Orienta sua equipe sobre boas práticas",
-                "Conduz a resposta a incidentes de segurança",
+                "Opera a LGPD de cada cliente: registro, contratos, cookies",
+                "Responde os pedidos dos donos dos dados no prazo",
+                "Acompanha a vigilância e pede os ajustes nos sites",
+                "No Scale: responde à ANPD e conduz incidentes",
               ].map((s, i) => (
                 <li key={s} className="flex items-center gap-4 rounded-[20px] bg-white/[0.06] px-6 py-5">
                   <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-brand font-mono text-[14px] text-on-brand">

@@ -188,7 +188,7 @@ export function DatVisual() {
   return (
     <Cena>
       <div aria-hidden="true" className={SCREEN}>
-        <p className={ROTULO}>DAT · resumo de conformidade</p>
+        <p className={ROTULO}>Relatório para o cliente</p>
         <p className="font-display mt-2 text-[20px] leading-tight">Loja Aurora está em dia</p>
         <ul className="mt-4 space-y-2 text-[13px]">
           {rows.map((r, i) => (

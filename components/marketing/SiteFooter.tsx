@@ -13,7 +13,7 @@ const COLUMNS: { title: string; links: { label: string; href: string }[] }[] = [
       { label: "Auditoria", href: "/#modulos" },
       { label: "Certificado e selo", href: "/#modulos" },
       { label: "Dossiê para BM", href: "/#bm-suspensa" },
-      { label: "DAT", href: "/#modulos" },
+      { label: "Relatório para o cliente", href: "/#modulos" },
     ],
   },
   {
@@ -96,7 +96,7 @@ export function SiteFooter() {
         <div className="mt-16 flex flex-col gap-8 border-t border-white/10 pt-8 lg:flex-row lg:items-end lg:justify-between">
           <div className="max-w-xl space-y-2 text-[13px] text-white/55">
             <p>© {year} Dattis. Todos os direitos reservados.</p>
-            <p>Compliance LGPD para agências de tráfego pago. Baseado na Lei nº 13.709/2018 (LGPD).</p>
+            <p>O DPO das agências de tráfego pago. Baseado na Lei nº 13.709/2018 (LGPD).</p>
           </div>
           <div className="flex flex-wrap gap-3">
             <Link href="/planos" className="btn btn-primary">
