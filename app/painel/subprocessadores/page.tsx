@@ -4,7 +4,7 @@ import { getSessao } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { contasCliente, contaSubprocessadores, subprocessadoresCatalogo } from "@/lib/db/schema";
 import { ExternalLink } from "lucide-react";
-import { BarraModulo, BuscaModulo, FiltroModulo } from "@/components/app/Modulo";
+import { BarraModulo, BuscaModulo, SelecaoModulo } from "@/components/app/Modulo";
 import { ferramentasDaAgencia } from "@/lib/ferramentas-agencia";
 import { AdicionarFerramenta } from "@/components/app/AdicionarFerramenta";
 import { ExcluirFerramenta } from "@/components/app/ExcluirFerramenta";
@@ -67,8 +67,9 @@ export default async function SubprocessadoresPage({ searchParams }: { searchPar
           <>
             <BuscaModulo placeholder="Buscar ferramenta" />
             {categorias.length > 1 && (
-              <FiltroModulo
+              <SelecaoModulo
                 nome="categoria"
+                rotulo="Categoria"
                 opcoes={[{ valor: "todas", rotulo: "Todas", n: todos.length }, ...categorias.map((c) => ({ valor: c, rotulo: c, n: todos.filter((g) => g.categoria === c).length }))]}
               />
             )}

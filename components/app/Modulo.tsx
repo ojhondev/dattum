@@ -124,7 +124,7 @@ export function FiltroModulo({ nome, opcoes, padrao }: { nome: string; opcoes: {
   const base = padrao ?? opcoes[0]?.valor;
   const atual = valor(nome) ?? base;
   return (
-    <div role="group" className="flex max-w-full gap-1 overflow-x-auto rounded-lg bg-canvas p-1 [scrollbar-width:none]">
+    <div role="group" className="flex max-w-full flex-wrap gap-1 rounded-lg bg-canvas p-1">
       {opcoes.map((o) => {
         const on = atual === o.valor;
         return (
@@ -147,10 +147,37 @@ export function FiltroModulo({ nome, opcoes, padrao }: { nome: string; opcoes: {
   );
 }
 
+/**
+ * Filtro em lista suspensa, na URL (?{nome}=valor), para quando há opções demais para botões
+ * (ex.: as categorias de ferramentas). O valor padrão (o primeiro) fica sem parâmetro.
+ */
+export function SelecaoModulo({ nome, rotulo, opcoes }: { nome: string; rotulo: string; opcoes: { valor: string; rotulo: string; n?: number }[] }) {
+  const { valor, definir } = useParam();
+  const base = opcoes[0]?.valor;
+  return (
+    <label className="flex h-9 min-w-0 items-center gap-2 rounded-lg border border-line bg-canvas pl-2.5 pr-1 focus-within:border-brand-strong">
+      <span className="shrink-0 text-[13px] text-muted">{rotulo}</span>
+      <select
+        id={`filtro-${nome}`}
+        value={valor(nome) ?? base}
+        onChange={(e) => definir(nome, e.target.value === base ? null : e.target.value)}
+        className="h-full min-w-0 max-w-[240px] cursor-pointer bg-transparent text-[13.5px] text-ink outline-none"
+      >
+        {opcoes.map((o) => (
+          <option key={o.valor} value={o.valor}>
+            {o.rotulo}
+            {o.n !== undefined ? ` (${o.n})` : ""}
+          </option>
+        ))}
+      </select>
+    </label>
+  );
+}
+
 /** Abas de uma página de detalhe (controladas pela própria página). */
 export function AbasModulo<T extends string>({ abas, atual, onChange }: { abas: { id: T; rotulo: string; n?: number }[]; atual: T; onChange: (id: T) => void }) {
   return (
-    <div role="tablist" className="flex max-w-full gap-1 overflow-x-auto rounded-lg bg-canvas p-1 [scrollbar-width:none]">
+    <div role="tablist" className="flex max-w-full flex-wrap gap-1 rounded-lg bg-canvas p-1">
       {abas.map((a) => {
         const on = a.id === atual;
         return (
