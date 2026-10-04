@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { and, eq, ne } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { agencias } from "@/lib/db/schema";
-import { ehDono, getSessao, verificarSenha } from "@/lib/auth";
+import { ehDono, ehOperador, getSessao, verificarSenha } from "@/lib/auth";
 import { registrar } from "@/lib/registro";
 import { EMAIL_DEMO } from "@/lib/admin-dados";
 import { atualizarRascunhosDaAgencia } from "@/lib/dpa";
@@ -30,6 +30,9 @@ export async function PATCH(req: Request) {
 
   const email = (texto(b?.email, 160) ?? "").toLowerCase();
   if (!EMAIL.test(email)) return NextResponse.json({ ok: false, error: "Informe um e-mail válido." }, { status: 400 });
+  if (email !== agencia.email && ehOperador(sessao)) {
+    return NextResponse.json({ ok: false, error: "O DPO da Dattis não troca o e-mail de acesso da agência. Peça ao dono da conta." }, { status: 403 });
+  }
   if (email !== agencia.email) {
     if (agencia.senhaDefinida) {
       const senha = typeof b?.senhaAtual === "string" ? b.senhaAtual : "";

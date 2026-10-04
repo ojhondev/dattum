@@ -37,6 +37,11 @@ export const agencias = pgTable("agencias", {
   cookiesConfig: jsonb("cookies_config").$type<ConfigCookies>(),
   cookiesDetectadoEm: timestamp("cookies_detectado_em"), // aviso visto funcionando no site (script carregado ou escolha de visitante)
   cookiesDetectadoUrl: text("cookies_detectado_url"),
+  // Multiacesso: a agência autoriza o DPO da Dattis a operar a conta (Scale inclui; nos outros planos, servico_dpo = adicional)
+  acessoDattis: boolean("acesso_dattis").notNull().default(false),
+  acessoDattisEm: timestamp("acesso_dattis_em"),
+  servicoDpo: boolean("servico_dpo").notNull().default(false),
+  dattisUltimoAcesso: timestamp("dattis_ultimo_acesso"),
   onboardingConcluidoEm: timestamp("onboarding_concluido_em"), // fim do preenchimento guiado (/painel/comecar)
   toursVistos: jsonb("tours_vistos").$type<string[]>().notNull().default([]), // tours guiados já concluídos ou pulados
   diaVencimento: integer("dia_vencimento").notNull().default(10), // dia do mês da mensalidade

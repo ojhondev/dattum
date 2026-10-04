@@ -103,7 +103,7 @@ export default async function AdminAgencias() {
                     <span className="flex flex-col gap-1.5">
                       <RodarVarredura agenciaId={a.id} rotulo="Varrer" className="btn btn-ghost" />
                       {!a.demo && <LinkSenha agenciaId={a.id} agenciaNome={a.nome} contato={a.contato} />}
-                      {!a.demo && <GerenciarAgencia agenciaId={a.id} agenciaNome={a.nome} plano={a.plano} clientes={a.contratados} suspensa={a.suspensa} />}
+                      {!a.demo && <GerenciarAgencia agenciaId={a.id} agenciaNome={a.nome} plano={a.plano} clientes={a.contratados} suspensa={a.suspensa} servicoDpo={a.servicoDpo} />}
                     </span>
                   </td>
                 </tr>

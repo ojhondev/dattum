@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { eq, and } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { dpas } from "@/lib/db/schema";
-import { getSessao } from "@/lib/auth";
+import { ehOperador, getSessao } from "@/lib/auth";
 import { automatizarCertificados } from "@/lib/automacao";
 import { filtroVigente, ipDe, registrarAssinatura, userAgentDe, situacaoDpa } from "@/lib/dpa";
 import { registrar } from "@/lib/registro";
@@ -14,6 +14,10 @@ export const runtime = "nodejs";
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const sessao = await getSessao();
   if (!sessao) return NextResponse.json({ ok: false, error: "Não autenticado." }, { status: 401 });
+  // Assinar é ato de quem representa a agência: o DPO da Dattis prepara e cobra, mas não assina por ela.
+  if (ehOperador(sessao)) {
+    return NextResponse.json({ ok: false, error: "O contrato precisa ser assinado por alguém da agência. Como DPO, mande o lembrete para o responsável assinar." }, { status: 403 });
+  }
 
   const { id } = await params;
   const body = await req.json().catch(() => null);

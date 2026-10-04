@@ -2,7 +2,8 @@ import Link from "next/link";
 import { count, eq } from "drizzle-orm";
 import { ArrowRight, BadgeCheck, Download, Network } from "lucide-react";
 import { AdicionarFerramenta } from "@/components/app/AdicionarFerramenta";
-import { ehDono, getSessao } from "@/lib/auth";
+import { ehDono, ehOperador, getSessao, temServicoDpo } from "@/lib/auth";
+import { AcessoDattis } from "./AcessoDattis";
 import { db } from "@/lib/db";
 import { agencias, contasCliente, usuarios } from "@/lib/db/schema";
 import { PLANOS } from "@/lib/planos";
@@ -24,7 +25,7 @@ const ROTULO = "font-mono text-[12px] uppercase tracking-[0.04em] text-muted";
 const TITULO = "text-[17px] font-medium text-ink";
 const DESC = "mt-1 text-[14px] leading-relaxed text-muted";
 
-type Aba = "agencia" | "conta" | "equipe" | "privacidade" | "ferramentas" | "plano" | "registro";
+type Aba = "agencia" | "conta" | "equipe" | "privacidade" | "ferramentas" | "dattis" | "plano" | "registro";
 
 export default async function ConfiguracoesPage({ searchParams }: { searchParams: Promise<{ aba?: string }> }) {
   const sessao = await getSessao();
@@ -47,6 +48,7 @@ export default async function ConfiguracoesPage({ searchParams }: { searchParams
         { valor: "equipe", rotulo: "Equipe" },
         { valor: "privacidade", rotulo: "Privacidade e cookies" },
         { valor: "ferramentas", rotulo: "Ferramentas" },
+        { valor: "dattis", rotulo: "Acesso da Dattis" },
         { valor: "plano", rotulo: "Plano e documentos" },
         { valor: "registro", rotulo: "Registro de atividades" },
       ]
@@ -179,6 +181,46 @@ export default async function ConfiguracoesPage({ searchParams }: { searchParams
             <ArrowRight size={17} className="shrink-0 text-muted" />
           </a>
         </div>
+      )}
+
+      {aba === "dattis" && dono && (
+        <section className={CARD}>
+          <h2 className={TITULO}>A Dattis faz por você</h2>
+          {temServicoDpo(agencia) ? (
+            <>
+              <p className={DESC}>
+                {agencia.plano !== "start" ? `No plano ${agencia.plano === "scale" ? "Scale" : "Growth"}` : "Com o serviço de DPO contratado"}, a Dattis é o DPO da sua agência e cuida da conta por você: prepara e cobra
+                contratos, responde pedidos de titulares, acompanha a vigilância e mantém tudo em dia. Para isso, ele precisa da sua autorização para entrar
+                na conta. Tudo o que ele fizer fica no Registro de atividades, com o nome dele, e você pode retirar o acesso quando quiser.
+              </p>
+              <AcessoDattis ativo={agencia.acessoDattis} podeMudar={!ehOperador(sessao) && !demo} />
+              <p className="mt-3 text-[13.5px] text-muted">
+                {agencia.dattisUltimoAcesso
+                  ? `Último acesso da Dattis: ${agencia.dattisUltimoAcesso.toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short", timeZone: "America/Sao_Paulo" })}.`
+                  : "A Dattis ainda não entrou na conta."}{" "}
+                <a href="/painel/configuracoes?aba=registro" className="underline underline-offset-2 hover:text-ink">
+                  Ver o que foi feito
+                </a>
+              </p>
+            </>
+          ) : (
+            <>
+              <p className={DESC}>
+                No plano Start, a própria agência opera a plataforma. Prefere que a Dattis seja o DPO da agência e faça por você: preparar e cobrar
+                contratos, responder pedidos de titulares, acompanhar a vigilância e manter tudo em dia, com cada ação registrada? Isso vem incluso no Growth
+                (R$ 97 por cliente/mês) e no Scale.
+              </p>
+              <a
+                href={linkContato(`Olá! Quero passar a ${agencia.nome} para o Growth, com a Dattis como DPO.`)}
+                target="_blank"
+                rel="noopener"
+                className="barra-btn primario mt-4"
+              >
+                Quero que a Dattis faça por mim
+              </a>
+            </>
+          )}
+        </section>
       )}
 
       {aba === "ferramentas" && dono && (

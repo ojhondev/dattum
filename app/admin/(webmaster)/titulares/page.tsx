@@ -9,7 +9,7 @@ export const dynamic = "force-dynamic";
 const TH = "border-b border-line px-4 py-3 text-left font-mono text-[12px] font-normal uppercase tracking-[0.04em] text-muted";
 const TD = "border-b border-line px-4 py-3.5 align-top";
 
-/** Visão da Dattis sobre todos os pedidos de titulares. No plano Scale, o DPO da Dattis acompanha estes pedidos. */
+/** Visão da Dattis sobre todos os pedidos de titulares. Nos planos Growth e Scale, o DPO da Dattis responde estes pedidos. */
 export default async function AdminTitulares() {
   const [pedidos, ags, contas] = await Promise.all([
     db.query.pedidosTitular.findMany({ orderBy: desc(pedidosTitular.criadoEm), limit: 500 }),

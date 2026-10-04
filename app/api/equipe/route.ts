@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { eq } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { agencias, usuarios } from "@/lib/db/schema";
-import { ehDono, getSessao } from "@/lib/auth";
+import { ehDono, ehOperador, getSessao } from "@/lib/auth";
 import { EMAIL_DEMO } from "@/lib/admin-dados";
 import { emailEmUso, novoConvite } from "@/lib/equipe";
 import { registrar } from "@/lib/registro";
@@ -16,6 +16,7 @@ export async function POST(req: Request) {
   const sessao = await getSessao();
   if (!sessao) return NextResponse.json({ ok: false, error: "Não autenticado." }, { status: 401 });
   if (!ehDono(sessao)) return NextResponse.json({ ok: false, error: "Só o dono da conta gerencia a equipe." }, { status: 403 });
+  if (ehOperador(sessao)) return NextResponse.json({ ok: false, error: "O DPO da Dattis não altera login, senha, equipe nem aceita termos pela agência. Peça ao dono da conta." }, { status: 403 });
   const agencia = await db.query.agencias.findFirst({ where: eq(agencias.id, sessao.agenciaId), columns: { email: true } });
   if (agencia?.email === EMAIL_DEMO) return NextResponse.json({ ok: false, error: "A conta de demonstração não pode convidar pessoas." }, { status: 403 });
 

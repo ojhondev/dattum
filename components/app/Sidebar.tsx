@@ -10,6 +10,7 @@ import { linkContato } from "@/lib/contato";
 import {
   LayoutDashboard,
   Users,
+  UserCheck,
   FileText,
   Cookie,
   BadgeCheck,
@@ -60,7 +61,10 @@ const GRUPOS_PAINEL: Grupo[] = [
 const GRUPOS_ADMIN: Grupo[] = [
   {
     title: "WebMaster",
-    items: [{ href: "/admin", label: "Visão geral", icon: LayoutDashboard, exact: true }],
+    items: [
+      { href: "/admin", label: "Visão geral", icon: LayoutDashboard, exact: true },
+      { href: "/admin/dpo", label: "Portal do DPO", icon: UserCheck },
+    ],
   },
   {
     title: "Operação",
@@ -225,7 +229,7 @@ export function Sidebar({
       <span className="pixel-corners pixel-corners-sm grid h-9 w-9 shrink-0 place-items-center bg-brand font-mono text-[13px] text-on-brand">{iniciais(agenciaNome)}</span>
       <span className="min-w-0 leading-tight">
         <span className="block truncate text-[14px] font-medium text-ink">{agenciaNome}</span>
-        <span className="block truncate text-[12px] text-muted">{variante === "admin" ? "Administrador" : pessoa ? `Equipe · ${pessoa}` : "Dono da conta"}</span>
+        <span className="block truncate text-[12px] text-muted">{variante === "admin" ? "Administrador" : pessoa?.startsWith("DPO Dattis") ? pessoa : pessoa ? `Equipe · ${pessoa}` : "Dono da conta"}</span>
       </span>
     </div>
   );

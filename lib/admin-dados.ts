@@ -36,6 +36,8 @@ export async function carregarAgencias() {
       planoNome: PLANOS.find((p) => p.id === a.plano)?.nome ?? a.plano,
       demo,
       suspensa: a.suspensa,
+      servicoDpo: a.servicoDpo,
+      acessoDattis: a.acessoDattis,
       criadaEm: a.createdAt,
       contas,
       contratados: a.clientesContratados,

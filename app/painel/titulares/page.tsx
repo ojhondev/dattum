@@ -69,7 +69,7 @@ export default async function TitularesPage({ searchParams }: { searchParams: Pr
         }
         direita={
           <span className="px-2 text-[13px] text-muted">
-            Prazo legal de 15 dias{agencia?.plano === "scale" ? " · o DPO da Dattis acompanha" : ""}
+            Prazo legal de 15 dias{agencia && agencia.plano !== "start" ? " · o DPO da Dattis responde por você" : ""}
           </span>
         }
       />

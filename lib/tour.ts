@@ -293,5 +293,5 @@ export const GLOSSARIO: { termo: string; significado: string }[] = [
   { termo: "Consentimento", significado: "Quando a pessoa autoriza, por exemplo, clicando em Aceitar no aviso de cookies." },
   { termo: "DAT / Relatório para o cliente", significado: "O relatório de conformidade que você manda ao cliente mostrando que está tudo em dia." },
   { termo: "ANPD", significado: "Autoridade Nacional de Proteção de Dados: o órgão que fiscaliza e multa." },
-  { termo: "Encarregado (DPO)", significado: "A pessoa que responde pela privacidade da empresa. No plano Scale, a Dattis faz esse papel pela agência." },
+  { termo: "Encarregado (DPO)", significado: "A pessoa que responde pela privacidade da empresa. Nos planos Growth e Scale, a Dattis faz esse papel pela agência." },
 ];

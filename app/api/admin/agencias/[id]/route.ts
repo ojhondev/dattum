@@ -12,6 +12,7 @@ export const runtime = "nodejs";
  * - `link-senha`: gera um link de redefinição (vale 3 dias)
  * - `suspender` / `reativar`: bloqueia o painel (ex.: inadimplência); os dados ficam preservados
  * - `plano`: muda plano e quantidade de clientes contratados
+ * - `servico-dpo`: liga/desliga o serviço de DPO operado pela Dattis como adicional (no Scale já vem incluso)
  */
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
   if (!(await isAdmin())) return NextResponse.json({ ok: false, error: "Não autorizado." }, { status: 401 });
@@ -37,6 +38,9 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       await db.update(agencias).set({ plano, clientesContratados: clientes }).where(eq(agencias.id, agencia.id));
       return NextResponse.json({ ok: true });
     }
+    case "servico-dpo":
+      await db.update(agencias).set({ servicoDpo: body?.ativo === true }).where(eq(agencias.id, agencia.id));
+      return NextResponse.json({ ok: true });
   }
   return NextResponse.json({ ok: false, error: "Ação desconhecida." }, { status: 400 });
 }

@@ -115,12 +115,14 @@ export function GerenciarAgencia({
   plano,
   clientes,
   suspensa,
+  servicoDpo,
 }: {
   agenciaId: string;
   agenciaNome: string;
   plano: string;
   clientes: number | null;
   suspensa: boolean;
+  servicoDpo: boolean;
 }) {
   const router = useRouter();
   const [aberto, setAberto] = useState(false);
@@ -165,6 +167,20 @@ export function GerenciarAgencia({
       <button type="button" className="btn btn-primary" disabled={estado === "salvando"} onClick={() => enviar({ acao: "plano", plano: p, clientes: Number(n) })}>
         Salvar plano
       </button>
+      {plano !== "start" ? (
+        <span className="text-[12.5px] text-muted">Dattis como DPO: incluso no plano</span>
+      ) : (
+        <label className="flex items-center gap-2 text-[13px] text-body">
+          <input
+            type="checkbox"
+            checked={servicoDpo}
+            disabled={estado === "salvando"}
+            onChange={(e) => enviar({ acao: "servico-dpo", ativo: e.target.checked })}
+            className="h-4 w-4 accent-[var(--color-brand-strong)]"
+          />
+          Serviço de DPO (adicional)
+        </label>
+      )}
       <button type="button" className={"btn " + (suspensa ? "btn-primary" : "btn-ghost text-danger")} disabled={estado === "salvando"} onClick={alternarSuspensao}>
         {suspensa ? "Reativar acesso" : "Suspender acesso"}
       </button>

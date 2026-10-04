@@ -38,10 +38,22 @@ export default async function PainelLayout({ children }: { children: React.React
         agenciaNome={agencia.nome}
         sairSlot={<SairButton />}
         plano={plano ? { nome: plano.nome, usados: Number(n), limite: agencia.clientesContratados } : undefined}
-        pessoa={pessoa?.nome ?? null}
+        pessoa={sessao.operador ? `DPO Dattis (${sessao.operador})` : (pessoa?.nome ?? null)}
         pedidosAbertos={Number(pedidos)}
       />
       <div className="min-w-0 flex-1">
+        {sessao.operador && (
+          <div className="no-print flex flex-wrap items-center gap-x-4 gap-y-1 bg-orange px-4 py-2 text-[13.5px] text-[#2b1606] sm:px-10">
+            <span className="flex-1">
+              Você está operando a conta da <b>{agencia.nome}</b> como DPO da Dattis ({sessao.operador}). Tudo o que fizer fica no registro de atividades dela.
+            </span>
+            {/* Rota de API que encerra a sessão: precisa ser link comum (o Link do Next poderia pré-carregar e deslogar). */}
+            {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
+            <a href="/api/admin/operar/sair" className="rounded-full bg-[#2b1606] px-3 py-1 font-mono text-[11.5px] uppercase tracking-[0.04em] text-white hover:bg-black">
+              Sair e voltar ao portal
+            </a>
+          </div>
+        )}
         <Topbar agenciaNome={agencia.nome} />
         <main className="px-4 pb-16 pt-6 sm:px-10 lg:pt-8">
           {atrasada && (
@@ -60,7 +72,7 @@ export default async function PainelLayout({ children }: { children: React.React
               </a>
             </div>
           )}
-          {agencia.termosVersao !== VERSAO_LEGAL && agencia.email !== EMAIL_DEMO && (
+          {agencia.termosVersao !== VERSAO_LEGAL && agencia.email !== EMAIL_DEMO && !sessao.operador && (
             <AvisoTermos versao={VERSAO_LEGAL} atualizacao={!!agencia.termosVersao} />
           )}
           {agencia.suspensa ? (

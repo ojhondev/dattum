@@ -5,6 +5,7 @@ import type { Sessao } from "@/lib/auth";
 
 /** Quem está logado, em nome legível: a pessoa da equipe ou o dono (responsável da agência). */
 export async function autorDaSessao(s: Sessao) {
+  if (s.operador) return { nome: `${s.operador} (DPO Dattis)`, email: null, usuarioId: null };
   if (s.usuarioId) {
     const u = await db.query.usuarios.findFirst({ where: eq(usuarios.id, s.usuarioId), columns: { nome: true, email: true } });
     if (u) return { nome: u.nome, email: u.email, usuarioId: s.usuarioId };

@@ -2,8 +2,8 @@ import type { DadosEmpresa } from "@/lib/empresa";
 
 // Versão dos documentos legais da própria Dattis. Mudou o texto de forma relevante? Suba a versão:
 // o aceite gravado no cadastro (agencias.termos_versao) mostra qual versão cada agência aceitou.
-export const VERSAO_LEGAL = "2026.10.3";
-export const VIGENCIA_LEGAL = "2 de outubro de 2026";
+export const VERSAO_LEGAL = "2026.10.4";
+export const VIGENCIA_LEGAL = "4 de outubro de 2026";
 
 export type DocumentoLegal = "termos" | "privacidade" | "contrato-de-dados";
 
@@ -104,6 +104,14 @@ O preço é cobrado por cliente da Agência, por mês, conforme o plano e a prop
 Os valores podem ser reajustados uma vez a cada 12 meses pelo IPCA (ou pelo índice que o substituir), com aviso prévio de 30 dias.
 
 Se houver atraso de pagamento, a Dattis avisa a Agência. Se o débito continuar depois de 10 dias do aviso, o acesso pode ser suspenso até a regularização. Durante a suspensão, os dados ficam preservados e o selo dos sites pode mostrar o certificado como suspenso.
+
+## Operação da conta pela Dattis (serviço de DPO)
+
+Nos planos Growth e Scale, ou quando contratado como serviço adicional no Start, o encarregado (DPO) da Dattis pode operar a conta da Agência para prestar o serviço: manter registros e ferramentas em dia, preparar documentos, enviar e cobrar os links de assinatura, responder pedidos de titulares e acompanhar a vigilância dos sites.
+
+Esse acesso só acontece enquanto a Agência mantiver a autorização ligada em Configurações → Acesso da Dattis, e pode ser retirado a qualquer momento, com efeito imediato. Cada ação feita pela Dattis fica no registro de atividades da Agência, identificada com o nome do DPO.
+
+A Dattis não assina contratos em nome da Agência, não altera o login, a senha ou a equipe e não aceita estes Termos por ela. Nessa operação, a Dattis trata os dados como suboperadora, nos limites do [Contrato de Tratamento de Dados](/contrato-de-dados).
 
 ## Prazo, renovação e encerramento
 

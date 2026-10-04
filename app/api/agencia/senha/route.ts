@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { eq } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { agencias } from "@/lib/db/schema";
-import { ehDono, getSessao, hashSenha, verificarSenha } from "@/lib/auth";
+import { ehDono, ehOperador, getSessao, hashSenha, verificarSenha } from "@/lib/auth";
 import { registrar } from "@/lib/registro";
 import { EMAIL_DEMO } from "@/lib/admin-dados";
 
@@ -13,6 +13,7 @@ export async function POST(req: Request) {
   const sessao = await getSessao();
   if (!sessao) return NextResponse.json({ ok: false, error: "Não autenticado." }, { status: 401 });
   if (!ehDono(sessao)) return NextResponse.json({ ok: false, error: "Só o dono da conta pode fazer isso." }, { status: 403 });
+  if (ehOperador(sessao)) return NextResponse.json({ ok: false, error: "O DPO da Dattis não altera login, senha, equipe nem aceita termos pela agência. Peça ao dono da conta." }, { status: 403 });
   const agencia = await db.query.agencias.findFirst({ where: eq(agencias.id, sessao.agenciaId) });
   if (!agencia) return NextResponse.json({ ok: false, error: "Agência não encontrada." }, { status: 404 });
   if (agencia.email === EMAIL_DEMO) {
