@@ -33,6 +33,24 @@ export const TOURS: Tour[] = [
         lado: "right",
       },
       {
+        alvo: nav("/painel/documentos"),
+        titulo: "Documentos prontos",
+        texto: "Cláusula de LGPD para o contrato comercial, política de privacidade, aviso para formulários: tudo preenchido com os dados de cada cliente.",
+        lado: "right",
+      },
+      {
+        alvo: nav("/painel/cookies"),
+        titulo: "Aviso de cookies",
+        texto: "O banner que segura o pixel até o visitante aceitar. Instale pelo Gerenciador de Tags ou mande o passo a passo para quem cuida do site; a Dattis avisa quando estiver funcionando.",
+        lado: "right",
+      },
+      {
+        alvo: nav("/painel/certificados"),
+        titulo: "Certificados e selo",
+        texto: "Quando a documentação de um cliente fica completa, o certificado sai sozinho. Aqui você pega o selo para o rodapé do site.",
+        lado: "right",
+      },
+      {
         alvo: "gerar-relatorio",
         titulo: "Relatório em um clique",
         texto: "De qualquer tela, gere o relatório da carteira inteira ou o relatório para o cliente, pronto para mandar.",

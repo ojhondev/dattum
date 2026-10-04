@@ -10,6 +10,9 @@ import { linkContato } from "@/lib/contato";
 import {
   LayoutDashboard,
   Users,
+  FileText,
+  Cookie,
+  BadgeCheck,
   Radar,
   Building2,
   Inbox,
@@ -34,14 +37,17 @@ import logoEscuro from "../../public/brand/logo-fundo-dark.png";
 type Item = { href: string; label: string; icon: LucideIcon; exact?: boolean; n?: number };
 type Grupo = { title: string; items: Item[] };
 
-// Painel da agência: poucas portas. Cookies, ferramentas, vigilância, certificado, documentos e
-// dossiê vivem dentro de cada cliente; "Pedidos" só aparece quando há pedido em aberto.
+// Painel da agência: poucas portas. Documentos, cookies e certificados ficam à mão no menu; ferramentas,
+// vigilância e dossiê vivem dentro de cada cliente; "Pedidos" só aparece quando há pedido em aberto.
 const GRUPOS_PAINEL: Grupo[] = [
   {
     title: "Menu",
     items: [
       { href: "/painel", label: "Início", icon: LayoutDashboard, exact: true },
       { href: "/painel/contas", label: "Clientes", icon: Users },
+      { href: "/painel/documentos", label: "Documentos", icon: FileText },
+      { href: "/painel/cookies", label: "Cookies", icon: Cookie },
+      { href: "/painel/certificados", label: "Certificados e selo", icon: BadgeCheck },
       { href: "/painel/titulares", label: "Pedidos de titulares", icon: Inbox },
     ],
   },
