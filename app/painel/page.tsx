@@ -1,6 +1,5 @@
 import Link from "next/link";
 import {
-  ArrowRight,
   ArrowUpRight,
   BadgeCheck,
   FileSignature,
@@ -25,8 +24,8 @@ import { TIPOS_DOCUMENTO } from "@/lib/documentos";
 import { NotaVigilancia, SeveridadeChip } from "@/components/app/VigilanciaChips";
 import { GraficoVigilancia } from "@/components/app/graficos/GraficoVigilancia";
 import { Rosca } from "@/components/app/graficos/Rosca";
-import { PrimeirosPassos } from "@/components/app/PrimeirosPassos";
-import { primeirosPassos } from "@/lib/primeiros-passos";
+import { ListaTarefas } from "@/components/app/ListaTarefas";
+import { tarefasDaAgencia } from "@/lib/tarefas";
 import { BarraModulo, FiltroModulo } from "@/components/app/Modulo";
 
 export const dynamic = "force-dynamic";
@@ -61,9 +60,9 @@ export default async function PainelDashboard({ searchParams }: { searchParams: 
   const sp = await searchParams;
   const periodo = PERIODOS.includes(Number(sp.periodo)) ? Number(sp.periodo) : 30;
   const filtroAtividade = FILTROS_ATIVIDADE.find((f) => f.id === sp.atividade) ?? FILTROS_ATIVIDADE[1];
-  const [d, passos, agencia] = await Promise.all([
+  const [d, tarefas, agencia] = await Promise.all([
     dadosDoPainel(sessao.agenciaId, { dias: periodo }),
-    primeirosPassos(sessao.agenciaId),
+    tarefasDaAgencia(sessao.agenciaId),
     db.query.agencias.findFirst({ where: eq(agencias.id, sessao.agenciaId), columns: { onboardingConcluidoEm: true, email: true } }),
   ]);
   // Primeiro acesso, sem cliente: começa pelo preenchimento guiado.
@@ -104,8 +103,18 @@ export default async function PainelDashboard({ searchParams }: { searchParams: 
           </>
         }
       />
-      <PrimeirosPassos passos={passos} />
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-12">
+      <ListaTarefas tarefas={tarefas} />
+
+      {/* Números e gráficos: para quem quer acompanhar, recolhidos por padrão */}
+      <details className="group mt-6" open={tarefas.length === 0}>
+        <summary className="flex cursor-pointer list-none items-center gap-2 py-2 text-[15px] font-medium text-ink">
+          <span className="grid h-6 w-6 place-items-center rounded-md border border-line text-muted transition-transform group-open:rotate-90">›</span>
+          Visão geral da carteira
+          <span className="text-[13.5px] font-normal text-muted">
+            · {d.total ? `${pct}% em dia` : "sem clientes ainda"}
+          </span>
+        </summary>
+      <div className="mt-3 grid grid-cols-1 gap-4 lg:grid-cols-12">
         {/* Índice de conformidade (cartão verde de destaque) */}
         <section data-tour="indice" className="pixel-corners relative overflow-hidden bg-brand p-6 text-on-brand lg:col-span-6 xl:col-span-4">
           <div aria-hidden="true" className="absolute -right-10 -top-16 h-56 w-56 rounded-full border-[28px] border-white/25" />
@@ -345,29 +354,6 @@ export default async function PainelDashboard({ searchParams }: { searchParams: 
         </section>
 
         {/* Pendências */}
-        <section data-tour="resolver" className={CARD + " p-5 lg:order-9 lg:col-span-6 xl:order-none"}>
-          <div className="flex items-center justify-between gap-3">
-            <h2 className="text-[16px] font-medium text-ink">O que resolver primeiro</h2>
-            <span className="pill pill-neutral">{d.pendencias.length}</span>
-          </div>
-          {d.pendencias.length === 0 ? (
-            <p className="mt-4 rounded-2xl bg-brand-tint px-4 py-3 text-[14px] text-brand-ink">Nada pendente. Carteira em dia.</p>
-          ) : (
-            <ul className="mt-3 flex flex-col divide-y divide-line">
-              {d.pendencias.slice(0, 6).map((p, i) => (
-                <li key={i}>
-                  <Link href={p.href ?? `/painel/contas/${p.contaId}`} className="group flex items-center gap-3 py-2.5">
-                    <SeveridadeChip severidade={p.severidade} />
-                    <span className="min-w-0 flex-1 truncate text-[14px]">
-                      <b className="font-medium text-ink">{p.conta}</b> <span className="text-body">· {p.texto}</span>
-                    </span>
-                    <ArrowRight size={15} className="shrink-0 text-faint transition-transform group-hover:translate-x-0.5" />
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          )}
-        </section>
 
         {/* Operações de tráfego */}
         <section className={CARD + " p-5 lg:order-9 lg:col-span-6 xl:order-none"}>
@@ -455,6 +441,7 @@ export default async function PainelDashboard({ searchParams }: { searchParams: 
           </div>
         </section>
       </div>
+      </details>
     </div>
   );
 }

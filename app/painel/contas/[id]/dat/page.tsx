@@ -11,6 +11,8 @@ import { linkContato } from "@/lib/contato";
 import { RelatorioDat } from "@/components/app/RelatorioDat";
 import { AcoesDat } from "./AcoesDat";
 import { ImprimirAoAbrir } from "@/components/app/ImprimirAoAbrir";
+import { BarraModulo } from "@/components/app/Modulo";
+import { ArrowLeft } from "lucide-react";
 
 export default async function DatPage({ params }: { params: Promise<{ id: string }> }) {
   const sessao = await getSessao();
@@ -23,9 +25,9 @@ export default async function DatPage({ params }: { params: Promise<{ id: string
   if (agencia?.plano === "start") {
     return (
       <div className="max-w-2xl">
-        <h1 className="painel-title">Resumo para o cliente (DAT)</h1>
+        <h1 className="painel-title">Relatório para o cliente</h1>
         <p className="painel-lede">
-          O DAT é o resumo de conformidade que você manda para o cliente sempre que ele perguntar se está tudo certo. Ele faz parte dos planos
+          O relatório para o cliente, com link sempre atualizado para mandar sempre que ele perguntar se está tudo certo, faz parte dos planos
           Growth e Scale.
         </p>
         <a href={linkContato(`Olá! Quero passar a ${agencia.nome} para o plano Growth da Dattis.`)} target="_blank" rel="noopener" className="painel-btn">
@@ -42,21 +44,14 @@ export default async function DatPage({ params }: { params: Promise<{ id: string
   return (
     <div>
       <ImprimirAoAbrir />
-      <div className="no-print mb-6 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-        <div>
-          <p className="painel-eyebrow">
-            <Link href={`/painel/contas/${id}`} className="hover:underline">
-              {conta.nome}
-            </Link>{" "}
-            · DAT
-          </p>
-          <h1 className="painel-title">Resumo para o cliente</h1>
-          <p className="painel-lede !mb-0">
-            Mande o link para o cliente acompanhar a situação sempre atualizada, ou baixe em PDF para anexar no relatório do mês.
-          </p>
-        </div>
-        <AcoesDat contaId={id} contaNome={conta.nome} temLink={!!conta.tokenPublico} contato={{ nome: conta.contatoNome, whatsapp: conta.contatoWhatsapp, email: conta.contatoEmail }} />
-      </div>
+      <BarraModulo
+        esquerda={
+          <Link href={`/painel/contas/${id}`} className="flex items-center gap-1.5 px-2 text-[13.5px] text-muted hover:text-ink">
+            <ArrowLeft size={14} /> {conta.nome} · <b className="font-medium text-ink">Relatório para o cliente</b>
+          </Link>
+        }
+        direita={<AcoesDat contaId={id} contaNome={conta.nome} temLink={!!conta.tokenPublico} contato={{ nome: conta.contatoNome, whatsapp: conta.contatoWhatsapp, email: conta.contatoEmail }} />}
+      />
       <RelatorioDat dat={dat} urlVerificacao={dat.certificado ? `${origem}/verificar/${dat.certificado.codigo}` : null} />
     </div>
   );

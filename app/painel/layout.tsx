@@ -1,8 +1,8 @@
 import { redirect } from "next/navigation";
-import { count, eq } from "drizzle-orm";
+import { and, count, eq, inArray } from "drizzle-orm";
 import { getSessao } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { agencias, contasCliente, usuarios } from "@/lib/db/schema";
+import { agencias, contasCliente, pedidosTitular, usuarios } from "@/lib/db/schema";
 import { PLANOS } from "@/lib/planos";
 import { Sidebar } from "@/components/app/Sidebar";
 import { Topbar } from "@/components/app/Topbar";
@@ -18,9 +18,13 @@ export default async function PainelLayout({ children }: { children: React.React
   const sessao = await getSessao();
   if (!sessao) redirect("/entrar");
 
-  const [agencia, [{ n }]] = await Promise.all([
+  const [agencia, [{ n }], [{ pedidos }]] = await Promise.all([
     db.query.agencias.findFirst({ where: eq(agencias.id, sessao.agenciaId) }),
     db.select({ n: count() }).from(contasCliente).where(eq(contasCliente.agenciaId, sessao.agenciaId)),
+    db
+      .select({ pedidos: count() })
+      .from(pedidosTitular)
+      .where(and(eq(pedidosTitular.agenciaId, sessao.agenciaId), inArray(pedidosTitular.status, ["aberto", "em_andamento"]))),
   ]);
   if (!agencia) redirect("/entrar");
   const atrasada = !sessao.usuarioId && !agencia.suspensa ? await cobrancaAtrasada(agencia.id) : null;
@@ -35,6 +39,7 @@ export default async function PainelLayout({ children }: { children: React.React
         sairSlot={<SairButton />}
         plano={plano ? { nome: plano.nome, usados: Number(n), limite: agencia.clientesContratados } : undefined}
         pessoa={pessoa?.nome ?? null}
+        pedidosAbertos={Number(pedidos)}
       />
       <div className="min-w-0 flex-1">
         <Topbar agenciaNome={agencia.nome} />

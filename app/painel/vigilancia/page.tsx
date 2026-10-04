@@ -83,7 +83,7 @@ export default async function VigilanciaPage({ searchParams }: { searchParams: P
                 <ContagemSeveridades criticos={r.criticos} altos={r.altos} medios={r.medios} />
               </summary>
               <div className="border-t border-line px-6 py-5">
-                <ListaAchados achados={r.achados} />
+                <ListaAchados achados={r.achados} cliente={r.contaClienteId ? { id: r.contaClienteId, nome: r.titular, site: r.alvo } : undefined} />
                 {r.contaClienteId && (
                   <Link href={`/painel/contas/${r.contaClienteId}`} className="mt-4 inline-block font-mono text-[12px] uppercase tracking-[0.04em] text-muted hover:text-ink">
                     Abrir conta →

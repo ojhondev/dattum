@@ -4,13 +4,13 @@ import type { Dat } from "@/lib/dat";
 const mesAno = (d: Date) => d.toLocaleDateString("pt-BR", { month: "long", year: "numeric", timeZone: "America/Sao_Paulo" });
 const dataHora = (d: Date) => d.toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short", timeZone: "America/Sao_Paulo" });
 
-/** O DAT em si: uma folha que a agência manda pro cliente (painel, link público e impressão em PDF). */
+/** O relatório para o cliente (antes chamado DAT): uma folha que a agência manda pro cliente (painel, link público e PDF). */
 export function RelatorioDat({ dat, urlVerificacao }: { dat: Dat; urlVerificacao: string | null }) {
   return (
     <article className="mx-auto w-full max-w-[860px] rounded-[28px] border border-line bg-surface px-5 py-7 sm:px-10 sm:py-10 print:max-w-none print:rounded-none print:border-0 print:p-0">
       <header className="flex flex-col gap-5 border-b border-line pb-7 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <p className="font-mono text-[12px] uppercase tracking-[0.05em] text-muted">DAT · Resumo de conformidade LGPD · {mesAno(dat.geradoEm)}</p>
+          <p className="font-mono text-[12px] uppercase tracking-[0.05em] text-muted">Relatório de conformidade LGPD · {mesAno(dat.geradoEm)}</p>
           <h1 className="mt-3 font-display text-[clamp(1.7rem,3.6vw,2.4rem)] leading-[1.12] text-ink">
             {dat.emDia ? `${dat.conta.nome} está em dia com a LGPD` : `${dat.conta.nome}: adequação em andamento`}
           </h1>

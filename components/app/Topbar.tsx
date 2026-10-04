@@ -19,7 +19,7 @@ const TITULOS: [string, string, string][] = [
   ["/painel/titulares", "Pedidos de titulares", "Pedidos das pessoas sobre os próprios dados, com prazo de 15 dias."],
   ["/painel/cookies", "Cookies", "Aviso de cookies, consentimento e Gerenciador de Tags dos sites."],
   ["/painel/configuracoes", "Configurações", "Dados da agência, acesso e documentos legais."],
-  ["/painel", "Painel", "Monitore a privacidade e a conformidade da sua carteira em tempo real."],
+  ["/painel", "Início", "O que fazer agora para deixar a carteira em dia."],
 ];
 
 /** Barra superior do painel: onde estou, busca de clientes, tema, ajuda e conta. */

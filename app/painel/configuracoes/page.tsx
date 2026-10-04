@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { count, eq } from "drizzle-orm";
-import { Download } from "lucide-react";
+import { ArrowRight, BadgeCheck, Download, Network } from "lucide-react";
+import { AdicionarFerramenta } from "@/components/app/AdicionarFerramenta";
 import { ehDono, getSessao } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { agencias, contasCliente, usuarios } from "@/lib/db/schema";
@@ -23,7 +24,7 @@ const ROTULO = "font-mono text-[12px] uppercase tracking-[0.04em] text-muted";
 const TITULO = "text-[17px] font-medium text-ink";
 const DESC = "mt-1 text-[14px] leading-relaxed text-muted";
 
-type Aba = "agencia" | "conta" | "equipe" | "privacidade" | "plano" | "registro";
+type Aba = "agencia" | "conta" | "equipe" | "privacidade" | "ferramentas" | "plano" | "registro";
 
 export default async function ConfiguracoesPage({ searchParams }: { searchParams: Promise<{ aba?: string }> }) {
   const sessao = await getSessao();
@@ -45,6 +46,7 @@ export default async function ConfiguracoesPage({ searchParams }: { searchParams
         { valor: "agencia", rotulo: "Agência e acesso" },
         { valor: "equipe", rotulo: "Equipe" },
         { valor: "privacidade", rotulo: "Privacidade e cookies" },
+        { valor: "ferramentas", rotulo: "Ferramentas" },
         { valor: "plano", rotulo: "Plano e documentos" },
         { valor: "registro", rotulo: "Registro de atividades" },
       ]
@@ -166,7 +168,33 @@ export default async function ConfiguracoesPage({ searchParams }: { searchParams
           {agencia.plano !== "start" && (
             <CookiesAtalho href="/painel/cookies?site=agencia" ativo={!!agencia.cookiesToken} escolhas={(await estatisticaCookies(agencia.cookiesToken))?.total ?? null} />
           )}
+          <a href="/painel/certificados" className="bloco flex items-center gap-3 p-5 transition-colors hover:bg-surface-2">
+            <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-canvas text-muted">
+              <BadgeCheck size={18} />
+            </span>
+            <span className="min-w-0 flex-1">
+              <span className="block text-[15px] font-medium text-ink">Selo de privacidade da agência</span>
+              <span className="mt-0.5 block text-[13.5px] leading-snug text-muted">O certificado e o selo para o rodapé do site da agência e de cada cliente.</span>
+            </span>
+            <ArrowRight size={17} className="shrink-0 text-muted" />
+          </a>
         </div>
+      )}
+
+      {aba === "ferramentas" && dono && (
+        <section className={CARD}>
+          <h2 className={TITULO}>Ferramentas da agência</h2>
+          <p className={DESC}>
+            O catálogo da Dattis tem centenas de ferramentas. Se a agência usa alguma que não está lá, cadastre com nome, link e categoria: ela fica disponível
+            para escolher em todos os clientes.
+          </p>
+          <div className="mt-4 flex flex-wrap gap-2">
+            <AdicionarFerramenta />
+            <a href="/painel/subprocessadores" className="barra-btn">
+              <Network size={14} /> Ver todas e em quais clientes estão <ArrowRight size={14} />
+            </a>
+          </div>
+        </section>
       )}
 
       {aba === "plano" && (

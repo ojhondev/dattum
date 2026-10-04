@@ -506,3 +506,24 @@ export const CATALOGO_FERRAMENTAS: FerramentaCatalogo[] = CATEGORIAS_FERRAMENTA.
     return { chave: k, nome, categoria: c.nome, categoriaId: c.id, pais, finalidadePadrao: FINALIDADE_PROPRIA[k] ?? c.finalidade };
   }),
 );
+
+/**
+ * Operações que as ferramentas marcadas indicam. O dono de agência sabe dizer "uso Meta Ads,
+ * RD Station e WhatsApp"; a Dattis traduz isso em operações (pixel, CRM, atendimento...).
+ * "Lista de clientes pra público" não dá para deduzir: fica para a pessoa confirmar.
+ */
+const OPERACOES_POR_CATEGORIA: Record<string, ("ads" | "capi" | "crm" | "whatsapp" | "formularios")[]> = {
+  anuncios: ["ads"],
+  rastreamento: ["ads", "capi"],
+  crm: ["crm"],
+  email: ["crm"],
+  integracoes: ["crm"],
+  arquivos: ["crm"],
+  atendimento: ["whatsapp"],
+  sms: ["whatsapp"],
+  formularios: ["formularios"],
+};
+
+export function operacoesDasFerramentas(ferramentas: { categoriaId: string }[]) {
+  return [...new Set(ferramentas.flatMap((f) => OPERACOES_POR_CATEGORIA[f.categoriaId] ?? []))];
+}

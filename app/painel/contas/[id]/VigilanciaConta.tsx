@@ -80,7 +80,17 @@ export function SiteDaConta({ contaId, siteInicial }: { contaId: string; siteIni
   );
 }
 
-export function VigilanciaDaConta({ contaId, resultado, temSite }: { contaId: string; resultado: ResultadoVigilancia; temSite: boolean }) {
+export function VigilanciaDaConta({
+  contaId,
+  resultado,
+  temSite,
+  cliente,
+}: {
+  contaId: string;
+  resultado: ResultadoVigilancia;
+  temSite: boolean;
+  cliente: { nome: string; site: string | null };
+}) {
   const router = useRouter();
   const [verificando, setVerificando] = useState(false);
   const [aviso, setAviso] = useState("");
@@ -101,11 +111,6 @@ export function VigilanciaDaConta({ contaId, resultado, temSite }: { contaId: st
 
   return (
     <div>
-      <p className="painel-lede" style={{ marginBottom: 20 }}>
-        Todo dia a Dattis confere o site e a documentação deste cliente: HTTPS, certificado SSL, pixel disparando sem banner
-        de cookies, formulário sem política de privacidade, contrato e registro em dia.
-      </p>
-
       <div className="flex flex-wrap items-center gap-3">
         {resultado && <NotaVigilancia nota={resultado.nota} />}
         <span className="text-body-sm text-muted">
@@ -119,13 +124,13 @@ export function VigilanciaDaConta({ contaId, resultado, temSite }: { contaId: st
       {aviso && <p className="mt-3 text-body-sm text-warn">{aviso}</p>}
       {!temSite && (
         <p className="mt-4 rounded-2xl bg-caution-tint px-4 py-3 text-body-sm text-caution">
-          Cadastre o site do cliente (acima) pra vigilância checar pixel, HTTPS e política de privacidade.
+          Cadastre o site do cliente na aba Site e privacidade para a Dattis conferir todo dia o cadeado de segurança, o pixel e a política de privacidade.
         </p>
       )}
 
       {resultado && (
         <div className="mt-6">
-          <ListaAchados achados={resultado.achados} />
+          <ListaAchados achados={resultado.achados} cliente={{ id: contaId, nome: cliente.nome, site: cliente.site }} />
         </div>
       )}
     </div>

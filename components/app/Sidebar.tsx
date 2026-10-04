@@ -10,10 +10,6 @@ import { linkContato } from "@/lib/contato";
 import {
   LayoutDashboard,
   Users,
-  Network,
-  BadgeCheck,
-  FolderOpen,
-  FileText,
   Radar,
   Building2,
   Inbox,
@@ -27,7 +23,6 @@ import {
   ShieldCheck,
   type LucideIcon,
   Settings,
-  Cookie,
   Wallet,
   Activity,
 } from "lucide-react";
@@ -36,27 +31,18 @@ import iconeBranco from "../../public/brand/icone-sidebar-branco.png";
 import logoClaro from "../../public/brand/logo-fundo-claro.png";
 import logoEscuro from "../../public/brand/logo-fundo-dark.png";
 
-type Item = { href: string; label: string; icon: LucideIcon; exact?: boolean };
+type Item = { href: string; label: string; icon: LucideIcon; exact?: boolean; n?: number };
 type Grupo = { title: string; items: Item[] };
 
+// Painel da agência: poucas portas. Cookies, ferramentas, vigilância, certificado, documentos e
+// dossiê vivem dentro de cada cliente; "Pedidos" só aparece quando há pedido em aberto.
 const GRUPOS_PAINEL: Grupo[] = [
   {
-    title: "Menu principal",
+    title: "Menu",
     items: [
-      { href: "/painel", label: "Painel", icon: LayoutDashboard, exact: true },
+      { href: "/painel", label: "Início", icon: LayoutDashboard, exact: true },
       { href: "/painel/contas", label: "Clientes", icon: Users },
-      { href: "/painel/documentos", label: "Documentos", icon: FileText },
-      { href: "/painel/subprocessadores", label: "Ferramentas", icon: Network },
-    ],
-  },
-  {
-    title: "Proteção",
-    items: [
-      { href: "/painel/vigilancia", label: "Vigilância", icon: Radar },
-      { href: "/painel/cookies", label: "Cookies", icon: Cookie },
       { href: "/painel/titulares", label: "Pedidos de titulares", icon: Inbox },
-      { href: "/painel/certificados", label: "Certificados e selo", icon: BadgeCheck },
-      { href: "/painel/dossie", label: "Dossiê para BM", icon: FolderOpen },
     ],
   },
   {
@@ -161,6 +147,9 @@ function NavItems({ grupos, collapsed, onNavigate }: { grupos: Grupo[]; collapse
               >
                 <Icon size={18} strokeWidth={1.8} className={"shrink-0 " + (active ? "text-brand-ink" : "")} />
                 {!collapsed && <span className="flex-1 truncate">{it.label}</span>}
+                {!!it.n && (
+                  <span className={"grid h-5 min-w-5 place-items-center rounded-full bg-warn px-1.5 font-mono text-[11px] text-white " + (collapsed ? "absolute right-1 top-1" : "")}>{it.n}</span>
+                )}
                 {active && !collapsed && <span className="pixel-corners pixel-corners-sm h-2 w-2 bg-brand-strong" />}
               </Link>
             );
@@ -203,14 +192,25 @@ export function Sidebar({
   variante = "painel",
   plano,
   pessoa,
+  pedidosAbertos = 0,
 }: {
+  pedidosAbertos?: number;
   agenciaNome: string;
   sairSlot: React.ReactNode;
   variante?: keyof typeof GRUPOS;
   plano?: PlanoSidebar;
   pessoa?: string | null; // pessoa da equipe logada (nulo = dono)
 }) {
-  const grupos = GRUPOS[variante];
+  const pathname = usePathname();
+  const grupos =
+    variante === "painel"
+      ? GRUPOS_PAINEL.map((g) => ({
+          ...g,
+          items: g.items
+            .filter((it) => it.href !== "/painel/titulares" || pedidosAbertos > 0 || pathname.startsWith(it.href))
+            .map((it) => (it.href === "/painel/titulares" ? { ...it, n: pedidosAbertos } : it)),
+        }))
+      : GRUPOS[variante];
   const [collapsed, setCollapsed] = useLocalStorageBoolean("dattis:sidebar", false);
   const [mobileOpen, setMobileOpen] = useState(false);
 

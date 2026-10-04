@@ -51,7 +51,7 @@ export function BotaoRelatorio() {
               <span className="block text-[12.5px] text-muted">Todos os clientes, com o que falta fazer, em PDF</span>
             </span>
           </a>
-          <p className="px-3 pb-1.5 pt-3 font-mono text-[11px] uppercase tracking-[0.05em] text-muted">Ou de um cliente</p>
+          <p className="px-3 pb-1.5 pt-3 font-mono text-[11px] uppercase tracking-[0.05em] text-muted">Ou o relatório de um cliente</p>
           {contas && contas.length > 6 && (
             <label className="mx-1 mb-1 flex items-center gap-2 rounded-lg border border-line px-2.5 py-1.5">
               <Search size={14} className="text-faint" />

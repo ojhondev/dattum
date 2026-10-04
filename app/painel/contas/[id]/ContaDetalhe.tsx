@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { FileText, FolderOpen, Globe, Pencil, Plus, ScrollText, Trash2, FileBarChart } from "lucide-react";
+import { ArrowRight, BadgeCheck, FileText, FolderOpen, Globe, Network, Pencil, Plus, ScrollText, Trash2, FileBarChart } from "lucide-react";
 import { FLUXO_POR_CHAVE, type FlowKey } from "@/lib/fluxos";
 import { SiteDaConta, VigilanciaDaConta, type ResultadoVigilancia } from "./VigilanciaConta";
 import { ContratoConta, type ContratoDados, type VersaoContrato } from "./ContratoConta";
@@ -49,6 +49,11 @@ const CAMPOS: { chave: Exclude<keyof Atividade, "id" | "fluxo" | "nomeAtividade"
   { chave: "prazoRetencao", label: "Por quanto tempo" },
 ];
 
+/**
+ * Uma atividade do registro (RAT), para leigo: em cima só o que a agência faz, quais dados e
+ * pra quê. A parte jurídica (base legal, titulares, prazo) fica em "Detalhes técnicos", só de
+ * leitura; editar é uma opção avançada lá dentro.
+ */
 function AtividadeCard({ atividade, contaId }: { atividade: Atividade; contaId: string }) {
   const [editando, setEditando] = useState(false);
   const [form, setForm] = useState(atividade);
@@ -62,50 +67,25 @@ function AtividadeCard({ atividade, contaId }: { atividade: Atividade; contaId: 
     setEditando(false);
   };
 
-  return (
-    <article className="bloco p-5 sm:p-6">
-      <div className="flex items-start justify-between gap-4">
-        <div className="min-w-0">
-          {fluxo && <p className="font-mono text-[11px] uppercase tracking-[0.05em] text-faint">{fluxo.curto} · LGPD {fluxo.artigo}</p>}
-          {editando ? (
-            <textarea
-              rows={2}
-              value={form.nomeAtividade}
-              onChange={(e) => setForm((f) => ({ ...f, nomeAtividade: e.target.value }))}
-              className="field-input mt-1 w-full text-[15px]"
-              aria-label="Atividade"
-            />
-          ) : (
-            <h3 className="mt-1 font-display text-[18px] leading-snug text-ink">{form.nomeAtividade}</h3>
-          )}
+  if (editando) {
+    const todos: { chave: Exclude<keyof Atividade, "id" | "fluxo">; label: string }[] = [{ chave: "nomeAtividade", label: "Atividade" }, ...CAMPOS];
+    return (
+      <article className="bloco p-5 sm:p-6">
+        <p className="font-mono text-[11px] uppercase tracking-[0.05em] text-warn">Edição avançada · texto que vai para o registro e o contrato</p>
+        <div className="mt-4 grid gap-x-6 gap-y-3 text-[13.5px] md:grid-cols-2">
+          {todos.map((c) => (
+            <label key={c.chave} htmlFor={`${atividade.id}-${c.chave}`} className={c.chave === "nomeAtividade" || c.chave === "categoriasDado" ? "md:col-span-2" : ""}>
+              <span className="text-[12px] text-muted">{c.label}</span>
+              <textarea
+                id={`${atividade.id}-${c.chave}`}
+                rows={2}
+                value={form[c.chave]}
+                onChange={(e) => setForm((f) => ({ ...f, [c.chave]: e.target.value }))}
+                className="field-input mt-1 w-full text-[13.5px]"
+              />
+            </label>
+          ))}
         </div>
-        {!editando && (
-          <button type="button" className="barra-btn shrink-0" onClick={() => setEditando(true)}>
-            <Pencil size={14} /> Editar
-          </button>
-        )}
-      </div>
-      <dl className="mt-4 grid gap-x-8 gap-y-3 text-[13.5px] md:grid-cols-2">
-        {CAMPOS.map((c) => (
-          <div key={c.chave} className={c.chave === "categoriasDado" ? "md:col-span-2" : ""}>
-            <dt className="text-[12px] text-muted">{c.label}</dt>
-            <dd className="mt-0.5 leading-relaxed text-body">
-              {editando ? (
-                <textarea
-                  rows={2}
-                  value={form[c.chave]}
-                  onChange={(e) => setForm((f) => ({ ...f, [c.chave]: e.target.value }))}
-                  className="field-input w-full text-[13.5px]"
-                  aria-label={c.label}
-                />
-              ) : (
-                form[c.chave]
-              )}
-            </dd>
-          </div>
-        ))}
-      </dl>
-      {editando && (
         <div className="mt-4 flex gap-2">
           <button className="barra-btn primario" type="button" onClick={salvar} disabled={salvando}>
             {salvando ? "Salvando..." : "Salvar"}
@@ -121,14 +101,43 @@ function AtividadeCard({ atividade, contaId }: { atividade: Atividade; contaId: 
             Cancelar
           </button>
         </div>
-      )}
-      {fluxo && !editando && (
-        <details className="mt-4 border-t border-line pt-3 text-[13px]">
-          <summary className="cursor-pointer text-muted hover:text-ink">Por que isso importa</summary>
-          <p className="mt-2 leading-relaxed text-body">{fluxo.risco}</p>
-          <p className="mt-1.5 leading-relaxed text-muted">{fluxo.comoChamam}</p>
-        </details>
-      )}
+      </article>
+    );
+  }
+
+  return (
+    <article className="bloco p-5 sm:p-6">
+      <h3 className="font-display text-[19px] leading-snug text-ink">{fluxo ? fluxo.titulo : form.nomeAtividade}</h3>
+      <dl className="mt-3 grid gap-x-8 gap-y-2.5 text-[14px] md:grid-cols-2">
+        <div>
+          <dt className="text-[12px] text-muted">Quais dados</dt>
+          <dd className="mt-0.5 leading-relaxed text-body">{form.categoriasDado}</dd>
+        </div>
+        <div>
+          <dt className="text-[12px] text-muted">Para quê</dt>
+          <dd className="mt-0.5 leading-relaxed text-body">{form.finalidade}</dd>
+        </div>
+      </dl>
+      <details className="mt-4 border-t border-line pt-3 text-[13px]">
+        <summary className="cursor-pointer text-muted hover:text-ink">Detalhes técnicos (para o advogado ou o contador)</summary>
+        <dl className="mt-3 grid gap-x-8 gap-y-2.5 md:grid-cols-2">
+          {[
+            ["Nome no registro", form.nomeAtividade],
+            ["Base legal", form.baseLegal],
+            ["De quem são os dados", form.titulares],
+            ["Por quanto tempo ficam guardados", form.prazoRetencao],
+            ...(fluxo ? [["Por que isso importa", fluxo.risco], ["Como aparece nas plataformas", fluxo.comoChamam]] : []),
+          ].map(([k, v]) => (
+            <div key={k}>
+              <dt className="text-[12px] text-muted">{k}</dt>
+              <dd className="mt-0.5 leading-relaxed text-body">{v}</dd>
+            </div>
+          ))}
+        </dl>
+        <button type="button" className="barra-btn mt-4" onClick={() => setEditando(true)}>
+          <Pencil size={14} /> Editar textos (avançado)
+        </button>
+      </details>
     </article>
   );
 }
@@ -179,7 +188,8 @@ export default function ContaDetalhe({
   };
 
   const chipContrato = contrato ? CHIP_CONTRATO[contrato.situacao] : null;
-  const relatorio = temDat ? `/painel/contas/${conta.id}/dat?imprimir=1` : `/painel/relatorio?conta=${conta.id}&imprimir=1`;
+  // Um relatório só: o "Relatório para o cliente" (link sempre atualizado, WhatsApp ou PDF). No Start, a versão em PDF.
+  const relatorio = temDat ? `/painel/contas/${conta.id}/dat` : `/painel/relatorio?conta=${conta.id}&imprimir=1`;
 
   return (
     <div>
@@ -217,7 +227,7 @@ export default function ContaDetalhe({
               <Pencil size={14} /> Editar cliente
             </a>
             <a href={relatorio} className="barra-btn primario" data-tour="conta-relatorio">
-              <FileBarChart size={15} /> Gerar relatório
+              <FileBarChart size={15} /> Relatório para o cliente
             </a>
             <span data-tour="conta-atalhos">
               <MenuAcoes>
@@ -230,11 +240,6 @@ export default function ContaDetalhe({
                 <Link href={`/painel/dossie/${conta.id}`} className="menu-item">
                   <FolderOpen size={15} /> Dossiê para BM
                 </Link>
-                {temDat && (
-                  <Link href={`/painel/contas/${conta.id}/dat`} className="menu-item">
-                    <FileBarChart size={15} /> Resumo para o cliente (DAT)
-                  </Link>
-                )}
                 <span className="menu-sep" />
                 <button type="button" className="menu-item perigo" onClick={excluirConta}>
                   <Trash2 size={15} /> Excluir cliente
@@ -262,9 +267,14 @@ export default function ContaDetalhe({
           }
           direita={
             aba === "ferramentas" ? (
-              <button type="button" className="barra-btn marca" onClick={() => setSeletor(true)}>
-                <Plus size={15} /> Escolher ferramentas
-              </button>
+              <>
+                <a href="/painel/subprocessadores" className="barra-btn">
+                  <Network size={14} /> Ferramentas da agência
+                </a>
+                <button type="button" className="barra-btn marca" onClick={() => setSeletor(true)}>
+                  <Plus size={15} /> Escolher ferramentas
+                </button>
+              </>
             ) : aba === "registro" ? (
               <a href={`/painel/contas/${conta.id}/editar`} className="barra-btn">
                 <Pencil size={14} /> Mudar operações
@@ -371,10 +381,20 @@ export default function ContaDetalhe({
             />
           </div>
           {temDat && <CookiesAtalho href={`/painel/cookies?site=${conta.id}`} ativo={!!cookies.token} escolhas={cookies.estatistica?.total ?? null} />}
+          <a href="/painel/certificados" className="bloco flex items-center gap-3 p-5 transition-colors hover:bg-surface-2">
+            <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-canvas text-muted">
+              <BadgeCheck size={18} />
+            </span>
+            <span className="min-w-0 flex-1">
+              <span className="block text-[15px] font-medium text-ink">Selo de privacidade e certificado</span>
+              <span className="mt-0.5 block text-[13.5px] leading-snug text-muted">Saem sozinhos com o contrato assinado. Pegue aqui o código do selo para o rodapé do site.</span>
+            </span>
+            <ArrowRight size={17} className="shrink-0 text-muted" />
+          </a>
         </div>
       )}
 
-      {aba === "vigilancia" && <VigilanciaDaConta contaId={conta.id} resultado={vigilancia} temSite={!!conta.site} />}
+      {aba === "vigilancia" && <VigilanciaDaConta contaId={conta.id} resultado={vigilancia} temSite={!!conta.site} cliente={{ nome: conta.nome, site: conta.site }} />}
 
       {seletor && (
         <ModalFerramentas

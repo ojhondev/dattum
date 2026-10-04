@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { eq } from "drizzle-orm";
 import { CheckCircle2, CircleAlert } from "lucide-react";
 import { getSessao } from "@/lib/auth";
@@ -32,16 +33,18 @@ function Marca({ ok, texto }: { ok: boolean | null; texto: string }) {
  * Relatório de conformidade em um clique: a carteira inteira (padrão) ou um cliente (?conta=).
  * Com ?imprimir=1 já abre a janela para salvar em PDF.
  */
-export default async function RelatorioPage({ searchParams }: { searchParams: Promise<{ conta?: string }> }) {
+export default async function RelatorioPage({ searchParams }: { searchParams: Promise<{ conta?: string; imprimir?: string }> }) {
   const sessao = await getSessao();
   if (!sessao) return null;
-  const { conta } = await searchParams;
+  const { conta, imprimir } = await searchParams;
 
   const [agencia, contas] = await Promise.all([
     db.query.agencias.findFirst({ where: eq(agencias.id, sessao.agenciaId) }),
     db.query.contasCliente.findMany({ where: eq(contasCliente.agenciaId, sessao.agenciaId), orderBy: (t, { asc }) => asc(t.nome) }),
   ]);
   if (!agencia) return null;
+  // Um cliente, nos planos com relatório para o cliente: abre esse (link, WhatsApp e PDF), que é o mesmo documento.
+  if (conta && agencia.plano !== "start" && contas.some((c) => c.id === conta)) redirect(`/painel/contas/${conta}/dat${imprimir === "1" ? "?imprimir=1" : ""}`);
   const escolhidas = conta ? contas.filter((c) => c.id === conta) : contas;
   const dats = (await Promise.all(escolhidas.map((c) => montarDat(c.id)))).filter((d): d is Dat => !!d);
   const emDia = dats.filter((d) => d.emDia).length;
