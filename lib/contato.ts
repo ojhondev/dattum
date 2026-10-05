@@ -5,7 +5,7 @@
  */
 const WHATSAPP = (process.env.NEXT_PUBLIC_WHATSAPP || "5514998570045").replace(/\D/g, "");
 export const WHATSAPP_EXIBICAO = "(14) 99857-0045";
-export const EMAIL_CONTATO = "contato@dattis.com";
+export const EMAIL_CONTATO = "contato@dattis.com.br";
 
 export function linkContato(mensagem: string) {
   if (WHATSAPP) return `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(mensagem)}`;

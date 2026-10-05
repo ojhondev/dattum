@@ -27,7 +27,7 @@ const CONTAS_DEMO: { nome: string; cnpj: string; slug: string; site?: string; fl
     nome: "Loja Aurora (demo)",
     cnpj: "12.345.678/0001-90",
     slug: "loja-aurora-demo",
-    site: "https://dattum-rho.vercel.app",
+    site: "https://www.dattis.com.br",
     flows: ["publicos", "capi", "ads", "whatsapp"],
     ferramentas: ["shopify", "google-tag-manager", "klaviyo", "microsoft-clarity", "mercado-pago"],
     assinado: true,

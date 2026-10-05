@@ -7,7 +7,7 @@ import path from "node:path";
 import puppeteer, { type Page } from "puppeteer-core";
 import { resolveExecutablePath } from "../lib/browser";
 
-const B = process.env.CAPTURA_URL ?? "https://dattum-rho.vercel.app";
+const B = process.env.CAPTURA_URL ?? "https://www.dattis.com.br";
 const SAIDA = path.join(process.cwd(), "public/marketing/app");
 fs.mkdirSync(SAIDA, { recursive: true });
 const TOURS = ["boas-vindas", "contas", "nova-conta", "conta", "documentos", "ferramentas", "vigilancia", "certificados", "dossie", "configuracoes", "titulares", "cookies"];

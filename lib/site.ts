@@ -1,5 +1,5 @@
-// Endereço canônico do site. Troque NEXT_PUBLIC_SITE_URL quando o domínio próprio (ex.: dattis.com.br) estiver no ar.
-export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://dattum-rho.vercel.app").replace(/\/$/, "");
+// Endereço canônico do site (domínio próprio). NEXT_PUBLIC_SITE_URL sobrescreve, ex. para testes.
+export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://www.dattis.com.br").replace(/\/$/, "");
 export const SITE_NOME = "Dattis";
 export const SITE_DESCRICAO =
   "A Dattis é o DPO das agências de tráfego pago: cuidamos da LGPD de cada cliente que você atende, com contratos, registros, cookies, pedidos de titulares e vigilância diária.";
