@@ -5,6 +5,7 @@ import { agencias, usuarios } from "@/lib/db/schema";
 import { limitarIp, excedeuLimite, respostaLimite } from "@/lib/limite";
 import { verificarSenha, criarSessao } from "@/lib/auth";
 import { registrar } from "@/lib/registro";
+import { EMAIL_MASTER, credenciaisMasterCorretas, criarSessaoAdmin } from "@/lib/admin";
 
 export const runtime = "nodejs";
 
@@ -18,6 +19,13 @@ export async function POST(req: Request) {
 
   if (!email || !senha) {
     return NextResponse.json({ ok: false, error: "Informe e-mail e senha." }, { status: 400 });
+  }
+
+  // 0) Login master da Dattis: vai para o painel WebMaster (acesso a todas as agências)
+  if (email === EMAIL_MASTER) {
+    if (!credenciaisMasterCorretas(email, senha)) return ERRO();
+    await criarSessaoAdmin();
+    return NextResponse.json({ ok: true, destino: "/admin" });
   }
 
   // 1) Dono: o login da própria agência

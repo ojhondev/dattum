@@ -6,6 +6,7 @@ import { Logo } from "@/components/brand/Logo";
 
 export default function AdminEntrarPage() {
   const router = useRouter();
+  const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const [erro, setErro] = useState("");
   const [enviando, setEnviando] = useState(false);
@@ -17,7 +18,7 @@ export default function AdminEntrarPage() {
     const res = await fetch("/api/admin/entrar", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ senha }),
+      body: JSON.stringify({ email, senha }),
     });
     const data = await res.json().catch(() => ({ ok: false }));
     if (!data.ok) {
@@ -34,11 +35,23 @@ export default function AdminEntrarPage() {
       <Logo height={26} />
       <div className="mx-auto flex w-full max-w-sm flex-1 flex-col justify-center py-12">
         <p className="t-eyebrow">Área Dattis</p>
-        <h1 className="t-display mt-3">Acesso da equipe</h1>
-        <p className="mt-3 text-body-sm text-muted">Gestão de códigos de ativação dos clientes.</p>
+        <h1 className="t-display mt-3">Login master</h1>
+        <p className="mt-3 text-body-sm text-muted">Painel WebMaster e Portal do DPO, com acesso a todas as agências.</p>
         <form onSubmit={submit} className="mt-8 space-y-4">
           <label className="block">
-            <span className="text-body-sm font-medium text-body">Senha de administrador</span>
+            <span className="text-body-sm font-medium text-body">E-mail</span>
+            <input
+              id="admin-email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              autoComplete="username"
+              className="field-input mt-1.5"
+            />
+          </label>
+          <label className="block">
+            <span className="text-body-sm font-medium text-body">Senha</span>
             <input
               id="admin-senha"
               type="password"

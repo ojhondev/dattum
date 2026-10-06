@@ -188,7 +188,7 @@ export default async function LandingPage() {
           <div className="mx-auto max-w-5xl px-5 text-center">
             <p className="t-eyebrow">DPO para agências de tráfego pago · LGPD</p>
             <h1 className="t-hero t-hero-home mx-auto mt-5 max-w-[17ch]">
-              <span className="text-brand-ink">Agência de Tráfego:</span> a Dattis é o seu DPO.
+              <span className="text-brand-ink">Agência de Tráfego:</span> Evite multas pela LGPD
             </h1>
             <p className="mx-auto mt-6 max-w-2xl text-[20px] leading-[1.4] text-body">
               Nós cuidamos da LGPD de cada cliente que a sua agência atende. Você continua rodando campanha, sem contratar

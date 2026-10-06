@@ -1,17 +1,25 @@
-import { timingSafeEqual } from "node:crypto";
+import { scryptSync, timingSafeEqual } from "node:crypto";
 import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
 
 const COOKIE = "dattis_admin";
 import { chaveDe } from "@/lib/segredo";
 
-/** Compara com ADMIN_SENHA em tempo constante. Sem a env configurada, ninguém entra. */
-export function senhaAdminCorreta(senha: string) {
-  const esperada = process.env.ADMIN_SENHA ?? "";
-  if (!esperada || !senha) return false;
-  const a = Buffer.from(senha);
-  const b = Buffer.from(esperada);
-  return a.length === b.length && timingSafeEqual(a, b);
+/** E-mail do login master (WebMaster + Portal do DPO, acesso a todas as agências). */
+export const EMAIL_MASTER = (process.env.ADMIN_EMAIL || "dattisprivacy@gmail.com").trim().toLowerCase();
+
+/**
+ * Confere e-mail e senha do login master. A senha não fica em lugar nenhum: só o hash scrypt em
+ * ADMIN_SENHA_HASH, no formato "salt:hash" (hex). Sem a env configurada, ninguém entra.
+ */
+export function credenciaisMasterCorretas(email: string, senha: string) {
+  const [sal, hash] = (process.env.ADMIN_SENHA_HASH ?? "").split(":");
+  if (!sal || !hash || !senha || senha.length > 200) return false;
+  const emailOk = email.trim().toLowerCase() === EMAIL_MASTER;
+  const calculado = scryptSync(senha, Buffer.from(sal, "hex"), 64);
+  const esperado = Buffer.from(hash, "hex");
+  const senhaOk = esperado.length === calculado.length && timingSafeEqual(calculado, esperado);
+  return emailOk && senhaOk;
 }
 
 export async function criarSessaoAdmin() {

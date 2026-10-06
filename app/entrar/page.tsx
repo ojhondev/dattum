@@ -30,7 +30,7 @@ function EntrarForm() {
         setEnviando(false);
         return;
       }
-      router.push(params.get("proximo") || "/painel");
+      router.push(data.destino || params.get("proximo") || "/painel");
       router.refresh();
     } catch {
       setErro("Não foi possível entrar agora. Tenta de novo.");
