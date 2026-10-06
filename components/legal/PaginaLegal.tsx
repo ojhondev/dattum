@@ -10,7 +10,7 @@ import { DOCUMENTOS_LEGAIS, VERSAO_LEGAL, VIGENCIA_LEGAL, type DocumentoLegal } 
 /** Página de documento legal da Dattis (Termos, Privacidade, Contrato de dados), com sumário fixo no desktop. */
 export function PaginaLegal({ id, markdown }: { id: DocumentoLegal; markdown: string }) {
   const doc = DOCUMENTOS_LEGAIS.find((d) => d.id === id)!;
-  const { html, sumario } = renderMarkdown(markdown, { siteHost: new URL(SITE_URL).host });
+  const { html, sumario } = renderMarkdown(markdown, { siteHost: new URL(SITE_URL).host, seguro: true });
   const secoes = sumario.filter((s) => s.nivel === 2);
 
   return (

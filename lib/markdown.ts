@@ -17,8 +17,20 @@ export function slugify(texto: string) {
 }
 
 const textoPuro = (s: string) => s.replace(/<[^>]+>/g, "").replace(/&[a-z#0-9]+;/gi, " ");
+const escapar = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 
-export function renderMarkdown(md: string, opts: { siteHost?: string } = {}) {
+/** Só deixa passar link http(s), e-mail, telefone, caminho do site e âncora. Bloqueia javascript:, data: etc. */
+function hrefSeguro(href: string) {
+  const h = (href || "").trim();
+  if (/^[a-z][a-z0-9+.-]*:/i.test(h) && !/^(https?|mailto|tel):/i.test(h)) return "#";
+  return escapar(h);
+}
+
+/**
+ * `seguro`: para texto que veio de agência/cliente (política pública): HTML cru vira texto.
+ * O blog (escrito só pelo admin) aceita HTML no Markdown.
+ */
+export function renderMarkdown(md: string, opts: { siteHost?: string; seguro?: boolean } = {}) {
   const sumario: ItemSumario[] = [];
   const usados = new Map<string, number>();
   const marked = new Marked({ gfm: true, breaks: false });
@@ -39,15 +51,17 @@ export function renderMarkdown(md: string, opts: { siteHost?: string } = {}) {
       link(this: { parser: { parseInline: (t: Tokens.Generic[]) => string } }, { href, title, tokens }: Tokens.Link) {
         const html = this.parser.parseInline(tokens);
         const externo = /^https?:\/\//.test(href) && !(opts.siteHost && href.includes(opts.siteHost));
-        const t = title ? ` title="${title}"` : "";
+        const t = title ? ` title="${escapar(title)}"` : "";
+        const destino = hrefSeguro(href);
         return externo
-          ? `<a href="${href}"${t} target="_blank" rel="noopener">${html}</a>`
-          : `<a href="${href}"${t}>${html}</a>`;
+          ? `<a href="${destino}"${t} target="_blank" rel="noopener">${html}</a>`
+          : `<a href="${destino}"${t}>${html}</a>`;
       },
       image({ href, title, text }: Tokens.Image) {
-        const legenda = title ? `<figcaption>${title}</figcaption>` : "";
-        return `<figure><img src="${href}" alt="${text.replace(/"/g, "&quot;")}" loading="lazy" decoding="async" />${legenda}</figure>`;
+        const legenda = title ? `<figcaption>${escapar(title)}</figcaption>` : "";
+        return `<figure><img src="${hrefSeguro(href)}" alt="${text.replace(/"/g, "&quot;")}" loading="lazy" decoding="async" />${legenda}</figure>`;
       },
+      ...(opts.seguro ? { html: ({ text }: Tokens.HTML | Tokens.Tag) => escapar(text) } : {}),
     },
   });
 

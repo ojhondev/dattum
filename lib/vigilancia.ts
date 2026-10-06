@@ -1,6 +1,4 @@
 import tls from "node:tls";
-import dns from "node:dns/promises";
-import net from "node:net";
 import { and, count, eq, lt, desc, isNull, inArray } from "drizzle-orm";
 import { db } from "@/lib/db";
 import {
@@ -15,6 +13,7 @@ import {
 } from "@/lib/db/schema";
 import { contarSeveridades, notaDosAchados, type Achado } from "@/lib/vigilancia-tipos";
 import { SITE_URL } from "@/lib/site";
+import { hostPublico } from "@/lib/rede-segura";
 
 const UA = `Mozilla/5.0 (compatible; DattisVigilancia/1.0; +${SITE_URL})`;
 const TIMEOUT_MS = 12_000;
@@ -23,27 +22,6 @@ const PARALELO = 6;
 const RETENCAO_DIAS = 90;
 
 // ---------- Rede (com bloqueio de endereço interno) ----------
-
-function ipPrivado(ip: string) {
-  if (net.isIPv4(ip)) {
-    const [a, b] = ip.split(".").map(Number);
-    return a === 10 || a === 127 || a === 0 || (a === 169 && b === 254) || (a === 172 && b >= 16 && b <= 31) || (a === 192 && b === 168) || (a === 100 && b >= 64 && b <= 127);
-  }
-  const v = ip.toLowerCase();
-  return v === "::1" || v === "::" || v.startsWith("fc") || v.startsWith("fd") || v.startsWith("fe80") || v.startsWith("::ffff:127.") || v.startsWith("::ffff:10.") || v.startsWith("::ffff:192.168.");
-}
-
-async function hostPublico(hostname: string) {
-  const h = hostname.toLowerCase();
-  if (h === "localhost" || !h.includes(".")) return false;
-  if (net.isIP(h)) return !ipPrivado(h);
-  try {
-    const ips = await dns.lookup(h, { all: true });
-    return ips.length > 0 && ips.every((r) => !ipPrivado(r.address));
-  } catch {
-    return false;
-  }
-}
 
 async function buscar(url: URL, saltos = 0): Promise<{ res: Response; url: URL; cadeia: URL[] }> {
   if (!(await hostPublico(url.hostname))) throw new Error("host-bloqueado");

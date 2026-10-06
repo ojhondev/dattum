@@ -4,6 +4,7 @@ import puppeteer, { type Browser } from "puppeteer-core";
 import { resolveExecutablePath } from "@/lib/browser";
 import { limitarIp, respostaLimite } from "@/lib/limite";
 import { SITE_URL } from "@/lib/site";
+import { hostPublico, verificadorDeHosts } from "@/lib/rede-segura";
 
 export const runtime = "nodejs";
 export const maxDuration = 60; // cold start now includes downloading the Chromium pack (~70MB) into /tmp
@@ -23,18 +24,6 @@ type CheckResult = {
 
 const NAV_TIMEOUT_MS = 20000;
 const SETTLE_MS = 1800; // extra wait for tags that fire after load (GTM containers, delayed scripts)
-
-function isBlockedHost(hostname: string): boolean {
-  const h = hostname.toLowerCase();
-  if (h === "localhost" || h === "0.0.0.0" || h === "::1") return true;
-  if (/^127\./.test(h)) return true;
-  if (/^10\./.test(h)) return true;
-  if (/^192\.168\./.test(h)) return true;
-  if (/^172\.(1[6-9]|2\d|3[01])\./.test(h)) return true;
-  if (/^169\.254\./.test(h)) return true;
-  if (!h.includes(".")) return true;
-  return false;
-}
 
 function normalizeUrl(input: string): URL | null {
   let raw = input.trim();
@@ -84,7 +73,7 @@ export async function POST(req: Request) {
   if (!target) {
     return NextResponse.json({ ok: false, error: "URL inválida. Confira o endereço e tente de novo." }, { status: 400 });
   }
-  if (isBlockedHost(target.hostname)) {
+  if (!(await hostPublico(target.hostname))) {
     return NextResponse.json({ ok: false, error: "Esse endereço não pode ser analisado." }, { status: 400 });
   }
 
@@ -111,12 +100,21 @@ export async function POST(req: Request) {
       `Mozilla/5.0 (compatible; DattisAuditBot/2.0; +${SITE_URL}/auditoria)`
     );
 
-    page.on("request", (r) => {
+    // Toda requisição do navegador (inclusive redirecionamentos e scripts da página) só sai para IP público.
+    const publico = verificadorDeHosts();
+    await page.setRequestInterception(true);
+    page.on("request", async (r) => {
+      let u: URL | null = null;
       try {
-        requestHosts.add(new URL(r.url()).hostname.toLowerCase());
+        u = new URL(r.url());
       } catch {
         // ignore malformed request URLs
       }
+      if (u && (u.protocol === "http:" || u.protocol === "https:")) {
+        if (!(await publico(u.hostname))) return r.abort("blockedbyclient");
+        requestHosts.add(u.hostname.toLowerCase());
+      }
+      return r.continue();
     });
 
     await page.goto(target.toString(), { waitUntil: "networkidle2", timeout: NAV_TIMEOUT_MS });

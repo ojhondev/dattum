@@ -3,7 +3,7 @@ import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
 
 const COOKIE = "dattis_admin";
-const secret = new TextEncoder().encode(process.env.SESSION_SECRET ?? "dattis-dev-secret-troque-em-producao");
+import { chaveDe } from "@/lib/segredo";
 
 /** Compara com ADMIN_SENHA em tempo constante. Sem a env configurada, ninguém entra. */
 export function senhaAdminCorreta(senha: string) {
@@ -19,7 +19,7 @@ export async function criarSessaoAdmin() {
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
     .setExpirationTime("12h")
-    .sign(secret);
+    .sign(chaveDe("admin"));
   const store = await cookies();
   store.set(COOKIE, token, {
     httpOnly: true,
@@ -34,7 +34,7 @@ export async function isAdmin() {
   const token = (await cookies()).get(COOKIE)?.value;
   if (!token) return false;
   try {
-    const { payload } = await jwtVerify(token, secret);
+    const { payload } = await jwtVerify(token, chaveDe("admin"));
     return payload.papel === "admin";
   } catch {
     return false;

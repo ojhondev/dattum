@@ -23,7 +23,7 @@ export default async function PoliticaPublicaPage({ params }: { params: Promise<
   const { slug } = await params;
   const p = await politicaPorSlug(slug);
   if (!p) notFound();
-  const { html, sumario } = renderMarkdown(p.markdown, { siteHost: new URL(SITE_URL).host });
+  const { html, sumario } = renderMarkdown(p.markdown, { siteHost: new URL(SITE_URL).host, seguro: true });
   const secoes = sumario.filter((s) => s.nivel === 2);
   const atualizada = p.atualizadaEm.toLocaleDateString("pt-BR", { timeZone: "America/Sao_Paulo" });
 

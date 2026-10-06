@@ -1,10 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { jwtVerify } from "jose";
+import { chaveDe } from "@/lib/segredo";
 
 const COOKIE_NAME = "dattis_session";
-const secret = new TextEncoder().encode(
-  process.env.SESSION_SECRET ?? "dattis-dev-secret-troque-em-producao"
-);
 
 // Domínio canônico (ex.: https://www.dattis.com.br). Enquanto for .vercel.app, nada é redirecionado.
 const CANONICO = (process.env.NEXT_PUBLIC_SITE_URL ?? "").replace(/\/$/, "");
@@ -30,7 +28,7 @@ export async function proxy(req: NextRequest) {
   let autenticado = false;
   if (token) {
     try {
-      await jwtVerify(token, secret);
+      await jwtVerify(token, chaveDe("sessao"));
       autenticado = true;
     } catch {
       autenticado = false;

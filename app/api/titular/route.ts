@@ -3,6 +3,7 @@ import { createHash } from "node:crypto";
 import { eq } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { agencias, contasCliente, pedidosTitular } from "@/lib/db/schema";
+import { segredoBase } from "@/lib/segredo";
 import { limitarIp, respostaLimite } from "@/lib/limite";
 import { ipDe } from "@/lib/dpa";
 import { PRAZO_DIAS, TIPOS_PEDIDO, novoProtocolo } from "@/lib/titulares";
@@ -40,7 +41,7 @@ export async function POST(req: Request) {
     tipo,
     mensagem: mensagem || null,
     prazo: new Date(Date.now() + PRAZO_DIAS * 86_400_000),
-    ipHash: createHash("sha256").update(`${process.env.SESSION_SECRET ?? "dattis"}:${ipDe(req)}`).digest("hex"),
+    ipHash: createHash("sha256").update(`${segredoBase()}:${ipDe(req)}`).digest("hex"),
   });
   return NextResponse.json({ ok: true, protocolo, prazoDias: PRAZO_DIAS });
 }

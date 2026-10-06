@@ -4,6 +4,7 @@ import { consentimentos } from "@/lib/db/schema";
 import { donoDoToken, registrarDeteccao } from "@/lib/cookies-sites";
 import { limitarIp } from "@/lib/limite";
 import { ipDe } from "@/lib/dpa";
+import { segredoBase } from "@/lib/segredo";
 
 export const runtime = "nodejs";
 
@@ -37,7 +38,7 @@ export async function POST(req: Request) {
   const dono = await donoDoToken(token).catch(() => null);
   if (!dono) return ok();
 
-  const segredo = process.env.SESSION_SECRET ?? "dattis";
+  const segredo = segredoBase();
   await db
     .insert(consentimentos)
     .values({

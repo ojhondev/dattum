@@ -5,11 +5,9 @@ import { and, eq } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { agencias, usuarios } from "@/lib/db/schema";
 import { isAdmin } from "@/lib/admin";
+import { chaveDe } from "@/lib/segredo";
 
 const COOKIE_NAME = "dattis_session";
-const secret = new TextEncoder().encode(
-  process.env.SESSION_SECRET ?? "dattis-dev-secret-troque-em-producao"
-);
 
 export async function hashSenha(senha: string) {
   return bcrypt.hash(senha, 10);
@@ -37,7 +35,7 @@ export async function criarSessaoOperador(agenciaId: string, operador: string) {
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
     .setExpirationTime("8h")
-    .sign(secret);
+    .sign(chaveDe("sessao"));
   const store = await cookies();
   store.set(COOKIE_NAME, token, { httpOnly: true, secure: process.env.NODE_ENV === "production", sameSite: "lax", path: "/", maxAge: 60 * 60 * 8 });
 }
@@ -47,7 +45,7 @@ export async function criarSessao(agenciaId: string, usuarioId: string | null = 
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
     .setExpirationTime("30d")
-    .sign(secret);
+    .sign(chaveDe("sessao"));
 
   const store = await cookies();
   store.set(COOKIE_NAME, token, {
@@ -64,7 +62,7 @@ export async function getSessao(): Promise<Sessao | null> {
   const token = store.get(COOKIE_NAME)?.value;
   if (!token) return null;
   try {
-    const { payload } = await jwtVerify(token, secret);
+    const { payload } = await jwtVerify(token, chaveDe("sessao"));
     if (typeof payload.agenciaId !== "string") return null;
     if (typeof payload.operador === "string") {
       // DPO da Dattis: precisa do login de admin ativo e da autorização da agência a cada acesso.
