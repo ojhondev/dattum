@@ -6,12 +6,15 @@ import { getSessao } from "@/lib/auth";
 import { contaDaAgencia } from "@/lib/contas";
 import { novoToken } from "@/lib/dpa";
 import { urlAbsoluta } from "@/lib/site";
+import { bloqueioDemo } from "@/lib/demo-bloqueio";
 
 export const runtime = "nodejs";
 
 async function conta(id: string) {
   const sessao = await getSessao();
   if (!sessao) return { erro: NextResponse.json({ ok: false, error: "Não autenticado." }, { status: 401 }) };
+  const demo = await bloqueioDemo(sessao.agenciaId);
+  if (demo) return { erro: demo };
   const agencia = await db.query.agencias.findFirst({ where: eq(agencias.id, sessao.agenciaId) });
   if (agencia?.plano === "start") return { erro: NextResponse.json({ ok: false, error: "O DAT faz parte dos planos Growth e Scale." }, { status: 403 }) };
   const c = await contaDaAgencia(id, sessao.agenciaId);

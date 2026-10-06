@@ -5,23 +5,24 @@ import { agencias } from "@/lib/db/schema";
 import { criarSessao } from "@/lib/auth";
 import { limitarIp, respostaLimite } from "@/lib/limite";
 import { ativarAgencia, CODIGO_INVALIDO, TERMOS_NAO_ACEITOS } from "@/lib/ativacao";
+import { EMAIL_VALIDO, problemaNaSenha } from "@/lib/validacao";
 
 export const runtime = "nodejs";
 
 export async function POST(req: Request) {
   if (await limitarIp(req, "cadastro", 10, 3600)) return respostaLimite(60);
   const body = await req.json().catch(() => null);
-  const nome = typeof body?.nome === "string" ? body.nome.trim() : "";
-  const email = typeof body?.email === "string" ? body.email.trim().toLowerCase() : "";
+  const nome = typeof body?.nome === "string" ? body.nome.trim().slice(0, 120) : "";
+  const email = typeof body?.email === "string" ? body.email.trim().toLowerCase().slice(0, 160) : "";
   const senha = typeof body?.senha === "string" ? body.senha : "";
-  const codigo = typeof body?.codigo === "string" ? body.codigo.trim().toUpperCase() : "";
+  const codigo = typeof body?.codigo === "string" ? body.codigo.trim().toUpperCase().slice(0, 40) : "";
 
   if (!codigo) return NextResponse.json({ ok: false, error: CODIGO_INVALIDO }, { status: 403 });
   if (body?.aceite !== true) return NextResponse.json({ ok: false, error: TERMOS_NAO_ACEITOS }, { status: 400 });
 
-  if (!nome || !email || senha.length < 8) {
+  if (!nome || !EMAIL_VALIDO.test(email) || problemaNaSenha(senha)) {
     return NextResponse.json(
-      { ok: false, error: "Preencha nome, e-mail e uma senha com pelo menos 8 caracteres." },
+      { ok: false, error: problemaNaSenha(senha) ?? "Preencha o nome e um e-mail válido." },
       { status: 400 }
     );
   }

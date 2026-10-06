@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { eq } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { leadsAuditoria } from "@/lib/db/schema";
+import { limitarIp, respostaLimite } from "@/lib/limite";
 
 export const runtime = "nodejs";
 
@@ -10,6 +11,7 @@ const NIVEIS = new Set(["Baixo", "Médio", "Alto", "Crítico"]);
 
 // Grava o resultado da auditoria e/ou o clique em "Enviar resultado para especialista".
 export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
+  if (await limitarIp(req, "lead-atualizar", 30, 3600)) return respostaLimite(60);
   const { id } = await params;
   if (!/^[0-9a-f-]{36}$/i.test(id)) return NextResponse.json({ ok: false }, { status: 404 });
 

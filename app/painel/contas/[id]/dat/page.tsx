@@ -7,7 +7,8 @@ import { agencias } from "@/lib/db/schema";
 import { contaDaAgencia } from "@/lib/contas";
 import { montarDat } from "@/lib/dat";
 import { origemAtual } from "@/lib/certificados";
-import { linkContato } from "@/lib/contato";
+import { planoPermite } from "@/lib/planos";
+import { ConviteGrowth } from "@/components/app/ConviteGrowth";
 import { RelatorioDat } from "@/components/app/RelatorioDat";
 import { AcoesDat } from "./AcoesDat";
 import { ImprimirAoAbrir } from "@/components/app/ImprimirAoAbrir";
@@ -22,18 +23,13 @@ export default async function DatPage({ params }: { params: Promise<{ id: string
   if (!conta) notFound();
   const agencia = await db.query.agencias.findFirst({ where: eq(agencias.id, sessao.agenciaId) });
 
-  if (agencia?.plano === "start") {
+  if (agencia && !planoPermite(agencia.plano, "relatorio")) {
     return (
-      <div className="max-w-2xl">
-        <h1 className="painel-title">Relatório para o cliente</h1>
-        <p className="painel-lede">
-          O relatório para o cliente, com link sempre atualizado para mandar sempre que ele perguntar se está tudo certo, faz parte dos planos
-          Growth e Scale.
-        </p>
-        <a href={linkContato(`Olá! Quero passar a ${agencia.nome} para o plano Growth da Dattis.`)} target="_blank" rel="noopener" className="painel-btn">
-          Falar sobre o Growth
-        </a>
-      </div>
+      <ConviteGrowth
+        titulo="Relatório para o cliente"
+        texto="O relatório para o cliente, com link sempre atualizado para mandar sempre que ele perguntar se está tudo certo, faz parte dos planos Growth e Scale."
+        agenciaNome={agencia.nome}
+      />
     );
   }
 

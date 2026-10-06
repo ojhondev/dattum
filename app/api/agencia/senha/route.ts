@@ -5,6 +5,7 @@ import { agencias } from "@/lib/db/schema";
 import { ehDono, ehOperador, getSessao, hashSenha, verificarSenha } from "@/lib/auth";
 import { registrar } from "@/lib/registro";
 import { EMAIL_DEMO } from "@/lib/admin-dados";
+import { problemaNaSenha } from "@/lib/validacao";
 
 export const runtime = "nodejs";
 
@@ -22,7 +23,7 @@ export async function POST(req: Request) {
 
   const b = await req.json().catch(() => null);
   const nova = typeof b?.nova === "string" ? b.nova : "";
-  if (nova.length < 8) return NextResponse.json({ ok: false, error: "A nova senha precisa ter pelo menos 8 caracteres." }, { status: 400 });
+  if (problemaNaSenha(nova)) return NextResponse.json({ ok: false, error: problemaNaSenha(nova) }, { status: 400 });
 
   if (agencia.senhaDefinida) {
     const atual = typeof b?.atual === "string" ? b.atual : "";

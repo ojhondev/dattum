@@ -17,6 +17,8 @@ import { origemAtual, statusCertificado } from "@/lib/certificados";
 import { MOTIVOS, prontidaoDossie, textoContestacao, type MotivoId } from "@/lib/dossie";
 import { varreduraResultados } from "@/lib/db/schema";
 import { DossieActions } from "./DossieActions";
+import { planoPermite } from "@/lib/planos";
+import { ConviteDossie } from "@/components/app/ConviteGrowth";
 
 const ANEXAR = [
   "Cartão CNPJ da empresa",
@@ -65,6 +67,8 @@ export default async function DossieContaPage({
     where: and(eq(contasCliente.id, contaId), eq(contasCliente.agenciaId, sessao.agenciaId)),
   });
   if (!conta) notFound();
+  const plano = await db.query.agencias.findFirst({ where: eq(agencias.id, sessao.agenciaId), columns: { nome: true, plano: true } });
+  if (plano && !planoPermite(plano.plano, "dossie")) return <ConviteDossie agenciaNome={plano.nome} />;
 
   const [agencia, atividades, dpa, subs, cert, origem, vig] = await Promise.all([
     db.query.agencias.findFirst({ where: eq(agencias.id, sessao.agenciaId) }),

@@ -4,6 +4,8 @@ import { db } from "@/lib/db";
 import { agencias, certificados, contasCliente } from "@/lib/db/schema";
 import { getSessao } from "@/lib/auth";
 import { gerarCodigo, requisitosAgencia, requisitosConta } from "@/lib/certificados";
+import { planoPermite } from "@/lib/planos";
+import { bloqueioDemo } from "@/lib/demo-bloqueio";
 
 export const runtime = "nodejs";
 
@@ -16,6 +18,8 @@ function normalizarDominio(v: unknown) {
 export async function POST(req: Request) {
   const sessao = await getSessao();
   if (!sessao) return NextResponse.json({ ok: false, error: "Não autenticado." }, { status: 401 });
+  const demo = await bloqueioDemo(sessao.agenciaId);
+  if (demo) return demo;
 
   const body = await req.json().catch(() => null);
   const contaId = typeof body?.contaId === "string" && body.contaId ? body.contaId : null;
@@ -27,6 +31,9 @@ export async function POST(req: Request) {
 
   const agencia = await db.query.agencias.findFirst({ where: eq(agencias.id, sessao.agenciaId) });
   if (!agencia) return NextResponse.json({ ok: false, error: "Agência não encontrada." }, { status: 404 });
+  if (!planoPermite(agencia.plano, "certificado")) {
+    return NextResponse.json({ ok: false, error: "O certificado e o selo fazem parte dos planos Growth e Scale." }, { status: 403 });
+  }
 
   let titular = agencia.nome;
   if (contaId) {

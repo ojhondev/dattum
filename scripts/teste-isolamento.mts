@@ -1,6 +1,10 @@
-// Teste de isolamento entre agências ("cada um só vê o seu").
-// Cria duas agências de teste (A e B), dá dados à B e tenta, logada como A, ler e alterar tudo da B
-// por todas as rotas da API e páginas do painel. No fim, confere que nada da B mudou e apaga as duas.
+// Teste de isolamento entre agências ("cada um só vê o seu") e das regras de permissão.
+// 1. Cria duas agências de teste (A e B), dá dados à B e tenta, logada como A, ler e alterar tudo da B
+//    por todas as rotas da API e páginas do painel. Confere que nada da B mudou.
+// 2. Uma agência Start (S) não emite certificado, não gera link de assinatura e não abre o dossiê,
+//    mas consegue registrar a assinatura do cliente feita fora da Dattis.
+// 3. A conta demo (compartilhada) não aceita alterações.
+// No fim, apaga as agências de teste.
 //
 // Uso (com o site rodando localmente: npm run build && npm run start):
 //   npm run teste:isolamento                       (padrão: http://localhost:3012)
@@ -55,14 +59,14 @@ async function chamar(cookie: string | null, metodo: string, caminho: string, co
 const negado = (r: Awaited<ReturnType<typeof chamar>>) =>
   (r.status >= 400 || (r.status >= 300 && r.status < 400) || r.json?.ok === false) && !r.texto.includes(MARCA_B);
 
-async function criarAgencia(letra: "A" | "B") {
+async function criarAgencia(letra: "A" | "B" | "S") {
   const [a] = await db
     .insert(agencias)
     .values({
       nome: letra === "B" ? `Agência ${MARCA_B}` : `Agência ISOLAMENTO-A-${sufixo}`,
       email: `isolamento-${letra.toLowerCase()}-${sufixo}@teste.invalid`,
       senhaHash: randomBytes(16).toString("hex"),
-      plano: "growth",
+      plano: letra === "S" ? "start" : "growth",
       termosVersao: "teste",
       termosAceitosEm: new Date(),
       onboardingConcluidoEm: new Date(),
@@ -209,6 +213,48 @@ try {
   checar(igual(antes.cert, depois.cert), "o certificado da B continua intacto");
   checar(!!depois.ferramenta, "a ferramenta própria da B continua existindo");
   checar(igual(antes.ferramentas, depois.ferramentas), "as ferramentas do cliente da B continuam intactas");
+
+  // ---------- Plano Start: o que é do Growth fica fechado, também pela API ----------
+  const S = await criarAgencia("S");
+  ids.push(S.id);
+  const cookieS = `dattis_session=${await token(S.id)}`;
+  const criadoS = (await chamar(cookieS, "POST", "/api/contas", { nome: `Cliente START-${sufixo}` })).json as { conta?: { id: string }; dpaId?: string } | null;
+  const contaS = criadoS?.conta?.id ?? "";
+  const dpaS = criadoS?.dpaId ?? "";
+  checar(!!contaS && !!dpaS, "a agência Start consegue cadastrar cliente (pré-condição)");
+  checar((await chamar(cookieS, "POST", "/api/certificados", { contaId: contaS })).status === 403, "Start não emite certificado pela API");
+  checar((await chamar(cookieS, "POST", `/api/dpa/${dpaS}/link`)).status === 403, "Start não gera link de assinatura eletrônica pela API");
+  checar((await chamar(cookieS, "POST", `/api/contas/${contaS}/dat-link`)).json?.ok === false, "Start não gera link do relatório para o cliente");
+  for (const caminho of [`/painel/dossie/${contaS}`, "/painel/dossie", "/painel/certificados", `/painel/contas/${contaS}/dat`]) {
+    const r = await chamar(cookieS, "GET", caminho);
+    checar(r.status === 200 && r.texto.includes("Falar sobre o Growth"), `Start vê o convite ao Growth em ${caminho.replace(contaS, "{cliente}")}`);
+  }
+  // Assinatura do cliente fora da Dattis (o caminho do Start)
+  await chamar(cookieS, "POST", `/api/dpa/${dpaS}/assinar`, { nome: "Responsável Teste", cargo: "Sócio", aceite: true });
+  const hoje = new Date().toLocaleDateString("en-CA", { timeZone: "America/Sao_Paulo" });
+  checar((await chamar(cookieS, "POST", `/api/dpa/${dpaS}/cliente-fora`, { nome: "Cliente Teste", cargo: "Diretor", data: "2999-01-01", aceite: true })).status === 400, "data no futuro é recusada");
+  const fora = await chamar(cookieS, "POST", `/api/dpa/${dpaS}/cliente-fora`, { nome: "Cliente Teste", cargo: "Diretor", data: hoje, aceite: true });
+  checar((fora.json as { situacao?: string } | null)?.situacao === "assinado", "Start registra a assinatura do cliente feita fora e o contrato fica assinado");
+  checar(negado(await chamar(cookieA, "POST", `/api/dpa/${dpaS}/cliente-fora`, { nome: "x", cargo: "y", data: hoje, aceite: true })), "outra agência não registra assinatura num contrato que não é dela");
+  const certsS = await db.query.certificados.findMany({ where: eq(certificados.agenciaId, S.id) });
+  checar(certsS.length === 0, "contrato completo no Start não gera certificado automático");
+
+  // ---------- Conta demo: só leitura ----------
+  const demoAg = await db.query.agencias.findFirst({ where: eq(agencias.email, "demo@dattis.com.br") });
+  if (demoAg) {
+    const cookieDemo = `dattis_session=${await token(demoAg.id)}`;
+    const contaDemo = await db.query.contasCliente.findFirst({ where: eq(contasCliente.agenciaId, demoAg.id) });
+    checar((await chamar(cookieDemo, "GET", "/api/contas")).status === 200, "a demo continua navegável (leitura)");
+    checar((await chamar(cookieDemo, "POST", "/api/contas", { nome: "invasão demo" })).status === 403, "a demo não cadastra cliente");
+    if (contaDemo) {
+      checar((await chamar(cookieDemo, "PATCH", `/api/contas/${contaDemo.id}`, { nome: "invasão demo" })).status === 403, "a demo não renomeia cliente");
+      checar((await chamar(cookieDemo, "POST", `/api/rat/${contaDemo.id}`, { nomeAtividade: "x", categoriasDado: "x", finalidade: "x", baseLegal: "x", titulares: "x", prazoRetencao: "x" })).status === 403, "a demo não altera o registro (RAT)");
+      const depoisDemo = await db.query.contasCliente.findFirst({ where: eq(contasCliente.id, contaDemo.id) });
+      checar(depoisDemo?.nome === contaDemo.nome, "o cliente da demo continua intacto");
+    }
+  } else {
+    console.log("(conta demo não existe neste banco: verificação da demo pulada)");
+  }
 } catch (e) {
   falhas.push(`erro inesperado: ${e instanceof Error ? e.message : String(e)}`);
   console.error(e);

@@ -5,6 +5,7 @@ import { pedidosTitular } from "@/lib/db/schema";
 import { getSessao } from "@/lib/auth";
 import { registrar } from "@/lib/registro";
 import { STATUS_PEDIDO } from "@/lib/titulares";
+import { bloqueioDemo } from "@/lib/demo-bloqueio";
 
 export const runtime = "nodejs";
 
@@ -12,6 +13,8 @@ export const runtime = "nodejs";
 export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const sessao = await getSessao();
   if (!sessao) return NextResponse.json({ ok: false, error: "Não autenticado." }, { status: 401 });
+  const demo = await bloqueioDemo(sessao.agenciaId);
+  if (demo) return demo;
   const { id } = await params;
   const b = await req.json().catch(() => null);
   const status = typeof b?.status === "string" && STATUS_PEDIDO[b.status] ? (b.status as string) : null;

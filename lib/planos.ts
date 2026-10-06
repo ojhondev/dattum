@@ -36,6 +36,19 @@ export const RECURSOS: Recurso[] = [
   { pilar: "Relacionamento", nome: "Suporte", valores: { start: "E-mail", growth: "Prioritário", scale: "Gestor dedicado" } },
 ];
 
+/**
+ * Recursos que o Start não tem (ver RECURSOS acima). A mesma regra vale na tela e no servidor:
+ * a tela usa para mostrar o convite ao Growth, a API para recusar (403) quem chama direto.
+ */
+export type RecursoPago = "certificado" | "dossie" | "relatorio" | "assinaturaEletronicaCliente";
+const PLANOS_COM: Record<RecursoPago, PlanoId[]> = {
+  certificado: ["growth", "scale"],
+  dossie: ["growth", "scale"],
+  relatorio: ["growth", "scale"],
+  assinaturaEletronicaCliente: ["growth", "scale"],
+};
+export const planoPermite = (plano: string | null | undefined, recurso: RecursoPago) => (PLANOS_COM[recurso] as string[]).includes(plano ?? "");
+
 export function destaquesDoPlano(id: PlanoId): string[] {
   return RECURSOS.filter((r) => r.valores[id] !== false).map((r) =>
     typeof r.valores[id] === "string" ? `${r.nome}: ${minusculaInicial(r.valores[id] as string)}` : r.nome,

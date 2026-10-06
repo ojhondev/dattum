@@ -1,15 +1,27 @@
 import { desc, eq } from "drizzle-orm";
 import { getSessao } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { certificados, contasCliente } from "@/lib/db/schema";
+import { agencias, certificados, contasCliente } from "@/lib/db/schema";
 import { origemAtual, statusCertificado, requisitosConta } from "@/lib/certificados";
 import { automatizarCertificados } from "@/lib/automacao";
 import { EmitirCertificado, CertificadoCard } from "./CertificadosClient";
 import { BarraModulo } from "@/components/app/Modulo";
+import { planoPermite } from "@/lib/planos";
+import { ConviteGrowth } from "@/components/app/ConviteGrowth";
 
 export default async function CertificadosPage() {
   const sessao = await getSessao();
   if (!sessao) return null;
+  const agencia = await db.query.agencias.findFirst({ where: eq(agencias.id, sessao.agenciaId), columns: { nome: true, plano: true } });
+  if (agencia && !planoPermite(agencia.plano, "certificado")) {
+    return (
+      <ConviteGrowth
+        titulo="Certificado e selo"
+        texto="O certificado de privacidade de dados e o selo com QR Code para o site da agência e dos clientes fazem parte dos planos Growth e Scale. Eles saem sozinhos quando o cliente está com tudo em dia."
+        agenciaNome={agencia.nome}
+      />
+    );
+  }
 
   // Antes de listar, deixa o automático em dia (emite o que ficou elegível, renova o que vence em 30 dias).
   await automatizarCertificados(sessao.agenciaId).catch(() => null);

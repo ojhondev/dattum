@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import { agencias } from "@/lib/db/schema";
 import { ferramentasDaAgencia } from "@/lib/ferramentas-agencia";
 import { Onboarding } from "@/components/app/Onboarding";
+import { planoPermite } from "@/lib/planos";
 
 /** Cliente novo: o mesmo passo a passo do primeiro acesso, sem a parte da agência. */
 export default async function NovaContaPage() {
@@ -14,6 +15,7 @@ export default async function NovaContaPage() {
     <Onboarding
       modo="cliente"
       podeEditarAgencia={false}
+      recursos={{ assinaturaEletronica: planoPermite(agencia?.plano, "assinaturaEletronicaCliente"), relatorio: planoPermite(agencia?.plano, "relatorio") }}
       ferramentasProprias={proprias}
       agencia={{
         nome: agencia?.nome ?? "",

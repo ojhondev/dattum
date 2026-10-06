@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { CheckCircle2, Circle, Copy, Link2, Mail, MessageCircle } from "lucide-react";
+import { CheckCircle2, Circle, Copy, FileText, Link2, Mail, MessageCircle } from "lucide-react";
 import { linkWhatsappPara } from "@/lib/contato";
 
 export type ContratoDados = {
@@ -13,7 +13,7 @@ export type ContratoDados = {
   hashConteudo: string | null;
   temLink: boolean;
   agencia: { nome: string | null; cargo: string | null; em: string | null; ip: string | null } | null;
-  cliente: { nome: string | null; cargo: string | null; email: string | null; em: string | null; ip: string | null } | null;
+  cliente: { nome: string | null; cargo: string | null; email: string | null; em: string | null; ip: string | null; fora: boolean } | null;
 };
 
 export type VersaoContrato = { id: string; versao: number; assinado: boolean; criadoEm: string; substituidoEm: string | null };
@@ -27,7 +27,7 @@ const PILULA: Record<ContratoDados["situacao"], { classe: string; texto: string 
 
 const dataHora = (iso: string) => new Date(iso).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" });
 
-function Assinado({ nome, cargo, email, em, ip }: { nome: string | null; cargo: string | null; email?: string | null; em: string; ip: string | null }) {
+function Assinado({ nome, cargo, email, em, ip, fora }: { nome: string | null; cargo: string | null; email?: string | null; em: string; ip: string | null; fora?: boolean }) {
   return (
     <div className="mt-3 text-[14px] leading-relaxed text-body">
       <p className="text-ink">
@@ -35,7 +35,7 @@ function Assinado({ nome, cargo, email, em, ip }: { nome: string | null; cargo: 
       </p>
       {email && <p>{email}</p>}
       <p className="text-muted">
-        {dataHora(em)} · IP {ip ?? "-"}
+        {fora ? `Assinou o PDF fora da Dattis em ${new Date(em).toLocaleDateString("pt-BR")} · registrado pela agência` : `${dataHora(em)} · IP ${ip ?? "-"}`}
       </p>
     </div>
   );
@@ -47,12 +47,15 @@ export function ContratoConta({
   contaNome,
   contato,
   responsavelPadrao,
+  assinaturaEletronica,
 }: {
   contrato: ContratoDados | null;
   versoes: VersaoContrato[];
   contaNome: string;
   contato: { nome: string | null; email: string | null; whatsapp: string | null };
   responsavelPadrao: { nome: string; cargo: string };
+  /** Growth e Scale: o cliente assina pelo link. Start: assina o PDF por fora e a agência registra. */
+  assinaturaEletronica: boolean;
 }) {
   const router = useRouter();
   const [nome, setNome] = useState(responsavelPadrao.nome);
@@ -178,6 +181,9 @@ export function ContratoConta({
           {contrato.cliente?.em ? (
             <Assinado {...contrato.cliente} em={contrato.cliente.em} />
           ) : (
+            !assinaturaEletronica ? (
+              <AssinaturaFora contratoId={contrato.id} contato={contato} />
+            ) : (
             <div className="mt-3">
               <p className="text-[14px] leading-relaxed text-body">
                 O cliente assina pelo celular, sem criar conta. Gere o link e mande para {contato.nome ?? "o responsável"} pelo WhatsApp ou
@@ -214,6 +220,7 @@ export function ContratoConta({
                 </button>
               )}
             </div>
+            )
           )}
         </div>
       </div>
@@ -241,6 +248,82 @@ export function ContratoConta({
               </li>
             ))}
           </ul>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/** Plano Start: o cliente assina o PDF por fora e a agência registra quem assinou e quando. */
+function AssinaturaFora({ contratoId, contato }: { contratoId: string; contato: { nome: string | null; email: string | null } }) {
+  const router = useRouter();
+  const hoje = new Date().toLocaleDateString("en-CA");
+  const [aberto, setAberto] = useState(false);
+  const [f, setF] = useState({ nome: contato.nome ?? "", cargo: "", email: contato.email ?? "", data: hoje, aceite: false });
+  const [salvando, setSalvando] = useState(false);
+  const [erro, setErro] = useState("");
+
+  const salvar = async () => {
+    if (!f.nome.trim() || !f.cargo.trim() || !f.data || !f.aceite) return setErro("Preencha quem assinou, o cargo, a data e confirme que guarda a via assinada.");
+    setSalvando(true);
+    setErro("");
+    const r = await fetch(`/api/dpa/${contratoId}/cliente-fora`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(f) })
+      .then((x) => x.json())
+      .catch(() => ({ ok: false }));
+    setSalvando(false);
+    if (!r.ok) return setErro(r.error ?? "Não foi possível registrar agora.");
+    router.refresh();
+  };
+
+  return (
+    <div className="mt-3">
+      <p className="text-[14px] leading-relaxed text-body">
+        Baixe o contrato em PDF e mande para {contato.nome ?? "o responsável"} assinar (à mão ou no assinador que vocês já usam). Depois, registre aqui
+        quem assinou. Guarde a via assinada.
+      </p>
+      <p className="mt-2 text-[13px] leading-snug text-muted">No Growth, o cliente assina pelo celular com um link, sem PDF.</p>
+      {!aberto ? (
+        <div className="mt-4 flex flex-wrap gap-2">
+          <a className="painel-btn ghost" href={`/api/dpa/${contratoId}/pdf`} target="_blank" rel="noopener noreferrer">
+            <FileText size={14} /> Baixar PDF
+          </a>
+          <button type="button" className="painel-btn" onClick={() => setAberto(true)}>
+            O cliente assinou: registrar
+          </button>
+        </div>
+      ) : (
+        <div className="mt-4 flex flex-col gap-3">
+          <label className="block">
+            <span className="text-body-sm font-medium text-body">Quem assinou pelo cliente</span>
+            <input id="cf-nome" className="field-input mt-1.5" value={f.nome} onChange={(e) => setF({ ...f, nome: e.target.value })} />
+          </label>
+          <div className="grid gap-3 sm:grid-cols-2">
+            <label className="block">
+              <span className="text-body-sm font-medium text-body">Cargo</span>
+              <input id="cf-cargo" className="field-input mt-1.5" value={f.cargo} placeholder="Sócio, diretor..." onChange={(e) => setF({ ...f, cargo: e.target.value })} />
+            </label>
+            <label className="block">
+              <span className="text-body-sm font-medium text-body">Data da assinatura</span>
+              <input id="cf-data" type="date" max={hoje} className="field-input mt-1.5" value={f.data} onChange={(e) => setF({ ...f, data: e.target.value })} />
+            </label>
+          </div>
+          <label className="block">
+            <span className="text-body-sm font-medium text-body">E-mail (opcional)</span>
+            <input id="cf-email" type="email" className="field-input mt-1.5" value={f.email} onChange={(e) => setF({ ...f, email: e.target.value })} />
+          </label>
+          <label className="flex items-start gap-3 text-[14px] leading-snug text-body">
+            <input id="cf-aceite" type="checkbox" checked={f.aceite} onChange={(e) => setF({ ...f, aceite: e.target.checked })} className="mt-0.5 h-4 w-4 shrink-0" />
+            <span>Confirmo que o cliente assinou esta versão do contrato e que a agência guarda a via assinada.</span>
+          </label>
+          {erro && <div className="painel-error">{erro}</div>}
+          <div className="flex flex-wrap gap-2">
+            <button type="button" className="painel-btn" onClick={salvar} disabled={salvando}>
+              {salvando ? "Registrando..." : "Registrar assinatura"}
+            </button>
+            <button type="button" className="painel-btn ghost" onClick={() => setAberto(false)}>
+              Cancelar
+            </button>
+          </div>
         </div>
       )}
     </div>

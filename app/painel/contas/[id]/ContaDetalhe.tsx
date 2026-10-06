@@ -159,6 +159,7 @@ export default function ContaDetalhe({
   vigilancia,
   abaInicial,
   temDat,
+  assinaturaEletronica,
   politica,
   cookies,
   ferramentasProprias,
@@ -173,6 +174,7 @@ export default function ContaDetalhe({
   vigilancia: ResultadoVigilancia;
   abaInicial: AbaConta;
   temDat: boolean;
+  assinaturaEletronica: boolean;
   politica: { url: string | null; email: string };
   cookies: { token: string | null; config: { cor?: string; politicaUrl?: string; flutuante?: boolean } | null; estatistica: EstatisticaCookies | null; origem: string };
 }) {
@@ -305,6 +307,7 @@ export default function ContaDetalhe({
             contaNome={conta.nome}
             contato={{ nome: conta.contatoNome, email: conta.contatoEmail, whatsapp: conta.contatoWhatsapp }}
             responsavelPadrao={responsavelPadrao}
+            assinaturaEletronica={assinaturaEletronica}
           />
         </div>
       )}

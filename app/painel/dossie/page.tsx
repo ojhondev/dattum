@@ -3,7 +3,9 @@ import { eq } from "drizzle-orm";
 import { ArrowRight, FolderOpen } from "lucide-react";
 import { getSessao } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { contasCliente } from "@/lib/db/schema";
+import { agencias, contasCliente } from "@/lib/db/schema";
+import { planoPermite } from "@/lib/planos";
+import { ConviteDossie } from "@/components/app/ConviteGrowth";
 import { BarraModulo, BuscaModulo } from "@/components/app/Modulo";
 
 const PASSOS = [
@@ -16,6 +18,8 @@ export default async function DossiePage({ searchParams }: { searchParams: Promi
   const { q } = await searchParams;
   const sessao = await getSessao();
   if (!sessao) return null;
+  const agencia = await db.query.agencias.findFirst({ where: eq(agencias.id, sessao.agenciaId), columns: { nome: true, plano: true } });
+  if (agencia && !planoPermite(agencia.plano, "dossie")) return <ConviteDossie agenciaNome={agencia.nome} />;
 
   const contas = await db.query.contasCliente.findMany({
     where: eq(contasCliente.agenciaId, sessao.agenciaId),
@@ -65,3 +69,4 @@ export default async function DossiePage({ searchParams }: { searchParams: Promi
     </div>
   );
 }
+

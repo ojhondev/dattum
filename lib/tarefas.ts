@@ -6,6 +6,7 @@ import { ultimosResultados } from "@/lib/vigilancia";
 import { acaoDoAchado } from "@/lib/vigilancia-acao";
 import { diasAtePrazo, rotuloTipo } from "@/lib/titulares";
 import { agoraMs } from "@/lib/utils";
+import { planoPermite } from "@/lib/planos";
 
 // "O que eu tenho que fazer hoje?": tudo o que falta na carteira, dito como ação e já com o
 // botão que resolve. É o centro do painel inicial; some sozinho quando a coisa é feita.
@@ -40,6 +41,7 @@ export async function tarefasDaAgencia(agenciaId: string): Promise<Tarefa[]> {
   const contratoDe = new Map(contratos.map((d) => [d.contaClienteId, d]));
   const vigDe = new Map(resultados.filter((r) => r.contaClienteId).map((r) => [r.contaClienteId!, r]));
   const growth = agencia.plano !== "start";
+  const assinaturaPorLink = planoPermite(agencia.plano, "assinaturaEletronicaCliente");
   const agora = agoraMs();
   const t: Tarefa[] = [];
 
@@ -85,7 +87,9 @@ export async function tarefasDaAgencia(agenciaId: string): Promise<Tarefa[]> {
         id: `assinar-${c.id}`,
         urgencia: 2,
         titulo: `Assinar o contrato da ${c.nome}`,
-        detalhe: "Assine pela agência e mande o link para o cliente assinar pelo celular. Sem as duas assinaturas, o contrato não vale.",
+        detalhe: assinaturaPorLink
+          ? "Assine pela agência e mande o link para o cliente assinar pelo celular. Sem as duas assinaturas, o contrato não vale."
+          : "Assine pela agência e mande o PDF para o cliente assinar. Sem as duas assinaturas, o contrato não vale.",
         cliente: c.nome,
         acao: { rotulo: "Assinar", href: `${base}?aba=contrato` },
       });
@@ -94,9 +98,11 @@ export async function tarefasDaAgencia(agenciaId: string): Promise<Tarefa[]> {
         id: `cobrar-${c.id}`,
         urgencia: 2,
         titulo: `Cobrar a assinatura da ${c.nome}`,
-        detalhe: c.contatoNome ? `${c.contatoNome} ainda não assinou. Reenvie o link pelo WhatsApp.` : "O cliente ainda não assinou. Reenvie o link pelo WhatsApp.",
+        detalhe: assinaturaPorLink
+          ? c.contatoNome ? `${c.contatoNome} ainda não assinou. Reenvie o link pelo WhatsApp.` : "O cliente ainda não assinou. Reenvie o link pelo WhatsApp."
+          : `${c.contatoNome ?? "O cliente"} precisa assinar o PDF do contrato. Quando voltar assinado, registre a assinatura.`,
         cliente: c.nome,
-        acao: { rotulo: "Reenviar link", href: `${base}?aba=contrato` },
+        acao: assinaturaPorLink ? { rotulo: "Reenviar link", href: `${base}?aba=contrato` } : { rotulo: "Registrar assinatura", href: `${base}?aba=contrato` },
       });
     }
 

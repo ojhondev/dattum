@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getSessao } from "@/lib/auth";
 import { cadastrarFerramenta, ferramentasDaAgencia } from "@/lib/ferramentas-agencia";
 import { registrar } from "@/lib/registro";
+import { bloqueioDemo } from "@/lib/demo-bloqueio";
 
 export const runtime = "nodejs";
 
@@ -16,6 +17,8 @@ export async function GET() {
 export async function POST(req: Request) {
   const sessao = await getSessao();
   if (!sessao) return NextResponse.json({ ok: false, error: "Não autenticado." }, { status: 401 });
+  const demo = await bloqueioDemo(sessao.agenciaId);
+  if (demo) return demo;
   const b = await req.json().catch(() => null);
   const r = await cadastrarFerramenta(sessao.agenciaId, {
     nome: typeof b?.nome === "string" ? b.nome : "",

@@ -1,13 +1,19 @@
 import chromium from "@sparticuz/chromium-min";
 import puppeteer from "puppeteer-core";
 import { resolveExecutablePath } from "@/lib/browser";
-import { situacaoDpa, ROTULO_SITUACAO, type Dpa } from "@/lib/dpa";
+import { assinadoFora, situacaoDpa, ROTULO_SITUACAO, type Dpa } from "@/lib/dpa";
 
 const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 const quando = (d: Date | null) => (d ? d.toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo" }) : "-");
 
 function bloco(titulo: string, a: { nome: string | null; cargo: string | null; email?: string | null; em: Date | null; ip: string | null; ua: string | null }) {
   if (!a.em) return `<div class="ass pendente"><p class="t">${titulo}</p><p>Ainda não assinou.</p></div>`;
+  if (assinadoFora(a.ua)) {
+    const dia = a.em.toLocaleDateString("pt-BR", { timeZone: "America/Sao_Paulo" });
+    return `<div class="ass"><p class="t">${titulo}</p>
+    <p><b>${esc(a.nome ?? "")}</b> · ${esc(a.cargo ?? "")}${a.email ? ` · ${esc(a.email)}` : ""}</p>
+    <p>Assinou a via em PDF fora da Dattis em ${dia}. Assinatura registrada pela agência, que guarda a via assinada.</p></div>`;
+  }
   return `<div class="ass"><p class="t">${titulo}</p>
     <p><b>${esc(a.nome ?? "")}</b> · ${esc(a.cargo ?? "")}${a.email ? ` · ${esc(a.email)}` : ""}</p>
     <p>Assinado eletronicamente em ${quando(a.em)} (horário de Brasília) · IP ${esc(a.ip ?? "-")}</p>

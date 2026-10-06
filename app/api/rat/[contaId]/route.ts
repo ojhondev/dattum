@@ -3,8 +3,12 @@ import { eq, and } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { atividadesTratamento, contasCliente } from "@/lib/db/schema";
 import { getSessao } from "@/lib/auth";
+import { bloqueioDemo } from "@/lib/demo-bloqueio";
 
 export const runtime = "nodejs";
+
+// O nome da atividade é curto; os demais campos são frases (vão para o PDF do contrato e para a política pública).
+const limite = (campo: string) => (campo === "nomeAtividade" ? 200 : 2000);
 
 async function contaPertenceAgencia(contaId: string, agenciaId: string) {
   const conta = await db.query.contasCliente.findFirst({
@@ -33,6 +37,8 @@ export async function GET(_req: Request, { params }: { params: Promise<{ contaId
 export async function POST(req: Request, { params }: { params: Promise<{ contaId: string }> }) {
   const sessao = await getSessao();
   if (!sessao) return NextResponse.json({ ok: false, error: "Não autenticado." }, { status: 401 });
+  const demo = await bloqueioDemo(sessao.agenciaId);
+  if (demo) return demo;
 
   const { contaId } = await params;
   if (!(await contaPertenceAgencia(contaId, sessao.agenciaId))) {
@@ -47,7 +53,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ contaId
     if (typeof valor !== "string" || !valor.trim()) {
       return NextResponse.json({ ok: false, error: `Campo obrigatório ausente: ${campo}.` }, { status: 400 });
     }
-    valores[campo] = valor.trim();
+    valores[campo] = valor.trim().slice(0, limite(campo));
   }
 
   const [atividade] = await db
@@ -71,6 +77,8 @@ export async function POST(req: Request, { params }: { params: Promise<{ contaId
 export async function PATCH(req: Request, { params }: { params: Promise<{ contaId: string }> }) {
   const sessao = await getSessao();
   if (!sessao) return NextResponse.json({ ok: false, error: "Não autenticado." }, { status: 401 });
+  const demo = await bloqueioDemo(sessao.agenciaId);
+  if (demo) return demo;
 
   const { contaId } = await params;
   if (!(await contaPertenceAgencia(contaId, sessao.agenciaId))) {
@@ -79,7 +87,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ contaI
 
   const body = await req.json().catch(() => null);
   const atividadeId = typeof body?.id === "string" ? body.id : "";
-  if (!atividadeId) {
+  if (!/^[0-9a-f-]{36}$/i.test(atividadeId)) {
     return NextResponse.json({ ok: false, error: "Informe o id da atividade." }, { status: 400 });
   }
 
@@ -87,7 +95,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ contaI
   const patch: Record<string, string> = {};
   for (const campo of campos) {
     if (typeof body?.[campo] === "string" && body[campo].trim()) {
-      patch[campo] = body[campo].trim();
+      patch[campo] = body[campo].trim().slice(0, limite(campo));
     }
   }
 

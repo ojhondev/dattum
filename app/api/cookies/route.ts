@@ -6,6 +6,7 @@ import { getSessao } from "@/lib/auth";
 import { contaDaAgencia } from "@/lib/contas";
 import { novoToken } from "@/lib/dpa";
 import { registrar } from "@/lib/registro";
+import { bloqueioDemo } from "@/lib/demo-bloqueio";
 
 export const runtime = "nodejs";
 
@@ -16,6 +17,8 @@ export const runtime = "nodejs";
 export async function POST(req: Request) {
   const sessao = await getSessao();
   if (!sessao) return NextResponse.json({ ok: false, error: "Não autenticado." }, { status: 401 });
+  const demo = await bloqueioDemo(sessao.agenciaId);
+  if (demo) return demo;
   const agencia = await db.query.agencias.findFirst({ where: eq(agencias.id, sessao.agenciaId) });
   if (!agencia) return NextResponse.json({ ok: false, error: "Agência não encontrada." }, { status: 404 });
   if (agencia.plano === "start") return NextResponse.json({ ok: false, error: "O aviso de cookies faz parte dos planos Growth e Scale." }, { status: 403 });

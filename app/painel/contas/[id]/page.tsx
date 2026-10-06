@@ -4,12 +4,13 @@ import { getSessao } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { agencias, contasCliente, atividadesTratamento, contaSubprocessadores, subprocessadoresCatalogo, varreduraResultados } from "@/lib/db/schema";
 import { fluxosDaConta } from "@/lib/fluxos";
-import { dpaVigente, situacaoDpa, versoesAnteriores } from "@/lib/dpa";
+import { dpaVigente, situacaoDpa, assinadoFora, versoesAnteriores } from "@/lib/dpa";
 import ContaDetalhe, { type AbaConta } from "./ContaDetalhe";
 import type { FlowKey } from "@/lib/fluxos";
 import { SITE_URL, urlAbsoluta } from "@/lib/site";
 import { estatisticaCookies } from "@/lib/cookies-stats";
 import { ferramentasDaAgencia } from "@/lib/ferramentas-agencia";
+import { planoPermite } from "@/lib/planos";
 
 // Aceita também os nomes antigos das abas (links já enviados e redirecionamentos do formulário).
 const ABAS: Record<string, AbaConta> = { registro: "registro", rat: "registro", contrato: "contrato", dpa: "contrato", ferramentas: "ferramentas", sub: "ferramentas", site: "site", vigilancia: "vigilancia", vig: "vigilancia" };
@@ -69,7 +70,8 @@ export default async function ContaDetalhePage({ params, searchParams }: { param
 
   return (
     <ContaDetalhe
-      temDat={agencia?.plano !== "start"}
+      temDat={planoPermite(agencia?.plano, "relatorio")}
+      assinaturaEletronica={planoPermite(agencia?.plano, "assinaturaEletronicaCliente")}
       ferramentasProprias={proprias}
       cookies={{ token: conta.cookiesToken, config: conta.cookiesConfig ?? null, estatistica: await estatisticaCookies(conta.cookiesToken), origem: SITE_URL }}
       politica={{ url: conta.politicaPublicadaEm && conta.slug ? urlAbsoluta(`/p/${conta.slug}/privacidade`) : null, email: conta.emailPrivacidade ?? "" }}
@@ -107,7 +109,7 @@ export default async function ContaDetalhePage({ params, searchParams }: { param
               hashConteudo: dpa.hashConteudo,
               temLink: !!dpa.tokenAssinatura,
               agencia: { nome: dpa.assinanteNome, cargo: dpa.assinanteCargo, em: iso(dpa.assinadoEm), ip: dpa.assinadoIp },
-              cliente: { nome: dpa.clienteNome, cargo: dpa.clienteCargo, email: dpa.clienteEmail, em: iso(dpa.clienteAssinadoEm), ip: dpa.clienteIp },
+              cliente: { nome: dpa.clienteNome, cargo: dpa.clienteCargo, email: dpa.clienteEmail, em: iso(dpa.clienteAssinadoEm), ip: dpa.clienteIp, fora: assinadoFora(dpa.clienteUserAgent) },
             }
           : null
       }

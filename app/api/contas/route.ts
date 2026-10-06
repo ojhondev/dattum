@@ -5,6 +5,7 @@ import { agencias, contasCliente } from "@/lib/db/schema";
 import { getSessao } from "@/lib/auth";
 import { ativarConta, normalizarSite, CHAVES_FLUXO } from "@/lib/contas";
 import { registrar } from "@/lib/registro";
+import { bloqueioDemo } from "@/lib/demo-bloqueio";
 
 export const runtime = "nodejs";
 
@@ -23,9 +24,11 @@ export async function GET() {
 export async function POST(req: Request) {
   const sessao = await getSessao();
   if (!sessao) return NextResponse.json({ ok: false, error: "Não autenticado." }, { status: 401 });
+  const demo = await bloqueioDemo(sessao.agenciaId);
+  if (demo) return demo;
 
   const body = await req.json().catch(() => null);
-  const texto = (v: unknown) => (typeof v === "string" && v.trim() ? v.trim() : null);
+  const texto = (v: unknown, max = 200) => (typeof v === "string" && v.trim() ? v.trim().slice(0, max) : null);
   const lista = (v: unknown, max: number) =>
     Array.isArray(v) ? v.filter((x): x is string => typeof x === "string" && !!x.trim()).map((x) => x.trim().slice(0, 80)).slice(0, max) : [];
   const nome = texto(body?.nome) ?? "";
@@ -34,6 +37,10 @@ export async function POST(req: Request) {
 
   if (!nome) {
     return NextResponse.json({ ok: false, error: "Informe o nome do cliente." }, { status: 400 });
+  }
+  const contatoEmail = texto(body?.contatoEmail, 160)?.toLowerCase() ?? null;
+  if (contatoEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(contatoEmail)) {
+    return NextResponse.json({ ok: false, error: "O e-mail do responsável não parece válido." }, { status: 400 });
   }
   if (body?.site && texto(body.site) && !site) {
     return NextResponse.json({ ok: false, error: "O site informado não parece um endereço válido (ex.: lojaaurora.com.br)." }, { status: 400 });
@@ -62,7 +69,7 @@ export async function POST(req: Request) {
     nome,
     cnpj: texto(body?.cnpj),
     contatoNome: texto(body?.contatoNome),
-    contatoEmail: texto(body?.contatoEmail),
+    contatoEmail,
     contatoWhatsapp: texto(body?.contatoWhatsapp),
     crmNome: texto(body?.crmNome),
     site,

@@ -5,6 +5,7 @@ import { agencias } from "@/lib/db/schema";
 import { EMAIL_DEMO } from "@/lib/admin-dados";
 import { Onboarding } from "@/components/app/Onboarding";
 import { ferramentasDaAgencia } from "@/lib/ferramentas-agencia";
+import { planoPermite } from "@/lib/planos";
 
 /** Preenchimento guiado do primeiro acesso: agência + primeiro cliente, numa conversa só. */
 export default async function ComecarPage() {
@@ -15,6 +16,7 @@ export default async function ComecarPage() {
   return (
     <Onboarding
       modo="agencia"
+      recursos={{ assinaturaEletronica: planoPermite(agencia.plano, "assinaturaEletronicaCliente"), relatorio: planoPermite(agencia.plano, "relatorio") }}
       ferramentasProprias={await ferramentasDaAgencia(sessao.agenciaId)}
       podeEditarAgencia={ehDono(sessao) && agencia.email !== EMAIL_DEMO}
       agencia={{

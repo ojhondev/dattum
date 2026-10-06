@@ -3,6 +3,7 @@ import { criarSessao } from "@/lib/auth";
 import { aceitarConvite } from "@/lib/equipe";
 import { limitarIp, respostaLimite } from "@/lib/limite";
 import { registrar } from "@/lib/registro";
+import { problemaNaSenha } from "@/lib/validacao";
 
 export const runtime = "nodejs";
 
@@ -13,7 +14,8 @@ export async function POST(req: Request) {
   const token = typeof b?.token === "string" ? b.token : "";
   const senha = typeof b?.senha === "string" ? b.senha : "";
   const nome = typeof b?.nome === "string" ? b.nome.slice(0, 120) : undefined;
-  if (senha.length < 8) return NextResponse.json({ ok: false, error: "A senha precisa ter pelo menos 8 caracteres." }, { status: 400 });
+  const problema = problemaNaSenha(senha);
+  if (problema) return NextResponse.json({ ok: false, error: problema }, { status: 400 });
   if (b?.aceite !== true) return NextResponse.json({ ok: false, error: "Confirme que leu os Termos de Uso e a Política de Privacidade." }, { status: 400 });
   const u = await aceitarConvite(token, senha, nome);
   if (!u) return NextResponse.json({ ok: false, error: "Este convite expirou ou já foi usado. Peça um novo ao dono da conta." }, { status: 410 });

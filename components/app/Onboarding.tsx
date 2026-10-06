@@ -37,11 +37,14 @@ export function Onboarding({
   agencia,
   podeEditarAgencia,
   ferramentasProprias = [],
+  recursos,
 }: {
   modo: "agencia" | "cliente";
   agencia: DadosAgenciaOnboarding;
   podeEditarAgencia: boolean;
   ferramentasProprias?: FerramentaPropria[];
+  /** Growth e Scale: cliente assina pelo link e há relatório para o cliente. Start: cliente assina o PDF por fora. */
+  recursos: { assinaturaEletronica: boolean; relatorio: boolean };
 }) {
   const router = useRouter();
   const comAgencia = modo === "agencia" && podeEditarAgencia;
@@ -61,6 +64,7 @@ export function Onboarding({
   const [ass, setAss] = useState({ nome: agencia.responsavelNome, cargo: agencia.responsavelCargo, aceite: false });
   const [assinando, setAssinando] = useState(false);
   const [link, setLink] = useState<string | null>(null);
+  const [agenciaAssinou, setAgenciaAssinou] = useState(false);
   const [copiado, setCopiado] = useState(false);
 
   const i = ordem.indexOf(passo);
@@ -154,8 +158,11 @@ export function Onboarding({
     setErro("");
     try {
       await json(`/api/dpa/${criado.dpaId}/assinar`, "POST", { nome: ass.nome.trim(), cargo: ass.cargo.trim(), aceite: true });
-      const l = await json(`/api/dpa/${criado.dpaId}/link`, "POST");
-      setLink(l.url);
+      setAgenciaAssinou(true);
+      if (recursos.assinaturaEletronica) {
+        const l = await json(`/api/dpa/${criado.dpaId}/link`, "POST");
+        setLink(l.url);
+      }
       setPasso("pronto");
     } catch (e) {
       setErro((e as Error).message);
@@ -175,6 +182,7 @@ export function Onboarding({
     setFlowsTocados(false);
     setCriado(null);
     setLink(null);
+    setAgenciaAssinou(false);
     setCopiado(false);
     setAss((a) => ({ ...a, aceite: false }));
     setFeitos([]);
@@ -366,7 +374,11 @@ export function Onboarding({
           <Tela
             rotulo="Contrato"
             pergunta={`Assine o contrato e mande para a ${nomeCli}`}
-            ajuda="O contrato só vale com as duas assinaturas. Assine pela agência agora e a Dattis gera o link para o cliente assinar pelo celular."
+            ajuda={
+              recursos.assinaturaEletronica
+                ? "O contrato só vale com as duas assinaturas. Assine pela agência agora e a Dattis gera o link para o cliente assinar pelo celular."
+                : "O contrato só vale com as duas assinaturas. Assine pela agência agora; depois o cliente assina o PDF e você registra a assinatura dele."
+            }
           >
             <div className="bloco flex flex-col gap-4 p-5 sm:p-6">
               <a href={`/api/dpa/${criado.dpaId}/pdf`} target="_blank" rel="noopener" className="barra-btn self-start">
@@ -390,6 +402,22 @@ export function Onboarding({
             pergunta={`A ${nomeCli} já está documentada`}
             ajuda={link ? "Agora é só mandar o link para o cliente assinar. Depois, os passos abaixo deixam tudo completo:" : "O registro, o contrato e a lista de ferramentas estão no ar. Faltam só os passos que dependem de você:"}
           >
+            {agenciaAssinou && !link && (
+              <div className="mb-4 flex flex-col gap-3 rounded-2xl border border-brand-strong bg-brand-tint p-5">
+                <p className="text-[15px] font-medium text-ink">
+                  Contrato assinado pela agência. Mande o PDF para {cli.contatoNome.trim() || "o responsável do cliente"} assinar e, quando voltar
+                  assinado, registre na aba Contrato.
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  <a href={`/api/dpa/${criado.dpaId}/pdf`} target="_blank" rel="noopener" className="barra-btn primario">
+                    <FileText size={15} /> Baixar o contrato (PDF)
+                  </a>
+                  <Link href={`/painel/contas/${criado.id}?aba=contrato`} className="barra-btn">
+                    Registrar a assinatura do cliente
+                  </Link>
+                </div>
+              </div>
+            )}
             {link && (
               <div className="mb-4 flex flex-col gap-3 rounded-2xl border border-brand-strong bg-brand-tint p-5">
                 <p className="text-[15px] font-medium text-ink">
@@ -421,10 +449,18 @@ export function Onboarding({
             )}
             <ul className="grid gap-2.5 sm:grid-cols-2">
               {[
-                ...(link ? [] : [{ icon: FileText, t: "Assinar o contrato e mandar o link ao cliente", d: "Com as duas assinaturas, o certificado e o selo saem sozinhos.", href: `/painel/contas/${criado.id}?aba=contrato` }]),
+                ...(agenciaAssinou
+                  ? []
+                  : [
+                      recursos.assinaturaEletronica
+                        ? { icon: FileText, t: "Assinar o contrato e mandar o link ao cliente", d: "Com as duas assinaturas, o certificado e o selo saem sozinhos.", href: `/painel/contas/${criado.id}?aba=contrato` }
+                        : { icon: FileText, t: "Assinar o contrato e colher a assinatura do cliente", d: "O cliente assina o PDF e você registra aqui.", href: `/painel/contas/${criado.id}?aba=contrato` },
+                    ]),
                 { icon: Globe, t: "Publicar a política de privacidade", d: "Link pronto para o site e para o formulário de anúncio.", href: `/painel/contas/${criado.id}?aba=site` },
                 { icon: Cookie, t: "Instalar o aviso de cookies", d: "Segura o pixel até o visitante aceitar.", href: `/painel/cookies?site=${criado.id}` },
-                { icon: FileBarChart, t: "Gerar o relatório para o cliente", d: "A situação dele em PDF, em um clique.", href: `/painel/contas/${criado.id}/dat?imprimir=1` },
+                ...(recursos.relatorio
+                  ? [{ icon: FileBarChart, t: "Gerar o relatório para o cliente", d: "A situação dele em PDF, em um clique.", href: `/painel/contas/${criado.id}/dat?imprimir=1` }]
+                  : []),
               ].map((p) => (
                 <li key={p.t}>
                   <Link href={p.href} className="bloco flex h-full items-start gap-3 p-4 transition-colors hover:border-line-strong">
@@ -461,7 +497,7 @@ export function Onboarding({
                 Deixar para depois
               </button>
               <button type="submit" disabled={assinando} className="barra-btn primario !h-11 !px-5">
-                {assinando ? "Assinando..." : "Assinar e gerar link"} <ArrowRight size={16} />
+                {assinando ? "Assinando..." : recursos.assinaturaEletronica ? "Assinar e gerar link" : "Assinar pela agência"} <ArrowRight size={16} />
               </button>
             </>
           ) : passo === "criando" ? null : (

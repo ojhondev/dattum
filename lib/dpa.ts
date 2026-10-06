@@ -54,11 +54,15 @@ export function ipDe(req: Request) {
 
 export const userAgentDe = (req: Request) => (req.headers.get("user-agent") ?? "").slice(0, 400) || null;
 
-type Assinante = { nome: string; cargo: string; ip: string; userAgent: string | null };
+type Assinante = { nome: string; cargo: string; ip: string | null; userAgent: string | null; em?: Date };
+
+/** Marca, no lugar do navegador, a assinatura que o cliente fez fora da Dattis (PDF) e a agência registrou (plano Start). */
+export const ASSINATURA_FORA = "Assinado fora da Dattis, registrado pela agência";
+export const assinadoFora = (userAgent: string | null | undefined) => userAgent === ASSINATURA_FORA;
 
 /** Grava uma assinatura (agência ou cliente). Congela o texto pelo hash na primeira assinatura. */
 export async function registrarAssinatura(dpa: Dpa, parte: "agencia" | "cliente", a: Assinante & { email?: string | null }) {
-  const agora = new Date();
+  const agora = a.em ?? new Date();
   const campos =
     parte === "agencia"
       ? { assinanteNome: a.nome, assinanteCargo: a.cargo, assinadoEm: agora, assinadoIp: a.ip, assinadoUserAgent: a.userAgent }

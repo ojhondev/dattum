@@ -2,6 +2,7 @@ import { and, eq } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { agencias, certificados, contasCliente } from "@/lib/db/schema";
 import { gerarCodigo, requisitosAgencia, requisitosConta } from "@/lib/certificados";
+import { planoPermite } from "@/lib/planos";
 
 const DIA = 86_400_000;
 const RENOVAR_COM_DIAS = 30;
@@ -32,7 +33,7 @@ export async function automatizarCertificados(agenciaId: string) {
     db.query.contasCliente.findMany({ where: eq(contasCliente.agenciaId, agenciaId) }),
     db.query.certificados.findMany({ where: and(eq(certificados.agenciaId, agenciaId), eq(certificados.revogado, false)) }),
   ]);
-  if (!agencia || agencia.plano === "start") return { emitidos: 0, renovados: 0 }; // certificado é do Growth em diante
+  if (!agencia || !planoPermite(agencia.plano, "certificado")) return { emitidos: 0, renovados: 0 }; // certificado é do Growth em diante
 
   let emitidos = 0;
   let renovados = 0;
