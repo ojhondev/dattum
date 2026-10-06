@@ -7,6 +7,8 @@ const ERROS: Record<string, string> = {
   google_sem_conta: "Não encontramos uma conta da Dattis com esse e-mail. Para criar o acesso, use o código de ativação enviado pela Dattis.",
   termos: "Para ativar, aceite os Termos de Uso, a Política de Privacidade e o Contrato de dados.",
   codigo_invalido: "Código de ativação inválido ou já usado. Ele é enviado pela equipe Dattis depois da confirmação do pagamento.",
+  google_em_uso: "Essa conta Google já está conectada a outro acesso da Dattis. Use outra conta Google ou desconecte-a lá primeiro.",
+  sem_permissao: "Só o dono da conta conecta o login com Google.",
 };
 
 export const mensagemErroGoogle = (codigo: string | null) => (codigo ? ERROS[codigo] ?? null : null);

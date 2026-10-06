@@ -11,6 +11,7 @@ export const GOOGLE_STATE_COOKIE = "dattis_g_state";
 export const GOOGLE_VERIFIER_COOKIE = "dattis_g_verifier";
 export const GOOGLE_NEXT_COOKIE = "dattis_g_next";
 export const GOOGLE_CODIGO_COOKIE = "dattis_g_codigo"; // código de ativação, quando o Google é usado no cadastro
+export const GOOGLE_VINCULAR_COOKIE = "dattis_g_vincular"; // "1" quando o dono conecta o Google pela tela de Configurações
 
 export function googleConfigurado(): boolean {
   return Boolean(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET);

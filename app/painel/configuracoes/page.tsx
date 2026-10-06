@@ -11,6 +11,7 @@ import { DOCUMENTOS_LEGAIS, VERSAO_LEGAL } from "@/lib/legal";
 import { EMAIL_DEMO } from "@/lib/admin-dados";
 import { linkContato } from "@/lib/contato";
 import { FormDadosAgencia, FormSenha } from "./ConfiguracoesClient";
+import { LoginGoogleCard } from "./LoginGoogleCard";
 import { EquipeCard } from "./EquipeCard";
 import { PoliticaPublicaCard } from "@/components/app/PoliticaPublicaCard";
 import { urlAbsoluta } from "@/lib/site";
@@ -27,7 +28,7 @@ const DESC = "mt-1 text-[14px] leading-relaxed text-muted";
 
 type Aba = "agencia" | "conta" | "equipe" | "privacidade" | "ferramentas" | "dattis" | "plano" | "registro";
 
-export default async function ConfiguracoesPage({ searchParams }: { searchParams: Promise<{ aba?: string }> }) {
+export default async function ConfiguracoesPage({ searchParams }: { searchParams: Promise<{ aba?: string; google?: string }> }) {
   const sessao = await getSessao();
   if (!sessao) return null;
   const dono = ehDono(sessao);
@@ -58,7 +59,7 @@ export default async function ConfiguracoesPage({ searchParams }: { searchParams
         { valor: "plano", rotulo: "Plano e documentos" },
         { valor: "registro", rotulo: "Registro de atividades" },
       ];
-  const { aba: pedida } = await searchParams;
+  const { aba: pedida, google: googleRetorno } = await searchParams;
   const aba = abas.find((a) => a.valor === pedida)?.valor ?? abas[0].valor;
 
   return (
@@ -113,14 +114,12 @@ export default async function ConfiguracoesPage({ searchParams }: { searchParams
               </p>
               <FormSenha temSenha={agencia.senhaDefinida} bloqueado={demo} />
             </section>
-            <section className={CARD}>
-              <p className={ROTULO}>Login com Google</p>
-              <p className="mt-2 text-[14.5px] leading-relaxed text-body">
-                {agencia.googleSub
-                  ? "Vinculado. Você pode entrar com o botão “Continuar com Google”."
-                  : `Não vinculado. Para vincular, entre uma vez com “Continuar com Google” usando a conta Google do e-mail ${agencia.email}.`}
-              </p>
-            </section>
+            <LoginGoogleCard
+              conectado={!!agencia.googleSub}
+              senhaDefinida={agencia.senhaDefinida}
+              podeGerenciar={dono && !ehOperador(sessao) && !demo}
+              retorno={googleRetorno ?? null}
+            />
           </div>
         </div>
       )}

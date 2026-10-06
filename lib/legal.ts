@@ -218,7 +218,7 @@ A **Dattis é operadora** quando trata, em nome da agência, os dados que a agê
 | Auditoria da sua agência | Nome do responsável, nome da agência, WhatsApp, respostas do questionário e origem da visita (parâmetros UTM) | Mostrar o resultado, enviar ao especialista quando você pede e oferecer os serviços da Dattis | Procedimentos preliminares a um contrato, a seu pedido (art. 7º, V), e legítimo interesse para contato comercial (art. 7º, IX) |
 | Auditoria de site | Endereço do site informado | Fazer a análise pedida. O resultado aparece na tela e não fica guardado | Legítimo interesse (art. 7º, IX) |
 | Conversa pelo WhatsApp | Nome, número e mensagens | Atendimento comercial e suporte | Procedimentos preliminares e execução de contrato (art. 7º, V) |
-| Acesso à plataforma | Nome e CNPJ da agência, e-mail, senha (guardada só como hash, nunca em texto), WhatsApp, endereço, nome e cargo do responsável e, se usar o login com Google, o identificador e o e-mail da conta Google | Criar e proteger o acesso, executar a assinatura, gerar os documentos e falar com a agência | Execução de contrato (art. 7º, V) |
+| Acesso à plataforma | Nome e CNPJ da agência, e-mail, senha (guardada só como hash, nunca em texto), WhatsApp, endereço, nome e cargo do responsável e, se usar o login com Google, o identificador, o nome e o e-mail da conta Google | Criar e proteger o acesso, executar a assinatura, gerar os documentos e falar com a agência | Execução de contrato (art. 7º, V) |
 | Registros de acesso à plataforma | IP, data e hora | Segurança e cumprimento do Marco Civil da Internet (Lei nº 12.965/2014, art. 15) | Cumprimento de obrigação legal (art. 7º, II) |
 | Cobrança e nota fiscal | Razão social, CNPJ, endereço e contato financeiro | Emitir cobrança e documentos fiscais | Obrigação legal e execução de contrato (art. 7º, II e V) |
 
@@ -251,6 +251,8 @@ A Dattis **não vende dados pessoais**. Compartilhamos dados apenas:
 - com o Meta (WhatsApp), quando você escolhe falar conosco por lá;
 - com autoridades, quando houver obrigação legal ou ordem judicial;
 - com o cliente da agência, no caso dos dados que aparecem no contrato que ele assina e no resumo de conformidade (DAT) que a agência envia a ele.
+
+**Login com Google.** Quando você escolhe entrar com o Google, recebemos do Google apenas o nome, o e-mail e o identificador da sua conta, e só para identificar o seu acesso à plataforma. Não acessamos e-mails, arquivos, contatos nem qualquer outro dado da sua conta Google, não usamos esses dados para publicidade e não os repassamos a terceiros. O uso segue a Política de Dados do Usuário dos Serviços de API do Google, inclusive os requisitos de Uso Limitado. Você pode desconectar o Google a qualquer momento em Configurações.
 
 ## Transferência internacional
 

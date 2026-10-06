@@ -5,29 +5,36 @@ import { db } from "@/lib/db";
 import { agencias, usuarios } from "@/lib/db/schema";
 import { and } from "drizzle-orm";
 import { registrar } from "@/lib/registro";
-import { criarSessao } from "@/lib/auth";
+import { criarSessao, ehDono, ehOperador, getSessao } from "@/lib/auth";
+import { registrarErro } from "@/lib/erros";
 import { ativarAgencia } from "@/lib/ativacao";
 import {
   GOOGLE_CODIGO_COOKIE,
   GOOGLE_NEXT_COOKIE,
   GOOGLE_STATE_COOKIE,
   GOOGLE_VERIFIER_COOKIE,
+  GOOGLE_VINCULAR_COOKIE,
   googleRedirectUri,
   trocarCodigoGoogle,
 } from "@/lib/oauth-google";
 
 export const dynamic = "force-dynamic";
 
-const TEMPORARIOS = [GOOGLE_STATE_COOKIE, GOOGLE_VERIFIER_COOKIE, GOOGLE_NEXT_COOKIE, GOOGLE_CODIGO_COOKIE];
+const TEMPORARIOS = [GOOGLE_STATE_COOKIE, GOOGLE_VERIFIER_COOKIE, GOOGLE_NEXT_COOKIE, GOOGLE_CODIGO_COOKIE, GOOGLE_VINCULAR_COOKIE];
 
 export async function GET(req: Request) {
   const url = new URL(req.url);
   const store = await cookies();
   const codigo = store.get(GOOGLE_CODIGO_COOKIE)?.value ?? "";
+  const vincular = store.get(GOOGLE_VINCULAR_COOKIE)?.value === "1";
   const limpar = () => TEMPORARIOS.forEach((c) => store.set(c, "", { path: "/", maxAge: 0 }));
   const falhar = (erro: string) => {
     limpar();
-    const destino = codigo ? `/cadastro?codigo=${encodeURIComponent(codigo)}&erro=${erro}` : `/entrar?erro=${erro}`;
+    const destino = vincular
+      ? `/painel/configuracoes?google=${erro}`
+      : codigo
+        ? `/cadastro?codigo=${encodeURIComponent(codigo)}&erro=${erro}`
+        : `/entrar?erro=${erro}`;
     return NextResponse.redirect(new URL(destino, url.origin));
   };
 
@@ -45,9 +52,27 @@ export async function GET(req: Request) {
     perfil = await trocarCodigoGoogle(code, verifier, googleRedirectUri(url.origin));
   } catch (err) {
     console.error("[google callback]", err);
+    // Aparece em /admin/sistema: a resposta do Google diz se é a chave (invalid_client) ou o código (invalid_grant).
+    await registrarErro({ tipo: "servidor", mensagem: `Login com Google falhou: ${(err as Error).message}`.slice(0, 500), rota: "/api/auth/google/callback", metodo: "GET" });
     return falhar("google_falhou");
   }
   if (!perfil.emailVerificado) return falhar("google_email");
+
+  // Conectar o Google pela tela de Configurações: vincula esta conta Google à agência logada.
+  if (vincular) {
+    const sessao = await getSessao();
+    if (!sessao || !ehDono(sessao) || ehOperador(sessao)) return falhar("sem_permissao");
+    const [outraAgencia, membroComEsse] = await Promise.all([
+      db.query.agencias.findFirst({ where: eq(agencias.googleSub, perfil.sub), columns: { id: true } }),
+      db.query.usuarios.findFirst({ where: eq(usuarios.googleSub, perfil.sub), columns: { id: true } }),
+    ]);
+    // Uma conta Google entra em um só lugar: senão o login cairia na agência errada.
+    if ((outraAgencia && outraAgencia.id !== sessao.agenciaId) || membroComEsse) return falhar("google_em_uso");
+    await db.update(agencias).set({ googleSub: perfil.sub }).where(eq(agencias.id, sessao.agenciaId));
+    await registrar(sessao, "Conectou o login com Google", perfil.email);
+    limpar();
+    return NextResponse.redirect(new URL("/painel/configuracoes?google=conectado", url.origin));
+  }
 
   // Pessoa da equipe: Google já vinculado ou mesmo e-mail do convite aceito
   const membro =
@@ -77,6 +102,7 @@ export async function GET(req: Request) {
   }
 
   await criarSessao(agencia.id);
+  await registrar({ agenciaId: agencia.id, usuarioId: null }, "Entrou na plataforma", "Com Google");
   limpar();
   return NextResponse.redirect(new URL(proximo, url.origin));
 }
