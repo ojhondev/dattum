@@ -11,7 +11,9 @@ function EntrarForm() {
   const params = useSearchParams();
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
-  const [erro, setErro] = useState(() => mensagemErroGoogle(params.get("erro")) ?? "");
+  // Google sem conta não é erro de digitação: vira um aviso que leva ao cadastro.
+  const semConta = params.get("erro") === "google_sem_conta";
+  const [erro, setErro] = useState(() => (semConta ? "" : mensagemErroGoogle(params.get("erro")) ?? ""));
   const [enviando, setEnviando] = useState(false);
 
   const submit = async (e: FormEvent) => {
@@ -46,6 +48,14 @@ function EntrarForm() {
       <div className="mt-8">
         <BotaoGoogle proximo={params.get("proximo")} />
       </div>
+      {semConta && (
+        <div className="font-ui mt-4 rounded-xl border border-line px-4 py-3 text-body-sm">
+          <p className="text-body">{mensagemErroGoogle("google_sem_conta")}</p>
+          <Link href="/cadastro" className="btn btn-dark mt-3">
+            Criar conta da agência →
+          </Link>
+        </div>
+      )}
       <div className="mt-6 flex items-center gap-3 font-mono text-caption uppercase text-faint">
         <span className="h-px flex-1 bg-line" />
         ou com e-mail
@@ -98,9 +108,13 @@ function EntrarForm() {
       </p>
 
       <p className="font-ui mt-8 text-body-sm">
-        Ainda não é cliente?{" "}
+        Ainda não tem conta?{" "}
+        <Link href="/cadastro" className="nav-link">
+          Criar conta da agência
+        </Link>
+        <span className="text-muted"> · </span>
         <Link href="/planos" className="nav-link">
-          Ver planos e assinar
+          Ver planos
         </Link>
       </p>
     </AuthShell>

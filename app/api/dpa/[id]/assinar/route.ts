@@ -7,7 +7,7 @@ import { automatizarCertificados } from "@/lib/automacao";
 import { filtroVigente, ipDe, registrarAssinatura, userAgentDe, situacaoDpa } from "@/lib/dpa";
 import { registrar } from "@/lib/registro";
 import { contasCliente } from "@/lib/db/schema";
-import { bloqueioDemo } from "@/lib/demo-bloqueio";
+import { bloqueioDemo, bloqueioExploracao } from "@/lib/demo-bloqueio";
 
 export const runtime = "nodejs";
 
@@ -17,6 +17,8 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
   if (!sessao) return NextResponse.json({ ok: false, error: "Não autenticado." }, { status: 401 });
   const demo = await bloqueioDemo(sessao.agenciaId);
   if (demo) return demo;
+  const exploracao = await bloqueioExploracao(sessao.agenciaId);
+  if (exploracao) return exploracao;
   // Assinar é ato de quem representa a agência: o DPO da Dattis prepara e cobra, mas não assina por ela.
   if (ehOperador(sessao)) {
     return NextResponse.json({ ok: false, error: "O contrato precisa ser assinado por alguém da agência. Como DPO, mande o lembrete para o responsável assinar." }, { status: 403 });

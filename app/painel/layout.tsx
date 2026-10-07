@@ -8,6 +8,7 @@ import { Sidebar } from "@/components/app/Sidebar";
 import { Topbar } from "@/components/app/Topbar";
 import SairButton from "./SairButton";
 import { AvisoTermos } from "./AvisoTermos";
+import { AvisoExploracao } from "./AvisoExploracao";
 import { TourProvider } from "@/components/app/Tour";
 import { VERSAO_LEGAL } from "@/lib/legal";
 import { EMAIL_DEMO } from "@/lib/admin-dados";
@@ -29,7 +30,8 @@ export default async function PainelLayout({ children }: { children: React.React
   if (!agencia) redirect("/entrar");
   const atrasada = !sessao.usuarioId && !agencia.suspensa ? await cobrancaAtrasada(agencia.id) : null;
   const pessoa = sessao.usuarioId ? await db.query.usuarios.findFirst({ where: eq(usuarios.id, sessao.usuarioId), columns: { nome: true } }) : null;
-  const plano = PLANOS.find((p) => p.id === agencia.plano);
+  const exploracao = !agencia.ativadaEm;
+  const plano = exploracao ? { nome: "Exploração" } : PLANOS.find((p) => p.id === agencia.plano);
 
   return (
     <TourProvider vistosIniciais={agencia.toursVistos ?? []} salvarNoServidor={agencia.email !== EMAIL_DEMO}>
@@ -71,6 +73,13 @@ export default async function PainelLayout({ children }: { children: React.React
                 {agencia.linkPagamento ? "Pagar agora" : "Falar com a Dattis"}
               </a>
             </div>
+          )}
+          {exploracao && !agencia.suspensa && (
+            <AvisoExploracao
+              limite={agencia.clientesContratados}
+              linkAtivar={linkContato(`Olá! Criei a conta da ${agencia.nome} na Dattis e quero ativar o plano.`)}
+              podeAplicar={!sessao.usuarioId && !sessao.operador}
+            />
           )}
           {agencia.termosVersao !== VERSAO_LEGAL && agencia.email !== EMAIL_DEMO && !sessao.operador && (
             <AvisoTermos versao={VERSAO_LEGAL} atualizacao={!!agencia.termosVersao} />

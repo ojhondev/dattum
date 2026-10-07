@@ -6,7 +6,7 @@ import { ehOperador, getSessao } from "@/lib/auth";
 import { automatizarCertificados } from "@/lib/automacao";
 import { ASSINATURA_FORA, filtroVigente, registrarAssinatura, situacaoDpa } from "@/lib/dpa";
 import { registrar } from "@/lib/registro";
-import { bloqueioDemo } from "@/lib/demo-bloqueio";
+import { bloqueioDemo, bloqueioExploracao } from "@/lib/demo-bloqueio";
 
 export const runtime = "nodejs";
 
@@ -21,6 +21,8 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
   if (!sessao) return NextResponse.json({ ok: false, error: "Não autenticado." }, { status: 401 });
   const demo = await bloqueioDemo(sessao.agenciaId);
   if (demo) return demo;
+  const exploracao = await bloqueioExploracao(sessao.agenciaId);
+  if (exploracao) return exploracao;
   // Quem declara a assinatura do cliente responde por ela: é ato da agência, não do DPO da Dattis.
   if (ehOperador(sessao)) {
     return NextResponse.json({ ok: false, error: "Quem registra a assinatura do cliente é a agência, que guarda a via assinada." }, { status: 403 });

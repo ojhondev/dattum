@@ -33,7 +33,8 @@ export async function automatizarCertificados(agenciaId: string) {
     db.query.contasCliente.findMany({ where: eq(contasCliente.agenciaId, agenciaId) }),
     db.query.certificados.findMany({ where: and(eq(certificados.agenciaId, agenciaId), eq(certificados.revogado, false)) }),
   ]);
-  if (!agencia || !planoPermite(agencia.plano, "certificado")) return { emitidos: 0, renovados: 0 }; // certificado é do Growth em diante
+  // Certificado é do Growth em diante e só para conta ativada (em exploração nada é emitido).
+  if (!agencia || !agencia.ativadaEm || !planoPermite(agencia.plano, "certificado")) return { emitidos: 0, renovados: 0 };
 
   let emitidos = 0;
   let renovados = 0;

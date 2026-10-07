@@ -113,7 +113,7 @@ export async function garantirDemo() {
   if (existente) return existente;
   const [agencia] = await db
     .insert(agencias)
-    .values({ ...DEMO, email: DEMO_EMAIL, senhaHash: await hashSenha(crypto.randomUUID()), termosVersao: VERSAO_LEGAL, termosAceitosEm: new Date() })
+    .values({ ...DEMO, email: DEMO_EMAIL, senhaHash: await hashSenha(crypto.randomUUID()), termosVersao: VERSAO_LEGAL, termosAceitosEm: new Date(), ativadaEm: new Date() })
     .returning();
   await semearContas(agencia.id);
   await automatizarCertificados(agencia.id).catch(() => null);

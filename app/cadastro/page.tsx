@@ -4,19 +4,32 @@ import { Suspense, useState, type FormEvent } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { AuthShell } from "@/components/marketing/AuthShell";
-import { linkAssinar } from "@/lib/contato";
 import { BotaoGoogle, mensagemErroGoogle } from "@/components/marketing/BotaoGoogle";
+
+const digitos = (v: string) => v.replace(/\D/g, "");
 
 function CadastroForm() {
   const router = useRouter();
   const params = useSearchParams();
   const [codigo, setCodigo] = useState(params.get("codigo") ?? "");
+  const [comCodigo, setComCodigo] = useState(!!params.get("codigo"));
   const [nome, setNome] = useState("");
+  const [whatsapp, setWhatsapp] = useState("");
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const [erro, setErro] = useState(() => mensagemErroGoogle(params.get("erro")) ?? "");
   const [enviando, setEnviando] = useState(false);
   const [aceite, setAceite] = useState(false);
+
+  const codigoValido = comCodigo && codigo.trim().length >= 6;
+  const whatsappValido = digitos(whatsapp).length >= 10;
+  const pendenteGoogle = !nome.trim()
+    ? "Preencha o nome da agência para continuar com o Google."
+    : !whatsappValido && !codigoValido
+      ? "Preencha o WhatsApp com DDD para continuar com o Google."
+      : !aceite
+        ? "Marque o aceite acima para continuar com o Google."
+        : null;
 
   const submit = async (e: FormEvent) => {
     e.preventDefault();
@@ -26,7 +39,7 @@ function CadastroForm() {
       const res = await fetch("/api/auth/cadastro", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ nome, email, senha, codigo, aceite }),
+        body: JSON.stringify({ nome, whatsapp, email, senha, codigo: comCodigo ? codigo : "", aceite }),
       });
       const data = await res.json();
       if (!data.ok) {
@@ -44,24 +57,50 @@ function CadastroForm() {
 
   return (
     <AuthShell panelHeadline="Proteja sua agência e seus clientes antes que a multa chegue.">
-      <h1 className="t-display">Ativar acesso</h1>
+      <h1 className="t-display">Criar conta</h1>
       <p className="mt-3 text-body-sm text-muted">
-        Recebeu o código de ativação depois do pagamento? Crie aqui o acesso da sua agência — o plano
-        contratado já vem vinculado ao código.
+        Crie o acesso da sua agência e conheça a plataforma com os seus clientes. Contratos, documentos, selo e
+        certificado são liberados quando o plano for ativado.
       </p>
 
       <form className="font-ui mt-8 space-y-4" onSubmit={submit}>
         <label className="block">
-          <span className="text-body-sm font-medium text-body">Código de ativação</span>
-          <input
-            type="text"
-            value={codigo}
-            onChange={(e) => setCodigo(e.target.value)}
-            required
-            placeholder="ATV-XXXX-XXXX"
-            className="field-input mt-1.5 font-mono uppercase"
-          />
+          <span className="text-body-sm font-medium text-body">Nome da agência</span>
+          <input type="text" value={nome} onChange={(e) => setNome(e.target.value)} required autoComplete="organization" className="field-input mt-1.5" />
         </label>
+        <label className="block">
+          <span className="text-body-sm font-medium text-body">WhatsApp com DDD</span>
+          <input
+            type="tel"
+            inputMode="tel"
+            value={whatsapp}
+            onChange={(e) => setWhatsapp(e.target.value)}
+            required={!codigoValido}
+            placeholder="(11) 99999-9999"
+            autoComplete="tel"
+            className="field-input mt-1.5"
+          />
+          <span className="mt-1 block text-caption text-faint">É por aqui que a Dattis fala com você para ativar o plano.</span>
+        </label>
+
+        {comCodigo ? (
+          <label className="block">
+            <span className="text-body-sm font-medium text-body">Código de ativação</span>
+            <input
+              type="text"
+              value={codigo}
+              onChange={(e) => setCodigo(e.target.value)}
+              placeholder="ATV-XXXX-XXXX"
+              className="field-input mt-1.5 font-mono uppercase"
+            />
+            <span className="mt-1 block text-caption text-faint">Com o código, a conta já nasce com o plano contratado.</span>
+          </label>
+        ) : (
+          <button type="button" className="nav-link text-body-sm" onClick={() => setComCodigo(true)}>
+            Já pagou e recebeu um código de ativação?
+          </button>
+        )}
+
         <label className="flex items-start gap-3 rounded-2xl border border-line bg-surface px-4 py-3.5 text-body-sm leading-snug text-body">
           <input type="checkbox" checked={aceite} onChange={(e) => setAceite(e.target.checked)} required className="mt-0.5 h-4 w-4 shrink-0 accent-[var(--color-brand-strong)]" />
           <span>
@@ -72,27 +111,22 @@ function CadastroForm() {
           </span>
         </label>
         <div className="pt-1">
-          <BotaoGoogle codigo={codigo} desabilitado={codigo.trim().length < 6 || !aceite} rotulo="Ativar com Google" />
-          <p className="mt-2 text-caption text-faint">
-            {codigo.trim().length < 6
-              ? "Digite o código acima para ativar com o Google."
-              : !aceite
-                ? "Marque o aceite acima para ativar com o Google."
-                : "Usa o nome da agência informado no seu código e o e-mail da conta Google."}
-          </p>
+          <BotaoGoogle
+            codigo={codigoValido ? codigo : undefined}
+            cadastro={{ nome, whatsapp: digitos(whatsapp) }}
+            desabilitado={!!pendenteGoogle}
+            rotulo="Criar conta com Google"
+          />
+          <p className="mt-2 text-caption text-faint">{pendenteGoogle ?? "Usa o e-mail da sua conta Google para entrar."}</p>
         </div>
         <div className="flex items-center gap-3 font-mono text-caption uppercase text-faint">
           <span className="h-px flex-1 bg-line" />
-          ou crie uma senha
+          ou com e-mail e senha
           <span className="h-px flex-1 bg-line" />
         </div>
         <label className="block">
-          <span className="text-body-sm font-medium text-body">Nome da agência</span>
-          <input type="text" value={nome} onChange={(e) => setNome(e.target.value)} required className="field-input mt-1.5" />
-        </label>
-        <label className="block">
           <span className="text-body-sm font-medium text-body">E-mail</span>
-          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required className="field-input mt-1.5" />
+          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required autoComplete="email" className="field-input mt-1.5" />
         </label>
         <label className="block">
           <span className="text-body-sm font-medium text-body">Senha (mínimo 8 caracteres)</span>
@@ -102,24 +136,21 @@ function CadastroForm() {
             onChange={(e) => setSenha(e.target.value)}
             minLength={8}
             required
+            autoComplete="new-password"
             className="field-input mt-1.5"
           />
         </label>
         {erro && <div className="rounded-xl bg-danger-tint px-4 py-3 text-body-sm text-danger">{erro}</div>}
         <button type="submit" disabled={enviando} className="btn btn-dark btn-lg w-full">
-          {enviando ? "Ativando..." : "Ativar acesso"}
+          {enviando ? "Criando..." : "Criar conta"}
         </button>
       </form>
 
       <p className="font-ui mt-8 text-body-sm">
-        Já é cliente?{" "}
+        Já tem conta?{" "}
         <Link href="/entrar" className="nav-link">
           Entrar
         </Link>
-        <span className="text-muted"> · </span>
-        <a href={linkAssinar()} target="_blank" rel="noopener" className="nav-link">
-          Ainda não tem código? Fale com a Dattis
-        </a>
       </p>
     </AuthShell>
   );

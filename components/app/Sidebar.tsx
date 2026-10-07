@@ -92,8 +92,6 @@ const GRUPOS_ADMIN: Grupo[] = [
   },
 ];
 
-const GRUPOS = { painel: GRUPOS_PAINEL, admin: GRUPOS_ADMIN };
-
 export type PlanoSidebar = { nome: string; usados: number; limite: number | null };
 
 function Marca({ compacta = false }: { compacta?: boolean }) {
@@ -203,11 +201,13 @@ export function Sidebar({
   plano,
   pessoa,
   pedidosAbertos = 0,
+  cadastrosNovos = 0,
 }: {
   pedidosAbertos?: number;
+  cadastrosNovos?: number; // admin: agências criadas pelo site aguardando ativação
   agenciaNome: string;
   sairSlot: React.ReactNode;
-  variante?: keyof typeof GRUPOS;
+  variante?: "painel" | "admin";
   plano?: PlanoSidebar;
   pessoa?: string | null; // pessoa da equipe logada (nulo = dono)
 }) {
@@ -220,7 +220,7 @@ export function Sidebar({
             .filter((it) => it.href !== "/painel/titulares" || pedidosAbertos > 0 || pathname.startsWith(it.href))
             .map((it) => (it.href === "/painel/titulares" ? { ...it, n: pedidosAbertos } : it)),
         }))
-      : GRUPOS[variante];
+      : GRUPOS_ADMIN.map((g) => ({ ...g, items: g.items.map((it) => (it.href === "/admin/agencias" ? { ...it, n: cadastrosNovos } : it)) }));
   const [collapsed, setCollapsed] = useLocalStorageBoolean("dattis:sidebar", false);
   const [mobileOpen, setMobileOpen] = useState(false);
 

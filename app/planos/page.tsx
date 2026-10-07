@@ -52,7 +52,7 @@ const FAQ_PLANOS = [
   },
   {
     q: "Como eu contrato?",
-    a: "Fale com a gente pelo botão do plano: marcamos uma conversa rápida, enviamos o link de pagamento pelo WhatsApp e, confirmado o pagamento, você recebe o código de ativação pra criar o acesso da agência.",
+    a: "Crie a conta da agência no site e conheça a plataforma com os seus clientes. Para ativar o plano, fale com a gente pelo botão do plano: marcamos uma conversa rápida, enviamos o link de pagamento pelo WhatsApp e, confirmado o pagamento, ativamos o plano na sua conta.",
   },
 ];
 

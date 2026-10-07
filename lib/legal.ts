@@ -2,7 +2,7 @@ import type { DadosEmpresa } from "@/lib/empresa";
 
 // Versão dos documentos legais da própria Dattis. Mudou o texto de forma relevante? Suba a versão:
 // o aceite gravado no cadastro (agencias.termos_versao) mostra qual versão cada agência aceitou.
-export const VERSAO_LEGAL = "2026.10.4";
+export const VERSAO_LEGAL = "2026.10.7";
 export const VIGENCIA_LEGAL = "4 de outubro de 2026";
 
 export type DocumentoLegal = "termos" | "privacidade" | "contrato-de-dados";
@@ -56,7 +56,7 @@ const canal = (e: DadosEmpresa) =>
 // ---------------------------------------------------------------------------------------------
 
 export function termosDeUso(e: DadosEmpresa) {
-  return `Estes Termos de Uso regulam a assinatura e o uso da plataforma Dattis, oferecida por ${qualificacao(e)}, por agências de marketing, tráfego pago e atendimento ("Agência"). Ao ativar o acesso com o código de ativação, a Agência declara que leu e aceita estes Termos, a [Política de Privacidade](/privacidade) e o [Contrato de Tratamento de Dados](/contrato-de-dados), que fazem parte deste acordo.
+  return `Estes Termos de Uso regulam a assinatura e o uso da plataforma Dattis, oferecida por ${qualificacao(e)}, por agências de marketing, tráfego pago e atendimento ("Agência"). Ao criar a conta na plataforma, a Agência declara que leu e aceita estes Termos, a [Política de Privacidade](/privacidade) e o [Contrato de Tratamento de Dados](/contrato-de-dados), que fazem parte deste acordo.
 
 Quem aceita em nome da Agência declara ter poderes para isso.
 
@@ -87,9 +87,11 @@ Para não haver dúvida sobre o alcance do serviço:
 
 ## Contratação, ativação e acesso
 
-A contratação é feita com a equipe comercial da Dattis. Depois da confirmação do pagamento, a Agência recebe um código de ativação individual e de uso único, vinculado ao plano e à quantidade de clientes contratados.
+A Agência pode criar a conta pelo site e usar a plataforma em modo de exploração, sem custo e com número limitado de clientes. Nesse modo não são emitidos contratos, documentos, selo, certificado nem publicações.
 
-A Agência ativa o acesso com e-mail e senha ou com uma conta Google. Ela é responsável:
+A contratação é feita com a equipe comercial da Dattis. Depois da confirmação do pagamento, a Dattis ativa o plano na conta da Agência ou envia um código de ativação individual e de uso único, vinculado ao plano e à quantidade de clientes contratados.
+
+A Agência acessa a plataforma com e-mail e senha ou com uma conta Google. Ela é responsável:
 
 - por manter as credenciais em sigilo;
 - por tudo o que for feito com o seu acesso;

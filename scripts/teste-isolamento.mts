@@ -70,6 +70,7 @@ async function criarAgencia(letra: "A" | "B" | "S") {
       termosVersao: "teste",
       termosAceitosEm: new Date(),
       onboardingConcluidoEm: new Date(),
+      ativadaEm: new Date(),
     })
     .returning();
   return a;

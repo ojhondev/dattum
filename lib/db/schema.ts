@@ -46,6 +46,7 @@ export const agencias = pgTable("agencias", {
   toursVistos: jsonb("tours_vistos").$type<string[]>().notNull().default([]), // tours guiados já concluídos ou pulados
   diaVencimento: integer("dia_vencimento").notNull().default(10), // dia do mês da mensalidade
   linkPagamento: text("link_pagamento"), // link de pagamento recorrente enviado pela Dattis
+  ativadaEm: timestamp("ativada_em"), // nulo = conta criada pelo site, em exploração até a Dattis ativar o plano (ou o código ser aplicado)
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 

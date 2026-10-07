@@ -28,6 +28,7 @@ export async function carregarAgencias() {
     const notas = res.map((r) => r.nota);
     const preco = PLANOS.find((p) => p.id === a.plano)?.preco ?? 0;
     const demo = a.email === EMAIL_DEMO;
+    const pendente = !a.ativadaEm; // criada pelo site, aguardando a Dattis ativar o plano
     return {
       id: a.id,
       nome: a.nome,
@@ -35,6 +36,7 @@ export async function carregarAgencias() {
       plano: a.plano,
       planoNome: PLANOS.find((p) => p.id === a.plano)?.nome ?? a.plano,
       demo,
+      pendente,
       suspensa: a.suspensa,
       servicoDpo: a.servicoDpo,
       acessoDattis: a.acessoDattis,
@@ -46,9 +48,9 @@ export async function carregarAgencias() {
       notaMedia: notas.length ? Math.round(notas.reduce((s, n) => s + n, 0) / notas.length) : null,
       criticos: res.reduce((s, r) => s + r.criticos, 0),
       altos: res.reduce((s, r) => s + r.altos, 0),
-      contato: codigos.find((c) => c.ag === a.id && c.contato)?.contato ?? null,
-      // Receita: preço do plano × clientes contratados (ou ativos, se o plano não tiver limite). Demo não conta.
-      mrr: demo ? 0 : preco * (a.clientesContratados ?? contas),
+      contato: a.whatsapp ?? codigos.find((c) => c.ag === a.id && c.contato)?.contato ?? null,
+      // Receita: preço do plano × clientes contratados (ou ativos, se o plano não tiver limite). Demo e exploração não contam.
+      mrr: demo || pendente ? 0 : preco * (a.clientesContratados ?? contas),
     };
   });
 }

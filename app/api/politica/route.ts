@@ -3,6 +3,7 @@ import { eq } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { agencias, contasCliente } from "@/lib/db/schema";
 import { getSessao } from "@/lib/auth";
+import { bloqueioExploracao } from "@/lib/demo-bloqueio";
 import { contaDaAgencia } from "@/lib/contas";
 import { slugDisponivel } from "@/lib/politica-publica";
 import { urlAbsoluta } from "@/lib/site";
@@ -32,6 +33,8 @@ async function alvo(req: Request) {
 export async function POST(req: Request) {
   const r = await alvo(req);
   if (r.erro) return r.erro;
+  const exploracao = await bloqueioExploracao(r.agencia.id);
+  if (exploracao) return exploracao;
   // Conta demo é compartilhada: ninguém publica e-mail próprio nela.
   const email = r.agencia.email === EMAIL_DEMO ? "" : typeof r.body?.email === "string" ? r.body.email.trim().toLowerCase().slice(0, 160) : "";
   if (email && !EMAIL.test(email)) return NextResponse.json({ ok: false, error: "O e-mail de privacidade não parece válido." }, { status: 400 });

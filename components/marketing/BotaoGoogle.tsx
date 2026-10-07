@@ -4,9 +4,11 @@ const ERROS: Record<string, string> = {
   google_sessao: "A sessão do login com Google expirou. Tente de novo.",
   google_falhou: "Não foi possível entrar com o Google agora. Tente de novo.",
   google_email: "Esse e-mail do Google ainda não foi verificado.",
-  google_sem_conta: "Não encontramos uma conta da Dattis com esse e-mail. Para criar o acesso, use o código de ativação enviado pela Dattis.",
-  termos: "Para ativar, aceite os Termos de Uso, a Política de Privacidade e o Contrato de dados.",
-  codigo_invalido: "Código de ativação inválido ou já usado. Ele é enviado pela equipe Dattis depois da confirmação do pagamento.",
+  google_sem_conta: "Ainda não existe uma conta da Dattis com esse e-mail do Google. Crie a conta da sua agência: leva um minuto.",
+  termos: "Para criar a conta, aceite os Termos de Uso, a Política de Privacidade e o Contrato de dados.",
+  dados_cadastro: "Preencha o nome da agência e o WhatsApp com DDD antes de continuar com o Google.",
+  cadastro_falhou: "Não foi possível criar a conta agora. Tente de novo.",
+  codigo_invalido: "Código de ativação inválido ou já usado. A equipe Dattis manda o código pelo WhatsApp depois da confirmação do pagamento.",
   google_em_uso: "Essa conta Google já está conectada a outro acesso da Dattis. Use outra conta Google ou desconecte-a lá primeiro.",
   sem_permissao: "Só o dono da conta conecta o login com Google.",
 };
@@ -24,11 +26,31 @@ function LogoGoogle() {
   );
 }
 
-/** Botão “Continuar com Google”. Com `codigo`, ativa uma conta nova vinculada ao Google. */
-export function BotaoGoogle({ codigo, proximo, desabilitado = false, rotulo = "Continuar com Google" }: { codigo?: string; proximo?: string | null; desabilitado?: boolean; rotulo?: string }) {
+/**
+ * Botão “Continuar com Google”. Com `codigo`, cria a conta já com o plano do código; com `cadastro`
+ * (nome da agência + WhatsApp), cria a conta em exploração. Os dois só aparecem habilitados com o aceite marcado.
+ */
+export function BotaoGoogle({
+  codigo,
+  cadastro,
+  proximo,
+  desabilitado = false,
+  rotulo = "Continuar com Google",
+}: {
+  codigo?: string;
+  cadastro?: { nome: string; whatsapp: string };
+  proximo?: string | null;
+  desabilitado?: boolean;
+  rotulo?: string;
+}) {
   const params = new URLSearchParams();
-  if (codigo) {
+  if (codigo?.trim()) {
     params.set("codigo", codigo.trim());
+    params.set("aceite", "1");
+  } else if (cadastro) {
+    params.set("cadastro", "1");
+    params.set("nome", cadastro.nome.trim());
+    params.set("whatsapp", cadastro.whatsapp);
     params.set("aceite", "1");
   }
   if (proximo) params.set("proximo", proximo);

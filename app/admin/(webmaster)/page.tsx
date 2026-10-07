@@ -28,7 +28,8 @@ export default async function AdminVisaoGeral() {
     db.query.varreduras.findMany({ orderBy: desc(varreduras.iniciadaEm), limit: 1 }),
   ]);
 
-  const reais = ags.filter((a) => !a.demo);
+  const reais = ags.filter((a) => !a.demo && !a.pendente);
+  const pendentes = ags.filter((a) => a.pendente);
   const mrr = reais.reduce((s, a) => s + a.mrr, 0);
   const clientes = reais.reduce((s, a) => s + a.contas, 0);
   const contratados = reais.reduce((s, a) => s + (a.contratados ?? a.contas), 0);
@@ -45,6 +46,37 @@ export default async function AdminVisaoGeral() {
     <div className="max-w-7xl">
       <p className="t-eyebrow">Área Dattis · WebMaster</p>
       <h1 className="t-display mt-3">Visão geral da operação</h1>
+
+      {pendentes.length > 0 && (
+        <section className="mt-8 rounded-[20px] border border-orange/40 bg-warn-tint p-5">
+          <div className="flex flex-wrap items-center gap-3">
+            <p className="flex-1 text-[15px] text-ink">
+              <b>{pendentes.length} cadastro(s) novo(s)</b> aguardando ativação. Chame no WhatsApp, feche o plano e ative em Agências.
+            </p>
+            <Link href="/admin/agencias" className="btn btn-primary">
+              Ver e ativar
+            </Link>
+          </div>
+          <ul className="mt-4 divide-y divide-line text-body-sm">
+            {pendentes.slice(0, 5).map((a) => {
+              const wa = linkWhatsappPara(a.contato, `Olá! Aqui é da Dattis. Vi que você criou a conta da ${a.nome} e quero te ajudar a ativar o plano.`);
+              return (
+                <li key={a.id} className="flex flex-wrap items-center gap-x-4 gap-y-1 py-2.5">
+                  <span className="min-w-0 flex-1">
+                    <b className="text-ink">{a.nome}</b> <span className="text-muted">· {a.email} · {a.criadaEm.toLocaleDateString("pt-BR")}</span>
+                  </span>
+                  <span className="text-muted">{a.contas} cliente(s) cadastrado(s)</span>
+                  {wa && (
+                    <a href={wa} target="_blank" rel="noopener" className="text-brand-ink hover:underline">
+                      {formatarTelefone(a.contato)}
+                    </a>
+                  )}
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+      )}
 
       <div className="mt-10 grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
         <Card label="Receita mensal (MRR)" valor={brl(mrr)} sub={`${reais.length} agência(s) pagante(s)`} />

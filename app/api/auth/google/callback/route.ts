@@ -7,8 +7,9 @@ import { and } from "drizzle-orm";
 import { registrar } from "@/lib/registro";
 import { criarSessao, ehDono, ehOperador, getSessao } from "@/lib/auth";
 import { registrarErro } from "@/lib/erros";
-import { ativarAgencia } from "@/lib/ativacao";
+import { criarAgencia, normalizarWhatsapp } from "@/lib/ativacao";
 import {
+  GOOGLE_CADASTRO_COOKIE,
   GOOGLE_CODIGO_COOKIE,
   GOOGLE_NEXT_COOKIE,
   GOOGLE_STATE_COOKIE,
@@ -20,13 +21,26 @@ import {
 
 export const dynamic = "force-dynamic";
 
-const TEMPORARIOS = [GOOGLE_STATE_COOKIE, GOOGLE_VERIFIER_COOKIE, GOOGLE_NEXT_COOKIE, GOOGLE_CODIGO_COOKIE, GOOGLE_VINCULAR_COOKIE];
+const TEMPORARIOS = [GOOGLE_STATE_COOKIE, GOOGLE_VERIFIER_COOKIE, GOOGLE_NEXT_COOKIE, GOOGLE_CODIGO_COOKIE, GOOGLE_VINCULAR_COOKIE, GOOGLE_CADASTRO_COOKIE];
+
+/** Dados do formulário de cadastro guardados no início do login (nome da agência e WhatsApp). */
+function lerCadastro(valor: string | undefined) {
+  try {
+    const d = JSON.parse(valor ?? "");
+    const nome = typeof d?.nome === "string" ? d.nome.trim().slice(0, 120) : "";
+    const whatsapp = normalizarWhatsapp(d?.whatsapp);
+    return nome && whatsapp ? { nome, whatsapp } : null;
+  } catch {
+    return null;
+  }
+}
 
 export async function GET(req: Request) {
   const url = new URL(req.url);
   const store = await cookies();
   const codigo = store.get(GOOGLE_CODIGO_COOKIE)?.value ?? "";
   const vincular = store.get(GOOGLE_VINCULAR_COOKIE)?.value === "1";
+  const cadastro = lerCadastro(store.get(GOOGLE_CADASTRO_COOKIE)?.value);
   const limpar = () => TEMPORARIOS.forEach((c) => store.set(c, "", { path: "/", maxAge: 0 }));
   const falhar = (erro: string) => {
     limpar();
@@ -34,7 +48,9 @@ export async function GET(req: Request) {
       ? `/painel/configuracoes?google=${erro}`
       : codigo
         ? `/cadastro?codigo=${encodeURIComponent(codigo)}&erro=${erro}`
-        : `/entrar?erro=${erro}`;
+        : cadastro
+          ? `/cadastro?erro=${erro}`
+          : `/entrar?erro=${erro}`;
     return NextResponse.redirect(new URL(destino, url.origin));
   };
 
@@ -86,7 +102,7 @@ export async function GET(req: Request) {
     return NextResponse.redirect(new URL(proximo, url.origin));
   }
 
-  // 1) Conta já vinculada a este Google  2) conta com o mesmo e-mail (vincula)  3) código de ativação (cria)
+  // 1) Conta já vinculada a este Google  2) conta com o mesmo e-mail (vincula)  3) cadastro novo, com código (plano ativo) ou sem (exploração)
   let agencia = await db.query.agencias.findFirst({ where: eq(agencias.googleSub, perfil.sub) });
   if (!agencia) {
     const porEmail = await db.query.agencias.findFirst({ where: eq(agencias.email, perfil.email) });
@@ -95,9 +111,10 @@ export async function GET(req: Request) {
     }
   }
   if (!agencia) {
-    if (!codigo) return falhar("google_sem_conta");
-    const r = await ativarAgencia({ codigo, nome: "", email: perfil.email, googleSub: perfil.sub, aceitouTermos: true }); // o botão só inicia com o aceite marcado
-    if (!r.ok) return falhar("codigo_invalido");
+    if (!codigo && !cadastro) return falhar("google_sem_conta");
+    // O botão só inicia com o aceite marcado (ver /api/auth/google).
+    const r = await criarAgencia({ codigo, nome: cadastro?.nome ?? "", email: perfil.email, googleSub: perfil.sub, whatsapp: cadastro?.whatsapp, aceitouTermos: true });
+    if (!r.ok) return falhar(codigo ? "codigo_invalido" : "cadastro_falhou");
     agencia = r.agencia;
   }
 

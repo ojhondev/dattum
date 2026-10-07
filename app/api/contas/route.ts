@@ -55,7 +55,9 @@ export async function POST(req: Request) {
       return NextResponse.json(
         {
           ok: false,
-          error: `Seu plano cobre ${agencia.clientesContratados} cliente(s) e todos já estão ativos. Fale com a Dattis pra incluir mais clientes.`,
+          error: agencia.ativadaEm
+            ? `Seu plano cobre ${agencia.clientesContratados} cliente(s) e todos já estão ativos. Fale com a Dattis pra incluir mais clientes.`
+            : `Na exploração dá para cadastrar até ${agencia.clientesContratados} cliente(s). Ative o plano com a Dattis pra incluir mais.`,
         },
         { status: 403 },
       );

@@ -5,7 +5,7 @@ import { agencias, certificados, contasCliente } from "@/lib/db/schema";
 import { getSessao } from "@/lib/auth";
 import { gerarCodigo, requisitosAgencia, requisitosConta } from "@/lib/certificados";
 import { planoPermite } from "@/lib/planos";
-import { bloqueioDemo } from "@/lib/demo-bloqueio";
+import { bloqueioDemo, bloqueioExploracao } from "@/lib/demo-bloqueio";
 
 export const runtime = "nodejs";
 
@@ -20,6 +20,8 @@ export async function POST(req: Request) {
   if (!sessao) return NextResponse.json({ ok: false, error: "Não autenticado." }, { status: 401 });
   const demo = await bloqueioDemo(sessao.agenciaId);
   if (demo) return demo;
+  const exploracao = await bloqueioExploracao(sessao.agenciaId);
+  if (exploracao) return exploracao;
 
   const body = await req.json().catch(() => null);
   const contaId = typeof body?.contaId === "string" && body.contaId ? body.contaId : null;

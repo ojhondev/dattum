@@ -116,6 +116,7 @@ export function GerenciarAgencia({
   clientes,
   suspensa,
   servicoDpo,
+  pendente = false,
 }: {
   agenciaId: string;
   agenciaNome: string;
@@ -123,6 +124,7 @@ export function GerenciarAgencia({
   clientes: number | null;
   suspensa: boolean;
   servicoDpo: boolean;
+  pendente?: boolean; // conta em exploração: salvar o plano é o que ativa
 }) {
   const router = useRouter();
   const [aberto, setAberto] = useState(false);
@@ -151,8 +153,8 @@ export function GerenciarAgencia({
 
   if (!aberto) {
     return (
-      <button type="button" className="btn btn-ghost" onClick={() => setAberto(true)}>
-        Plano e acesso
+      <button type="button" className={"btn " + (pendente ? "btn-primary" : "btn-ghost")} onClick={() => setAberto(true)}>
+        {pendente ? "Ativar plano" : "Plano e acesso"}
       </button>
     );
   }
@@ -165,7 +167,7 @@ export function GerenciarAgencia({
       </select>
       <input aria-label="Clientes contratados" type="number" min={1} max={1000} value={n} onChange={(e) => setN(e.target.value)} className="field-input !py-2" />
       <button type="button" className="btn btn-primary" disabled={estado === "salvando"} onClick={() => enviar({ acao: "plano", plano: p, clientes: Number(n) })}>
-        Salvar plano
+        {pendente ? "Ativar com este plano" : "Salvar plano"}
       </button>
       {plano !== "start" ? (
         <span className="text-[12.5px] text-muted">Dattis como DPO: incluso no plano</span>
