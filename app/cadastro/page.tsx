@@ -5,8 +5,8 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { AuthShell } from "@/components/marketing/AuthShell";
 import { BotaoGoogle, mensagemErroGoogle } from "@/components/marketing/BotaoGoogle";
-
-const digitos = (v: string) => v.replace(/\D/g, "");
+import { CampoSenha } from "@/components/marketing/CampoSenha";
+import { digitosCelular, mascaraCelular, problemaNoCelular } from "@/lib/telefone";
 
 function CadastroForm() {
   const router = useRouter();
@@ -22,11 +22,15 @@ function CadastroForm() {
   const [aceite, setAceite] = useState(false);
 
   const codigoValido = comCodigo && codigo.trim().length >= 6;
-  const whatsappValido = digitos(whatsapp).length >= 10;
+  const problemaWhatsapp = problemaNoCelular(whatsapp);
+  const whatsappValido = !problemaWhatsapp;
+  // Só reclama do número depois que ele foi digitado inteiro (11 dígitos) ou quando a pessoa sai do campo.
+  const [saiuWhatsapp, setSaiuWhatsapp] = useState(false);
+  const mostrarErroWhatsapp = !!whatsapp && !!problemaWhatsapp && (saiuWhatsapp || digitosCelular(whatsapp).length === 11);
   const pendenteGoogle = !nome.trim()
     ? "Preencha o nome da agência para continuar com o Google."
     : !whatsappValido && !codigoValido
-      ? "Preencha o WhatsApp com DDD para continuar com o Google."
+      ? (problemaWhatsapp ?? "Preencha o WhatsApp com DDD para continuar com o Google.")
       : !aceite
         ? "Marque o aceite acima para continuar com o Google."
         : null;
@@ -74,13 +78,19 @@ function CadastroForm() {
             type="tel"
             inputMode="tel"
             value={whatsapp}
-            onChange={(e) => setWhatsapp(e.target.value)}
+            onChange={(e) => setWhatsapp(mascaraCelular(e.target.value))}
+            onBlur={() => setSaiuWhatsapp(true)}
+            aria-invalid={mostrarErroWhatsapp}
             required={!codigoValido}
             placeholder="(11) 99999-9999"
             autoComplete="tel"
             className="field-input mt-1.5"
           />
-          <span className="mt-1 block text-caption text-faint">É por aqui que a Dattis fala com você para ativar o plano.</span>
+          {mostrarErroWhatsapp ? (
+            <span className="mt-1 block text-caption text-danger">{problemaWhatsapp}</span>
+          ) : (
+            <span className="mt-1 block text-caption text-faint">É por aqui que a Dattis fala com você para ativar o plano.</span>
+          )}
         </label>
 
         {comCodigo ? (
@@ -113,7 +123,7 @@ function CadastroForm() {
         <div className="pt-1">
           <BotaoGoogle
             codigo={codigoValido ? codigo : undefined}
-            cadastro={{ nome, whatsapp: digitos(whatsapp) }}
+            cadastro={{ nome, whatsapp: digitosCelular(whatsapp) }}
             desabilitado={!!pendenteGoogle}
             rotulo="Criar conta com Google"
           />
@@ -130,8 +140,7 @@ function CadastroForm() {
         </label>
         <label className="block">
           <span className="text-body-sm font-medium text-body">Senha (mínimo 8 caracteres)</span>
-          <input
-            type="password"
+          <CampoSenha
             value={senha}
             onChange={(e) => setSenha(e.target.value)}
             minLength={8}

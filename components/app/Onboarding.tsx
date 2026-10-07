@@ -7,6 +7,8 @@ import { ArrowLeft, ArrowRight, Check, Copy, FileBarChart, FileText, Globe, Cook
 import { FLUXOS, type FlowKey } from "@/lib/fluxos";
 import { CATALOGO_FERRAMENTAS, operacoesDasFerramentas } from "@/lib/ferramentas";
 import { linkWhatsappPara } from "@/lib/contato";
+import { mascaraCelular, problemaNoCelular } from "@/lib/telefone";
+import { mascaraCnpj } from "@/lib/cnpj";
 import { SeletorFerramentasCorpo, type SelecaoFerramentas } from "@/components/app/SeletorFerramentas";
 import type { FerramentaPropria } from "@/components/app/AdicionarFerramenta";
 
@@ -53,7 +55,9 @@ export function Onboarding({
     [modo, comAgencia],
   );
   const [passo, setPasso] = useState<Passo>(ordem[0]);
-  const [ag, setAg] = useState(agencia);
+  const [ag, setAg] = useState(() => ({ ...agencia, whatsapp: agencia.whatsapp ? mascaraCelular(agencia.whatsapp) : agencia.whatsapp, cnpj: agencia.cnpj ? mascaraCnpj(agencia.cnpj) : agencia.cnpj }));
+  const [cnpjConferido, setCnpjConferido] = useState(""); // "cnpj|nome" já validado na Receita
+  const [conferindo, setConferindo] = useState(false);
   const [cli, setCli] = useState<Cliente>(CLIENTE_VAZIO);
   const [flows, setFlows] = useState<FlowKey[]>([]);
   const [ferr, setFerr] = useState<SelecaoFerramentas>({ chaves: [], personalizadas: [] });
@@ -85,6 +89,10 @@ export function Onboarding({
 
   const validar = (): string => {
     if (passo === "agencia" && !ag.nome.trim()) return "Informe o nome da agência.";
+    if (passo === "agencia" && ag.whatsapp?.trim()) {
+      const p = problemaNoCelular(ag.whatsapp);
+      if (p) return p;
+    }
     if (passo === "cliente" && !cli.nome.trim()) return "Informe o nome do cliente.";
     if (passo === "cliente" && cli.site.trim() && !/^(https?:\/\/)?[^\s/]+\.[^\s]{2,}/i.test(cli.site.trim())) return "Esse site não parece um endereço válido (ex.: lojaaurora.com.br).";
     if (passo === "responsavel" && cli.contatoEmail.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(cli.contatoEmail.trim())) return "Esse e-mail não parece válido.";
@@ -92,10 +100,22 @@ export function Onboarding({
     return "";
   };
 
-  const avancar = () => {
+  const avancar = async () => {
     const e = validar();
     setErro(e);
     if (e) return;
+    // CNPJ da agência: confere na Receita antes de seguir (válido, ativo e com o nome da agência).
+    const chaveCnpj = `${ag.cnpj?.replace(/\D/g, "") ?? ""}|${ag.nome.trim()}`;
+    if (passo === "agencia" && ag.cnpj?.trim() && chaveCnpj !== cnpjConferido) {
+      setConferindo(true);
+      const r = await fetch("/api/agencia/cnpj", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ cnpj: ag.cnpj, nome: ag.nome }) })
+        .then((x) => x.json())
+        .catch(() => ({ ok: true, endereco: null }));
+      setConferindo(false);
+      if (!r.ok) return setErro(r.error ?? "Não foi possível conferir o CNPJ.");
+      setCnpjConferido(chaveCnpj);
+      if (r.endereco && !ag.endereco?.trim()) setAg((x) => ({ ...x, endereco: r.endereco }));
+    }
     if (passo === "revisao") return criar();
     if (passo === "assinar") return assinarEGerarLink();
     if (passo === "ferramentas" && !flowsTocados) setFlows(deduzidas());
@@ -190,7 +210,8 @@ export function Onboarding({
     router.refresh();
   };
 
-  const campoAg = (k: keyof DadosAgenciaOnboarding) => ({ id: `ag-${k}`, value: ag[k], onChange: (e: React.ChangeEvent<HTMLInputElement>) => setAg((x) => ({ ...x, [k]: e.target.value })) });
+  const mascara = (k: keyof DadosAgenciaOnboarding, v: string) => (k === "whatsapp" ? mascaraCelular(v) : k === "cnpj" ? mascaraCnpj(v) : v);
+  const campoAg = (k: keyof DadosAgenciaOnboarding) => ({ id: `ag-${k}`, value: ag[k], onChange: (e: React.ChangeEvent<HTMLInputElement>) => setAg((x) => ({ ...x, [k]: mascara(k, e.target.value) })) });
   const campoCli = (k: keyof Cliente) => ({ id: `cli-${k}`, value: cli[k], onChange: (e: React.ChangeEvent<HTMLInputElement>) => setCli((x) => ({ ...x, [k]: e.target.value })) });
   const nomeCli = cli.nome.trim() || "o cliente";
 
@@ -480,8 +501,8 @@ export function Onboarding({
 
         {erro && <p className="mt-6 rounded-xl bg-warn-tint px-4 py-3 text-[14px] text-warn">{erro}</p>}
 
-        {/* Rodapé de navegação */}
-        <div className="mt-auto flex items-center justify-between gap-3 pt-10">
+        {/* Rodapé de navegação: logo abaixo do conteúdo e preso no pé da tela quando a etapa é longa */}
+        <div className="sticky bottom-0 z-10 -mx-4 mt-10 flex items-center justify-between gap-3 border-t border-line bg-canvas/95 px-4 py-4 backdrop-blur">
           {passo === "pronto" && criado ? (
             <>
               <button type="button" onClick={outroCliente} className="barra-btn">
@@ -507,8 +528,8 @@ export function Onboarding({
               </button>
               <div className="flex items-center gap-3">
                 <span className="hidden text-[12px] text-faint sm:inline">Enter ↵</span>
-                <button type="submit" className="barra-btn primario !h-11 !px-5">
-                  {passo === "boas-vindas" ? "Começar" : passo === "revisao" ? "Criar tudo" : "Continuar"} <ArrowRight size={16} />
+                <button type="submit" disabled={conferindo} className="barra-btn primario !h-11 !px-5">
+                  {conferindo ? "Conferindo CNPJ..." : passo === "boas-vindas" ? "Começar" : passo === "revisao" ? "Criar tudo" : "Continuar"} <ArrowRight size={16} />
                 </button>
               </div>
             </>

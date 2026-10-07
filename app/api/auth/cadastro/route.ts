@@ -6,6 +6,7 @@ import { criarSessao } from "@/lib/auth";
 import { limitarIp, respostaLimite } from "@/lib/limite";
 import { criarAgencia, CODIGO_INVALIDO, normalizarWhatsapp, TERMOS_NAO_ACEITOS } from "@/lib/ativacao";
 import { EMAIL_VALIDO, problemaNaSenha } from "@/lib/validacao";
+import { problemaNoCelular } from "@/lib/telefone";
 
 export const runtime = "nodejs";
 
@@ -27,7 +28,10 @@ export async function POST(req: Request) {
     );
   }
   // Sem código, o WhatsApp é como a Dattis fala com quem acabou de se cadastrar.
-  if (!codigo && !whatsapp) return NextResponse.json({ ok: false, error: "Informe um WhatsApp com DDD." }, { status: 400 });
+  if (!codigo && !whatsapp) {
+    const erro = problemaNoCelular(typeof body?.whatsapp === "string" ? body.whatsapp : "") ?? "Informe um WhatsApp com DDD.";
+    return NextResponse.json({ ok: false, error: erro }, { status: 400 });
+  }
 
   const existente = await db.query.agencias.findFirst({ where: eq(agencias.email, email) });
   if (existente) {

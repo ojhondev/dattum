@@ -3,6 +3,7 @@ import { db } from "@/lib/db";
 import { agencias, codigosAtivacao } from "@/lib/db/schema";
 import { hashSenha } from "@/lib/auth";
 import { VERSAO_LEGAL } from "@/lib/legal";
+import { celularValido } from "@/lib/telefone";
 
 export const TERMOS_NAO_ACEITOS = "Para criar a conta, aceite os Termos de Uso, a Política de Privacidade e o Contrato de dados.";
 
@@ -10,16 +11,13 @@ export const CODIGO_INVALIDO =
   "Código de ativação inválido ou já usado. A equipe Dattis manda o código pelo WhatsApp depois da confirmação do pagamento.";
 
 /** Clientes que uma conta em exploração (criada pelo site, plano ainda não ativado) pode cadastrar. */
-export const CLIENTES_EXPLORACAO = 2;
+export const CLIENTES_EXPLORACAO = 1;
 
 /** Conta criada pelo site que a Dattis ainda não ativou: usa a plataforma, mas não emite nada. */
 export const emExploracao = (a: { ativadaEm: Date | null }) => !a.ativadaEm;
 
-/** Só dígitos, com DDD (10 ou 11) e DDI opcional. Nulo quando não parece um celular/telefone. */
-export function normalizarWhatsapp(v: unknown) {
-  const d = typeof v === "string" ? v.replace(/\D/g, "") : "";
-  return d.length >= 10 && d.length <= 13 ? d : null;
-}
+/** Celular com DDD em 11 dígitos, ou null quando não parece um número real (ver lib/telefone.ts). */
+export const normalizarWhatsapp = celularValido;
 
 /** Reserva o código de forma atômica: só um cadastro consegue marcá-lo como usado. */
 async function reservarCodigo(codigoBruto: string) {

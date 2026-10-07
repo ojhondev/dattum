@@ -2,6 +2,7 @@
 
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
+import { CampoSenha } from "@/components/marketing/CampoSenha";
 
 export function FormConvite({ token, nomeInicial }: { token: string; nomeInicial: string }) {
   const router = useRouter();
@@ -37,11 +38,11 @@ export function FormConvite({ token, nomeInicial }: { token: string; nomeInicial
       </label>
       <label className="block">
         <span className="text-body-sm font-medium text-body">Senha (mínimo 8 caracteres)</span>
-        <input id="conv-senha" type="password" value={senha} onChange={(e) => setSenha(e.target.value)} minLength={8} required autoComplete="new-password" className="field-input mt-1.5" />
+        <CampoSenha id="conv-senha" value={senha} onChange={(e) => setSenha(e.target.value)} minLength={8} required autoComplete="new-password" className="field-input mt-1.5" />
       </label>
       <label className="block">
         <span className="text-body-sm font-medium text-body">Repita a senha</span>
-        <input id="conv-confirma" type="password" value={confirma} onChange={(e) => setConfirma(e.target.value)} minLength={8} required autoComplete="new-password" className="field-input mt-1.5" />
+        <CampoSenha id="conv-confirma" value={confirma} onChange={(e) => setConfirma(e.target.value)} minLength={8} required autoComplete="new-password" className="field-input mt-1.5" />
       </label>
       <label className="flex items-start gap-3 rounded-2xl border border-line bg-surface px-4 py-3.5 text-body-sm leading-snug text-body">
         <input id="conv-aceite" type="checkbox" checked={aceite} onChange={(e) => setAceite(e.target.checked)} required className="mt-0.5 h-4 w-4 shrink-0" />

@@ -3,14 +3,17 @@
 import { BarraModulo } from "@/components/app/Modulo";
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Check, Copy, FileDown, Printer, FileText } from "lucide-react";
+import { Check, Copy, FileDown, Printer, FileText, Lock } from "lucide-react";
 import { TIPOS_DOCUMENTO, gerarDocumento, VERSAO_MODELOS, type DadosDocumento } from "@/lib/documentos";
+import { dividirPrevia } from "@/lib/previa";
+import { ConteudoBloqueado } from "@/components/app/ConteudoBloqueado";
 
 export type ContaDoc = { id: string; dados: DadosDocumento };
 
 const escapar = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
-export function GeradorDocumentos({ contas, contaInicial, tipoInicial }: { contas: ContaDoc[]; contaInicial: string; tipoInicial: string }) {
+/** `bloqueado` = conta em exploração: só o começo do documento fica legível, sem copiar, Word ou PDF. */
+export function GeradorDocumentos({ contas, contaInicial, tipoInicial, bloqueado = false }: { contas: ContaDoc[]; contaInicial: string; tipoInicial: string; bloqueado?: boolean }) {
   const router = useRouter();
   const [contaId, setContaId] = useState(contaInicial);
   const [tipo, setTipo] = useState(tipoInicial);
@@ -23,6 +26,7 @@ export function GeradorDocumentos({ contas, contaInicial, tipoInicial }: { conta
   const campos = useMemo(() => [...new Set([...base.matchAll(/\[preencher: ([^\]]+)\]/g)].map((m) => m[1]))], [base]);
   const texto = useMemo(() => base.replace(/\[preencher: ([^\]]+)\]/g, (m, campo: string) => lacunas[campo]?.trim() || m), [base, lacunas]);
   const faltam = campos.filter((c) => !lacunas[c]?.trim()).length;
+  const previa = useMemo(() => (bloqueado ? dividirPrevia(texto) : null), [bloqueado, texto]);
 
   const escolher = (c: string, t: string) => {
     setContaId(c);
@@ -137,6 +141,12 @@ export function GeradorDocumentos({ contas, contaInicial, tipoInicial }: { conta
             <p className="text-[16px] font-medium text-ink">{doc.titulo}</p>
             <p className="text-[12.5px] text-muted">Onde usar: {doc.ondeUsar}</p>
           </div>
+          {previa ? (
+            <span className="pill pill-neutral inline-flex items-center gap-1.5">
+              <Lock size={13} /> Copiar, Word e PDF no plano ativo
+            </span>
+          ) : (
+          <>
           <button
             type="button"
             onClick={async () => {
@@ -158,9 +168,11 @@ export function GeradorDocumentos({ contas, contaInicial, tipoInicial }: { conta
           <button type="button" onClick={imprimir} className="btn btn-dark">
             <Printer size={15} /> PDF
           </button>
+          </>
+          )}
         </div>
         <pre className="max-h-[78vh] overflow-auto whitespace-pre-wrap break-words px-6 py-6 font-ui text-[15px] leading-[1.75] text-body sm:px-10">
-          {texto.split(/(\[preencher: [^\]]+\])/g).map((parte, i) =>
+          {(previa ? previa.visivel : texto).split(/(\[preencher: [^\]]+\])/g).map((parte, i) =>
             parte.startsWith("[preencher:") ? (
               <mark key={i} className="rounded bg-caution-tint px-1 text-caution">
                 {parte}
@@ -170,6 +182,11 @@ export function GeradorDocumentos({ contas, contaInicial, tipoInicial }: { conta
             ),
           )}
         </pre>
+        {previa && (
+          <ConteudoBloqueado className="-mt-4 px-6 pb-6 sm:px-10">
+            <pre className="whitespace-pre-wrap break-words font-ui text-[15px] leading-[1.75] text-body">{previa.oculto}</pre>
+          </ConteudoBloqueado>
+        )}
         <p className="border-t border-line px-6 py-3 text-[12px] leading-snug text-faint">
           Modelo Dattis v{VERSAO_MODELOS}, gerado a partir dos dados cadastrados. Revise com o jurídico do cliente antes de
           assinar ou publicar. A Dattis não presta assessoria jurídica.

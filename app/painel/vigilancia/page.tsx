@@ -2,7 +2,8 @@ import Link from "next/link";
 import { eq } from "drizzle-orm";
 import { getSessao } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { contasCliente } from "@/lib/db/schema";
+import { agencias, contasCliente } from "@/lib/db/schema";
+import { RecursoTravado } from "@/components/app/RecursoTravado";
 import { ultimosResultados } from "@/lib/vigilancia";
 import { NotaVigilancia, ContagemSeveridades } from "@/components/app/VigilanciaChips";
 import { ListaAchados } from "@/components/app/ListaAchados";
@@ -22,6 +23,8 @@ const CHECAGENS = [
 export default async function VigilanciaPage({ searchParams }: { searchParams: Promise<{ q?: string; nivel?: string }> }) {
   const sessao = await getSessao();
   if (!sessao) return null;
+  const ag = await db.query.agencias.findFirst({ where: eq(agencias.id, sessao.agenciaId), columns: { ativadaEm: true } });
+  if (ag && !ag.ativadaEm) return <RecursoTravado titulo="Vigilância diária" texto="Todo dia às 6h a Dattis confere o site e a documentação de cada cliente e avisa o que precisa de atenção antes que vire multa ou BM restrita." exemplo="vigilancia" />;
   const { q, nivel } = await searchParams;
   const termo = (q ?? "").trim().toLowerCase();
 

@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { AuthShell } from "@/components/marketing/AuthShell";
 import { BotaoGoogle, mensagemErroGoogle } from "@/components/marketing/BotaoGoogle";
+import { CampoSenha } from "@/components/marketing/CampoSenha";
 
 function EntrarForm() {
   const router = useRouter();
@@ -75,8 +76,7 @@ function EntrarForm() {
         </label>
         <label className="block">
           <span className="text-body-sm font-medium text-body">Senha</span>
-          <input
-            type="password"
+          <CampoSenha
             value={senha}
             onChange={(e) => setSenha(e.target.value)}
             required

@@ -41,7 +41,7 @@ export default async function DocumentosPage({ searchParams }: { searchParams: P
 
   return (
     <div className="max-w-[1400px]">
-      <GeradorDocumentos contas={lista} contaInicial={contaInicial} tipoInicial={tipoInicial} />
+      <GeradorDocumentos contas={lista} contaInicial={contaInicial} tipoInicial={tipoInicial} bloqueado={!agencia.ativadaEm} />
     </div>
   );
 }

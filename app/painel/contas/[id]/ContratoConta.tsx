@@ -4,12 +4,14 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { CheckCircle2, Circle, Copy, FileText, Link2, Mail, MessageCircle } from "lucide-react";
 import { linkWhatsappPara } from "@/lib/contato";
+import { ConteudoBloqueado } from "@/components/app/ConteudoBloqueado";
 
 export type ContratoDados = {
   id: string;
   versao: number;
   situacao: "rascunho" | "aguarda_cliente" | "aguarda_agencia" | "assinado";
   conteudoSnapshot: string;
+  conteudoBloqueado: string | null; // conta em exploração: resto do contrato embaralhado, exibido borrado
   hashConteudo: string | null;
   temLink: boolean;
   agencia: { nome: string | null; cargo: string | null; em: string | null; ip: string | null } | null;
@@ -229,6 +231,11 @@ export function ContratoConta({
 
       <div className="dpa-doc mt-6">
         <pre>{contrato.conteudoSnapshot}</pre>
+        {contrato.conteudoBloqueado && (
+          <ConteudoBloqueado className="mt-2" titulo="Contrato completo no plano ativo" texto="Ative o plano para ler o contrato inteiro, assinar e mandar o link para o cliente assinar.">
+            <pre>{contrato.conteudoBloqueado}</pre>
+          </ConteudoBloqueado>
+        )}
         {contrato.hashConteudo && <p className="mt-4 break-all font-mono text-[11px] text-muted">SHA-256 do texto assinado: {contrato.hashConteudo}</p>}
       </div>
 

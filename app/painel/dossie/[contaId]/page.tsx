@@ -18,6 +18,7 @@ import { MOTIVOS, prontidaoDossie, textoContestacao, type MotivoId } from "@/lib
 import { varreduraResultados } from "@/lib/db/schema";
 import { DossieActions } from "./DossieActions";
 import { planoPermite } from "@/lib/planos";
+import { RecursoTravado } from "@/components/app/RecursoTravado";
 import { ConviteDossie } from "@/components/app/ConviteGrowth";
 
 const ANEXAR = [
@@ -67,7 +68,8 @@ export default async function DossieContaPage({
     where: and(eq(contasCliente.id, contaId), eq(contasCliente.agenciaId, sessao.agenciaId)),
   });
   if (!conta) notFound();
-  const plano = await db.query.agencias.findFirst({ where: eq(agencias.id, sessao.agenciaId), columns: { nome: true, plano: true } });
+  const plano = await db.query.agencias.findFirst({ where: eq(agencias.id, sessao.agenciaId), columns: { nome: true, plano: true, ativadaEm: true } });
+  if (plano && !plano.ativadaEm) return <RecursoTravado titulo="Dossiê para BM suspensa" texto="Em minutos, reúne os documentos que provam que a agência trata os dados do cliente dentro da lei, para contestar a restrição da Business Manager." exemplo="dossie" />;
   if (plano && !planoPermite(plano.plano, "dossie")) return <ConviteDossie agenciaNome={plano.nome} />;
 
   const [agencia, atividades, dpa, subs, cert, origem, vig] = await Promise.all([

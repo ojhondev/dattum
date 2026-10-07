@@ -11,6 +11,7 @@ import { SITE_URL, urlAbsoluta } from "@/lib/site";
 import { estatisticaCookies } from "@/lib/cookies-stats";
 import { ferramentasDaAgencia } from "@/lib/ferramentas-agencia";
 import { planoPermite } from "@/lib/planos";
+import { dividirPrevia } from "@/lib/previa";
 
 // Aceita também os nomes antigos das abas (links já enviados e redirecionamentos do formulário).
 const ABAS: Record<string, AbaConta> = { registro: "registro", rat: "registro", contrato: "contrato", dpa: "contrato", ferramentas: "ferramentas", sub: "ferramentas", site: "site", vigilancia: "vigilancia", vig: "vigilancia" };
@@ -67,6 +68,8 @@ export default async function ContaDetalhePage({ params, searchParams }: { param
     finalidade: s.finalidade,
     origem: s.origem,
   }));
+  // Em exploração o contrato inteiro não sai do servidor: só a qualificação e o objeto; o resto vai embaralhado.
+  const previaDpa = dpa ? dividirPrevia(dpa.conteudoSnapshot, [/\n2\. /]) : null;
 
   return (
     <ContaDetalhe
@@ -105,7 +108,8 @@ export default async function ContaDetalhePage({ params, searchParams }: { param
               id: dpa.id,
               versao: dpa.versao,
               situacao: situacaoDpa(dpa),
-              conteudoSnapshot: dpa.conteudoSnapshot,
+              conteudoSnapshot: agencia?.ativadaEm ? dpa.conteudoSnapshot : (previaDpa?.visivel ?? ""),
+              conteudoBloqueado: agencia?.ativadaEm ? null : (previaDpa?.oculto ?? null),
               hashConteudo: dpa.hashConteudo,
               temLink: !!dpa.tokenAssinatura,
               agencia: { nome: dpa.assinanteNome, cargo: dpa.assinanteCargo, em: iso(dpa.assinadoEm), ip: dpa.assinadoIp },

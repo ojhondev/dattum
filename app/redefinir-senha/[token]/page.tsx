@@ -4,6 +4,7 @@ import { use, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { AuthShell } from "@/components/marketing/AuthShell";
+import { CampoSenha } from "@/components/marketing/CampoSenha";
 
 export default function RedefinirSenhaPage({ params }: { params: Promise<{ token: string }> }) {
   const { token } = use(params);
@@ -37,11 +38,11 @@ export default function RedefinirSenhaPage({ params }: { params: Promise<{ token
       <form className="font-ui mt-8 space-y-4" onSubmit={enviar}>
         <label className="block">
           <span className="text-body-sm font-medium text-body">Nova senha (mínimo 8 caracteres)</span>
-          <input id="senha" type="password" value={senha} onChange={(e) => setSenha(e.target.value)} minLength={8} required autoComplete="new-password" className="field-input mt-1.5" />
+          <CampoSenha id="senha" value={senha} onChange={(e) => setSenha(e.target.value)} minLength={8} required autoComplete="new-password" className="field-input mt-1.5" />
         </label>
         <label className="block">
           <span className="text-body-sm font-medium text-body">Repita a nova senha</span>
-          <input id="confirma" type="password" value={confirma} onChange={(e) => setConfirma(e.target.value)} minLength={8} required autoComplete="new-password" className="field-input mt-1.5" />
+          <CampoSenha id="confirma" value={confirma} onChange={(e) => setConfirma(e.target.value)} minLength={8} required autoComplete="new-password" className="field-input mt-1.5" />
         </label>
         {erro && <div className="rounded-xl bg-danger-tint px-4 py-3 text-body-sm text-danger">{erro}</div>}
         <button type="submit" disabled={enviando} className="btn btn-dark btn-lg w-full">

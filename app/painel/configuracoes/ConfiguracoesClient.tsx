@@ -2,6 +2,8 @@
 
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
+import { mascaraCelular } from "@/lib/telefone";
+import { mascaraCnpj } from "@/lib/cnpj";
 
 type Dados = {
   nome: string;
@@ -30,7 +32,8 @@ function Aviso({ estado }: { estado: { tipo: "ok" | "erro"; texto: string } | nu
 
 export function FormDadosAgencia({ inicial, pedeSenhaParaEmail, bloqueado }: { inicial: Dados; pedeSenhaParaEmail: boolean; bloqueado: boolean }) {
   const router = useRouter();
-  const [d, setD] = useState(inicial);
+  const [d, setD] = useState(() => ({ ...inicial, whatsapp: mascaraCelular(inicial.whatsapp ?? ""), cnpj: mascaraCnpj(inicial.cnpj ?? "") }));
+  const mascara = (k: keyof Dados, v: string) => (k === "whatsapp" ? mascaraCelular(v) : k === "cnpj" ? mascaraCnpj(v) : v);
   const [senhaAtual, setSenhaAtual] = useState("");
   const [salvando, setSalvando] = useState(false);
   const [estado, setEstado] = useState<{ tipo: "ok" | "erro"; texto: string } | null>(null);
@@ -69,7 +72,7 @@ export function FormDadosAgencia({ inicial, pedeSenhaParaEmail, bloqueado }: { i
               autoComplete={c.auto}
               disabled={bloqueado}
               required={c.k === "nome" || c.k === "email"}
-              onChange={(e) => setD((x) => ({ ...x, [c.k]: e.target.value }))}
+              onChange={(e) => setD((x) => ({ ...x, [c.k]: mascara(c.k, e.target.value) }))}
               className="field-input mt-1.5"
             />
           </label>

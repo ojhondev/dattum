@@ -6,6 +6,8 @@ import { ehDono, ehOperador, getSessao, verificarSenha } from "@/lib/auth";
 import { registrar } from "@/lib/registro";
 import { EMAIL_DEMO } from "@/lib/admin-dados";
 import { atualizarRascunhosDaAgencia } from "@/lib/dpa";
+import { celularValido, problemaNoCelular } from "@/lib/telefone";
+import { digitosCnpj, mascaraCnpj, verificarCnpjAgencia } from "@/lib/cnpj";
 
 export const runtime = "nodejs";
 
@@ -44,14 +46,25 @@ export async function PATCH(req: Request) {
     if (outro) return NextResponse.json({ ok: false, error: "Esse e-mail já é usado por outra conta." }, { status: 409 });
   }
 
+  // WhatsApp: celular real com DDD. CNPJ: válido, ativo na Receita e da própria agência (nome confere).
+  const whatsappBruto = texto(b?.whatsapp, 30);
+  if (whatsappBruto && !celularValido(whatsappBruto)) return NextResponse.json({ ok: false, error: problemaNoCelular(whatsappBruto) }, { status: 400 });
+  const cnpjBruto = texto(b?.cnpj, 30);
+  let enderecoReceita: string | null = null;
+  if (cnpjBruto && (digitosCnpj(cnpjBruto) !== digitosCnpj(agencia.cnpj ?? "") || nome !== agencia.nome)) {
+    const v = await verificarCnpjAgencia(cnpjBruto, nome);
+    if (!v.ok) return NextResponse.json({ ok: false, error: v.erro }, { status: 400 });
+    enderecoReceita = v.receita?.endereco ?? null;
+  }
+
   const [atual] = await db
     .update(agencias)
     .set({
       nome,
       email,
-      cnpj: texto(b?.cnpj, 30),
-      whatsapp: texto(b?.whatsapp, 30),
-      endereco: texto(b?.endereco, 300),
+      cnpj: cnpjBruto ? mascaraCnpj(cnpjBruto) : null,
+      whatsapp: whatsappBruto ? celularValido(whatsappBruto) : null,
+      endereco: texto(b?.endereco, 300) ?? enderecoReceita,
       responsavelNome: texto(b?.responsavelNome, 120),
       responsavelCargo: texto(b?.responsavelCargo, 120),
     })

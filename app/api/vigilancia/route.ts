@@ -3,6 +3,7 @@ import { and, desc, eq } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { varreduraResultados } from "@/lib/db/schema";
 import { getSessao } from "@/lib/auth";
+import { bloqueioExploracao } from "@/lib/demo-bloqueio";
 import { contaDaAgencia } from "@/lib/contas";
 import { executarVarredura } from "@/lib/vigilancia";
 
@@ -15,6 +16,8 @@ const INTERVALO_MIN = 5;
 export async function POST(req: Request) {
   const sessao = await getSessao();
   if (!sessao) return NextResponse.json({ ok: false, error: "Não autenticado." }, { status: 401 });
+  const exploracao = await bloqueioExploracao(sessao.agenciaId);
+  if (exploracao) return exploracao;
 
   const body = await req.json().catch(() => null);
   const contaId = typeof body?.contaId === "string" ? body.contaId : "";

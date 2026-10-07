@@ -341,16 +341,17 @@ export async function executarVarredura(params: { origem: "cron" | "manual" | "a
     ]);
 
     const agIdsContas = [...new Set(contas.map((c) => c.agenciaId))];
-    const planoPor = new Map(
-      (agIdsContas.length ? await db.select({ id: agencias.id, plano: agencias.plano }).from(agencias).where(inArray(agencias.id, agIdsContas)) : []).map((a) => [a.id, a.plano]),
-    );
+    const agsContas = agIdsContas.length ? await db.select({ id: agencias.id, plano: agencias.plano, ativadaEm: agencias.ativadaEm }).from(agencias).where(inArray(agencias.id, agIdsContas)) : [];
+    const planoPor = new Map(agsContas.map((a) => [a.id, a.plano]));
+    // Vigilância é recurso do plano ativo: contas em exploração ficam de fora da varredura.
+    const ativas = new Set(agsContas.filter((a) => a.ativadaEm).map((a) => a.id));
     const dpaPor = new Map(dpasRows.map((d) => [d.conta, d.status]));
     const ratPor = new Map(ratRows.map((r) => [r.conta, Number(r.n)]));
     const subPor = new Map(subRows.map((r) => [r.conta, Number(r.n)]));
     const certPor = new Map<string, (typeof certRows)[number]>();
     for (const c of certRows) if (c.contaClienteId && !certPor.has(c.contaClienteId)) certPor.set(c.contaClienteId, c);
 
-    const alvos: Alvo[] = contas.map((c) => {
+    const alvos: Alvo[] = contas.filter((c) => ativas.has(c.agenciaId)).map((c) => {
       const cert = certPor.get(c.id) ?? null;
       const site = c.site ?? (cert?.dominio ? `https://${cert.dominio}` : null);
       return {

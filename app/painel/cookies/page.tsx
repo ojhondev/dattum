@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { and, count, desc, eq, gte, inArray } from "drizzle-orm";
-import { Cookie, Globe } from "lucide-react";
+import { BarChart3, ChevronDown, Cookie, Globe } from "lucide-react";
 import { getSessao } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { agencias, consentimentos, contasCliente } from "@/lib/db/schema";
@@ -12,8 +12,6 @@ import { ConfigurarCookies } from "./ConfigurarCookies";
 import { BarraModulo } from "@/components/app/Modulo";
 
 export const dynamic = "force-dynamic";
-
-const CARD = "rounded-[20px] border border-line bg-surface p-5 sm:p-6";
 
 export default async function CookiesPage({ searchParams }: { searchParams: Promise<{ site?: string }> }) {
   const sessao = await getSessao();
@@ -143,11 +141,23 @@ export default async function CookiesPage({ searchParams }: { searchParams: Prom
             recentes={recentes.map((r) => ({ quando: r.criadoEm.toISOString(), acao: r.acao, estatisticas: r.categorias.estatisticas, marketing: r.categorias.marketing, url: r.url }))}
           />
 
-          <details className={CARD + " mt-5"} data-tour="cookies-gtm">
-            <summary className="cursor-pointer list-none">
-              <p className="font-mono text-[11px] uppercase tracking-[0.05em] text-muted">Google Analytics e Gerenciador de Tags</p>
-              <p className="mt-1 font-display text-[22px] leading-tight text-ink">O cliente ainda não tem? Crie do zero em 10 minutos</p>
-              <p className="mt-1 text-[14px] text-muted">Clique para abrir o passo a passo.</p>
+          {/* Bloco clicável com conteúdo escondido: destacado (borda e fundo da marca, seta) para não passar por texto solto. */}
+          <details className="group mt-5 rounded-[20px] border-2 border-brand-strong/40 bg-brand-tint p-5 transition-colors open:bg-surface sm:p-6" data-tour="cookies-gtm">
+            <summary className="flex cursor-pointer list-none items-center gap-4 [&::-webkit-details-marker]:hidden">
+              <span className="pixel-corners pixel-corners-sm grid h-11 w-11 shrink-0 place-items-center bg-rail text-brand">
+                <BarChart3 size={20} />
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="block font-mono text-[11px] uppercase tracking-[0.05em] text-brand-ink">Google Analytics e Gerenciador de Tags</span>
+                <span className="mt-1 block font-display text-[22px] leading-tight text-ink">O cliente ainda não tem? Crie do zero em 10 minutos</span>
+                <span className="mt-1 block text-[14px] text-muted">Passo a passo pelos menus, do zero até publicar.</span>
+              </span>
+              <span className="painel-btn hidden shrink-0 items-center gap-1.5 sm:inline-flex">
+                <span className="group-open:hidden">Ver passo a passo</span>
+                <span className="hidden group-open:inline">Fechar</span>
+                <ChevronDown size={16} className="transition-transform group-open:rotate-180" />
+              </span>
+              <ChevronDown size={22} className="shrink-0 text-brand-ink transition-transform group-open:rotate-180 sm:hidden" />
             </summary>
             <div className="mt-5 grid gap-6 lg:grid-cols-2">
               <div>

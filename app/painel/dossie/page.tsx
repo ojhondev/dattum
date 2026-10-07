@@ -5,6 +5,7 @@ import { getSessao } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { agencias, contasCliente } from "@/lib/db/schema";
 import { planoPermite } from "@/lib/planos";
+import { RecursoTravado } from "@/components/app/RecursoTravado";
 import { ConviteDossie } from "@/components/app/ConviteGrowth";
 import { BarraModulo, BuscaModulo } from "@/components/app/Modulo";
 
@@ -18,7 +19,8 @@ export default async function DossiePage({ searchParams }: { searchParams: Promi
   const { q } = await searchParams;
   const sessao = await getSessao();
   if (!sessao) return null;
-  const agencia = await db.query.agencias.findFirst({ where: eq(agencias.id, sessao.agenciaId), columns: { nome: true, plano: true } });
+  const agencia = await db.query.agencias.findFirst({ where: eq(agencias.id, sessao.agenciaId), columns: { nome: true, plano: true, ativadaEm: true } });
+  if (agencia && !agencia.ativadaEm) return <RecursoTravado titulo="Dossiê para BM suspensa" texto="Em minutos, reúne os documentos que provam que a agência trata os dados do cliente dentro da lei, para contestar a restrição da Business Manager." exemplo="dossie" />;
   if (agencia && !planoPermite(agencia.plano, "dossie")) return <ConviteDossie agenciaNome={agencia.nome} />;
 
   const contas = await db.query.contasCliente.findMany({
