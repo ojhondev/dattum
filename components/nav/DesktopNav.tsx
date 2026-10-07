@@ -41,8 +41,8 @@ export function DesktopNav() {
   const grupo = NAV_GROUPS.find((g) => g.label === aberto);
 
   return (
-    <nav className="hidden xl:block" onMouseLeave={agendarFechar} aria-label="Principal">
-      <ul className="flex items-center gap-2">
+    <nav className="hidden justify-self-center xl:block" onMouseLeave={agendarFechar} aria-label="Principal">
+      <ul className="flex items-center min-[1440px]:gap-2">
         {NAV_GROUPS.map((g) => (
           <li key={g.label}>
             <button
@@ -51,7 +51,7 @@ export function DesktopNav() {
               onMouseEnter={() => abrir(g.label)}
               onFocus={() => abrir(g.label)}
               onClick={() => (aberto === g.label ? setAberto(null) : abrir(g.label))}
-              className="inline-flex items-center gap-2.5 px-4 py-5 text-[16px] text-ink"
+              className="inline-flex items-center gap-2 px-2.5 py-5 text-[15px] text-ink min-[1440px]:gap-2.5 min-[1440px]:px-4 min-[1440px]:text-[16px]"
             >
               {g.label}
               <ChevronDown size={20} strokeWidth={1.5} className={"transition-transform " + (aberto === g.label ? "rotate-180" : "")} />

@@ -116,10 +116,13 @@ export function MobileNav({
               </nav>
 
               <div className="grid gap-2.5 px-4 pt-6 sm:grid-cols-2 sm:px-10">
+                <Link href="/cadastro" onClick={fechar} className="btn btn-primary btn-lg w-full sm:col-span-2">
+                  Criar conta
+                </Link>
                 <Link href={ctaHref} onClick={fechar} className="btn btn-dark btn-lg w-full">
                   {ctaLabel}
                 </Link>
-                <Link href="/entrar" onClick={fechar} className="btn btn-primary btn-lg w-full">
+                <Link href="/entrar" onClick={fechar} className="btn btn-ghost btn-lg w-full">
                   {enterLabel}
                 </Link>
               </div>
