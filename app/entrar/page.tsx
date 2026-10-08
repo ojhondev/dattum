@@ -6,6 +6,7 @@ import Link from "next/link";
 import { AuthShell } from "@/components/marketing/AuthShell";
 import { BotaoGoogle, mensagemErroGoogle } from "@/components/marketing/BotaoGoogle";
 import { CampoSenha } from "@/components/marketing/CampoSenha";
+import { DEMO_VISIVEL } from "@/lib/flags";
 
 function EntrarForm() {
   const router = useRouter();
@@ -94,6 +95,8 @@ function EntrarForm() {
         </p>
       </form>
 
+      {DEMO_VISIVEL && (
+      <>
       <div className="mt-6 flex items-center gap-3 font-mono text-caption uppercase text-faint">
         <span className="h-px flex-1 bg-line" />
         ou
@@ -106,6 +109,8 @@ function EntrarForm() {
       <p className="font-ui mt-2 text-caption text-faint">
         Acesso de demonstração com dados de exemplo, sem precisar criar conta.
       </p>
+      </>
+      )}
 
       <p className="font-ui mt-8 text-body-sm">
         Ainda não tem conta?{" "}

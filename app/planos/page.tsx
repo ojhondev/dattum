@@ -9,6 +9,7 @@ import { PLANOS, RECURSOS, destaquesDoPlano, type Plano } from "@/lib/planos";
 import { linkAssinar } from "@/lib/contato";
 import { LeiBar } from "@/components/marketing/LeiBar";
 import { CalculadoraPopup } from "@/components/marketing/CalculadoraPopup";
+import { DEMO_VISIVEL } from "@/lib/flags";
 
 const SPRINT = [
   "Contrato de operador (DPA) padrão para a carteira",
@@ -48,7 +49,9 @@ const FAQ_PLANOS = [
   },
   {
     q: "Posso ver a plataforma antes de assinar?",
-    a: "Sim. Na página de login há um acesso de demonstração com dados de exemplo, sem senha.",
+    a: DEMO_VISIVEL
+      ? "Sim. Na página de login há um acesso de demonstração com dados de exemplo, sem senha."
+      : "Sim. Crie a conta da agência e explore a plataforma com um cliente antes de ativar o plano.",
   },
   {
     q: "Como eu contrato?",
@@ -242,8 +245,8 @@ export default function PlanosPage() {
               <a href={linkAssinar("Growth")} target="_blank" rel="noopener" className="btn btn-leaf">
                 Falar com a Dattis
               </a>
-              <a href="/api/auth/demo" className="btn btn-dark">
-                Ver a demonstração
+              <a href={DEMO_VISIVEL ? "/api/auth/demo" : "/cadastro"} className="btn btn-dark">
+                {DEMO_VISIVEL ? "Ver a demonstração" : "Criar conta e explorar"}
               </a>
             </div>
           </div>

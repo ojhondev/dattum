@@ -14,6 +14,7 @@ import dat from "../../public/marketing/app/dat.webp";
 import seloClaro from "../../public/marketing/app/selo-claro.png";
 import seloEscuro from "../../public/marketing/app/selo-escuro.png";
 import certificados from "../../public/marketing/app/certificados.webp";
+import { DEMO_VISIVEL } from "@/lib/flags";
 
 // Prints REAIS da plataforma (conta demo). Para atualizar: npx tsx scripts/capturar-telas.mts
 
@@ -249,8 +250,8 @@ export function Funcionalidades() {
             </ul>
           </div>
           <div className="mt-10 flex flex-wrap gap-3 lg:pl-[252px]">
-            <Link href="/api/auth/demo" prefetch={false} className="btn btn-primary">
-              Testar a plataforma sem senha <ArrowRight size={16} />
+            <Link href={DEMO_VISIVEL ? "/api/auth/demo" : "/cadastro"} prefetch={false} className="btn btn-primary">
+              {DEMO_VISIVEL ? "Testar a plataforma sem senha" : "Criar conta"} <ArrowRight size={16} />
             </Link>
             <Link href="/planos" className="btn border-white/25 text-white hover:border-white/60">
               Ver planos

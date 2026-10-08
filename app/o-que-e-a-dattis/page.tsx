@@ -10,6 +10,7 @@ import { JsonLd } from "@/components/seo/JsonLd";
 import { schemaBreadcrumb, schemaFaq } from "@/lib/schema-org";
 import { SITE_URL } from "@/lib/site";
 import { linkContato } from "@/lib/contato";
+import { DEMO_VISIVEL } from "@/lib/flags";
 
 // Página institucional pensada para busca orgânica: responde "o que é a Dattis",
 // "LGPD para agência de tráfego" e variações. Texto direto, termos técnicos explicados.
@@ -326,7 +327,7 @@ export default function OQueEADattisPage() {
                 Quer ver como a Dattis funciona na sua agência?
               </h2>
               <ul className="mt-6 flex flex-wrap gap-x-6 gap-y-2 text-[15px] text-white/80">
-                {["Sem fidelidade", "A partir de R$ 47 por cliente", "Demonstração sem senha"].map((t) => (
+                {["Sem fidelidade", "A partir de R$ 47 por cliente", DEMO_VISIVEL ? "Demonstração sem senha" : "Crie a conta e explore"].map((t) => (
                   <li key={t} className="flex items-center gap-2">
                     <Check size={16} className="text-brand" /> {t}
                   </li>
@@ -334,8 +335,8 @@ export default function OQueEADattisPage() {
               </ul>
             </div>
             <div className="flex flex-wrap gap-3">
-              <Link href="/api/auth/demo" prefetch={false} className="btn btn-primary">
-                Testar a plataforma <ArrowRight size={16} />
+              <Link href={DEMO_VISIVEL ? "/api/auth/demo" : "/cadastro"} prefetch={false} className="btn btn-primary">
+                {DEMO_VISIVEL ? "Testar a plataforma" : "Criar conta"} <ArrowRight size={16} />
               </Link>
               <a
                 href={linkContato("Olá! Li sobre a Dattis e quero entender como funciona na minha agência.")}
