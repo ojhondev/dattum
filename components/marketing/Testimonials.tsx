@@ -1,49 +1,41 @@
-"use client";
+import Image from "next/image";
+import type { Depoimento } from "@/lib/depoimentos";
 
-import { useState } from "react";
-import { ArrowRight } from "lucide-react";
-
-type Item = { quote: string; name: string; role: string };
-
-export function Testimonials({ kicker, title, items, note }: { kicker: string; title: string; items: Item[]; note: string }) {
-  const [i, setI] = useState(0);
-  const go = (d: number) => setI((n) => (n + d + items.length) % items.length);
-
+/**
+ * Depoimentos de agências clientes, lado a lado (foto, frase, nome e agência).
+ * `escuro` é a versão para fundo preto da landing de anúncios.
+ */
+export function Testimonials({ kicker, title, items, escuro = false }: { kicker: string; title: string; items: Depoimento[]; escuro?: boolean }) {
   return (
-    <section className="relative z-10 bg-canvas">
-      <div className="w-full overflow-hidden px-5 py-24 sm:px-10 lg:px-14">
-        <div className="flex flex-wrap items-end justify-between gap-6">
-          <div>
-            <p className="t-eyebrow mb-4">{kicker}</p>
-            <h2 className="t-display max-w-2xl">{title}</h2>
-          </div>
-          <div className="flex gap-2">
-            <button type="button" onClick={() => go(-1)} aria-label="Anterior" className="arrow-circle rotate-180">
-              <ArrowRight size={18} strokeWidth={1.6} />
-            </button>
-            <button type="button" onClick={() => go(1)} aria-label="Próximo" className="arrow-circle">
-              <ArrowRight size={18} strokeWidth={1.6} />
-            </button>
-          </div>
-        </div>
+    <section className={"relative z-10 " + (escuro ? "" : "bg-canvas")}>
+      <div className={escuro ? "mx-auto max-w-7xl px-4 py-24 sm:px-10" : "w-full px-5 py-24 sm:px-10 lg:px-14"}>
+        <p className={escuro ? "font-mono text-[13px] uppercase tracking-[0.08em] text-brand" : "t-eyebrow mb-4"}>{kicker}</p>
+        <h2 className={escuro ? "mt-4 max-w-3xl font-display text-[clamp(1.9rem,3.6vw,3rem)] leading-[1.1] text-white" : "t-display max-w-2xl"}>{title}</h2>
 
-        <div className="mt-12">
-          <div className="flex transition-transform duration-500 ease-out" style={{ transform: `translateX(-${i * 100}%)` }}>
-            {items.map((t, idx) => (
-              <figure key={idx} className="w-full shrink-0 pr-1">
-                <div className="block-card max-w-4xl p-8 sm:p-12">
-                  <blockquote className="font-display text-[clamp(1.4rem,2.6vw,2rem)] leading-snug text-ink">“{t.quote}”</blockquote>
-                  <figcaption className="mt-8 flex flex-wrap items-center gap-2">
-                    <span className="tag">{t.name}</span>
-                    <span className="tag tag-white">{t.role}</span>
-                  </figcaption>
-                </div>
-              </figure>
-            ))}
-          </div>
+        <div className="mt-12 grid gap-4 lg:grid-cols-2">
+          {items.map((t) => (
+            <figure
+              key={t.name}
+              className={
+                "flex flex-col justify-between gap-10 rounded-[28px] p-8 sm:p-10 " +
+                (escuro ? "border border-white/10 bg-[#0b100e]" : "block-card")
+              }
+            >
+              <blockquote className={"font-display text-[clamp(1.3rem,2.2vw,1.75rem)] leading-snug " + (escuro ? "text-white" : "text-ink")}>
+                “{t.quote}”
+              </blockquote>
+              <figcaption className="flex items-center gap-4">
+                <Image src={t.foto} alt={`${t.name}, ${t.agencia}`} width={56} height={56} className="h-14 w-14 shrink-0 rounded-full object-cover" />
+                <span className="leading-tight">
+                  <span className={"block text-[16px] font-medium " + (escuro ? "text-white" : "text-ink")}>{t.name}</span>
+                  <span className={"mt-1 block font-mono text-[12.5px] uppercase tracking-[0.05em] " + (escuro ? "text-brand" : "text-brand-ink")}>
+                    {t.agencia}
+                  </span>
+                </span>
+              </figcaption>
+            </figure>
+          ))}
         </div>
-
-        <p className="mt-6 font-mono text-[12px] uppercase tracking-[0.04em] text-faint">{note}</p>
       </div>
     </section>
   );

@@ -20,9 +20,11 @@ import logoDark from "../../public/brand/logo-fundo-dark.png";
 import iso27001 from "../../public/selos/iso-27001.webp";
 import iso27701 from "../../public/selos/iso-27701.webp";
 import { FormLead } from "./FormLead";
+import { Testimonials } from "@/components/marketing/Testimonials";
+import { DEPOIMENTOS } from "@/lib/depoimentos";
 
 // Landing de anúncios (fundo preto, copy agressiva) para agências de tráfego. Estrutura: hero com formulário,
-// "a LGPD já está sendo cobrada", solução, vídeo, como funciona, situações reais e CTA final.
+// "a LGPD já está sendo cobrada", solução, vídeo, como funciona, situações reais, depoimentos e CTA final.
 
 export const metadata: Metadata = {
   title: "DPO para agências de tráfego · Evite multas pela LGPD",
@@ -213,6 +215,11 @@ export default function DpoParaAgenciasPage() {
             </div>
           </div>
         </section>
+
+        {/* DEPOIMENTOS */}
+        <div className="border-t border-white/[0.06]">
+          <Testimonials escuro kicker="Histórias de agências" title="Agências que já colocaram a LGPD em ordem com a Dattis" items={DEPOIMENTOS} />
+        </div>
 
         {/* CTA FINAL */}
         <section className="px-4 py-24 sm:px-10">

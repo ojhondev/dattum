@@ -21,6 +21,7 @@ import {
   BmAlertVisual,
 } from "@/components/marketing/ModuleVisuals";
 import { Testimonials } from "@/components/marketing/Testimonials";
+import { DEPOIMENTOS } from "@/lib/depoimentos";
 import { ScrollRevealText } from "@/components/marketing/ScrollRevealText";
 import { LeiBar } from "@/components/marketing/LeiBar";
 import { CalculadoraPopup, BotaoCalculadora } from "@/components/marketing/CalculadoraPopup";
@@ -499,23 +500,7 @@ export default async function LandingPage() {
         </section>
 
         {/* DEPOIMENTOS */}
-        <Testimonials
-          kicker="Prova social"
-          title="O que agências dizem sobre a Dattis"
-          note="[Depoimentos reais entram aqui antes da publicação — placeholder]"
-          items={[
-            {
-              quote: "[Depoimento real de uma agência cliente entra aqui — resultado que a Dattis trouxe pra operação dela]",
-              name: "[Nome do responsável]",
-              role: "[Cargo] na [Nome da agência]",
-            },
-            {
-              quote: "[Segundo depoimento entra aqui]",
-              name: "[Nome do responsável]",
-              role: "[Cargo] na [Nome da agência]",
-            },
-          ]}
-        />
+        <Testimonials kicker="Prova social" title="O que agências dizem sobre a Dattis" items={DEPOIMENTOS} />
 
         <Faq title="Perguntas frequentes" items={FAQ_ITEMS} />
 
