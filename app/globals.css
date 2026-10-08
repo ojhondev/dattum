@@ -244,7 +244,7 @@
   letter-spacing: -0.012em;
 }
 /* Título do hero da home: um degrau abaixo do .t-hero padrão. */
-.t-hero.t-hero-home { font-size: clamp(2.5rem, 5vw, 4.4rem); }
+.t-hero.t-hero-home { font-size: clamp(1.85rem, 7.6vw, 5.6rem); line-height: 1.02; }
 .t-display {
   font-family: var(--font-display);
   font-weight: 400;

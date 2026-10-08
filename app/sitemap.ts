@@ -15,6 +15,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${SITE_URL}/o-que-e-a-dattis`, changeFrequency: "monthly", priority: 0.9 },
     { url: `${SITE_URL}/diagnostico`, changeFrequency: "monthly", priority: 0.8 },
     { url: `${SITE_URL}/auditoria`, changeFrequency: "monthly", priority: 0.7 },
+    { url: `${SITE_URL}/consulta`, changeFrequency: "monthly", priority: 0.7 },
     { url: `${SITE_URL}/termos`, changeFrequency: "yearly", priority: 0.3 },
     { url: `${SITE_URL}/privacidade`, changeFrequency: "yearly", priority: 0.3 },
     { url: `${SITE_URL}/contrato-de-dados`, changeFrequency: "yearly", priority: 0.3 },

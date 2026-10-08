@@ -185,10 +185,12 @@ export default async function LandingPage() {
       <main>
         {/* HERO */}
         <section className="overflow-hidden pt-14 sm:pt-20">
-          <div className="mx-auto max-w-5xl px-5 text-center">
+          <div className="mx-auto max-w-6xl px-5 text-center">
             <p className="t-eyebrow">DPO para agências de tráfego pago · LGPD</p>
-            <h1 className="t-hero t-hero-home mx-auto mt-5 max-w-[17ch]">
-              <span className="text-brand-ink">Agência de Tráfego:</span> Evite multas pela LGPD
+            {/* Sempre duas linhas: o tamanho acompanha a largura da tela para "Evite multas pela LGPD" caber inteira. */}
+            <h1 className="t-hero t-hero-home mx-auto mt-5">
+              <span className="block whitespace-nowrap text-brand-ink">Agência de Tráfego</span>
+              <span className="block whitespace-nowrap">Evite multas pela LGPD</span>
             </h1>
             <p className="mx-auto mt-6 max-w-2xl text-[20px] leading-[1.4] text-body">
               Nós cuidamos da LGPD de cada cliente que a sua agência atende. Você continua rodando campanha, sem contratar
