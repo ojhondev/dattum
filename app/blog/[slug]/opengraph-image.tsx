@@ -4,7 +4,7 @@ import { imagemOg, OG_SIZE } from "@/lib/og";
 export const alt = "Artigo do blog Dattis";
 export const size = OG_SIZE;
 export const contentType = "image/png";
-export const revalidate = 600;
+export const revalidate = 86400; // imagem de compartilhamento (cara de gerar): 1 dia
 
 export default async function Image({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
