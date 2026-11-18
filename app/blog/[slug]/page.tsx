@@ -4,7 +4,7 @@ import { postPorSlug, postsPublicados } from "@/lib/blog";
 import { Artigo } from "@/components/blog/Artigo";
 import { urlAbsoluta } from "@/lib/site";
 
-export const revalidate = 600;
+export const revalidate = 1800; // 30 min: salvar/publicar no admin já invalida na hora (lib/blog-admin.ts)
 
 export async function generateStaticParams() {
   const posts = await postsPublicados().catch(() => []);

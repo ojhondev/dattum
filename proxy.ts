@@ -46,5 +46,7 @@ export async function proxy(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.ico|icon.png|apple-icon.png).*)"],
+  // Fora do proxy (economiza CPU): /api (já ignorada acima) e arquivos de imagem, fonte, CSS e JS,
+  // inclusive o aviso de cookies /c/{token}.js carregado pelos sites dos clientes.
+  matcher: ["/((?!_next/static|_next/image|api/|favicon.ico|icon.png|apple-icon.png|.*\\.(?:png|jpe?g|gif|webp|avif|svg|ico|woff2?|ttf|otf|css|js|map)$).*)"],
 };

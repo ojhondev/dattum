@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { CATEGORIAS, categoriaSlug, postsPublicados } from "@/lib/blog";
 import { BlogIndice } from "@/components/blog/BlogIndice";
 
-export const revalidate = 600;
+export const revalidate = 1800; // 30 min: salvar/publicar no admin já invalida na hora (lib/blog-admin.ts)
 
 const achar = (slug: string) => CATEGORIAS.find((c) => categoriaSlug(c) === slug);
 

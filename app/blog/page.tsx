@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { postsPublicados } from "@/lib/blog";
 import { BlogIndice } from "@/components/blog/BlogIndice";
 
-export const revalidate = 600;
+export const revalidate = 1800; // 30 min: salvar/publicar no admin já invalida na hora (lib/blog-admin.ts)
 
 export const metadata: Metadata = {
   title: "Blog: LGPD para agências de tráfego pago",
